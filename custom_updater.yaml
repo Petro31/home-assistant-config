@@ -1,0 +1,10 @@
+  show_installable: 
+  hide_sensor: false
+  track:
+    - components
+    - cards
+  card_urls:
+    - https://raw.githubusercontent.com/kalkih/mini-graph-card/master/tracker.json
+    - https://raw.githubusercontent.com/bramkragten/custom-ui/master/updater.json
+  component_urls:
+    - https://raw.githubusercontent.com/keatontaylor/alexa_media_player/master/custom_components.json

@@ -1,0 +1,177 @@
+  WhereAreWeIntent:
+    speech:
+      type: plain
+      text: >
+        {%- if is_state('device_tracker.petro_petro', 'home') and
+               is_state('device_tracker.lambo_lambo', 'home') -%}
+          You are both home. 
+        {%- else -%}
+          Lindsay is at {{ states("device_tracker.lambo_lambo") }} and
+          Mike is at {{ states("device_tracker.petro_petro") }}
+        {% endif %}
+  
+  LocateIntent:
+    speech:
+      type: plain
+      text: >
+        {%- if User.lower() in ['petro', 'mike', 'michael'] -%}
+          Mike is at {{ states("device_tracker.petro_petro") }}
+        {%- elif User.lower() in ['lambo', 'lindsay'] -%}
+          Lindsay is at {{ states("device_tracker.lambo_lambo") }}
+        {%- else -%}
+          {%- for state in states.device_tracker -%}
+            {%- if state.name.lower() == User.lower() -%}
+              {{ state.name }} is at {{ state.state }}
+            {%- endif -%}
+          {%- else -%}
+            I am sorry. I do not know where {{User}} is.
+          {%- endfor -%}
+        {%- endif -%}
+          
+  RunScriptIntent:
+    action:
+      service: script.turn_on
+      data_template:
+        entity_id: script.{{ Script | replace(" ", "_") }}
+    speech:
+      type: plain
+      text: OK
+      
+  ActivateSceneIntent:
+    action:
+      service: scene.turn_on
+      data_template:
+        entity_id: scene.{{ Scene | replace(" ", "_") }}
+    speech:
+      type: plain
+      text: OK
+
+  QuestionPersonIntent:
+    speech:
+      type: plain
+      text: >
+        {%- if Person.lower() in ['petro', 'mike', 'michael'] -%}
+          {{Person}} totally didn't program me to say these things.
+        {%- elif Person.lower() in ['lambo', 'lindsay', 'lindsey'] -%}
+          {{Person}} sometimes farts in her sleep.  I can hear her!
+        {%- elif Person.lower() in ['owen'] -%}
+          Oh no!  Hide your cups and glasses, {{Person}} might spill it.
+        {%- elif Person.lower() in ['joe'] -%}
+          {{Person}} likes to play ultimate frisbee...  It's totally manly.
+        {%- elif Person.lower() in ['jon','john'] -%}
+          I shouldn't speak of him.  Just saying his name might spark a semantical debate.
+        {%- elif Person.lower() in ['jim', 'james', 'grandpa'] -%}
+          {{Person}} is sometimes used as a solar panel.  His head is very shiney.
+        {%- elif Person.lower() in ['bonnie', 'nana'] -%}
+          Sometimes, people confuse {{Person}}'s voice with a firetruck siren.
+        {%- elif Person.lower() in ['andrea', 'assdrea'] -%}
+          Ass-drea, Andrea, whatever you want to call her, has a huge ass.
+        {%- elif Person.lower() in ['alex', 'alexander'] -%}
+          {{Person}} once lost to Lindsay in Call of Duty!  And Lindsay can't even aim!
+        {%- elif Person.lower() in ['victoria', 'tori'] -%}
+          Rumor on the street is that {{Person}}'s room smells like a sweaty armpit!
+        {%- elif Person.lower() in ['mosby'] -%}
+          {{Person}} poops in the office sometimes.
+        {%- else -%}
+          I'm sorry. I do not know who {{Person}} is.
+        {%- endif -%}
+        
+  SetVolumeIntent:
+    action:
+      service: media_player.volume_set
+      data_template:
+        entity_id: media_player.yamaha_receiver
+        volume_level: >-
+          {%- if Level|int in range(10,81) -%}
+            {%- set n = Level|float -%}
+            {{ (1.0-( n / 100.0 )) | round(2) }}
+          {%- endif -%}
+    speech:
+      type: plain
+      text: OK
+    
+  VolumeUpIntent:
+    action:
+      service: media_player.volume_set
+      data_template:
+        entity_id: media_player.yamaha_receiver
+        volume_level: >
+          {% if is_state('media_player.yamaha_receiver', 'on')  %}
+            {% set n = states.media_player.yamaha_receiver.attributes.volume_level | float %}
+            {% if n <= 0.85 %}
+              {{ n + 0.05 | round(2) }}
+            {% endif %}
+          {% endif %}
+    speech:
+      type: plain
+      text: OK
+      
+  VolumeDownIntent:
+    action:
+      service: media_player.volume_set
+      data_template:
+        entity_id: media_player.yamaha_receiver
+        volume_level: >
+          {% if is_state('media_player.yamaha_receiver', 'on')  %}
+            {% set n = states.media_player.yamaha_receiver.attributes.volume_level | float %}
+            {% if n >= 0.25 %}
+              {{ n - 0.05 | round(2) }}
+            {% endif %}
+          {% endif %}
+    speech:
+      type: plain
+      text: OK
+      
+  VolumeMuteIntent:
+    action:
+      service: media_player.volume_mute
+      data_template:
+        entity_id: media_player.yamaha_receiver
+        is_volume_muted: >
+          {% if is_state('media_player.yamaha_receiver', 'on')  %}
+            {% if DoWhat.lower() in ['mute'] %}
+              true
+            {% elif DoWhat.lower() in ['unmute'] %}
+              false
+            {% else %}
+              false
+            {% endif %}
+          {% else %}
+            false
+          {% endif %}
+    speech:
+      type: plain
+      text: OK
+      
+  ChangeInputIntent:
+    action:
+      service: media_player.select_source
+      data_template:
+        entity_id: media_player.yamaha_receiver
+        source: >
+          {% if is_state('media_player.yamaha_receiver', 'on')  %}
+            {% if Input.lower() in ['xbox','xbox one'] %}
+              Xbox One
+            {% elif Input.lower() in ['playstation','ps4'] %}
+              Playstation 4
+            {% elif Input.lower() in ['wii', 'wii u', 'we', 'we u', 'we you'] %}
+              Wii U
+            {% elif Input.lower() in ['computer','pc'] %}
+              PC
+            {% elif Input.lower() in ['apple tv','switch'] %}
+              Apple Tv
+            {% elif Input.lower() in ['phone','aux'] %}
+              Phone
+            {% elif Input.lower() in ['blue tooth', 'echo'] %}
+              Echo
+            {% elif Input.lower() in ['switch'] %}
+              Switch
+            {% else %}
+              Xbox One
+            {% endif %}
+          {% else %}
+            Xbox One
+          {% endif %}
+    speech:
+      type: plain
+      text: OK

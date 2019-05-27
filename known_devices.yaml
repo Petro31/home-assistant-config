@@ -1,0 +1,293 @@
+echo_living_room:
+  hide_if_away: false
+  icon: mdi:amazon-alexa
+  mac: 40:B4:CD:3A:2D:67
+  name: Echo Living Room
+  track: true
+  vendor: Amazon Technologies Inc.
+
+echo_master_bedroom:
+  hide_if_away: false
+  icon: mdi:amazon-alexa
+  mac: 34:D2:70:46:E5:1D
+  name: Echo Master Bedroom
+  picture: /local/images/dot.png
+  track: true
+  vendor: Amazon Technologies Inc.
+
+hp6796cc:
+  hide_if_away: false
+  icon: mdi:printer
+  mac: 1C:C1:DE:68:09:E2
+  name: HP6796CC
+  picture: 
+  track: true
+  vendor: Hewlett Packard
+
+lindsays_ipad:
+  hide_if_away: false
+  icon: mdi:tablet-ipad
+  mac: 24:A2:E1:2C:92:75
+  name: Lindsay's iPad
+  picture:
+  track: true
+  vendor: Apple, Inc.
+
+mikes_ipad:
+  hide_if_away: false
+  icon: mdi:tablet-ipad
+  mac: 28:6A:BA:1C:8A:2F
+  name: Mike's iPad
+  picture:
+  track: true
+  vendor: Apple, Inc.
+
+harmony_hub:
+  hide_if_away: false
+  icon: mdi:remote
+  mac: 00:04:20:FA:BC:E0
+  name: Harmony Hub
+  track: true
+  vendor: Slim Devices, Inc.
+
+lindsays_iphone5s:
+  hide_if_away: false
+  icon: mdi:cellphone-iphone
+  mac: 3C:AB:8E:68:C6:EE
+  name: Lindsay's iPhone
+  picture: 
+  track: true
+  vendor: unknown
+
+lindsays_imac:
+  hide_if_away: false
+  icon: mdi:laptop-mac
+  mac: 00:1F:5B:CF:5A:9B
+  name: Lindsay's iMac
+  picture: 
+  track: true
+  vendor: unknown
+
+petro:
+  hide_if_away: false
+  icon: mdi:cellphone-iphone
+  mac: 
+  picture: /local/images/petro.png
+  name: Mike's iPhone
+  track: true
+  vendor:
+
+nintendo_wii_u:
+  hide_if_away: false
+  icon: mdi:wiiu
+  mac: 98:B6:E9:23:D8:E0
+  name: Wii U
+  picture:
+  track: true
+  vendor: Nintendo Co.,Ltd
+
+lambo:
+  hide_if_away: false
+  icon: mdi:cellphone-iphone
+  mac: 
+  picture: /local/images/lindsay.png
+  name: Lindsay's iPhone
+  track: true
+  vendor: unknown
+
+lindsays_work_pc:
+  hide_if_away: false
+  icon: mdi:laptop
+  mac: 34:02:86:12:E2:83
+  name: Lindsay's Work PC
+  picture:
+  track: true
+  vendor: Intel Corporate
+
+forerunner_935:
+  hide_if_away: false
+  icon: mdi:watch
+  mac: 14:8F:21:F1:E7:30
+  name: Forerunner 935
+  picture:
+  track: true
+  vendor: Garmin International
+
+owens_iphone:
+  hide_if_away: false
+  icon: mdi:cellphone-iphone
+  mac: F0:24:75:6F:1B:A5
+  name: Owen's iPhone
+  track: true
+  vendor: Apple, Inc.
+
+mikes_iphone:
+  hide_if_away: false
+  icon: mdi:cellphone-iphone
+  mac: 18:F6:43:04:30:58
+  name: Mike's iPhone
+  picture:
+  track: true
+  vendor: Apple, Inc.
+
+james_iphone:
+  hide_if_away: false
+  mac: E0:AC:CB:D9:D1:E8
+  name: James's iPhone
+  icon: mdi:cellphone-iphone
+  track: true
+  vendor: Apple, Inc.
+
+james_iphone10:
+  hide_if_away: false
+  mac: 74:b5:87:47:20:93
+  name: James's iPhone 10
+  icon: mdi:cellphone-iphone
+  track: true
+  vendor: Apple, Inc.
+  
+james_ipad:
+  hide_if_away: false
+  mac: 94:E9:6A:0B:36:45
+  icon: mdi:tablet-ipad
+  name: James's iPad
+  picture:
+  track: true
+  vendor: Apple, Inc.
+
+andreas_pc:
+  hide_if_away: false
+  mac: E0:CA:94:1F:F8:57
+  name: Andreas Laptop
+  icon: mdi:laptop
+  track: true
+  vendor: ASKEY COMPUTER CORP
+
+mikes_laptop:
+  hide_if_away: false
+  icon: mdi:laptop-mac
+  mac: 7C:D1:C3:EB:76:17
+  name: Mike's Laptop
+  picture:
+  track: true
+  vendor: unknown
+
+james_air:
+  hide_if_away: false
+  icon: mdi:laptop-mac
+  mac: 10:94:BB:D8:6C:86
+  name: James's Air
+  picture:
+  track: true
+
+lindsays_iphone8:
+  hide_if_away: false
+  icon: mdi:cellphone-iphone
+  mac: 94:BF:2D:79:F5:80
+  name: Lindsay's iPhone 8
+  picture:
+  track: true
+
+hannas_iphone:
+  hide_if_away: false
+  icon: mdi:cellphone-iphone
+  mac: 1C:5C:F2:81:A3:9D
+  name: Hanna's iPhone
+  picture:
+  track: true
+
+katies_iphone:
+  hide_if_away: false
+  icon: mdi:cellphone
+  mac: E4:9A:DC:2A:8B:58
+  name: Katie's iPhone
+  picture:
+  track: true
+
+mike_s_computer:
+  hide_if_away: false
+  icon: mdi:desktop-classic
+  mac: 30:9C:23:DF:E0:9B
+  name: Mike's Computer
+  picture:
+  track: true
+
+intel_nuc:
+  hide_if_away: false
+  icon: mdi:desktop-classic
+  mac: 94:C6:91:A5:0B:9A
+  name: Intel Nuc
+  picture:
+  track: true
+
+yamaha_rx_v677:
+  hide_if_away: false
+  icon: mdi:speaker-multiple
+  mac: 00:A0:DE:B4:71:CF
+  name: Yamaha RX-V677
+  picture:
+  track: true
+
+unifi_cloudkey:
+  hide_if_away: false
+  icon:
+  mac: 44:D9:E7:9F:F1:F1
+  name: UniFi-CloudKey
+  picture:
+  track: true
+
+xbox_one:
+  hide_if_away: false
+  icon: mdi:xbox
+  mac: 50:1A:C5:9C:9A:0E
+  name: Xbox One
+  picture:
+  track: true
+
+synology_ds216j:
+  hide_if_away: false
+  icon: mdi:nas
+  mac: 00:11:32:74:C8:98
+  name: Synology DS216J
+  picture:
+  track: true
+
+common_room_camera:
+  hide_if_away: false
+  icon: mdi:cctv
+  mac: B0:41:1D:3A:D4:8A
+  name: Common Room Camera
+  picture:
+  track: true
+
+playstation_4:
+  hide_if_away: false
+  icon: mdi:playstation
+  mac: BC:60:A7:01:1F:77
+  name: Playstation 4
+  picture:
+  track: true
+
+garage_camera:
+  hide_if_away: false
+  icon: mdi:cctv
+  mac: EC:71:DB:14:7D:1F
+  name: Garage Camera
+  picture:
+  track: true
+
+alexs_nintendo_switch:
+  hide_if_away: false
+  icon: mdi:nintendo-switch
+  mac: 58:2f:40:0b:f3:dc
+  name: Alex's Nintendo Switch
+  picture:
+  track: true
+
+alexs_phone:
+  hide_if_away: false
+  icon: mdi:cellphone
+  mac: b0:6e:bf:53:aa:86
+  name: Alex's Phone
+  picture:
+  track: true

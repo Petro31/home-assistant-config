@@ -1,0 +1,14 @@
+
+  - platform: apcupsd
+
+  # TEMPLATE SENSORS
+
+  - platform: template
+    sensors:
+      yamaha_receiver:
+        device_class: power
+        value_template: >
+          {%- set media_players = [
+            states.media_player.yamaha_receiver,
+            states.media_player.yamaha_receiver_zone_2 ] %}
+          {{ media_players | selectattr('state','eq','on') | list | length >= 1 }}

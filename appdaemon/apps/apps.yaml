@@ -1,0 +1,252 @@
+sundownlighttoggle:
+  module: sundown_light_toggle
+  class: SunDownLightToggle
+  switches:
+    - entity: switch.xbox_one
+      entities:
+        - light.living_room
+    - entity: switch.ps4
+      entities:
+        - light.living_room
+    - entity: switch.wii_u
+      entities:
+        - light.living_room
+    - entity: switch.pc
+      entities:
+        - light.living_room
+    - entity: switch.switch
+      entities:
+        - light.living_room
+    - entity: switch.tv
+      entities:
+        - light.living_room
+
+holidaylights:
+  module: holiday_lights
+  class: HolidayLights
+  seasons:
+    - name: Christmas Indoor Lights
+      start:
+        # Thanksgiving Day
+        platform: date
+        month: 11
+        week: 4
+        day: 3
+      end:
+        # some random day in jan
+        platform: date
+        month: 1
+        week: 3
+        day: 0
+      turn_on: 
+        platform: time
+        at: '17:00:00'
+      turn_off: 
+        platform: time
+        at: '22:00:00'
+      entities:
+        - switch.office_window
+        - switch.living_room_window
+        #- switch.kitchen_holiday
+
+doorsensors:
+  module: doorsensors
+  class: Doorsensors
+  door_sensors:
+    - entity: sensor.main_door_hindge
+      entities:
+        - switch.foyer
+    - entity: sensor.entry_door_hindge
+      entities:
+        - switch.garage_entry
+        - switch.garage_cans
+    - entity: sensor.sliding_door
+      entities:
+        - light.dining_room_chandelier
+  notify_services:
+    - notify.ios_petro
+    - notify.ios_lambo
+  device_trackers:
+    - device_tracker.owens_iphone
+    - device_tracker.jimpetrnoiphone
+    - device_tracker.mikes_iphone
+    - device_tracker.petro
+    - device_tracker.lindsaysiphone
+    - device_tracker.lambo
+  durations:
+    notify: 15
+    light: 120
+    intruder: 30
+  company: input_select.company
+
+extendlighttoggle:
+  module: extend_light_toggle
+  class: ExtendLightToggle
+  switches:
+    - entity: switch.office_switch
+      entities:
+        - switch.office_outlet
+
+sunsetlights:
+  module: sunset_lights
+  class: SunsetLights
+  entities:
+    - group.sconces
+
+mediavolume:
+  module: media_player_volume
+  class: MediaVolume
+  media_players:
+    - entity: media_player.yamaha_receiver
+      input_number: input_number.yamaha_receiver
+    - entity: media_player.yamaha_receiver_zone_2
+      input_number: input_number.yamaha_receiver_zone_2
+  
+zonecycler:
+  module: zone_cycler
+  class: ZoneCycler
+  input_select: input_select.yamaha_volume_control
+  media_players:
+    - entity: media_player.yamaha_receiver
+    - entity: media_player.yamaha_receiver_zone_2
+    
+# mediaautomations:
+  # module: media_player_automations
+  # class: MediaPlayerAutomations
+  # media_players:
+    # - entity: media_player.living_room_dot
+      # turn_on: playing
+      # turn_off:
+        # - standby
+      # entities:
+        # - switch.audio_1
+        # - switch.zone_2
+
+# motion:
+  # module: multisensor
+  # class: MultisensorLights
+  # multisensors:
+    # - entity: binary_sensor.ms_motion
+      # duration: 300
+      # after: 
+        # platform: time
+        # at: '07:00:00'
+      # before: 
+        # platform: time
+        # at: '23:00:00'
+      # between:
+        # brightness: 255
+      # outside:
+        # brightness: 2
+      # entities:
+          # - light.hallway
+  
+minimote:
+  module: minimote
+  class: Minimotes
+  minimotes:
+    - entity: zwave.remote_living_room
+      # Button 1 Press
+      scene1:
+        brightness: 255
+        entities:
+          - light.kitchen_island
+          - light.kitchen_cans
+          - switch.kitchen_cabinet
+      # Button 1 Hold
+      scene2:
+        brightness: 255
+        entities:
+          - light.living_room
+          - light.kitchen_cans
+          - light.dining_room_chandelier
+          - light.kitchen_island
+          - switch.office_outlet
+          - switch.office_switch
+          - switch.garage_entry
+          - switch.foyer
+          - switch.garage_cans
+          - switch.kitchen_holiday
+          - switch.dining_room_hutch
+          - switch.kitchen_cabinet
+          - switch.kitchen_pantry
+      # Button 2 Press
+      scene3:
+        brightness: 255
+        entities:
+          - light.living_room
+      # Button 2 Hold
+      scene4:
+        brightness: 255
+        entities:
+          - light.hallway
+          - switch.master_nightstand_left
+          - switch.master_nightstand_right
+          - light.master_fixture
+      # Button 3 Press
+      scene5:
+        brightness: 255
+        entities:
+          - light.dining_room_chandelier
+      # Button 3 Hold
+      scene6:
+        brightness: 255
+        entities:
+          - switch.basement_stairs
+          - switch.basement_cans
+      # Button 4 Hold
+      scene7:
+        brightness: 255
+        entities:
+          - switch.office_outlet
+          - switch.office_switch
+
+    - entity: zwave.master_remote_left
+      # Button 1 Press
+      scene1:
+        brightness: 255
+        entities:
+          - switch.master_nightstand_left
+      # Button 1 Hold
+      scene2:
+        brightness: 255
+        entities:
+          - switch.master_nightstand_left
+          - switch.master_nightstand_right
+      # Button 2 Press
+      scene3:
+        brightness: 255
+        entities:
+          - light.hallway
+      # Button 2 Hold
+      scene4:
+        brightness: 255
+        entities:
+          - light.hallway
+          - switch.master_nightstand_left
+          - switch.master_nightstand_right
+
+    - entity: zwave.master_remote_right
+      # Button 1 Press
+      scene1:
+        brightness: 255
+        entities:
+          - switch.master_nightstand_right
+      # Button 1 Hold
+      scene2:
+        brightness: 255
+        entities:
+          - switch.master_nightstand_left
+          - switch.master_nightstand_right
+      # Button 2 Press
+      scene3:
+        brightness: 255
+        entities:
+          - light.hallway
+      # Button 2 Hold
+      scene4:
+        brightness: 255
+        entities:
+          - light.hallway
+          - switch.master_nightstand_left
+          - switch.master_nightstand_right

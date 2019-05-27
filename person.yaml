@@ -1,0 +1,10 @@
+- name: Petro
+  id: petro
+  user_id: 7d4eefa8059f4e1fa99401b87506dcb6
+  device_trackers:
+    - device_tracker.petro
+- name: Lambo
+  id: lambo
+  user_id: f1454dc04dfe4f168b29a7809009e49f
+  device_trackers:
+    - device_tracker.lambo

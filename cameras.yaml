@@ -1,0 +1,10 @@
+  - platform: zoneminder
+
+  - platform: local_file
+    name: garage_post_process
+    file_path: /config/www/motion/garage_clear_latest.jpg
+    
+  - platform: local_file
+    name: living_room_post_process
+    file_path: /config/www/motion/living_room_clear_latest.jpg
+    

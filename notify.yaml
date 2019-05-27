@@ -1,0 +1,5 @@
+- name: lambosino
+  platform: group
+  services:
+    - service: ios_petro
+    - service: ios_lambo

@@ -1,0 +1,295 @@
+zone.home:
+  track_ios: true
+  
+# OFFICE
+switch.office_outlet:
+  friendly_name: Office Desk Light
+  icon: mdi:desk-lamp
+switch.office_switch:
+  friendly_name: Office Light Switch
+  icon: mdi:floor-lamp
+switch.office_window:
+  friendly_name: Office Window Outlet
+  icon: mdi:power-socket-us
+  
+# GARAGE
+
+switch.sconces_garage:
+  friendly_name: Garage Sconces
+  icon: mdi:wall-sconce
+switch.garage_entry:
+  friendly_name: Entry Lights
+  icon: mdi:door
+switch.garage_cans:
+  friendly_name: Garage Fixtures
+  icon: mdi:lightbulb
+  
+# FOYER
+
+switch.sconces_main_entrance:
+  friendly_name: Main Sconces
+  icon: mdi:wall-sconce
+switch.foyer:
+  friendly_name: Foyer Lights
+  icon: mdi:door
+switch.outside_porch:
+  friendly_name: Outside Outlet
+  icon: mdi:power-socket-us
+  
+# BASEMENT
+
+switch.basement_cans:
+  friendly_name: Basement Cans
+  icon: mdi:lightbulb
+switch.basement_stairs:
+  friendly_name: Basement Stairs
+  icon: mdi:stairs
+  
+# KITCHEN
+
+switch.kitchen_holiday:
+  friendly_name: Holiday Lights
+  icon: mdi:power-socket-us
+switch.kitchen_cabinet:
+  friendly_name: Cabinet Lights
+  icon: mdi:stove
+switch.kitchen_pantry:
+  friendly_name: Pantry Lights
+  icon: mdi:lightbulb
+light.kitchen_cans:
+  friendly_name: Can Lights
+  icon: mdi:wall-sconce-flat
+light.kitchen_island:
+  friendly_name: Island Lights
+  icon: mdi:ceiling-light
+  
+# DINING ROOM
+
+switch.dining_room_hutch:
+  friendly_name: Hutch Lights
+  icon: mdi:lightbulb
+light.dining_room_chandelier:
+  friendly_name: Chandelier
+  icon: mdi:ceiling-light
+sensor.dining_room_temperature:
+  friendly_name: Dining Room Temperature
+  
+# MASTER BEDROOM
+
+switch.master_nightstand_left:
+  friendly_name: Mike's Nightstand
+  icon: mdi:lamp
+switch.master_nightstand_right:
+  friendly_name: Lindsay's Nightstand
+  icon: mdi:lamp
+light.master_fixture:
+  friendly_name: Master Light
+  icon: mdi:ceiling-light
+fan.master_fixture:
+  friendly_name: Master Fan
+  icon: mdi:fan
+light.master_closet:
+  friendly_name: Master Closet
+  icon: mdi:tshirt-crew-outline
+  
+# MASTER BATHROOM
+
+switch.master_bathroom_fan:
+  friendly_name: Master Bath Fan
+  icon: mdi:fan
+light.master_bathroom_sink:
+  friendly_name: Master Bath Sink
+  icon: mdi:lightbulb
+light.master_bathroom_cans:
+  friendly_name: Master Bath Can
+  icon: mdi:shower-head
+  
+# LIVING ROOM
+
+switch.floating_outlet_switch:
+  friendly_name: Echo Outlet
+  icon: mdi:lightbulb
+switch.living_room_window:
+  friendly_name: Living Room Window Outlet
+  icon: mdi:power-socket-us
+light.living_room:
+  friendly_name: Living Room Lamps
+  icon: mdi:lamp
+  
+# LAUNDRY ROOM
+
+switch.laundry:
+  friendly_name: Laundry
+  icon: mdi:washing-machine
+
+# HALLWAY
+
+light.hallway:
+  friendly_name: Hallway
+  icon: mdi:lightbulb
+
+# AREAS
+switch.basement:
+  friendly_name: Basement
+  icon: mdi:alpha-b-box
+switch.inside:
+  friendly_name: Inside
+  icon: mdi:alpha-i-box
+switch.outside:
+  friendly_name: Outside
+  icon: mdi:alpha-o-box
+switch.upstairs:
+  friendly_name: Upstairs
+  icon: mdi:alpha-u-box
+switch.downstairs:
+  friendly_name: Downstairs
+  icon: mdi:alpha-d-box
+  
+# RECEIVER
+
+input_number.yamaha_receiver:
+  icon: mdi:volume-high
+input_number.yamaha_receiver_zone_2:
+  icon: mdi:volume-high
+switch.zone_1:
+  friendly_name: Zone One
+  icon: mdi:numeric-1-box
+input_boolean.zone_1_control:
+  friendly_name: Zone One Control
+  icon: mdi:numeric-1-box
+switch.zone_2:
+  friendly_name: Zone Two
+  icon: mdi:numeric-2-box
+input_boolean.zone_2_control:
+  friendly_name: Zone Two Control
+  icon: mdi:numeric-2-box
+switch.audio_1:
+  friendly_name: Audio One
+  icon: mdi:google-home
+switch.audio_2:
+  friendly_name: Audio Two
+  icon: mdi:google-home
+sensor.zone1_volume:
+  friendly_name: Zone 1 Level
+  icon: mdi:volume-high
+sensor.zone2_volume:
+  friendly_name: Zone 2 Level
+  icon: mdi:volume-high
+  
+# RECEIVER SOURCES
+
+switch.xbox_source:
+  friendly_name: Xbox One Source
+  icon: mdi:xbox
+switch.playstation_source:
+  friendly_name: Playstation Source
+  icon: mdi:playstation
+switch.nintendo_switch_source:
+  friendly_name: Switch Source
+  icon: mdi:nintendo-switch
+switch.wii_u_source:
+  friendly_name: Wii U Source
+  icon: mdi:wiiu
+switch.pc_source:
+  friendly_name: Computer Source
+  icon: mdi:desktop-classic
+switch.phone_source:
+  friendly_name: Aux Source
+  icon: mdi:headphones
+switch.alexa_source:
+  friendly_name: Alexa Source
+  icon: mdi:amazon-alexa
+  
+# HARMONY
+
+switch.xbox_one:
+  friendly_name: Xbox One
+  icon: mdi:xbox
+switch.ps4:
+  friendly_name: Playstation
+  icon: mdi:playstation
+switch.wii_u:
+  friendly_name: Wii U
+  icon: mdi:wiiu
+switch.pc:
+  friendly_name: Computer
+  icon: mdi:desktop-classic
+switch.switch:
+  friendly_name: Switch
+  icon: mdi:nintendo-switch
+switch.tv:
+  friendly_name: TV
+  icon: mdi:television
+switch.poweroff:
+  friendly_name: Power Off
+  icon: mdi:power
+sensor.harmony_activity:
+  friendly_name: Harmony Status
+  
+# DOORS
+
+sensor.main_door_hindge:
+  friendly_name: Main Entrance
+  icon: mdi:door
+sensor.main_door_battery:
+  friendly_name: Main Entrance Battery
+sensor.entry_door_hindge:
+  friendly_name: Garage Entrance
+  icon: mdi:door
+sensor.entry_door_battery:
+  friendly_name: Garage Entrance Battery
+sensor.sliding_door:
+  friendly_name: Patio Entrance
+  icon: mdi:door
+sensor.sliding_door_battery:
+  friendly_name: Patio Entrance Battery
+sensor.garage_door_access_control:
+  friendly_name: Entry Door State
+  hidden: true
+sensor.main_door_t_access_control:
+  friendly_name: Main Door State
+  hidden: true
+
+# BATTERIES
+
+sensor.hallway_motion_battery:
+  friendly_name: Motion Sensor Battery
+sensor.door_bell_battery:
+  friendly_name: Door Bell Battery
+
+sensor.xbox_current:
+  friendly_name: Xbox App
+
+# MULTISENSOR
+  
+binary_sensor.ms_motion:
+  friendly_name: Motion Detected
+sensor.ms_alarm_level:
+  friendly_name: Alarm Level
+sensor.ms_alarm_type:
+  friendly_name: Alarm Type
+sensor.ms_burglar:
+  friendly_name: Burgler
+sensor.ms_luminance:
+  friendly_name: Luminance
+sensor.ms_humidity:
+  friendly_name: Humidity
+sensor.ms_nodeid:
+  friendly_name: Node ID
+sensor.ms_temperature:
+  friendly_name: Upstairs Temperature
+  device_class: temperature
+sensor.ms_ultraviolet:
+  friendly_name: Ultraviolet
+
+# DEVICE TRACKERS
+device_tracker.lambo:
+  friendly_name: Lindsay's iPhone
+
+# SPEEDTESTS
+sensor.speedtest_download:
+  friendly_name: Download
+sensor.speedtest_ping:
+  friendly_name: Ping
+sensor.speedtest_upload:
+  friendly_name: Upload

@@ -1,0 +1,24 @@
+  - platform: yamaha
+    host: !secret yamaha_host
+    source_ignore:
+      - AV1
+      - AV2
+      - AV3
+      - AV4
+      - AV5
+      - AV6
+      - Pandora
+      - Rhapsody
+      - SiriusXM
+      - Spotify
+      - Tuner
+      - USB
+      - V-AUX
+    source_names:
+      HDMI1: "Xbox One"
+      HDMI2: "Playstation 4"
+      HDMI3: "Wii U"
+      HDMI4: "PC"
+      HDMI5: "Switch"
+      AUDIO1: "Phone"
+      AUDIO2: "Echo"

@@ -1,0 +1,88 @@
+- alias: Reboot Once A Week
+  trigger:
+    - platform: time
+      at: '10:00:00'
+  condition:
+    - condition: time
+      weekday:
+        - wed
+  action:
+    - service: notify.ios_petro
+      data:
+        message: "Rebooting..."
+        data:
+          push:
+            badge: 5
+    - service: hassio.host_reboot
+    
+- alias: Garbage Day Message
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '15:30:00'
+    - platform: time
+      at: '19:00:00'
+  condition:
+    - condition: time
+      weekday:
+        - mon
+  action:
+    - service: notify.ios_petro
+      data:
+        message: "Trash day tomorrow!"
+        data:
+          push:
+            badge: 5
+    - service: notify.ios_lambo
+      data:
+        message: "Lindsays turn to take out trash."
+        data:
+          push:
+            badge: 5
+        
+- alias: Change Filters Message
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '19:00:00'
+  condition:
+    - condition: template
+      value_template: "{{ now().day == 1 and now().month in [ 1, 4, 7, 10 ] }}"
+  action:
+    - service: notify.ios_petro
+      data:
+        message: "Change HVAC filter."
+        data:
+          push:
+            badge: 5
+    - service: notify.ios_lambo
+      data:
+        message: "Lindsays turn to change HVAC filter."
+        data:
+          push:
+            badge: 5
+            
+- alias: Mosby Heartworm and Flee Medication.
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '19:00:00'
+  condition:
+    - condition: template
+      value_template: "{{ now().day == 1 }}"
+  action:
+    - service: notify.ios_petro
+      data:
+        message: "Give mosby heartworm and flee medication."
+        data:
+          push:
+            badge: 5
+    - service: notify.ios_lambo
+      data:
+        message: "Lindsays turn to give mosby heartworm and flee medication."
+        data:
+          push:
+            badge: 5

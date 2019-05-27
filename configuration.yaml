@@ -1,0 +1,92 @@
+homeassistant:
+  name: Home
+  latitude: !secret location_1_latitude
+  longitude: !secret location_1_longitude
+  elevation: !secret location_1_elevation
+  unit_system: imperial
+  time_zone: !secret time_zone
+  customize: !include customize.yaml
+
+frontend: !include frontend.yaml
+
+config:
+
+http:
+  api_password: !secret http_password
+  base_url: !secret http_base_url
+
+updater:
+  include_used_components: true
+
+discovery:
+
+conversation:
+
+history: !include history.yaml
+
+recorder: !include recorder.yaml
+
+logbook:
+
+map:
+
+sun:
+
+mobile_app:
+
+logger:
+  default: error
+  logs:
+    #for this item anything below error will not be logged
+    requests.packages.urllib3.connectionpool: critical 
+    py.warnings: critical
+    homeassistant.components.waze_travel_time: debug
+
+lovelace:
+  mode: yaml
+
+custom_updater: !include custom_updater.yaml
+  
+input_text:
+  alexa_say:
+    name: Alexa Speech
+
+speedtestdotnet:
+  monitored_conditions:
+    - ping
+    - download
+    - upload
+    
+alexa_media:
+  accounts:
+    - email: !secret amazon_email
+      password: !secret amazon_password
+      url: "amazon.com"
+      
+system_health:
+
+apcupsd:
+zoneminder: !include zoneminder.yaml
+camera: !include cameras.yaml
+image_processing: !include image_processing.yaml
+person: !include person.yaml
+device_tracker: !include device_tracker.yaml
+cloud:
+media_player: !include media_player.yaml
+emulated_hue: !include emulated_hue.yaml
+zwave: !include zwave.yaml
+remote: !include remote.yaml
+weather: !include weather.yaml
+ios:
+notify: !include notify.yaml
+input_select: !include input_select.yaml
+sensor: !include sensor.yaml
+binary_sensor: !include binary_sensor.yaml
+alexa:
+intent_script: !include alexa.yaml
+automation: !include_dir_merge_list automation
+zone: !include zones.yaml
+group: !include group.yaml
+script: !include scripts.yaml
+switch: !include switch.yaml
+input_number: !include input_number.yaml

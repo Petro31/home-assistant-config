@@ -1,0 +1,3 @@
+  - host: 192.168.1.134:9080
+    username: hass
+    password: !secret http_password

@@ -1,0 +1,569 @@
+  - platform: template
+    switches:
+              
+        # INSIDE LIGHTS SWITCH
+        inside:
+          value_template: "{{ is_state('group.inside','on') }}"
+          turn_on:
+            service: homeassistant.turn_on
+            data:
+              entity_id: group.inside
+          turn_off:
+            service: homeassistant.turn_off
+            data:
+              entity_id: group.inside
+        
+        # OUTSIDE LIGHTS SWITCH
+        outside:
+          value_template: "{{ is_state('group.outside','on') }}"
+          turn_on:
+            service: homeassistant.turn_on
+            data:
+              entity_id: group.outside
+          turn_off:
+            service: homeassistant.turn_off
+            data:
+              entity_id: group.outside
+        
+        # UPSTAIRS LIGHTS SWITCH
+        upstairs:
+          value_template: "{{ is_state('group.upstairs','on') }}"
+          turn_on:
+            service: homeassistant.turn_on
+            data:
+              entity_id: group.upstairs
+          turn_off:
+            service: homeassistant.turn_off
+            data:
+              entity_id: group.upstairs
+        
+        # DOWNSTAIRS LIGHTS SWITCH
+        downstairs:
+          value_template: "{{ is_state('group.downstairs','on') }}"
+          turn_on:
+            service: homeassistant.turn_on
+            data:
+              entity_id: group.downstairs
+          turn_off:
+            service: homeassistant.turn_off
+            data:
+              entity_id: group.downstairs
+        
+        # AWAKE/SLEEP PETRO SWITCH
+        petro_awake_sleep_automation:
+          value_template: "{{ is_state('input_select.petro_status','awake') }}"
+          turn_on:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.petro_status
+              option: awake
+          turn_off:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.petro_status
+              option: sleeping
+        
+        # AWAKE/SLEEP LAMBO SWITCH
+        lambo_awake_sleep_automation:
+          value_template: "{{ is_state('input_select.lambo_status','awake') }}"
+          turn_on:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.lambo_status
+              option: awake
+          turn_off:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.lambo_status
+              option: sleeping
+              
+              
+        # ZONE 1 MEDIA SWITCH
+        zone_1:
+          value_template: "{{ is_state('media_player.yamaha_receiver', 'on') }}"
+          turn_on:
+            service: media_player.turn_on
+            entity_id: media_player.yamaha_receiver
+          turn_off:
+            service: media_player.turn_off
+            entity_id: media_player.yamaha_receiver
+              
+        # ZONE 2 MEDIA SWITCH
+        zone_2:
+          value_template: "{{ is_state('media_player.yamaha_receiver_zone_2', 'on') }}"
+          turn_on:
+            service: media_player.turn_on
+            entity_id: media_player.yamaha_receiver_zone_2
+          turn_off:
+            service: media_player.turn_off
+            entity_id: media_player.yamaha_receiver_zone_2
+        
+        # XBOX HARMONY ACTIVITY
+        xbox_one:
+          value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Xbox One') }}"
+          turn_on:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'Xbox One'
+          turn_off:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PowerOff'
+        
+        # PLAYSTATION HARMONY ACTIVITY
+        ps4:
+          value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PS4') }}"
+          turn_on:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PS4'
+          turn_off:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PowerOff'
+        
+        # WII U HARMONY ACTIVITY
+        wii_u:
+          value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Wii U') }}"
+          turn_on:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'Wii U'
+          turn_off:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PowerOff'
+        
+        # PC HARMONY ACTIVITY
+        pc:
+          value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PC') }}"
+          turn_on:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PC'
+          turn_off:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PowerOff'
+        
+        # SWITCH HARMONY ACTIVITY
+        switch:
+          value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Switch') }}"
+          turn_on:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'Switch'
+          turn_off:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PowerOff'
+        
+        # TV HARMONY ACTIVITY
+        tv:
+          value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'TV') }}"
+          turn_on:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'TV'
+          turn_off:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PowerOff'
+        
+        # OFF ACTIVITY
+        poweroff:
+          value_template: "{{ not is_state_attr('remote.living_room', 'current_activity', 'PowerOff') }}"
+          turn_on:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PowerOff'
+          turn_off:
+            service: remote.turn_on
+            data:
+              entity_id: remote.living_room
+              activity: 'PowerOff'
+          
+        # AUDIO 1, USED FOR ECHO AND MUSIC ZONE 1
+        audio_1:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Echo') and is_state('switch.floating_outlet_switch', 'on') }}"
+          turn_on:
+            - service: switch.turn_on
+              entity_id: switch.floating_outlet_switch
+            - service: media_player.turn_on
+              entity_id: media_player.yamaha_receiver
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Echo
+            - service: media_player.volume_set
+              data:
+                entity_id: media_player.yamaha_receiver
+                volume_level: 0.7
+          turn_off:
+            - service: switch.turn_off
+              entity_id: switch.floating_outlet_switch
+            - service: media_player.turn_off
+              entity_id: media_player.yamaha_receiver
+
+        # AUDIO 2, USED FOR ECHO AND MUSIC ZONE 2
+        audio_2:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'Echo') and is_state('switch.floating_outlet_switch', 'on') }}"
+          turn_on:
+            - service: switch.turn_on
+              entity_id: switch.floating_outlet_switch
+            - service: media_player.turn_on
+              entity_id: media_player.yamaha_receiver_zone_2
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver_zone_2
+                source: Echo
+            - service: media_player.volume_set
+              data:
+                entity_id: media_player.yamaha_receiver_zone_2
+                volume_level: 0.7
+          turn_off:
+            - service: switch.turn_off
+              entity_id: switch.floating_outlet_switch
+            - service: media_player.turn_off
+              entity_id: media_player.yamaha_receiver_zone_2
+        
+        ### SOURCES FOR RECEIVER ###
+        
+        # Xbox Source
+        xbox_source:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Xbox One') }}"
+          turn_on:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Xbox One
+          turn_off:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Xbox One
+
+        # Playstation Source
+        playstation_source:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Playstation 4') }}"
+          turn_on:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Playstation 4
+          turn_off:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Playstation 4
+
+        # Playstation Source
+        nintendo_switch_source:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Switch') }}"
+          turn_on:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Switch
+          turn_off:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Switch
+
+        # Wii U Source
+        wii_u_source:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Wii U') }}"
+          turn_on:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Wii U
+          turn_off:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Wii U
+
+        # Computer Source
+        pc_source:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'PC') }}"
+          turn_on:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: PC
+          turn_off:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: PC
+
+        # Phone Source
+        phone_source:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Phone') }}"
+          turn_on:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Phone
+          turn_off:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Phone
+
+        # Alexa Source
+        alexa_source:
+          value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Echo') }}"
+          turn_on:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Echo
+          turn_off:
+            - service: media_player.select_source
+              data:
+                entity_id: media_player.yamaha_receiver
+                source: Echo
+        
+        # Volume Control
+        yamaha_volume_control:
+          value_template: "{{ not is_state('input_select.yamaha_volume_control', 'off') }}"
+          turn_on:
+            - service: input_select.select_option
+              data_template:
+                entity_id: input_select.yamaha_volume_control
+                option: >-
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set on = media_players | selectattr('1.state','eq','on') | list %}
+                  {%- if on | length == media_players | length %}
+                    {%- set options = state_attr(entity_id, 'options')[1:] %}
+                  {%- elif on | length >= 1 %}
+                    {%- set options = on | map(attribute=0) | list %}
+                  {%- else %}
+                    {%- set options = [] %}
+                  {%- endif %}
+                  {%- if options %}
+                    {%- set option = states(entity_id) %}
+                    {%- if options | length == 1 %}
+                      {{ options[0] }}
+                    {%- else %}
+                      {%- if option in options %}
+                        {%- set next = options.index(option) + 1 %}
+                        {%- set next = next if next < options | length else 0 %}
+                        {{ options[next] }}
+                      {%- else %}
+                        {{ options[0] }}
+                      {%- endif %}
+                    {%- endif %}
+                  {%- else %}
+                    off
+                  {%- endif %}
+          turn_off:
+            - service: input_select.select_option
+              data_template:
+                entity_id: input_select.yamaha_volume_control
+                option: >-
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set on = media_players | selectattr('1.state','eq','on') | list %}
+                  {%- if on | length == media_players | length %}
+                    {%- set options = state_attr(entity_id, 'options')[1:] %}
+                  {%- elif on | length >= 1 %}
+                    {%- set options = on | map(attribute=0) | list %}
+                  {%- else %}
+                    {%- set options = [] %}
+                  {%- endif %}
+                  {%- if options %}
+                    {%- set option = states(entity_id) %}
+                    {%- if options | length == 1 %}
+                      {{ options[0] }}
+                    {%- else %}
+                      {%- if option in options %}
+                        {%- set next = options.index(option) + 1 %}
+                        {%- set next = next if next < options | length else 0 %}
+                        {{ options[next] }}
+                      {%- else %}
+                        {{ options[0] }}
+                      {%- endif %}
+                    {%- endif %}
+                  {%- else %}
+                    off
+                  {%- endif %}
+                  
+        # Volume +
+        yamaha_volume_plus:
+          value_template: "{{ not is_state('input_select.yamaha_volume_control', 'off') }}"
+          turn_on:
+            - condition: template
+              value_template: "{{ is_state('binary_sensor.yamaha_receiver','on') and not is_state('input_select.yamaha_volume_control','off') }}"
+            - service: media_player.volume_set
+              data_template:
+                entity_id: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {{ media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.entity_id') | list | join(', ') }}
+                volume_level: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {%- set levels = media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.attributes.volume_level') | list %}
+                  {%- set level = (levels | sum / levels | length) | round(2) | multiply(100) %}
+                  {%- set level = (level - level % 5) / 100 %}
+                  {%- set next = level + 0.05 %}
+                  {{ next if next <= 1 else 1.0 }}
+          turn_off:
+            - condition: template
+              value_template: "{{ is_state('binary_sensor.yamaha_receiver','on') and not is_state('input_select.yamaha_volume_control','off') }}"
+            - service: media_player.volume_set
+              data_template:
+                entity_id: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {{ media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.entity_id') | list | join(', ') }}
+                volume_level: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {%- set levels = media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.attributes.volume_level') | list %}
+                  {%- set level = (levels | sum / levels | length) | round(2) | multiply(100) %}
+                  {%- set level = (level - level % 5) / 100 %}
+                  {%- set next = level + 0.05 %}
+                  {{ next if next <= 1 else 1.0 }}
+                  
+        # Volume -
+        yamaha_volume_minus:
+          value_template: "{{ not is_state('input_select.yamaha_volume_control', 'off') }}"
+          turn_on:
+            - condition: template
+              value_template: "{{ is_state('binary_sensor.yamaha_receiver','on') and not is_state('input_select.yamaha_volume_control','off') }}"
+            - service: media_player.volume_set
+              data_template:
+                entity_id: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {{ media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.entity_id') | list | join(', ') }}
+                volume_level: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {%- set levels = media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.attributes.volume_level') | list %}
+                  {%- set level = (levels | sum / levels | length) | round(2) | multiply(100) %}
+                  {%- set level = (level - level % 5) / 100 %}
+                  {%- set next = level - 0.05 %}
+                  {{ next if next >= 0.2 else 0.2 }}
+          turn_off:
+            - condition: template
+              value_template: "{{ is_state('binary_sensor.yamaha_receiver','on') and not is_state('input_select.yamaha_volume_control','off') }}"
+            - service: media_player.volume_set
+              data_template:
+                entity_id: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {{ media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.entity_id') | list | join(', ') }}
+                volume_level: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {%- set levels = media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.attributes.volume_level') | list %}
+                  {%- set level = (levels | sum / levels | length) | round(2) | multiply(100) %}
+                  {%- set level = (level - level % 5) / 100 %}
+                  {%- set next = level - 0.05 %}
+                  {{ next if next >= 0.2 else 0.2 }}
+                  
+        # Volume Mute
+        yamaha_volume_mute:
+          value_template: "{{ not is_state('input_select.yamaha_volume_control', 'off') }}"
+          turn_on:
+            - condition: template
+              value_template: "{{ is_state('binary_sensor.yamaha_receiver','on') }}"
+            - service: media_player.volume_mute
+              data_template:
+                entity_id: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {{ media_players | selectattr('1.state','eq','on') | selectattr('0','in', active) | map(attribute='1.entity_id') | list | join(', ') }}
+                is_volume_muted: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {%- set muted = media_players | selectattr('1.state','eq','on') | selectattr('1.attributes.is_volume_muted','eq',True) | selectattr('0','in', active) | list | length %}
+                  {{ not muted }}
+          turn_off:
+            - condition: template
+              value_template: "{{ is_state('binary_sensor.yamaha_receiver','on') }}"
+            - service: media_player.volume_mute
+              data_template:
+                entity_id: >-
+                  {%- set media_players = [
+                    states.media_player.yamaha_receiver,
+                    states.media_player.yamaha_receiver_zone_2 ] %}
+                  {{ media_players | selectattr('state','eq','on') | map(attribute='entity_id') | list | join(', ') }}
+                is_volume_muted: >-
+                  {%- set media_players = [
+                    ('1', states.media_player.yamaha_receiver),
+                    ('2', states.media_player.yamaha_receiver_zone_2) ] %}
+                  {%- set entity_id = 'input_select.yamaha_volume_control' %}
+                  {%- set option = states(entity_id) %}
+                  {%- set active = state_attr(entity_id, 'options')[2:] if option == 'all' else [ option ] %}
+                  {%- set muted = media_players | selectattr('1.state','eq','on') | selectattr('1.attributes.is_volume_muted','eq',True) | selectattr('0','in', active) | list | length %}
+                  {{ not muted }}
+                  
+    # Zoneminder cameras
+  - platform: zoneminder
+    command_on: Record
+    command_off: Monitor
