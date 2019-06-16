@@ -291,3 +291,19 @@ alexs_phone:
   name: Alex's Phone
   picture:
   track: true
+
+beckers_phone:
+  hide_if_away: false
+  icon:
+  mac: 40:4E:36:20:FC:00
+  name: 40 4e 36 20 fc 00
+  picture:
+  track: true
+
+subaru:
+  hide_if_away: false
+  icon:
+  mac: 2C:DC:AD:B9:18:87
+  name: SUBARU
+  picture:
+  track: true

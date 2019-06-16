@@ -46,7 +46,7 @@ lovelace:
   mode: yaml
 
 custom_updater: !include custom_updater.yaml
-  
+
 input_text:
   alexa_say:
     name: Alexa Speech
@@ -56,13 +56,13 @@ speedtestdotnet:
     - ping
     - download
     - upload
-    
+
 alexa_media:
   accounts:
     - email: !secret amazon_email
       password: !secret amazon_password
       url: "amazon.com"
-      
+
 system_health:
 
 apcupsd:
