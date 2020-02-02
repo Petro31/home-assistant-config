@@ -1913,8 +1913,10 @@ views:
                       
                     - <<: *cb_remote_harmony_command
                       icon: mdi:volume-plus
-                      entity: script.multizone_volume_up
                       name: "Up"
+                      tap_action:
+                        action: call-service
+                        service: script.multizone_volume_up
                       hold_action:
                         action: call-service
                         repeat: 250
@@ -1924,8 +1926,10 @@ views:
                       
                     - <<: *cb_remote_harmony_command
                       icon: mdi:volume-minus
-                      entity: script.multizone_volume_down
                       name: "Down"
+                      tap_action:
+                        action: call-service
+                        service: script.multizone_volume_down
                       hold_action:
                         action: call-service
                         repeat: 250
@@ -1935,8 +1939,10 @@ views:
                       
                     - <<: *cb_remote_harmony_command
                       icon: mdi:volume-mute
-                      entity: script.multizone_volume_mute
                       name: "Mute"
+                      tap_action:
+                        action: call-service
+                        service: script.multizone_volume_mute
 
                     - <<: *cb_spacer_10px
                     
