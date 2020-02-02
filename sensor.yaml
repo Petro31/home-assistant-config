@@ -1,0 +1,282 @@
+
+  # TEMPLATE SENSORS
+
+  - platform: template
+    sensors:
+      main_door_hindge: # MAIN DOOR SENSOR #
+        value_template: >
+          {{ 'open' if is_state('sensor.main_door_t_access_control', '22') else 'closed' }}
+        
+      entry_door_hindge: # GARAGE ENTRY DOOR SENSOR #
+        value_template: >
+          {{ 'open' if is_state('sensor.garage_door_access_control', '22') else 'closed' }}
+      
+      sliding_door: # SLIDING DOOR SENSOR #
+        value_template: >
+          {{ 'open' if is_state('sensor.sliding_door_access_control', '22') else 'closed' }}
+      
+      main_door_battery: # MAIN DOOR BATTERY #
+        device_class: battery
+        value_template: >
+          {% if states.zwave.main_door_t.state %}
+            {{ states.zwave.main_door_t.attributes.battery_level }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "%"
+      
+      entry_door_battery: # GARAGE ENTRY DOOR BATTERY #
+        device_class: battery
+        value_template: >
+          {% if states.zwave.garage_door.state %}
+            {{ states.zwave.garage_door.attributes.battery_level }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "%"
+        
+      sliding_door_battery:
+        device_class: battery
+        value_template: >
+          {% if states.zwave.sliding_door.state %}
+            {{ states.zwave.sliding_door.attributes.battery_level }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "%"
+      
+      hallway_motion_battery:
+        device_class: battery
+        value_template: >
+          {% if states.zwave.hallway_ms.state %}
+            {{ states.zwave.hallway_ms.attributes.battery_level }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "%"
+        
+      door_bell_battery:
+        device_class: battery
+        value_template: >
+          {% if states.zwave.door_bell.state %}
+            {{ states.zwave.door_bell.attributes.battery_level }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "%"
+        
+      dining_room_temperature:
+          device_class: temperature
+          value_template: >
+            {% if states.sensor.sliding_door_temperature.state %}
+              {{ states.sensor.sliding_door_temperature.state | float }}
+            {% else %}
+              0.0
+            {% endif %}
+          unit_of_measurement: ºF
+          
+      harmony_activity:
+        value_template: >
+          {% if is_state("remote.living_room", 'on') %}
+            {{ states.remote.living_room.attributes.current_activity }}
+          {% else %}
+            PowerOff
+          {% endif %}
+          
+      zone1_volume:
+        value_template: >
+          {% if is_state('media_player.yamaha_receiver', 'on')  %}
+            {% set n = states.media_player.yamaha_receiver.attributes.volume_level | float %}
+            {{ '%.1f'%( (-1.0+n)*100.0 | round(1) ) }}
+          {% else %}
+            -80.0
+          {% endif %}
+        unit_of_measurement: "DB"
+
+      zone2_volume:
+        value_template: >
+          {% if is_state('media_player.yamaha_receiver_zone_2', 'on')  %}
+            {% set n = states.media_player.yamaha_receiver_zone_2.attributes.volume_level | float %}
+            {{ '%.1f'%( (-1.0+n)*100.0 | round(1) ) }}
+          {% else %}
+            -80.0
+          {% endif %}
+        unit_of_measurement: "DB"
+        
+      nuc_uptime:
+        entity_id:
+          - sensor.time
+        value_template: >
+          {%- set dt = strptime(states('sensor.last_boot'),"%Y-%m-%dT%H:%M:%S%z") %}
+          {%- set time =  (now().timestamp() - dt.timestamp()) | int %}
+          {%- set minutes = ((time % 3600) // 60) %}
+          {%- set minutes = '{}min'.format(minutes) if minutes > 0 else '' %}
+          {%- set hours = ((time % 86400) // 3600) %}
+          {%- set hours = '{}hr '.format(hours) if hours > 0 else '' %}
+          {%- set days = (time // 86400) %}
+          {%- set days = '{}d '.format(days) if days > 0 else '' %}
+          {{ 'Less than 1 min' if time < 60 else days + hours + minutes }}
+        
+      ups_uptime:
+        entity_id:
+          - sensor.time
+        value_template: >
+          {%- set dt = strptime(states('sensor.ups_startup_time'), '%Y-%m-%d %H:%M:%S %z') %}
+          {%- set time =  (now().timestamp() - dt.timestamp()) | int %}
+          {%- set minutes = ((time % 3600) // 60) %}
+          {%- set minutes = '{}min'.format(minutes) if minutes > 0 else '' %}
+          {%- set hours = ((time % 86400) // 3600) %}
+          {%- set hours = '{}hr '.format(hours) if hours > 0 else '' %}
+          {%- set days = (time // 86400) %}
+          {%- set days = '{}d '.format(days) if days > 0 else '' %}
+          {{ 'Less than 1 min' if time < 60 else days + hours + minutes }}
+        
+      disk_use_total:
+        value_template: >
+          {{ (states('sensor.disk_free_home') | float + states('sensor.disk_use_home') | float) | round(1) }}
+        unit_of_measurement: "GiB"
+        
+      memory_use_total:
+        value_template: >
+          {{ (states('sensor.memory_free') | float + states('sensor.memory_use') | float) | round(1) }}
+        unit_of_measurement: "MiB"
+          
+  # SYSTREM MONITOR
+    
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /home
+      - type: disk_use
+        arg: /home
+      - type: disk_free
+        arg: /home
+      - type: memory_use
+      - type: memory_free
+      - type: memory_use_percent
+      - type: processor_use
+      - type: last_boot
+      
+  # SYNOLOGY
+      
+  - platform: synologydsm
+    host: !secret synology_host
+    port: 5000
+    ssl: false
+    username: !secret synology_username
+    password: !secret synology_password
+    monitored_conditions:
+      - cpu_total_load
+      - memory_real_usage
+      - network_up
+      - network_down
+      - volume_size_total
+      - volume_size_used
+      - volume_percentage_used
+      - disk_temp
+      
+  # APC
+  
+  - platform: apcupsd
+    resources:
+      - bcharge
+      - model
+      - linev
+      - loadpct
+      - timeleft
+      - starttime
+      
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date_time'
+      
+  - platform: version
+
+  # CLI
+  
+  - platform: command_line
+    name: CPU Temperature
+    command: "cat /sys/class/thermal/thermal_zone3/temp"
+    unit_of_measurement: "°C"
+    value_template: '{{ value | multiply(0.001) | round(1) }}'
+  
+  # SNMP
+  
+  - platform: snmp
+    host: !secret unifi_bonus_switch
+    name: Bonus Room Switch Temperature
+    unit_of_measurement: "°C"
+    baseoid: 1.3.6.1.4.1.4413.1.1.43.1.8.1.5.1.0
+
+  - platform: snmp
+    host: !secret unifi_bonus_switch
+    name: Bonus Room Switch Uptime
+    baseoid: 1.3.6.1.2.1.1.3.0
+    value_template: >
+      {%- set time = value | int // 100 %}
+      {%- set minutes = ((time % 3600) // 60) %}
+      {%- set minutes = '{}min'.format(minutes) if minutes > 0 else '' %}
+      {%- set hours = ((time % 86400) // 3600) %}
+      {%- set hours = '{}hr '.format(hours) if hours > 0 else '' %}
+      {%- set days = (time // 86400) %}
+      {%- set days = '{}d '.format(days) if days > 0 else '' %}
+      {{ 'Less than 1 min' if time < 60 else days + hours + minutes }}
+      
+  - platform: snmp
+    host: !secret unifi_server_switch
+    name: Server Room Switch Temperature
+    unit_of_measurement: "°C"
+    baseoid: 1.3.6.1.4.1.4413.1.1.43.1.8.1.5.1.0
+      
+  - platform: snmp
+    host: !secret unifi_server_switch
+    name: Server Room Switch Uptime
+    baseoid: 1.3.6.1.2.1.1.3.0
+    value_template: >
+      {%- set time = value | int // 100 %}
+      {%- set minutes = ((time % 3600) // 60) %}
+      {%- set minutes = '{}min'.format(minutes) if minutes > 0 else '' %}
+      {%- set hours = ((time % 86400) // 3600) %}
+      {%- set hours = '{}hr '.format(hours) if hours > 0 else '' %}
+      {%- set days = (time // 86400) %}
+      {%- set days = '{}d '.format(days) if days > 0 else '' %}
+      {{ 'Less than 1 min' if time < 60 else days + hours + minutes }}
+      
+  - platform: snmp
+    host: !secret unifi_server_gateway
+    name: Server Room Gateway Uptime
+    baseoid: 1.3.6.1.2.1.1.3.0
+    value_template: >
+      {%- set time = value | int // 100 %}
+      {%- set minutes = ((time % 3600) // 60) %}
+      {%- set minutes = '{}min'.format(minutes) if minutes > 0 else '' %}
+      {%- set hours = ((time % 86400) // 3600) %}
+      {%- set hours = '{}hr '.format(hours) if hours > 0 else '' %}
+      {%- set days = (time // 86400) %}
+      {%- set days = '{}d '.format(days) if days > 0 else '' %}
+      {{ 'Less than 1 min' if time < 60 else days + hours + minutes }}
+      
+  - platform: snmp
+    host: !secret synology_host
+    name: Synology Uptime
+    baseoid: 1.3.6.1.2.1.25.1.1.0
+    value_template: >
+      {%- set time = value | int // 100 %}
+      {%- set minutes = ((time % 3600) // 60) %}
+      {%- set minutes = '{}min'.format(minutes) if minutes > 0 else '' %}
+      {%- set hours = ((time % 86400) // 3600) %}
+      {%- set hours = '{}hr '.format(hours) if hours > 0 else '' %}
+      {%- set days = (time // 86400) %}
+      {%- set days = '{}d '.format(days) if days > 0 else '' %}
+      {{ 'Less than 1 min' if time < 60 else days + hours + minutes }}
+
+  - platform: sun2
+    monitored_conditions:
+      - dawn
+      - daylight
+      - dusk
+      - night
+      - solar_noon
+      - sunrise
+      - sunset

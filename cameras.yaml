@@ -1,0 +1,34 @@
+  #- platform: zoneminder
+
+  - platform: ffmpeg
+    name: Garage
+    input: !secret rtmp_garage_stream
+
+  - platform: ffmpeg
+    name: Common
+    input: !secret rtmp_common_stream
+
+  - platform: ffmpeg
+    name: Floating
+    input: !secret rtmp_floating_stream
+
+  - platform: ffmpeg
+    name: Foyer
+    input: !secret rtmp_foyer_stream
+
+  - platform: local_file
+    name: garage_post_process
+    file_path: /config/www/motion/garage_latest.jpg
+    
+  - platform: local_file
+    name: common_post_process
+    file_path: /config/www/motion/common_latest.jpg
+    
+  - platform: local_file
+    name: floating_post_process
+    file_path: /config/www/motion/floating_latest.jpg
+    
+  - platform: local_file
+    name: foyer_post_process
+    file_path: /config/www/motion/foyer_latest.jpg
+    

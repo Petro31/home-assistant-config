@@ -1,0 +1,415 @@
+###########
+# Anchors #
+###########
+anchors:
+  notify: &notify
+    notify: 
+    - notify.mobile_app_petro
+    - notify.mobile_app_lindsays_iphone
+
+  notify2: &testnotify
+    notify: 
+    - notify.mobile_app_petro
+
+################
+# CURRENT APPS #
+################
+
+# https://github.com/Petro31/ad_seasonal_lights
+
+holiday_lights:
+  module: seasonal_lights
+  class: SeasonalLights
+  start_date:
+    # Thanksgiving Day
+    month: 11
+    week: 4
+    day: 3
+  end_date:
+    # Sometime in the middle of January
+    month: 1
+    week: 3
+    day: 0
+  turn_on_time: '17:00:00'
+  turn_off_time: '22:00:00'
+  entities:
+  - switch.office_window
+  - switch.living_room_window
+  - switch.kitchen_outlet_above_microwave
+  - switch.kitchen_outlet_above_fridge
+
+# https://github.com/Petro31/ad_sunset_lights
+
+sunsetlights:
+  module: sunset_lights
+  class: SunsetLights
+  entities:
+    - group.sconces
+
+# https://github.com/Petro31/ad_toggle_light
+
+office_toggle:
+  module: toggle_light
+  class: ToggleLight
+  entity: switch.office_switch
+  entities:
+    - switch.office_outlet
+
+basement_toggle:
+  module: toggle_light
+  class: ToggleLight
+  entity: switch.basement_stairs
+  entities:
+    - switch.basement_cans
+
+entertainment_xbox_one:
+  module: toggle_light
+  class: ToggleLight
+  entity: switch.xbox_one
+  turn_off: false
+  sundown: true
+  entities:
+  - light.living_room
+
+entertainment_ps4:
+  module: toggle_light
+  class: ToggleLight
+  entity: switch.ps4
+  turn_off: false
+  sundown: true
+  entities:
+  - light.living_room
+
+entertainment_roku:
+  module: toggle_light
+  class: ToggleLight
+  entity: switch.roku
+  turn_off: false
+  sundown: true
+  entities:
+  - light.living_room
+
+entertainment_switch:
+  module: toggle_light
+  class: ToggleLight
+  entity: switch.switch
+  turn_off: false
+  sundown: true
+  entities:
+  - light.living_room
+
+entertainment_tv:
+  module: toggle_light
+  class: ToggleLight
+  entity: switch.tv
+  turn_off: false
+  sundown: true
+  entities:
+  - light.living_room
+
+# https://github.com/Petro31/ad_simple_door_bell
+
+door_bell:
+  module: simple_door_bell
+  class: DoorBell
+  sensor: binary_sensor.doorbell_button
+  timestamp: '%-I:%M:%S %p'
+  <<: *notify
+  tts_services:
+  - service: notify.alexa_media
+    data:
+      data:
+        type: announce
+      target: 
+      - media_player.living_room_dot
+      - media_player.master_dot
+
+# https://github.com/Petro31/ad_people_tracker
+
+people_at_home:
+  module: people_tracker
+  class: PeopleTracker
+  guest_entity_id: input_select.company
+  name: People At Home
+  entities:
+  - device_tracker.owens_iphone
+  - device_tracker.james_ipad
+  - device_tracker.james_iphone_10
+  - person.petro
+  - person.lambo
+
+# https://github.com/Petro31/ad_who_used_the_door
+
+main_door:
+  module: who_used_the_door
+  class: WhoUsedTheDoor
+  sensor: sensor.main_door_hindge
+  people_tracker: sensor.people_at_home
+  message_name: Main Door
+  notify:
+    door_ajar:
+      timestamp: '%-I:%M:%S %p'
+      duration: 120
+      <<: *notify
+    door_open:
+      timestamp: '%-I:%M:%S %p'
+      quiet_window: 120
+      <<: *notify
+
+garage_entry_door:
+  module: who_used_the_door
+  class: WhoUsedTheDoor
+  sensor: sensor.entry_door_hindge
+  people_tracker: sensor.people_at_home
+  message_name: Garage Entry Door
+  notify:
+    door_ajar:
+      timestamp: '%-I:%M:%S %p'
+      duration: 60
+      <<: *notify
+    door_open:
+      timestamp: '%-I:%M:%S %p'
+      quiet_window: 120
+      <<: *notify
+
+sliding_door:
+  module: who_used_the_door
+  class: WhoUsedTheDoor
+  sensor: sensor.sliding_door
+  people_tracker: sensor.people_at_home
+  message_name: Sliding Door
+  notify:
+    door_ajar:
+      timestamp: '%-I:%M:%S %p'
+      duration: 240
+      <<: *notify
+    door_open:
+      timestamp: '%-I:%M:%S %p'
+      quiet_window: 120
+      <<: *notify
+
+garage_door:
+  module: who_used_the_door
+  class: WhoUsedTheDoor
+  sensor: binary_sensor.garage_door_tilt
+  people_tracker: sensor.people_at_home
+  message_name: Garage Door
+  notify:
+    door_ajar:
+      timestamp: '%-I:%M:%S %p'
+      duration: 300
+      <<: *notify
+    door_open:
+      timestamp: '%-I:%M:%S %p'
+      <<: *notify
+    
+# https://github.com/Petro31/IlluminateDoor
+
+main_door_illumination:
+  module: illuminate_door
+  class: IlluminateDoor
+  sensor: sensor.main_door_hindge
+  turn_on:
+  - switch.foyer
+  duration: 120
+  sundown: true
+
+garage_entry_door_illumination:
+  module: illuminate_door
+  class: IlluminateDoor
+  sensor: sensor.entry_door_hindge
+  turn_on:
+  - switch.garage_entry
+  - switch.garage_cans
+  duration: 120
+  sundown: true
+
+sliding_door_illumination:
+  module: illuminate_door
+  class: IlluminateDoor
+  sensor: sensor.sliding_door
+  turn_on:
+  - entity: light.dining_room_chandelier
+    data:
+      brightness: 255
+  duration: 120
+  sundown: true
+
+# https://github.com/Petro31/ad_multizone_media_control
+
+multizone_controller:
+  module: multizone_media_control
+  class: MultiZoneController
+  media_players:
+  - media_player.yamaha_receiver
+  - media_player.yamaha_receiver_zone_2
+  snap_volume: true
+  volume_increment: 0.05
+  volume_max: 1.0
+  volume_min: 0.2
+
+# https://github.com/Petro31/ad_convert_media_volume
+
+zone1_volume:
+  module: convert_media_volume
+  class: ConvertMediaVolume
+  media_player: media_player.yamaha_receiver
+  unit_of_measurement: dB
+  min_volume:
+    device: -80.0
+    media_player: 0.2
+  max_volume:
+    device: 0.0
+    media_player: 1.0
+  precision: 0
+
+zone2_volume:
+  module: convert_media_volume
+  class: ConvertMediaVolume
+  media_player: media_player.yamaha_receiver_zone_2
+  unit_of_measurement: dB
+  min_volume:
+    device: -80.0
+    media_player: 0.2
+  max_volume:
+    device: 0.0
+    media_player: 1.0
+  precision: 0
+
+#############
+# TEST APPS #
+#############
+
+# test_season:
+#   module: seasonal_lights
+#   class: SeasonalLights
+#   start_date:
+#     month: 2
+#     day: 1
+#   end_date:
+#     month: 11
+#     week: 4
+#     day: 3
+#   turn_on_time: "10:45:00"
+  # turn_off_time: "11:45:00"
+  # entities:
+  # - switch.test_2
+  # - entity: light.test_1
+  #   service_data:
+  #     brightness: 100
+  #     kelvin: 2700
+  # - entity: light.test_2
+  #   service_data:
+  #     brightness: 130
+  #     rgb_color: [255,0,0]
+#   log_level: INFO
+
+# test_season:
+  # module: seasonal_lights
+  # class: SeasonalLights
+  # start_date:
+  #   month: 2
+  #   day: 1
+  # end_date:
+  #   month: 11
+  #   week: 4
+  #   day: 3
+  # log_level: INFO
+
+# events:
+  # module: event_monitor
+  # class: EventMonitor
+  # level: 'INFO'
+  # events:
+  # - event: call_service
+    # data:
+      # domain: 'switch'
+
+# groups:
+#   module: group_all
+#   class: GroupAll
+
+# test_toggle:
+  # module: toggle_light
+  # class: ToggleLight
+  # entity: switch.test_1
+  # entities:
+  # - switch.test_2
+  # - entity: light.test_1
+  #   service_data:
+  #     brightness: 100
+  #     kelvin: 2700
+  # - entity: light.test_2
+  #   service_data:
+  #     brightness: 130
+  #     rgb_color: [255,0,0]
+  # log_level: INFO
+
+# test_toggle_2:
+#   module: toggle_light
+#   class: ToggleLight
+#   entity: switch.test_1
+#   turn_off: false
+#   sundown: true
+#   entities:
+#   - switch.test_2
+#   - entity: light.test_1
+#     service_data:
+#       brightness: 100
+#       kelvin: 2700
+#   - entity: light.test_2
+#     service_data:
+#       brightness: 130
+#       rgb_color: [255,0,0]
+#   log_level: INFO
+      
+# test_doorbell:
+#   module: simple_door_bell
+#   class: DoorBell
+#   sensor: switch.test_1
+#   timestamp: '%-I:%M:%S %p'
+#   notify:
+#   - notify.mobile_app_petro
+#   tts_services:
+#   - service: notify.alexa_media
+#     data:
+#       data:
+#         type: announce
+#       target: 
+#       - media_player.living_room_dot
+#       - media_player.master_dot
+#   log_level: INFO
+
+# test_tracker:
+#   module: people_tracker
+#   class: PeopleTracker
+#   guest_entity_id: input_select.company
+#   name: Test Tracker
+#   entities:
+#   - switch.test_2
+
+# test_door_illumination:
+#   module: illuminate_door
+#   class: IlluminateDoor
+#   sensor: switch.test_1
+#   turn_on:
+#   - switch.test_2
+#   duration: 5
+#   sundown: false
+#   log_level: INFO
+
+# test_door:
+#   module: who_used_the_door
+#   class: WhoUsedTheDoor
+#   sensor: switch.test_1
+#   people_tracker: sensor.test_tracker
+#   message_name: Test Door
+#   notify:
+#     door_ajar:
+#       timestamp: '%-I:%M:%S %p'
+#       duration: 15
+#       <<: *testnotify
+#     door_open:
+#       timestamp: '%-I:%M:%S %p'
+#       <<: *testnotify
+#   log_level: INFO

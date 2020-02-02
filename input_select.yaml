@@ -1,0 +1,60 @@
+  # Harmony remote input selection
+  # living_room_harmony:
+    # name: Harmony Activity
+    # options:
+     # - PowerOff
+     # - Xbox One
+     # - PS4
+     # - Wii U
+     # - PC
+     # - Apple TV
+    # initial: PowerOff
+    # icon: mdi:remote
+    
+  # Mike Status
+  petro_status:
+    name: Mikes Sleep Status
+    options:
+      - awake
+      - sleeping
+    initial: awake
+      
+  # Lindsay Status
+  lambo_status:
+    name: Lindsays Sleep Status
+    options:
+      - awake
+      - sleeping
+    initial: awake
+      
+  company:
+    name: Company Status
+    options:
+      - enabled
+      - disabled
+    initial: disabled
+    icon: mdi:account-multiple
+      
+  house_sitting:
+    name: House Sitting Status
+    options:
+      - enabled
+      - disabled
+    initial: disabled
+    icon: mdi:home
+      
+  vacation:
+    name: Vacation Mode
+    options:
+      - enabled
+      - disabled
+    initial: disabled
+    icon: mdi:logout
+    
+  yamaha_volume_control:
+    name: Yamaha Volume Control
+    options:
+      - 'off'
+      - 'all'
+      - '1'
+      - '2'

@@ -1,0 +1,145 @@
+  host_ip: !secret emulated_hue_ip
+  listen_port: 8300
+  off_maps_to_on_domains:
+    - script
+    - scene
+  expose_by_default: false
+  entities:
+    fan.master_fixture:
+      name: Master Fan
+      hidden: false
+    switch.audio_1:
+      name: Audio One
+      hidden: false
+    switch.audio_2:
+      name: Audio Two
+      hidden: false
+    switch.roku:
+      name: Roku
+      hidden: false
+    switch.ps4:
+      name: Playstation
+      hidden: false
+    switch.switch:
+      name: Switch
+      hidden: false
+    switch.tv:
+      name: TV
+      hidden: false
+    switch.xbox_one:
+      name: Xbox One
+      hidden: false
+    switch.zone_1:
+      name: Zone One
+      hidden: false
+    switch.zone_2:
+      name: Zone Two
+      hidden: false
+    light.kitchen_cans:
+      name: Can Lights
+      hidden: false
+    light.dining_room_chandelier:
+      name: Chandelier
+      hidden: false
+    light.hallway:
+      name: Hallway
+      hidden: false
+    light.kitchen_island:
+      name: Island Lights
+      hidden: false
+    light.living_room:
+      name: Living Room Lamps
+      hidden: false
+    light.master_bathroom_cans:
+      name: Master Can
+      hidden: false
+    light.master_closet:
+      name: Master Closet
+      hidden: false
+    light.master_fixture:
+      name: Master Light
+      hidden: false
+    light.master_bathroom_sink:
+      name: Master Sink
+      hidden: false
+    switch.basement_cans:
+      name: Basement Cans
+      hidden: false
+    switch.basement_stairs:
+      name: Basement Stairs
+      hidden: false
+    switch.kitchen_cabinet:
+      name: Cabinet Lights
+      hidden: false
+    switch.downstairs:
+      name: Downstairs
+      hidden: false
+    switch.garage_entry:
+      name: Entry Lights
+      hidden: false
+    switch.floating_outlet_switch:
+      name: Echo Outlet
+      hidden: false
+    switch.foyer:
+      name: Foyer Lights
+      hidden: false
+    switch.garage_cans:
+      name: Garage Fixtures
+      hidden: false
+    switch.sconces_garage:
+      name: Garage Sconces
+      hidden: false
+    switch.dining_room_hutch:
+      name: Hutch Lights
+      hidden: false
+    switch.inside:
+      name: Inside
+      hidden: false
+    switch.lambo_awake_sleep_automation:
+      name: Lambos Automation
+      hidden: false
+    switch.laundry:
+      name: Laundry
+      hidden: false
+    switch.sconces_main_entrance:
+      name: Main Sconces
+      hidden: false
+    switch.master_bathroom_fan:
+      name: Master Bath Fan
+      hidden: false
+    switch.master_nightstand_right:
+      name: Lindsays Nightstand
+      hidden: false
+    switch.master_nightstand_left:
+      name: Mikes Nightstand
+      hidden: false
+    switch.office_outlet:
+      name: Office Desk Light
+      hidden: false
+    switch.office_switch:
+      name: Office Light Switch
+      hidden: false
+    switch.outside:
+      name: Outside
+      hidden: false
+    switch.outside_porch:
+      name: Outside Outlet
+      hidden: false
+    switch.kitchen_pantry:
+      name: Pantry Lights
+      hidden: false
+    switch.petro_awake_sleep_automation:
+      name: Petros Automation
+      hidden: false
+    switch.passenger_sconce:
+      name: Passenger Sconce
+      hidden: false
+    switch.upstairs:
+      name: Upstairs
+      hidden: false
+    switch.living_room_window:
+      name: Living Room Outlet
+      hidden: false
+    switch.office_window:
+      name: Office Outlet
+      hidden: false

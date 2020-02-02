@@ -1,0 +1,170 @@
+  smart_home:
+    filter:
+      include_entities:
+        - fan.master_fixture
+        - switch.audio_1
+        - switch.audio_2
+        - switch.roku
+        - switch.ps4
+        - switch.switch
+        - switch.tv
+        - switch.xbox_one
+        - switch.netflix
+        - switch.hbo_now
+        - switch.hulu
+        - switch.prime_video
+        - switch.disney_plus
+        - switch.zone_1
+        - switch.zone_2
+        - light.kitchen_cans
+        - light.dining_room_chandelier
+        - light.hallway
+        - light.kitchen_island
+        - light.living_room
+        - light.master_bathroom_cans
+        - light.master_closet
+        - light.master_fixture
+        - light.master_bathroom_sink
+        - switch.kitchen_outlet_above_microwave
+        - switch.kitchen_outlet_above_fridge
+        - switch.basement_cans
+        - switch.basement_stairs
+        - switch.kitchen_cabinet
+        - switch.downstairs
+        - switch.passenger_sconce
+        - switch.garage_entry
+        - switch.floating_outlet_switch
+        - switch.foyer
+        - switch.garage_cans
+        - switch.sconces_garage
+        - switch.dining_room_hutch
+        - switch.inside
+        - switch.laundry
+        - switch.sconces_main_entrance
+        - switch.master_bathroom_fan
+        - switch.master_nightstand_right
+        - switch.master_nightstand_left
+        - switch.office_outlet
+        - switch.office_switch
+        - switch.outside
+        - switch.outside_porch
+        - switch.kitchen_pantry
+        - switch.upstairs
+        - switch.living_room_window
+        - switch.office_window
+        - switch.echo_through_receiver
+        - media_player.living_room_speakers
+        - media_player.dining_room_speakers
+    entity_config:
+      fan.master_fixture:
+        name: Master Fan
+      switch.audio_1:
+        name: Audio One
+      switch.audio_2:
+        name: Audio Two
+      switch.roku:
+        name: Roku
+      switch.ps4:
+        name: Playstation
+      switch.switch:
+        name: Switch
+      switch.tv:
+        name: Cable
+      switch.xbox_one:
+        name: Xbox One
+      switch.netflix:
+        name: Netflix
+      switch.hbo_now:
+        name: HBO Now
+      switch.hulu:
+        name: Hulu
+      switch.prime_video:
+        name: Prime Video
+      switch.disney_plus:
+        name: Disney Plus
+      switch.zone_1:
+        name: Zone One
+      switch.zone_2:
+        name: Zone Two
+      light.kitchen_cans:
+        name: Can Lights
+      light.dining_room_chandelier:
+        name: Chandelier
+      light.hallway:
+        name: Hallway
+      light.kitchen_island:
+        name: Island Lights
+      light.living_room:
+        name: Living Room Light
+      light.master_bathroom_cans:
+        name: Master Can
+      light.master_closet:
+        name: Master Closet
+      light.master_fixture:
+        name: Master Light
+      light.master_bathroom_sink:
+        name: Master Sink
+      switch.kitchen_outlet_above_microwave:
+        name: Kitchen Outlet Above Microwave
+      switch.kitchen_outlet_above_fridge:
+        name: Kitchen Outlet Above Refrigerator
+      switch.basement_cans:
+        name: Basement Cans
+      switch.basement_stairs:
+        name: Basement Stairs
+      switch.kitchen_cabinet:
+        name: Cabinet Lights
+      switch.downstairs:
+        name: Downstairs
+      switch.garage_entry:
+        name: Entry Lights
+      switch.floating_outlet_switch:
+        name: Echo Outlet
+      switch.foyer:
+        name: Foyer Lights
+      switch.garage_cans:
+        name: Garage Fixtures
+      switch.sconces_garage:
+        name: Garage Sconces
+      switch.passenger_sconce:
+        name: Passenger Sconce
+      switch.dining_room_hutch:
+        name: Hutch Lights
+      switch.inside:
+        name: Inside
+      switch.lambo_awake_sleep_automation:
+        name: Lambos Automation
+      switch.laundry:
+        name: Laundry
+      switch.sconces_main_entrance:
+        name: Main Sconces
+      switch.master_bathroom_fan:
+        name: Master Bath Fan
+      switch.master_nightstand_right:
+        name: Lindsays Nightstand
+      switch.master_nightstand_left:
+        name: Mikes Nightstand
+      switch.office_outlet:
+        name: Office Desk Light
+      switch.office_switch:
+        name: Office Light Switch
+      switch.outside:
+        name: Outside
+      switch.outside_porch:
+        name: Outside Outlet
+      switch.kitchen_pantry:
+        name: Pantry Lights
+      switch.petro_awake_sleep_automation:
+        name: Petros Automation
+      switch.upstairs:
+        name: Upstairs
+      switch.living_room_window:
+        name: Living Room Outlet
+      switch.office_window:
+        name: Office Outlet
+      switch.echo_through_receiver:
+        name: Echo
+      media_player.living_room_speakers:
+        name: Living Room Speakers
+      media_player.dining_room_speakers:
+        name: Dining Room Speakers

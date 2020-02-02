@@ -1,0 +1,166 @@
+# Living Room Dot
+alexa_say_living_room:
+  sequence:
+    - condition: template
+      value_template: "{{ states('input_text.alexa_say') != '' }}"
+    - service: notify.alexa_media
+      data_template:
+        message: "{{ states('input_text.alexa_say') }}"
+        data:
+          type: tts
+        target: media_player.living_room_dot
+    - delay:
+        seconds: 1
+
+# Master Dot
+alexa_say_master:
+  sequence:
+    - condition: template
+      value_template: "{{ states('input_text.alexa_say') != '' }}"
+    - service: notify.alexa_media
+      data_template:
+        message: "{{ states('input_text.alexa_say') }}"
+        data:
+          type: tts
+        target: media_player.master_dot
+    - delay:
+        seconds: 1
+
+# AlL Echos
+alexa_say_all:
+  sequence:
+    - condition: template
+      value_template: "{{ states('input_text.alexa_say') != '' }}"
+    - service: notify.alexa_media
+      data_template:
+        message: "{{ states('input_text.alexa_say') }}"
+        data:
+          type: tts
+        target:  
+          - media_player.living_room_dot
+          - media_player.master_dot
+    - delay:
+        seconds: 1
+
+clear_alexa_text:
+  sequence:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.alexa_say
+        value: ""
+    - delay:
+        seconds: 1
+        
+roku:
+  sequence:
+    - condition: template
+      value_template: "{{ is_state('switch.roku', 'off') }}"
+    - service: switch.turn_on
+      entity_id: switch.roku
+
+turn_off_audio_1:
+  sequence:
+    - condition: template
+      value_template: "{{ is_state('media_player.yamaha_receiver', 'on') and is_state('switch.poweroff', 'off') }}"
+    - service: media_player.turn_off
+      entity_id: media_player.yamaha_receiver
+
+echo_outlet_power:
+  sequence:
+    - condition: template
+      value_template: "{{ not is_state('switch.floating_outlet_switch', power) }}"
+    - service_template: "switch.turn_{{ power }}"
+      entity_id: switch.floating_outlet_switch
+
+yamaha_set_volume:
+  sequence:
+    - condition: template
+      value_template: "{{ not is_state_attr(media_player, 'volume_level', volume) }}"
+    - service: media_player.volume_set
+      data_template:
+        entity_id: "{{ media_player }}"
+        volume_level: "{{ volume }}"
+
+yamaha_select_source:
+  sequence:
+    - condition: template
+      value_template: "{{ not is_state_attr(media_player, 'source', source) }}"
+    - service: media_player.select_source
+      data_template:
+        entity_id: "{{ media_player }}"
+        source: "{{ source }}"
+
+yamaha_power:
+  sequence:
+    - condition: template
+      value_template: "{{ not is_state(media_player, power) }}"
+    - service_template: "media_player.turn_{{ power }}"
+      data_template:
+        entity_id: "{{ media_player }}"
+        
+multizone_volume_up:
+  sequence:
+  - event: mz_volume_up
+    event_data:
+      event_id: multizone
+      
+multizone_volume_down:
+  sequence:
+  - event: mz_volume_down
+    event_data:
+      event_id: multizone
+      
+multizone_volume_mute:
+  sequence:
+  - event: mz_volume_mute
+    event_data:
+      event_id: multizone
+      
+multizone_cycle_zone:
+  sequence:
+  - event: mz_cycle_zone
+    event_data:
+      event_id: multizone
+        
+test_media:
+  sequence:
+      - service: notify.ios_petro
+        data_template:
+          message: >
+            {%- set entity_id = 'media_player.living_room_speakers' %}
+            {%- set c = state_attr(entity_id, 'volume_level') %}
+            {%- set d = (volume_level | float - c) %}
+            {%- set current = c | multiply(100) | round | int %}
+            {%- set delta = d | multiply(100) | round | int %}
+            {%- set next = current + delta %}
+            {%- set n = next / 100 %}
+            {%- set previous = current - delta %}
+            {%- set p = previous / 100 %}
+            {%- set increments = range(9,11) | reject('eq',5) | list %}
+            {%- set updown = delta | abs in increments %}
+            {%- set setting = current - delta if updown else current + delta %}
+            {%- set s = setting / 100 %}
+            c: {{ '%0.2f | %i'%(c, current) }} 
+            d: {{ '%0.2f | %i'%(d, delta) }}
+            n: {{ '%0.2f | %i'%(n, next) }}
+            p: {{ '%0.2f | %i'%(p, previous) }}
+            s: {{ '%0.2f | %i'%(s, setting) }}
+          data: {'push':{'badge': 1}}
+      - service: media_player.volume_set
+        data_template:
+          entity_id: media_player.yamaha_receiver
+          volume_level: >
+            {%- set entity_id = 'media_player.living_room_speakers' %}
+            {%- set c = state_attr(entity_id, 'volume_level') %}
+            {%- set current = c | multiply(100) | round | int %}
+            {%- set d = (volume_level | float - c) %}
+            {%- set d = -0.1 if c < 0.08 else d %}
+            {%- set delta = d | multiply(100) | round | int %}
+            {%- set increments = range(9,12) | reject('eq',5) | list %}
+            {%- set next = current - delta if delta | abs in increments else current + delta %}
+            {%- set next = 1 - (next / 100) %}
+            {% if next > 0 %}
+              {{ next  if next <= 1.0 else 1.0 }}
+            {% else %}
+              0.0
+            {% endif %}

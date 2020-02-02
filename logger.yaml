@@ -1,0 +1,10 @@
+  # default: debug
+  default: error
+  logs:
+    #for this item anything below error will not be logged
+    requests.packages.urllib3.connectionpool: critical
+    frontend.js.latest: critical
+    py.warnings: critical
+    #homeassistant.components.waze_travel_time: debug
+    #haffmpeg.core: debug
+    

@@ -1,0 +1,1 @@
+  - host: !secret roku_host

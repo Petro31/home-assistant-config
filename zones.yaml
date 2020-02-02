@@ -1,0 +1,65 @@
+- name: Home
+  latitude: !secret location_1_latitude
+  longitude: !secret location_1_longitude
+  radius: 125
+  icon: mdi:home
+  
+- name: !secret location_2_name
+  latitude: !secret location_2_latitude
+  longitude: !secret location_2_longitude
+  radius: 500
+  icon: mdi:factory
+  
+- name: !secret location_3_name
+  latitude: !secret location_3_latitude
+  longitude: !secret location_3_longitude
+  radius: 500
+  icon: mdi:factory
+  
+- name: !secret location_4_name
+  latitude: !secret location_4_latitude
+  longitude: !secret location_4_longitude
+  radius: 500
+  icon: mdi:dumbbell
+  
+- name: !secret location_5_name
+  latitude: !secret location_5_latitude
+  longitude: !secret location_5_longitude
+  radius: 500
+  icon: mdi:shopping
+  
+- name: !secret location_6_name
+  latitude: !secret location_6_latitude
+  longitude: !secret location_6_longitude
+  radius: 500
+  icon: mdi:shopping
+  
+- name: !secret location_7_name
+  latitude: !secret location_7_latitude
+  longitude: !secret location_7_longitude
+  radius: 750
+  icon: mdi:tree
+  
+- name: !secret location_8_name
+  latitude: !secret location_8_latitude
+  longitude: !secret location_8_longitude
+  radius: 500
+  icon: mdi:dumbbell
+  
+- name: !secret location_9_name
+  latitude: !secret location_9_latitude
+  longitude: !secret location_9_longitude
+  radius: 500
+  icon: mdi:dumbbell
+  
+- name: !secret location_10_name
+  latitude: !secret location_10_latitude
+  longitude: !secret location_10_longitude
+  radius: 750
+  icon: mdi:lighthouse
+  
+- name: !secret location_11_name
+  latitude: !secret location_11_latitude
+  longitude: !secret location_11_longitude
+  radius: 750
+  icon: mdi:lighthouse

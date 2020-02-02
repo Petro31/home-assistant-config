@@ -1,0 +1,4 @@
+  monitored_conditions:
+    - ping
+    - download
+    - upload

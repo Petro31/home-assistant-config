@@ -1,0 +1,69 @@
+  usb_path: /dev/ttyACM0
+  device_config:
+    light.master_closet:
+      refresh_value: true
+      delay: 3
+      
+    light.master_bathroom_sink:
+      refresh_value: true
+      delay: 3
+      
+    light.master_bathroom_cans:
+      refresh_value: true
+      delay: 3
+  
+    light.living_room:
+      refresh_value: true
+      delay: 3
+      
+    light.kitchen_cans:
+      refresh_value: true
+      delay: 3
+      
+    light.dining_room_chandelier:
+      refresh_value: true
+      delay: 3
+      
+    light.kitchen_island:
+      refresh_value: true
+      delay: 3
+      
+    light.hallway:
+      refresh_value: true
+      delay: 3
+      
+    light.master_fixture:
+      refresh_value: true
+      delay: 3
+      
+    sensor.ms_alarm_level:
+      polling_intensity: 1
+      refresh_value: true
+      
+    sensor.ms_alarm_type:
+      polling_intensity: 1
+      refresh_value: true
+      
+    sensor.ms_burglar:
+      polling_intensity: 1
+      refresh_value: true
+      
+    sensor.ms_luminance:
+      polling_intensity: 1
+      refresh_value: true
+      
+    sensor.ms_humidity:
+      polling_intensity: 1
+      refresh_value: true
+      
+    sensor.ms_nodeid:
+      polling_intensity: 1
+      refresh_value: true
+      
+    sensor.ms_temperature:
+      polling_intensity: 1
+      refresh_value: true
+      
+    sensor.ms_ultraviolet:
+      polling_intensity: 1
+      refresh_value: true
