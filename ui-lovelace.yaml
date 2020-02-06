@@ -3844,7 +3844,7 @@ views:
         show_state: false
       - type: picture-entity
         <<: *card_mod_mainstyle
-        entity: camera.common
+        entity: camera.kitchen
         show_state: false
       - type: picture-entity
         <<: *card_mod_mainstyle
@@ -3854,6 +3854,11 @@ views:
         <<: *card_mod_mainstyle
         entity: camera.foyer
         show_state: false
+      - type: picture-entity
+        <<: *card_mod_mainstyle
+        entity: camera.driveway
+        show_state: false
+
 
   ###########################
   # VIEW - IMAGE PROCESSING #
@@ -3868,27 +3873,27 @@ views:
         entity: camera.garage_post_process
         name: Garage
         show_state: false
-        tap_action:
+        hold_action:
           action: call-service
           service: image_processing.scan
           service_data:
             entity_id: image_processing.tensorflow_garage_clear
       - type: picture-entity
         <<: *card_mod_mainstyle
-        entity: camera.common_post_process
-        name: Living Room
+        entity: camera.kitchen_post_process
+        name: Kitchen
         show_state: false
-        tap_action:
+        hold_action:
           action: call-service
           service: image_processing.scan
           service_data:
-            entity_id: image_processing.tensorflow_common_clear
+            entity_id: image_processing.tensorflow_kitchen_clear
       - type: picture-entity
         <<: *card_mod_mainstyle
         entity: camera.floating_post_process
         name: Floating
         show_state: false
-        tap_action:
+        hold_action:
           action: call-service
           service: image_processing.scan
           service_data:
@@ -3898,11 +3903,21 @@ views:
         entity: camera.foyer_post_process
         name: Foyer
         show_state: false
-        tap_action:
+        hold_action:
           action: call-service
           service: image_processing.scan
           service_data:
             entity_id: image_processing.tensorflow_foyer_clear
+      - type: picture-entity
+        <<: *card_mod_mainstyle
+        entity: camera.driveway_post_process
+        name: Driveway
+        show_state: false
+        hold_action:
+          action: call-service
+          service: image_processing.scan
+          service_data:
+            entity_id: image_processing.tensorflow_driveway_clear
 
   ###########
   # TESTING #

@@ -18,7 +18,7 @@
     confidence: 75
     scan_interval: 10000
     source:
-      - entity_id: camera.common
+      - entity_id: camera.kitchen
     file_out:
       - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
     model:
@@ -52,3 +52,19 @@
       categories:
         - person
         - dog
+
+  - platform: tensorflow
+    confidence: 75
+    scan_interval: 600
+    source:
+      - entity_id: camera.driveway
+    file_out:
+      - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
+    model:
+      graph: /config/tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb
+      categories:
+        - car
+        - truck
+        - person
+        - dog
+        - cat
