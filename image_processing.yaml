@@ -55,7 +55,7 @@
 
   - platform: tensorflow
     confidence: 75
-    scan_interval: 600
+    scan_interval: 10000
     source:
       - entity_id: camera.driveway
     file_out:

@@ -3908,16 +3908,13 @@ views:
           service: image_processing.scan
           service_data:
             entity_id: image_processing.tensorflow_foyer_clear
-      - type: picture-entity
+      - type: picture-glance
         <<: *card_mod_mainstyle
-        entity: camera.driveway_post_process
+        camera_image: camera.driveway_post_process
         name: Driveway
         show_state: false
-        hold_action:
-          action: call-service
-          service: image_processing.scan
-          service_data:
-            entity_id: image_processing.tensorflow_driveway_clear
+        entities:
+        - switch.driveway_image
 
   ###########
   # TESTING #
