@@ -1,3 +1,17 @@
+- alias: Daily Snapshot
+  trigger:
+    - platform: time
+      at: '04:00:00'
+  action:
+    - service: hassio.addon_start
+      data:
+        addon: 954f2f4e_remote_backup
+    - service: persistent_notification.create
+      data:
+        title: Daily Snapshot
+        message: "Successfully created daily snapshot."
+        notification_id: Daily Snapshot
+
 - alias: Reboot Once A Week
   trigger:
     - platform: time
@@ -28,18 +42,9 @@
       weekday:
         - mon
   action:
-    - service: notify.ios_petro
+    - service: notify.homeowners
       data:
         message: "Trash day tomorrow!"
-        data:
-          push:
-            badge: 5
-    - service: notify.ios_lambo
-      data:
-        message: "Lindsays turn to take out trash."
-        data:
-          push:
-            badge: 5
         
 - alias: Change Filters Message
   trigger:
@@ -51,18 +56,9 @@
     - condition: template
       value_template: "{{ now().day == 1 and now().month in [ 1, 4, 7, 10 ] }}"
   action:
-    - service: notify.ios_petro
+    - service: notify.homeowners
       data:
         message: "Change HVAC filter."
-        data:
-          push:
-            badge: 5
-    - service: notify.ios_lambo
-      data:
-        message: "Lindsays turn to change HVAC filter."
-        data:
-          push:
-            badge: 5
             
 - alias: Mosby Heartworm and Flee Medication.
   trigger:
@@ -74,15 +70,6 @@
     - condition: template
       value_template: "{{ now().day == 1 }}"
   action:
-    - service: notify.ios_petro
+    - service: notify.homeowners
       data:
         message: "Give mosby heartworm and flee medication."
-        data:
-          push:
-            badge: 5
-    - service: notify.ios_lambo
-      data:
-        message: "Lindsays turn to give mosby heartworm and flee medication."
-        data:
-          push:
-            badge: 5

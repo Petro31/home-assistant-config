@@ -1,0 +1,62 @@
+- alias: Webhook Motion From Cameras
+  trigger:
+  - platform: webhook
+    webhook_id: motion_driveway
+  condition:
+  - condition: template
+    value_template: >
+      {% set entity_id = 'switch.'~ trigger.webhook_id.split('_')[-1] ~ '_camera' %}
+      {{ is_state(entity_id, 'on') }}
+  action:
+  - event: camera_motion
+    event_data_template:
+      camera: >
+        camera.{{ trigger.webhook_id.split('_')[-1] }}
+  - service: camera.snapshot
+    data_template:
+      entity_id: >
+        camera.{{ trigger.webhook_id.split('_')[-1] }}
+      filename: >
+        /config/www/motion/{{ trigger.webhook_id.split('_')[-1] }}_motion.jpg
+  - service: image_processing.scan
+    data_template:
+      entity_id: >
+        image_processing.tensorflow_{{ trigger.webhook_id.split('_')[-1] }}
+
+- alias: Turn off Outside Cameras based on temperature
+  trigger:
+  - platform: template
+    value_template: >
+      {% set below = states('sensor.outside_temperature') | float < 16 %}
+      {% set falling = is_state('binary_sensor.outside_temperature_falling', 'on') %}
+      {{ below and falling }}
+  action:
+  - service: notify.homeowners
+    data_template:
+      message: >
+        [{{ now().strftime('%-I:%M:%S %p') }}] Temperature is moving below 16°F, turning off the driveway and backyard camera.
+  - service: switch.turn_off
+    data:
+      entity_id:
+      - switch.driveway_camera
+      - switch.backyard_camera
+
+- alias: Turn on Outside Cameras based on temperature
+  trigger:
+  - platform: template
+    value_template: >
+      {% set above = states('sensor.outside_temperature') | float > 20 %}
+      {% set rising = is_state('binary_sensor.outside_temperature_rising','on') %}
+      {% set switches = [states.switch.driveway_camera, states.switch.backyard_camera] %}
+      {% set off = switches | selectattr('state','eq','off') | list | length > 0 %}
+      {{ above and off and rising }}
+  action:
+  - service: notify.homeowners
+    data_template:
+      message: >
+        [{{ now().strftime('%-I:%M:%S %p') }}] Temperature is moving above 20°F, turning on the driveway and backyard camera.
+  - service: switch.turn_on
+    data:
+      entity_id:
+      - switch.driveway_camera
+      - switch.backyard_camera
