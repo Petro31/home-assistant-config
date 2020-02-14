@@ -1,16 +1,3 @@
-  # Harmony remote input selection
-  # living_room_harmony:
-    # name: Harmony Activity
-    # options:
-     # - PowerOff
-     # - Xbox One
-     # - PS4
-     # - Wii U
-     # - PC
-     # - Apple TV
-    # initial: PowerOff
-    # icon: mdi:remote
-    
   # Mike Status
   petro_status:
     name: Mikes Sleep Status

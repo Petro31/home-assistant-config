@@ -11,6 +11,16 @@ anchors:
     notify: 
     - notify.mobile_app_petro
 
+  roku: &roku
+    activity: Roku
+    device: Roku Ultra
+  xbox: &xbox
+    activity: Xbox One
+    device: Microsoft Xbox One
+  ps4: &ps4
+    activity: PS4
+    device: Sony PS4
+
 ################
 # CURRENT APPS #
 ################
@@ -223,6 +233,7 @@ garage_entry_door_illumination:
   - switch.garage_cans
   duration: 120
   sundown: true
+  log_level: INFO
 
 sliding_door_illumination:
   module: illuminate_door
@@ -276,9 +287,189 @@ zone2_volume:
     media_player: 1.0
   precision: 0
 
+# https://github.com/Petro31/ad_harmony_activity_controls
+
+hac_living_room:
+  module: harmony_activity_controls
+  class: ActivityControls
+  remote: remote.living_room
+  activities:
+  - <<: *roku
+  - <<: *xbox
+  - <<: *ps4
+  commands:
+  - Rewind
+  - Play
+  - Pause
+  - command: FastForward
+    name: Forward
+  - DirectionUp
+  - DirectionLeft
+  - command: OK
+    name: Confirm
+  - DirectionRight
+  - DirectionDown
+  custom_events:
+  - event: HomeButton
+    icon: mdi:home
+    name: Home
+    activities:
+    - <<: *roku
+      command: Home
+    - <<: *xbox
+      command: Xbox
+    - <<: *ps4
+      command: PS
+  - event: MenuButton
+    icon: mdi:menu
+    name: Menu
+    activities:
+    - <<: *roku
+      command: 'Options*'
+    - <<: *xbox
+      command: Menu
+      icon: mdi:xbox-controller-menu
+    - <<: *ps4
+      command: Options
+  - event: LowerLeft
+    activities:
+    - <<: *roku
+      name: Search
+      command: Search
+    - <<: *xbox
+      name: View
+      command: View
+      icon: mdi:xbox-controller-view
+    - <<: *ps4
+      name: Info
+      command: Info
+  - event: LowerRight
+    activities:
+    - <<: *roku
+      name: Exit
+      command: Exit
+    - <<: *xbox
+      command: OneGuide
+      name: One Guide
+      icon: mdi:xbox
+    - <<: *ps4
+      name: Share
+      command: Share
+
+  - event: BottomButton
+    name: Confirm
+    activities:
+    - <<: *xbox
+      entity_picture: /local/images/xbox_a_transparent_2.png
+      color: rgba(100, 189, 54)
+      command: A
+    - <<: *ps4
+      entity_picture: /local/images/playstation_x.png
+      color: rgba(107, 139, 200)
+      command: Cross
+  - event: RightButton
+    name: Back
+    activities:
+    - <<: *xbox
+      entity_picture: /local/images/xbox_b_transparent_2.png
+      color: rgba(255, 24, 43)
+      command: B
+    - <<: *ps4
+      entity_picture: /local/images/playstation_circle.png
+      color: rgba(246, 69, 75)
+      command: Circle
+  - event: TopButton
+    name: Search
+    activities:
+    - <<: *xbox
+      entity_picture: /local/images/xbox_y_transparent_2.png
+      color: rgba(255, 185, 49)
+      command: 'Y'
+    - <<: *ps4
+      entity_picture: /local/images/playstation_triangle.png
+      color: rgba(43, 220, 150)
+      command: Triangle
+  - event: LeftButton
+    name: Backspace
+    activities:
+    - <<: *xbox
+      entity_picture: /local/images/xbox_x_transparent_2.png
+      color: rgba(0, 61, 142)
+      command: X
+    - <<: *ps4
+      entity_picture: /local/images/playstation_square.png
+      color: rgba(219, 142, 196)
+      command: Square
+  log_level: INFO
+  make_scripts: True
+
 #############
 # TEST APPS #
 #############
+
+# test_harmony:
+#   module: harmony_activity_controls
+#   class: ActivityControls
+#   remote: remote.living_room
+#   activities:
+#   - <<: *roku
+#   - <<: *xbox
+#   - <<: *ps4
+#   commands:
+#   - Rewind
+#   - Play
+#   - Pause
+#   - command: FastForward
+#     name: Forward
+#   - DirectionUp
+#   - DirectionLeft
+#   - command: OK
+#     name: Confirm
+#   - DirectionRight
+#   - DirectionDown
+#   custom_events:
+#   - event: HomeButton
+#     icon: mdi:home
+#     name: Home
+#     activities:
+#     - <<: *roku
+#       command: Home
+#     - <<: *xbox
+#       command: Xbox
+#     - <<: *ps4
+#       command: PS
+#   - event: MenuButton
+#     icon: mdi:menu
+#     name: Menu
+#     activities:
+#     - <<: *roku
+#       command: 'Options*'
+#     - <<: *xbox
+#       command: Menu
+#       icon: mdi:xbox-controller-menu
+#     - <<: *ps4
+#       command: Options
+#   - event: LowerLeft
+#     activities:
+#     - <<: *roku
+#       command: Search
+#     - <<: *xbox
+#       command: View
+#       icon: mdi:xbox-controller-view
+#     - <<: *ps4
+#       command: Info
+#   - event: LowerRight
+#     activities:
+#     - <<: *roku
+#       command: Exit
+#     - <<: *xbox
+#       command: OneGuide
+#       name: One Guide
+#       icon: mdi:xbox
+#     - <<: *ps4
+#       command: Share
+#   log_level: INFO
+#   make_scripts: True
 
 # test_season:
 #   module: seasonal_lights
@@ -317,13 +508,9 @@ zone2_volume:
   # log_level: INFO
 
 # events:
-  # module: event_monitor
-  # class: EventMonitor
-  # level: 'INFO'
-  # events:
-  # - event: call_service
-    # data:
-      # domain: 'switch'
+#   module: event_monitor
+#   class: EventMonitor
+#   level: 'INFO'
 
 # groups:
 #   module: group_all
