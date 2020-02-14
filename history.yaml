@@ -37,6 +37,7 @@
       - sensor.ups_load
       - sensor.ups_input_voltage
       - sensor.ups_battery
+      - sensor.outside_temperature
     domains:
       - light
       - switch

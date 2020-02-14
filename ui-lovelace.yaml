@@ -183,6 +183,26 @@ anchors:
       card:
         - width: 6px
         
+  # BASIC ON / OFF STYLINE
+
+  cb_basic_on_off_state_style: &cb_basic_on_off_state_style
+    state:
+      - value: "on"
+        styles:
+          card:
+            - --paper-card-background-color: rgba(40, 40, 40)
+            - box-shadow: 0px 0px 10px 3px var(--button-card-light-color)
+          name:
+            - color: white
+          state:
+            - color: white
+          label:
+            - color: white
+      - value: "off"
+        styles:
+          label:
+            - color: rgba(0, 0, 0, 0.0)
+
   # 3 BUTTONS PER ROW - THEME - OVERVIEW COUNTER
 
   cb_overview_counters: &cb_overview_counters
@@ -247,8 +267,10 @@ anchors:
             - color: white
     tap_action:
       action: toggle
+      haptic: light
     hold_action:
       action: more-info
+      haptic: success
         
   # 3 BUTTONS PER ROW - THEME - OVERVIEW INPUT SELECTS
 
@@ -302,6 +324,7 @@ anchors:
             - color: white
     hold_action:
       action: more-info
+      haptic: success
 
   # 3 BUTTONS PER ROW - THEME - NO LABEL
       
@@ -352,8 +375,10 @@ anchors:
             - color: white
     tap_action:
       action: toggle
+      haptic: light
     hold_action:
       action: more-info
+      haptic: success
 
   # 3 BUTTONS PER ROW - THEME - NO LABEL - OPEN
       
@@ -406,8 +431,10 @@ anchors:
             - color: white
     tap_action:
       action: toggle
+      haptic: light
     hold_action:
       action: more-info
+      haptic: success
   
   # 3 BUTTONS PER ROW - THEME - LABEL TEMPLATE
   
@@ -452,29 +479,16 @@ anchors:
         - align-items: flex-end
     tap_action:
       action: toggle
+      haptic: light
   
   # 3 BUTTONS PER ROW - THEME - LABEL TEMPLATE
   
   cb_3x_glow_template_label: &cb_3x_glow_template_label
     <<: *cb_3x_glow_template_label_base
-    state:
-      - value: "on"
-        styles:
-          card:
-            - --paper-card-background-color: rgba(40, 40, 40)
-            - box-shadow: 0px 0px 10px 3px var(--button-card-light-color)
-          name:
-            - color: white
-          state:
-            - color: white
-          label:
-            - color: white
-      - value: "off"
-        styles:
-          label:
-            - color: rgba(0, 0, 0, 0.0)
+    <<: *cb_basic_on_off_state_style
     hold_action:
       action: more-info
+      haptic: success
       
   # 3 BUTTONS PER ROW - THEME - LIGHT
   
@@ -534,6 +548,7 @@ anchors:
         - width: 35px
     tap_action:
       action: toggle
+      haptic: light
 
   # 5 BUTTONS PER ROW - USER SET - IMAGE
       
@@ -554,6 +569,7 @@ anchors:
         - width: 100%
     tap_action:
       action: toggle
+      haptic: light
     
   # 4 BUTTONS PER ROW - GRID AND NAME STYLES
 
@@ -568,6 +584,48 @@ anchors:
     show_label: false
     show_icon: false
     show_entity_picture: true
+    styles:
+      card:
+        - padding: 0px 0px
+        - border-radius: 15px
+        - margin: 5px 5px 0px 0px
+        - --paper-card-background-color: rgba(40, 40, 40)
+        - box-shadow: 0px 0px 10px 3px var(--button-card-light-color)
+      grid:
+        - grid-template-rows: 50px auto 0px
+        - grid-template-columns: 50px auto
+      entity_picture:
+        - height: 100%
+        - width: 100%
+      name:
+        - justify-self: start
+        - align-self: end
+        - padding: 9px 10px
+        - font-size: 12px
+    state:
+      - value: "on"
+        styles:
+          card:
+            - --paper-card-background-color: rgba(40, 40, 40)
+            - box-shadow: >
+                [[[
+                  var color = entity.attributes['color'] !== undefined
+                      ? entity.attributes.color
+                      : 'var(--button-card-light-color)';
+                  return '0px 0px 10px 3px ' + color;
+                ]]]
+          name:
+            - color: white
+          state:
+            - color: white
+          label:
+            - color: white
+      - value: "off"
+        styles:
+          label:
+            - color: rgba(0, 0, 0, 0.0)
+          card:
+            - --paper-card-background-color: rgba(40, 40, 40, 0.6)
     
   # 4 BUTTONS PER ROW - GRID AND NAME STYLES
   
@@ -580,118 +638,6 @@ anchors:
       - align-self: end
       - padding: 9px 10px
       - font-size: 12px
-
-  # 4 BUTTONS PER ROW - XBOX IMAGE STYLES
-
-  cb_remote_image_xbox_styles: &cb_remote_image_xbox_styles
-    <<: *cb_remote_image_grid_name_styles
-    entity_picture:
-      - height: 50px
-      - width: 50px
-
-  # 4 BUTTONS PER ROW - XBOX A BUTTON STYLE
-
-  cb_remote_xbox_a: &cb_remote_xbox_a
-    styles:
-      <<: *cb_remote_image_xbox_styles
-      card:
-        - padding: 0px 0px
-        - border-radius: 15px
-        - margin: 5px 5px 0px 0px
-        - --paper-card-background-color: rgba(40, 40, 40)
-        - box-shadow: 0px 0px 10px 3px rgba(100, 189, 54)
-
-  # 4 BUTTONS PER ROW - XBOX B BUTTON STYLE
-    
-  cb_remote_xbox_b: &cb_remote_xbox_b
-    styles:
-      <<: *cb_remote_image_xbox_styles
-      card:
-        - padding: 0px 0px
-        - border-radius: 15px
-        - margin: 5px 5px 0px 0px
-        - --paper-card-background-color: rgba(40, 40, 40)
-        - box-shadow: 0px 0px 10px 3px rgba(255, 24, 43)
-
-  # 4 BUTTONS PER ROW - XBOX Y BUTTON STYLE
-
-  cb_remote_xbox_y: &cb_remote_xbox_y
-    styles:
-      <<: *cb_remote_image_xbox_styles
-      card:
-        - padding: 0px 0px
-        - border-radius: 15px
-        - margin: 5px 5px 0px 0px
-        - --paper-card-background-color: rgba(40, 40, 40)
-        - box-shadow: 0px 0px 10px 3px rgba(255, 185, 49)
-
-  # 4 BUTTONS PER ROW - XBOX X BUTTON STYLE
-
-  cb_remote_xbox_x: &cb_remote_xbox_x
-    styles:
-      <<: *cb_remote_image_xbox_styles
-      card:
-        - padding: 0px 0px
-        - border-radius: 15px
-        - margin: 5px 5px 0px 0px
-        - --paper-card-background-color: rgba(40, 40, 40)
-        - box-shadow: 0px 0px 10px 3px rgba(0, 61, 142)
-
-  # 4 BUTTONS PER ROW - PLAYSTAION IMAGE STYLES
-
-  cb_remote_image_ps_styles: &cb_remote_image_ps_styles
-    <<: *cb_remote_image_grid_name_styles
-    entity_picture:
-      - height: 30px
-      - width: 30px
-
-  # 4 BUTTONS PER ROW - PLAYSTAION X BUTTON STYLE
-
-  cb_remote_ps_x: &cb_remote_ps_x
-    styles:
-      <<: *cb_remote_image_ps_styles
-      card:
-        - padding: 0px 0px
-        - border-radius: 15px
-        - margin: 5px 5px 0px 0px
-        - --paper-card-background-color: rgba(40, 40, 40)
-        - box-shadow: 0px 0px 10px 3px rgba(107, 139, 200)
-
-  # 4 BUTTONS PER ROW - PLAYSTAION CIRCLE BUTTON STYLE
-    
-  cb_remote_ps_c: &cb_remote_ps_c
-    styles:
-      <<: *cb_remote_image_ps_styles
-      card:
-        - padding: 0px 0px
-        - border-radius: 15px
-        - margin: 5px 5px 0px 0px
-        - --paper-card-background-color: rgba(40, 40, 40)
-        - box-shadow: 0px 0px 10px 3px rgba(246, 69, 75)
-
-  # 4 BUTTONS PER ROW - PLAYSTAION TRIANGLE BUTTON STYLE
-
-  cb_remote_ps_t: &cb_remote_ps_t
-    styles:
-      <<: *cb_remote_image_ps_styles
-      card:
-        - padding: 0px 0px
-        - border-radius: 15px
-        - margin: 5px 5px 0px 0px
-        - --paper-card-background-color: rgba(40, 40, 40)
-        - box-shadow: 0px 0px 10px 3px rgba(43, 220, 150)
-
-  # 4 BUTTONS PER ROW - PLAYSTAION SQUARE BUTTON STYLE
-
-  cb_remote_ps_s: &cb_remote_ps_s
-    styles:
-      <<: *cb_remote_image_ps_styles
-      card:
-        - padding: 0px 0px
-        - border-radius: 15px
-        - margin: 5px 5px 0px 0px
-        - --paper-card-background-color: rgba(40, 40, 40)
-        - box-shadow: 0px 0px 10px 3px rgba(219, 142, 196)
 
   # 3 BUTTONS PER ROW - POWER BUTTON
 
@@ -733,28 +679,13 @@ anchors:
           return 'muted';
         }
         return (level ? level : '0') + ' dB';
-      ]]]
+      ]]]    
 
   # 4 BUTTONS PER ROW BASE
 
   cb_remote_4_base: &cb_remote_4_base
     type: custom:button-card
-    state:
-      - value: "on"
-        styles:
-          card:
-            - --paper-card-background-color: rgba(40, 40, 40)
-            - box-shadow: 0px 0px 10px 3px var(--button-card-light-color)
-          name:
-            - color: white
-          state:
-            - color: white
-          label:
-            - color: white
-      - value: "off"
-        styles:
-          label:
-            - color: rgba(0, 0, 0, 0.0)
+    <<: *cb_basic_on_off_state_style
 
   # 4 BUTTONS PER ROW - ACTIVE - ICON AND LABEL
 
@@ -785,6 +716,7 @@ anchors:
         - text-transform: capitalize
     tap_action:
       action: toggle
+      haptic: light
 
   # 4 BUTTONS PER ROW - ACTIVE - ZONE CONTROL
 
@@ -989,6 +921,7 @@ anchors:
         - text-transform: capitalize
     tap_action:
       action: toggle
+      haptic: light
 
   # ACTIVE STATE ON
 
@@ -1089,6 +1022,7 @@ anchors:
         - align-self: end
     tap_action:
       action: toggle
+      haptic: light
 
   # 40 x ? indicator - on off indicator
 
@@ -1472,6 +1406,24 @@ decluttering_templates:
           styles:
             card:
               - background-image: 'url("[[image_away]]")'
+
+  ####################
+  # IMAGE PROCESSING #
+  ####################
+
+  image_processing_scans: &image_processing_scans
+    card:
+      type: picture-entity
+      <<: *card_mod_mainstyle
+      name: '[[name]]'
+      entity: '[[camera]]'
+      show_state: false
+      hold_action:
+        action: call-service
+        service: image_processing.scan
+        service_data:
+          entity_id: '[[image_processing]]'
+
 #########
 # VIEWS #
 #########
@@ -1901,6 +1853,7 @@ views:
                       tap_action:
                         action: call-service
                         service: script.multizone_cycle_zone
+                        haptic: light
                       name: >
                         [[[ 
                             var sentence = entity.state.split(" ");
@@ -1917,10 +1870,12 @@ views:
                       tap_action:
                         action: call-service
                         service: script.multizone_volume_up
+                        haptic: light
                       hold_action:
                         action: call-service
                         repeat: 250
                         service: script.multizone_volume_up
+                        haptic: light
                         
                     # Volume Down
                       
@@ -1930,10 +1885,12 @@ views:
                       tap_action:
                         action: call-service
                         service: script.multizone_volume_down
+                        haptic: light
                       hold_action:
                         action: call-service
                         repeat: 250
                         service: script.multizone_volume_down
+                        haptic: light
                         
                     # Volume Mute
                       
@@ -1943,9 +1900,10 @@ views:
                       tap_action:
                         action: call-service
                         service: script.multizone_volume_mute
+                        haptic: light
 
                     - <<: *cb_spacer_10px
-                    
+          
           ############################
           # HARMONY CONTEXT CONTROLS #
           ############################
@@ -1959,21 +1917,15 @@ views:
             card:
               type: vertical-stack
               cards:
-                    
-                ################
-                # XBOX BUTTONS #
-                ################
                 - type: conditional
                   conditions:
-                    - entity: switch.xbox_one
-                      state: 'on'
-                    - entity: switch.xbox_source
+                    - entity: binary_sensor.remote_living_room_control
                       state: 'on'
                   card:
                     type: vertical-stack
                     cards:
 
-                      # XBOX ROW 1 Rewind, Play, Pause, FastForward
+                      # ROW 1 REWIND, PLAY, PAUSE, FASFORWARD
 
                       - type: horizontal-stack
                         cards:
@@ -1982,54 +1934,42 @@ views:
                           # REWIND BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Rewind
-                            icon: mdi:rewind
+                            entity: binary_sensor.remote_living_room_rewind
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "Rewind"
+                              service: script.remote_living_room_rewind
+                              haptic: light
 
                           # PLAY BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Play
-                            icon: mdi:play
+                            entity: binary_sensor.remote_living_room_play
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "Play"
+                              service: script.remote_living_room_play
+                              haptic: light
 
                           # PAUSE BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Pause
-                            icon: mdi:pause
+                            entity: binary_sensor.remote_living_room_pause
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "Pause"
+                              service: script.remote_living_room_pause
+                              haptic: light
 
                           # FASFORWARD BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Forward
-                            icon: mdi:fast-forward
+                            entity: binary_sensor.remote_living_room_fastforward
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "FastForward"
+                              service: script.remote_living_room_fastforward
+                              haptic: light
 
                           - <<: *cb_spacer_10px
 
-                      # XBOX ROW 2 Home, Up, Menu
+                      # ROW 2 Home, Up, MENU
 
                       - type: horizontal-stack
                         cards:
@@ -2039,570 +1979,29 @@ views:
                           # HOME BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Home
-                            icon: mdi:home
+                            entity: binary_sensor.remote_living_room_homebutton
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "Xbox"
+                              service: script.remote_living_room_homebutton
+                              haptic: light
 
                           # UP BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Up
-                            icon: mdi:arrow-up-bold
+                            entity: binary_sensor.remote_living_room_directionup
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "DirectionUp"
+                              service: script.remote_living_room_directionup
+                              haptic: light
 
                           # MENU BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Menu
-                            icon: mdi:xbox-controller-menu
+                            entity: binary_sensor.remote_living_room_menubutton
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "Menu"
-
-                          - <<: *cb_spacer_10px
-
-                      # XBOX ROW 3 Left, Ok, Right
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-                          - <<: *cb_spacer_square
-
-                          # LEFT BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Left
-                            icon: mdi:arrow-left-bold
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "DirectionLeft"
-
-                          # OK BUTTON
-
-                          - <<: *cb_remote_name_as_icon
-                            name: OK
-                            label: Confirm
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "OK"
-
-                          # RIGHT BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Right
-                            icon: mdi:arrow-right-bold
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "DirectionRight"
-
-                          - <<: *cb_spacer_10px
-
-                      # XBOX ROW 4 View, Down, OneGuide
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-                          - <<: *cb_spacer_square
-
-                          # VIEW BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: View
-                            icon: mdi:xbox-controller-view
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "View"
-
-                          # DOWN BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Down
-                            icon: mdi:arrow-down-bold
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "DirectionDown"
-
-                          # ONE GUIDE BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: One Guide
-                            icon: mdi:xbox
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "OneGuide"
-
-                          - <<: *cb_spacer_10px
-
-                      # XBOX ROW 5 ABYX
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-
-                          # A BUTTON
-
-                          - <<: *cb_remote_image_name
-                            name: Confirm
-                            entity_picture: /local/images/xbox_a_transparent_2.png
-                            color: rgba(100, 189, 54)
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "A"
-                            <<: *cb_remote_xbox_a
-                                
-                          # B BUTTON
-                            
-                          - <<: *cb_remote_image_name
-                            name: Back
-                            entity_picture: /local/images/xbox_b_transparent_2.png
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "B"
-                            <<: *cb_remote_xbox_b
-                                
-                          # Y BUTTON
-                            
-                          - <<: *cb_remote_image_name
-                            name: Search
-                            entity_picture: /local/images/xbox_y_transparent_2.png
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "Y"
-                            <<: *cb_remote_xbox_y
-                                
-                          # X BUTTON
-                            
-                          - <<: *cb_remote_image_name
-                            name: Backspace
-                            entity_picture: /local/images/xbox_x_transparent_2.png
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_xbox
-                                command: "X"
-                            <<: *cb_remote_xbox_x
-
-                          - <<: *cb_spacer_10px
-                                
-                          
-                #######################
-                # PLAYSTATION BUTTONS #
-                #######################
-                - type: conditional
-                  conditions:
-                    - entity: switch.ps4
-                      state: 'on'
-                    - entity: switch.playstation_source
-                      state: 'on'
-                  card:
-                    type: vertical-stack
-                    cards:
-
-                      # PLAYSTATION ROW 1 Rewind, Play, Pause, FastForward
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-
-                          # REWIND BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Rewind
-                            icon: mdi:rewind
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Rewind"
-
-                          # PLAY BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Play
-                            icon: mdi:play
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Play"
-
-                          # PAUSE BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Pause
-                            icon: mdi:pause
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Pause"
-
-                          # FASFORWARD BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Forward
-                            icon: mdi:fast-forward
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "FastForward"
-
-                          - <<: *cb_spacer_10px
-
-                      # PLAYSTATION ROW 2 Home, Up, Options
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-                          - <<: *cb_spacer_square
-
-                          # HOME BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Home
-                            icon: mdi:home
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "PS"
-
-                          # UP BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Up
-                            icon: mdi:arrow-up-bold
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "DirectionUp"
-
-                          # OPTIONS BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Options
-                            icon: mdi:menu
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Options"
-
-                          - <<: *cb_spacer_10px
-
-                      # PLAYSTATION ROW 3 Left, Ok, Right
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-                          - <<: *cb_spacer_square
-
-                          # LEFT BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Left
-                            icon: mdi:arrow-left-bold
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "DirectionLeft"
-
-                          # OK BUTTON
-
-                          - <<: *cb_remote_name_as_icon
-                            name: OK
-                            label: Confirm
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "OK"
-
-                          # RIGHT BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Right
-                            icon: mdi:arrow-right-bold
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "DirectionRight"
-
-                          - <<: *cb_spacer_10px
-
-                      # PLAYSTATION ROW 4 Info, Down, Share
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-                          - <<: *cb_spacer_square
-
-                          # INFO BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Info
-                            icon: mdi:information
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Info"
-
-                          # DOWN BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Down
-                            icon: mdi:arrow-down-bold
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "DirectionDown"
-
-                          # SHARE BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Share
-                            icon: mdi:share
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Share"
-
-                          - <<: *cb_spacer_10px
-
-
-                      # PLAYSTATION ROW 4 X0[]/\
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-                          
-                            # X BUTTON
-                            
-                          - <<: *cb_remote_image_name
-                            name: Confirm
-                            entity_picture: /local/images/playstation_x.png
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Cross"
-                            <<: *cb_remote_ps_x
-                                
-                            # CIRCLE BUTTON
-                            
-                          - <<: *cb_remote_image_name
-                            name: Back
-                            entity_picture: /local/images/playstation_circle.png
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Circle"
-                            <<: *cb_remote_ps_c
-                                
-                            # TRIANGLE BUTTON
-                            
-                          - <<: *cb_remote_image_name
-                            name: Search
-                            entity_picture: /local/images/playstation_triangle.png
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Triangle"
-                            <<: *cb_remote_ps_t
-                                
-                            # SQUARE BUTTON
-                            
-                          - <<: *cb_remote_image_name
-                            name: Backspace
-                            entity_picture: /local/images/playstation_square.png
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_playstation
-                                command: "Square"
-                            <<: *cb_remote_ps_s
-
-                          - <<: *cb_spacer_10px
-
-                ################
-                # ROKU BUTTONS #
-                ################
-                
-                - type: conditional
-                  conditions:
-                    - entity: switch.roku
-                      state: 'on'
-                    - entity: switch.roku_source
-                      state: 'on'
-                  card:
-                    type: vertical-stack
-                    cards:
-
-                      # ROKU ROW 1 Rewind, Play, Pause, FastForward
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-
-                          # REWIND BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Rewind
-                            icon: mdi:rewind
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "Rewind"
-
-                          # PLAY BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Play
-                            icon: mdi:play
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "Play"
-
-                          # PAUSE BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Pause
-                            icon: mdi:pause
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "Pause"
-
-                          # FASFORWARD BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Forward
-                            icon: mdi:fast-forward
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "FastForward"
-
-                          - <<: *cb_spacer_10px
-
-                      # ROKU ROW 2 Home, Up, Options
-
-                      - type: horizontal-stack
-                        cards:
-                          - <<: *cb_spacer_10px
-                          - <<: *cb_spacer_square
-
-                          # HOME BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Home
-                            icon: mdi:home
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "Home"
-
-                          # UP BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Up
-                            icon: mdi:arrow-up-bold
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "DirectionUp"
-
-                          # OPTIONS BUTTON
-
-                          - <<: *cb_remote_harmony_command
-                            name: Options
-                            icon: mdi:menu
-                            tap_action:
-                              action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "Options*"
+                              service: script.remote_living_room_menubutton
+                              haptic: light
 
                           - <<: *cb_spacer_10px
 
@@ -2616,42 +2015,33 @@ views:
                           # LEFT BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Left
-                            icon: mdi:arrow-left-bold
+                            entity: binary_sensor.remote_living_room_directionleft
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "DirectionLeft"
+                              service: script.remote_living_room_directionleft
+                              haptic: light
 
                           # OK BUTTON
 
-                          - <<: *cb_remote_name_as_icon
-                            name: OK
-                            label: Confirm
+                          - <<: *cb_remote_harmony_command
+                            entity: binary_sensor.remote_living_room_ok
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "OK"
+                              service: script.remote_living_room_ok
+                              haptic: light
 
                           # RIGHT BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Right
-                            icon: mdi:arrow-right-bold
+                            entity: binary_sensor.remote_living_room_directionright
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "DirectionRight"
+                              service: script.remote_living_room_directionright
+                              haptic: light
 
                           - <<: *cb_spacer_10px
 
-                      # ROKU ROW 4 Info, Down, Share
+                      # ROKU ROW 4 LowerLeft, Down, LowerRight
 
                       - type: horizontal-stack
                         cards:
@@ -2661,41 +2051,85 @@ views:
                           # INFO BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Search
-                            icon: mdi:movie-search
+                            entity: binary_sensor.remote_living_room_lowerleft
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "Search"
+                              service: script.remote_living_room_lowerleft
+                              haptic: light
 
                           # DOWN BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Down
-                            icon: mdi:arrow-down-bold
+                            entity: binary_sensor.remote_living_room_directiondown
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "DirectionDown"
+                              service: script.remote_living_room_directiondown
+                              haptic: light
 
                           # SHARE BUTTON
 
                           - <<: *cb_remote_harmony_command
-                            name: Exit
-                            icon: mdi:exit-to-app
+                            entity: binary_sensor.remote_living_room_lowerright
                             tap_action:
                               action: call-service
-                              service: remote.send_command
-                              service_data:
-                                <<: *harmony_roku
-                                command: "Exit"
+                              service: script.remote_living_room_lowerright
+                              haptic: light
 
                           - <<: *cb_spacer_10px
 
+                - type: conditional
+                  conditions:
+                    - entity: sensor.harmony_activity
+                      state_not: 'PowerOff'
+                    - entity: sensor.harmony_activity
+                      state_not: 'Switch'
+                    - entity: sensor.harmony_activity
+                      state_not: 'TV'
+                    - entity: sensor.harmony_activity
+                      state_not: 'Roku'
+                  card:
+                    type: horizontal-stack
+                    cards:
+                      - <<: *cb_spacer_10px
+
+                        # BOTTOM CONTROLLER BUTTON
+
+                      - <<: *cb_remote_image_name
+                        entity: binary_sensor.remote_living_room_bottombutton
+                        tap_action:
+                          action: call-service
+                          service: script.remote_living_room_bottombutton
+                          haptic: light
+
+                        # RIGHT CONTROLLER BUTTON
+
+                      - <<: *cb_remote_image_name
+                        entity: binary_sensor.remote_living_room_rightbutton
+                        tap_action:
+                          action: call-service
+                          service: script.remote_living_room_rightbutton
+                          haptic: light
+
+                        # TOP CONTROLLER BUTTON
+
+                      - <<: *cb_remote_image_name
+                        entity: binary_sensor.remote_living_room_topbutton
+                        tap_action:
+                          action: call-service
+                          service: script.remote_living_room_topbutton
+                          haptic: light
+
+                        # TOP CONTROLLER BUTTON
+
+                      - <<: *cb_remote_image_name
+                        entity: binary_sensor.remote_living_room_leftbutton
+                        tap_action:
+                          action: call-service
+                          service: script.remote_living_room_leftbutton
+                          haptic: light
+
+                      - <<: *cb_spacer_10px
+ 
           ##########################
           # ALEXA CONTEXT CONTROLS #
           ##########################
@@ -3856,6 +3290,10 @@ views:
         show_state: false
       - type: picture-entity
         <<: *card_mod_mainstyle
+        entity: camera.backyard
+        show_state: false
+      - type: picture-entity
+        <<: *card_mod_mainstyle
         entity: camera.driveway
         show_state: false
 
@@ -3868,53 +3306,42 @@ views:
     icon: mdi:image-search
     title: Image Processing
     cards:
-      - type: picture-entity
-        <<: *card_mod_mainstyle
-        entity: camera.garage_post_process
-        name: Garage
-        show_state: false
-        hold_action:
-          action: call-service
-          service: image_processing.scan
-          service_data:
-            entity_id: image_processing.tensorflow_garage_clear
-      - type: picture-entity
-        <<: *card_mod_mainstyle
-        entity: camera.kitchen_post_process
-        name: Kitchen
-        show_state: false
-        hold_action:
-          action: call-service
-          service: image_processing.scan
-          service_data:
-            entity_id: image_processing.tensorflow_kitchen_clear
-      - type: picture-entity
-        <<: *card_mod_mainstyle
-        entity: camera.floating_post_process
-        name: Floating
-        show_state: false
-        hold_action:
-          action: call-service
-          service: image_processing.scan
-          service_data:
-            entity_id: image_processing.tensorflow_floating_clear
-      - type: picture-entity
-        <<: *card_mod_mainstyle
-        entity: camera.foyer_post_process
-        name: Foyer
-        show_state: false
-        hold_action:
-          action: call-service
-          service: image_processing.scan
-          service_data:
-            entity_id: image_processing.tensorflow_foyer_clear
-      - type: picture-glance
-        <<: *card_mod_mainstyle
-        camera_image: camera.driveway_post_process
-        name: Driveway
-        show_state: false
-        entities:
-        - switch.driveway_image
+      - type: custom:decluttering-card
+        template: image_processing_scans
+        variables:
+        - name: Garage
+        - camera: camera.garage_post_process
+        - image_processing: image_processing.tensorflow_garage
+      - type: custom:decluttering-card
+        template: image_processing_scans
+        variables:
+        - name: Kitchen
+        - camera: camera.kitchen_post_process
+        - image_processing: image_processing.tensorflow_kitchen
+      - type: custom:decluttering-card
+        template: image_processing_scans
+        variables:
+        - name: Floating
+        - camera: camera.floating_post_process
+        - image_processing: image_processing.tensorflow_floating
+      - type: custom:decluttering-card
+        template: image_processing_scans
+        variables:
+        - name: Foyer
+        - camera: camera.foyer_post_process
+        - image_processing: image_processing.tensorflow_foyer
+      - type: custom:decluttering-card
+        template: image_processing_scans
+        variables:
+        - name: Backyard
+        - camera: camera.backyard_post_process
+        - image_processing: image_processing.tensorflow_backyard
+      - type: custom:decluttering-card
+        template: image_processing_scans
+        variables:
+        - name: Driveway
+        - camera: camera.driveway_post_process
+        - image_processing: image_processing.tensorflow_driveway
 
   ###########
   # TESTING #
@@ -3925,6 +3352,7 @@ views:
     title: Testing
     cards:
       - type: entities
+        state_color: true
         entities: 
           - media_player.living_room_dot
           - switch.test_1
@@ -3935,4 +3363,7 @@ views:
           - entity: sensor.test_1_last_opened
             type: custom:secondaryinfo-entity-row
             secondary_info: '[[ {entity}.attributes.who ]]'
-          
+          - entity: binary_sensor.harmony_command_directiondown
+            tap_action:
+              action: call-service
+              service: script.harmony_command_directiondown

@@ -121,3 +121,88 @@ multizone_cycle_zone:
   - event: mz_cycle_zone
     event_data:
       event_id: multizone
+
+remote_living_room_rewind:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Rewind'}
+
+remote_living_room_play:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Play'}
+
+remote_living_room_pause:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Pause'}
+
+remote_living_room_fastforward:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'FastForward'}
+
+remote_living_room_directionup:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'DirectionUp'}
+
+remote_living_room_directionleft:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'DirectionLeft'}
+
+remote_living_room_ok:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'OK'}
+
+remote_living_room_directionright:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'DirectionRight'}
+
+remote_living_room_directiondown:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'DirectionDown'}
+
+remote_living_room_homebutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'HomeButton'}
+
+remote_living_room_menubutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'MenuButton'}
+
+remote_living_room_lowerleft:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'LowerLeft'}
+
+remote_living_room_lowerright:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'LowerRight'}
+
+remote_living_room_bottombutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'BottomButton'}
+
+remote_living_room_rightbutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'RightButton'}
+
+remote_living_room_topbutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'TopButton'}
+
+remote_living_room_leftbutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'LeftButton'}

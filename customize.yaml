@@ -260,5 +260,5 @@ sensor.speedtest_upload:
 device_tracker.harmony_hub:
   icon: mdi:remote
 binary_sensor.garage_door_tilt:
-  friendly_name: Garage Door
   device_class: garage_door
+  friendly_name: Garage Door
