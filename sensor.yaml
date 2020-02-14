@@ -3,6 +3,12 @@
 
   - platform: template
     sensors:
+      outside_temperature: # CREATED FOR TREND TESTING AND POSSIBLE USE
+        friendly_name: Outside Temperature
+        value_template: > 
+          {{ state_attr('weather.dark_sky', 'temperature') }}
+        unit_of_measurement: '°F'
+
       main_door_hindge: # MAIN DOOR SENSOR #
         value_template: >
           {{ 'open' if is_state('sensor.main_door_t_access_control', '22') else 'closed' }}

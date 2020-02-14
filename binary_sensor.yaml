@@ -12,3 +12,18 @@
             states.media_player.yamaha_receiver,
             states.media_player.yamaha_receiver_zone_2 ] %}
           {{ media_players | selectattr('state','eq','on') | list | length >= 1 }}
+
+  - platform: trend
+    sensors:
+      outside_temperature_rising:
+
+        entity_id: sensor.outside_temperature
+        sample_duration: 7200
+        min_gradient: 0.00027
+        device_class: heat
+
+      outside_temperature_falling:
+        entity_id: sensor.outside_temperature
+        sample_duration: 7200
+        min_gradient: -0.00027
+        device_class: cold

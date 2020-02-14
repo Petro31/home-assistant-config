@@ -40,11 +40,30 @@
     name: driveway_post_process
     file_path: /config/www/motion/driveway_latest.jpg
 
+  - platform: local_file
+    name: backyard_post_process
+    file_path: /config/www/motion/backyard_latest.jpg
+
+  # - platform: reolink_dev
+  #   host: !secret driveway_host
+  #   username: !secret camera_user
+  #   password: !secret camera_password
+  #   name: Driveway
+  #   stream: main
+  #   protocol: rtmp
+  #   scan_interval: 5
+
   - platform: reolink_dev
-    host: !secret driveway_host
+    host: !secret backyard_host
     username: !secret camera_user
     password: !secret camera_password
-    name: Driveway
+    name: Backyard
     stream: main
     protocol: rtmp
-    scan_interval: 5
+    scan_interval: 10
+  
+  - platform: synology
+    url: !secret synology_camera_host
+    username: !secret synology_username
+    password: !secret synology_password
+    verify_ssl: false
