@@ -1,62 +1,51 @@
 homeassistant:
-  name: Home
-  latitude: !secret location_1_latitude
-  longitude: !secret location_1_longitude
-  elevation: !secret location_1_elevation
-  unit_system: imperial
-  time_zone: !secret time_zone
   customize: !include customize.yaml
 
-frontend: !include frontend.yaml
-
+alexa: !include alexa.yaml
+alexa_media: !include alexa_media.yaml
+apcupsd:
+  host: a722577e-apcupsd
+automation: !include_dir_merge_list automation
+binary_sensor: !include binary_sensor.yaml
+camera: !include cameras.yaml
+cloud:
 config:
-
+conversation:
+cover: !include cover.yaml
+discovery: !include discovery.yaml
+frontend: !include frontend.yaml
+group: !include group.yaml
+history: !include history.yaml
 http:
   base_url: !secret http_base_url
-updater:
-  include_used_components: true
-discovery: !include discovery.yaml
-conversation:
-history: !include history.yaml
-recorder: !include recorder.yaml
+image_processing: !include image_processing.yaml
+input_number: !include input_number.yaml
+input_select: !include input_select.yaml
+input_text: !include input_text.yaml
+intent_script: !include intent_script.yaml
+ios:
+light:
+- platform: demo
 logbook:
-map:
-sun:
-mobile_app:
 logger: !include logger.yaml
 lovelace:
   mode: yaml
-light:
-- platform: demo
-roku: !include roku.yaml
-panel_custom: !include panel_custom.yaml
-input_text: !include input_text.yaml
-speedtestdotnet: !include speedtestdotnet.yaml
-alexa_media: !include alexa_media.yaml
-system_health:
-apcupsd:
-  host: a722577e-apcupsd
-#zoneminder: !include zoneminder.yaml
-camera: !include cameras.yaml
-image_processing: !include image_processing.yaml
-person: 
-cloud:
+map:
 media_player: !include media_player.yaml
-cover: !include cover.yaml
-#emulated_hue: !include emulated_hue.yaml
-zwave: !include zwave.yaml
-remote: !include remote.yaml
-weather: !include weather.yaml
-ios:
+mobile_app:
 notify: !include notify.yaml
-input_select: !include input_select.yaml
-sensor: !include sensor.yaml
-binary_sensor: !include binary_sensor.yaml
-alexa: !include alexa.yaml
-intent_script: !include intent_script.yaml
-automation: !include_dir_merge_list automation
-zone: !include zones.yaml
-group: !include group.yaml
+panel_custom: !include panel_custom.yaml
+person: 
+recorder: !include recorder.yaml
+remote: !include remote.yaml
+roku: !include roku.yaml
 script: !include scripts.yaml
+sensor: !include sensor.yaml
+speedtestdotnet: !include speedtestdotnet.yaml
+sun:
 switch: !include switch.yaml
-input_number: !include input_number.yaml
+system_health:
+weather: !include weather.yaml
+updater:
+  include_used_components: true
+zwave: !include zwave.yaml

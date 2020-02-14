@@ -1,8 +1,8 @@
-- name: lambosino
+- name: homeowners
   platform: group
   services:
-    - service: ios_petro
-    - service: ios_lambo
+    - service: mobile_app_petro
+    - service: mobile_app_lindsays_iphone
     
 - platform: alexa_media
   name: alexa
