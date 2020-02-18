@@ -153,3 +153,7 @@ www/images/driveway_motion.jpg
 www/harmony_activity_controls/transparent.png
 
 appdaemon/apps/ad_harmony_activity_controls/
+
+ozwave/
+
+ui-lovelace-before-changes.yaml

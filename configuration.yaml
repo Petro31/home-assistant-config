@@ -24,8 +24,7 @@ input_select: !include input_select.yaml
 input_text: !include input_text.yaml
 intent_script: !include intent_script.yaml
 ios:
-light:
-- platform: demo
+light: !include light.yaml
 logbook:
 logger: !include logger.yaml
 lovelace:
