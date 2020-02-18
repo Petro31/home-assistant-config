@@ -29,7 +29,9 @@
     value_template: >
       {% set below = states('sensor.outside_temperature') | float < 16 %}
       {% set falling = is_state('binary_sensor.outside_temperature_falling', 'on') %}
-      {{ below and falling }}
+      {% set switches = [states.switch.driveway_camera, states.switch.backyard_camera] %}
+      {% set are_on = switches | selectattr('state','eq','on') | list | length > 0 %}
+      {{ are_on and below and falling }}
   action:
   - service: notify.homeowners
     data_template:

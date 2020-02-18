@@ -262,3 +262,7 @@ device_tracker.harmony_hub:
 binary_sensor.garage_door_tilt:
   device_class: garage_door
   friendly_name: Garage Door
+light.inovelli_lzw42_multi_color_bulb_level:
+  supported_features: 179
+light.inovelli_lzw42_multi_color_bulb_level_2:
+  supported_features: 179

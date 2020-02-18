@@ -1,0 +1,6 @@
+- platform: demo
+- platform: group
+  name: Color Bulbs
+  entities:
+  - light.inovelli_lzw42_multi_color_bulb_level
+  - light.inovelli_lzw42_multi_color_bulb_level_2

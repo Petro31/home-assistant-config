@@ -1,4 +1,5 @@
   usb_path: /dev/ttyACM0
+  config_path: /config/ozwave/config
   device_config:
     light.master_closet:
       refresh_value: true

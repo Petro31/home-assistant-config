@@ -167,7 +167,8 @@ midnight:
   
   # Paper card
   paper-card-header-color: var(--accent-color)'                                   # Card header text colour
-  paper-card-background-color: "rgba(40, 40, 40, 0.6)"                            # Card background colour
+  # paper-card-background-color: "rgba(40, 40, 40, 0.6)"                            # Card background colour
+  paper-card-background-color: "rgba(40, 40, 40)"                                 # Card background colour
   paper-dialog-background-color: 'var(--primary-background-color)'                # Card dialog background colour
   paper-item-icon-color: rgba(161, 161, 161)                                      # Icon color
   paper-item-icon-active-color: 'var(--accent-color)'                             # Icon color active
