@@ -1073,18 +1073,12 @@ views:
             cards:
               - <<: *cb_spacer_0px
               - <<: *cb_button
-                entity: group.inside
-                icon: mdi:home
-                name: Inside
+                entity: group.inside_area
               - <<: *cb_button
-                entity: group.outside
+                entity: group.outside_area
                 <<: *cb_lock
-                icon: mdi:wall-sconce
-                name: Outside
               - <<: *cb_button
-                entity: group.garage
-                icon: mdi:home-floor-g
-                name: Garage
+                entity: group.garage_area
               - <<: *cb_spacer_0px
 
           # Overview Floor Lights
@@ -1093,17 +1087,11 @@ views:
             cards:
               - <<: *cb_spacer_0px
               - <<: *cb_button
-                entity: group.basement
-                icon: mdi:home-floor-b
-                name: Basement
+                entity: group.basement_area
               - <<: *cb_button
-                entity: group.upstairs
-                icon: mdi:home-floor-1
-                name: Upstairs
+                entity: group.upstairs_area
               - <<: *cb_button
-                entity: group.downstairs
-                icon: mdi:home-floor-2
-                name: Downstairs
+                entity: group.downstairs_area
               - <<: *cb_spacer_0px
 
           # Overview Floor Lights
@@ -1748,16 +1736,12 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.basement
+                entity: group.basement_area
               - <<: *cb_button
-                name: Light
                 entity: switch.basement_cans
               - <<: *cb_button
-                name: Stairs
                 entity: switch.basement_stairs
               - <<: *cb_spacer_0px
-
-                
                 
       #################
       # GARAGE LIGHTS #
@@ -1774,25 +1758,13 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.garage
-                icon: mdi:alpha-g-box
+                entity: group.garage_area
               - <<: *cb_button
-                name: Light
                 entity: switch.garage_cans
               - <<: *cb_button
-                name: Entrance
-                entity: switch.garage_entry
-              - <<: *cb_spacer_0px
-          - type: horizontal-stack
-            cards:
-              - <<: *cb_spacer_0px
-              - <<: *cb_button
-                name: Door
                 entity: cover.garage_door
                 icon: >
                   [[[ return (entity.state === 'open') ? 'mdi:garage-open' : 'mdi:garage'; ]]]
-              - <<: *cb_spacer_square
-              - <<: *cb_spacer_square
               - <<: *cb_spacer_0px
                 
       #####################
@@ -1810,13 +1782,10 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.dining_room
-                icon: mdi:alpha-d-box
+                entity: group.dining_room_area
               - <<: *cb_button
-                name: Light
                 entity: light.dining_room_chandelier
               - <<: *cb_button
-                name: Hutch
                 entity: switch.dining_room_hutch
               - <<: *cb_spacer_0px
                 
@@ -1835,13 +1804,10 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.living_room
-                icon: mdi:alpha-l-box
+                entity: group.living_room_area
               - <<: *cb_button
-                name: Light
                 entity: light.living_room
               - <<: *cb_button
-                name: Outlet
                 entity: switch.living_room_window
               - <<: *cb_spacer_0px
           - type: horizontal-stack
@@ -1858,6 +1824,36 @@ views:
               - <<: *cb_spacer_square
               - <<: *cb_spacer_0px
                 
+      ####################
+      # GAME ROOM LIGHTS #
+      ####################
+       
+      - id: basement_card
+        type: vertical-stack
+        cards:
+          - type: markdown
+            content: "#### Game Room"
+            <<: *card_mod_transparent_title
+          - type: horizontal-stack
+            cards:
+              - <<: *cb_spacer_0px
+              - <<: *cb_button
+                name: Lights
+                entity: group.game_room_area
+              - <<: *cb_button
+                entity: switch.office_switch
+              - <<: *cb_button
+                entity: switch.office_outlet
+              - <<: *cb_spacer_0px
+          - type: horizontal-stack
+            cards:
+              - <<: *cb_spacer_0px
+              - <<: *cb_button
+                entity: switch.office_window
+              - <<: *cb_spacer_square
+              - <<: *cb_spacer_square
+              - <<: *cb_spacer_0px
+
       #################
       # OFFICE LIGHTS #
       #################
@@ -1873,27 +1869,11 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.office
-                icon: mdi:alpha-o-box
+                entity: group.office_area
               - <<: *cb_button
-                name: Light
-                entity: switch.office_switch
-              - <<: *cb_button
-                name: Desk
-                entity: switch.office_outlet
-              - <<: *cb_spacer_0px
-          - type: horizontal-stack
-            cards:
-              - <<: *cb_spacer_0px
-              - <<: *cb_button
-                name: Bulb 1
                 entity: light.inovelli_lzw42_multi_color_bulb_level
               - <<: *cb_button
-                name: Bulb 2
                 entity: light.inovelli_lzw42_multi_color_bulb_level_2
-              - <<: *cb_button
-                name: Outlet
-                entity: switch.office_window
               - <<: *cb_spacer_0px
                 
       ##################
@@ -1911,72 +1891,126 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.kitchen
-                icon: mdi:alpha-k-box
+                entity: group.kitchen_area
               - <<: *cb_button
-                name: Island
                 entity: light.kitchen_island
               - <<: *cb_button
-                name: Light
                 entity: light.kitchen_cans
               - <<: *cb_spacer_0px
           - type: horizontal-stack
             cards:
               - <<: *cb_spacer_0px
               - <<: *cb_button
-                name: Pantry
                 entity: switch.kitchen_pantry
               - <<: *cb_button
-                name: Stove
                 entity: switch.kitchen_cabinet
               - <<: *cb_button
-                name: Fridge Outlet
                 entity: switch.kitchen_outlet_above_fridge
               - <<: *cb_spacer_0px
           - type: horizontal-stack
             cards:
               - <<: *cb_spacer_0px
               - <<: *cb_button
-                name: Microwave Outlet
                 entity: switch.kitchen_outlet_above_microwave
               - <<: *cb_spacer_square
               - <<: *cb_spacer_square
               - <<: *cb_spacer_0px
                 
-      ########################
-      # MISCELLANEOUS LIGHTS #
-      ########################
+      #########
+      # FOYER #
+      #########
                 
-      - id: miscellaneous_card
+      - id: foyer_card
         type: vertical-stack
         cards:
           - type: markdown
-            content: "#### Miscellaneous"
+            content: "#### Foyer"
             <<: *card_mod_transparent_title
           - type: horizontal-stack
             cards:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.miscellaneous
-                icon: mdi:alpha-m-box
+                entity: group.foyer_area
               - <<: *cb_button
-                name: Foyer
                 entity: switch.foyer
-              - <<: *cb_button
-                name: Laundry
-                entity: switch.laundry
+              - <<: *cb_spacer_square
               - <<: *cb_spacer_0px
+
+      ###################
+      # GARAGE ENTRANCE #
+      ###################
+                
+      - id: garage_entrance_card
+        type: vertical-stack
+        cards:
+          - type: markdown
+            content: "#### Garage Entrance"
+            <<: *card_mod_transparent_title
           - type: horizontal-stack
             cards:
               - <<: *cb_spacer_0px
               - <<: *cb_button
-                name: Hallway
-                entity: light.hallway
-              - <<: *cb_spacer_square
+                name: Lights
+                entity: group.garage_entrance_area
+              - <<: *cb_button
+                entity: switch.garage_entry
               - <<: *cb_spacer_square
               - <<: *cb_spacer_0px
+
+      ###########
+      # LAUNDRY #
+      ###########
+
+      - id: laundry_card
+        type: vertical-stack
+        cards:
+          - type: markdown
+            content: "#### Laundry"
+            <<: *card_mod_transparent_title
+          - type: horizontal-stack
+            cards:
+              - <<: *cb_spacer_0px
+              - <<: *cb_button
+                name: Lights
+                entity: group.laundry_area
+              - <<: *cb_button
+                entity: switch.laundry
+              - <<: *cb_spacer_square
+              - <<: *cb_spacer_0px
+
+      ###########
+      # HALLWAY #
+      ###########
                 
+      - id: hallway_card
+        type: vertical-stack
+        cards:
+          - type: markdown
+            content: "#### Hallway"
+            <<: *card_mod_transparent_title
+          - type: horizontal-stack
+            cards:
+              - <<: *cb_spacer_0px
+              - <<: *cb_button
+                name: Lights
+                entity: group.hall_area
+              - <<: *cb_button
+                entity: light.hallway
+              - <<: *cb_spacer_square
+              - <<: *cb_spacer_0px
+
+      #####################
+      # BONUS ROOM LIGHTS #
+      #####################
+       
+      - id: basement_card
+        type: vertical-stack
+        cards:
+          - type: markdown
+            content: "#### Bonus Room"
+            <<: *card_mod_transparent_title
+
       #########################
       # MASTER BEDROOM LIGHTS #
       #########################
@@ -1992,8 +2026,7 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.master
-                icon: mdi:alpha-m-box
+                entity: group.master_bedroom_area
               - <<: *cb_button
                 name: Light
                 entity: light.master_fixture
@@ -2030,8 +2063,7 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.master_bath
-                icon: mdi:alpha-m-box
+                entity: group.master_bathroom_area
               - <<: *cb_button
                 name: Light
                 entity: light.master_bathroom_sink
@@ -2064,8 +2096,7 @@ views:
               - <<: *cb_spacer_0px
               - <<: *cb_button
                 name: Lights
-                entity: group.outdoor_lights
-                icon: mdi:alpha-o-box
+                entity: group.outside_area
                 <<: *cb_lock
               - <<: *cb_button
                 name: Garage

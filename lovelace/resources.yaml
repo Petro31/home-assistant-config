@@ -1,0 +1,90 @@
+
+# Button Card (Most of the interface)
+
+- url: /community_plugin/button-card/button-card.js?
+  type: module
+
+# Weather Card
+
+- url: /community_plugin/weather-card/weather-card.js?
+  type: js
+
+# Card Tools
+
+- url: /community_plugin/lovelace-card-tools/card-tools.js?
+  type: js
+
+# Config Template Card
+
+- url: /community_plugin/config-template-card/config-template-card.js?
+  type: module
+
+# Text Input Row
+
+- url: /community_plugin/lovelace-text-input-row/text-input-row.js?
+  type: js
+
+# Mini Graph Card
+
+- url: /community_plugin/mini-graph-card/mini-graph-card.js?
+  type: module
+
+# Bar Card
+
+- url: /community_plugin/bar-card/bar-card.js?
+  type: js
+
+# Card Mod
+
+- url: /community_plugin/lovelace-card-mod/card-mod.js?
+  type: module
+
+# Secondary Info Row
+
+- url: /community_plugin/secondaryinfo-entity-row/secondaryinfo-entity-row.js?
+  type: js
+
+# Mini Media Player 
+
+- url: /community_plugin/mini-media-player/mini-media-player-bundle.js?
+  type: module
+
+# Air Visual Card
+
+- url: /community_plugin/air-visual-card/air-visual-card.js?
+  type: js
+
+# Custom Header
+
+- url: /community_plugin/custom-header/custom-header.js?
+  type: module
+
+# RGB Light Card
+
+- url: /community_plugin/rgb-light-card/card.js?
+  type: js
+
+# Simple Weather Card
+
+- url: /community_plugin/simple-weather-card/simple-weather-card-bundle.js?
+  type: module
+
+# Swipe Card
+
+- url: /community_plugin/swipe-card/swipe-card.js?
+  type: module
+
+# Auto Entities Card
+
+- url: /community_plugin/lovelace-auto-entities/auto-entities.js?
+  type: module
+
+# More Info Card
+
+- url: /community_plugin/lovelace-more-info-card/more-info-card.js?
+  type: module
+
+# State Switch Card
+
+- url: /community_plugin/lovelace-state-switch/state-switch.js?
+  type: module

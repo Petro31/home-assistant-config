@@ -2,8 +2,6 @@
     filter:
       include_entities:
         - fan.master_fixture
-        - switch.audio_1
-        - switch.audio_2
         - switch.roku
         - switch.ps4
         - switch.switch

@@ -1,448 +1,203 @@
-  ###########
-  # SENSORS #
-  ###########
-  
-  doors:
-    name: Doors
-    entities:
-      - sensor.main_door_hindge
-      - sensor.entry_door_hindge
-      - sensor.sliding_door
-      
-  batteries:
-    name: Batteries
-    entities:
-      - sensor.petros_phone_battery
-      - sensor.lambos_phone_battery
-      - sensor.main_door_battery
-      - sensor.entry_door_battery
-      - sensor.hallway_motion_battery
-      - sensor.door_bell_battery
-      - sensor.sliding_door_battery
-      
-  house_temperatures:
-    name: House Temperatures
-    entities:
-      - sensor.dining_room_temperature
-      - sensor.ms_temperature
-      
-  hall_motion:
-    name: Hallway MultiSensor
-    entities:
-      - binary_sensor.ms_motion
-      - sensor.ms_burglar
-      - sensor.ms_luminance
-      - sensor.ms_humidity
-      - sensor.ms_temperature
-      - sensor.ms_ultraviolet
-      
-  home_assistant_status:
-    name: System Status
-    entities:
-      - sensor.processor_use
-      - sensor.memory_free
-      - sensor.last_boot
-      - sensor.disk_free_home
-      
-  speed_test:
-    name: Speed Test
-    entities:
-      - sensor.speedtest_download
-      - sensor.speedtest_ping
-      - sensor.speedtest_upload
-      
-  orion_status:
-    name: Orion Status
-    entities:
-      - sensor.used_space_volume_1
-      - sensor.total_size_volume_1
-      - sensor.volume_used_volume_1
-      - sensor.average_disk_temp_volume_1
-      - sensor.network_up
-      - sensor.network_down
-      - sensor.memory_usage_real
-      - sensor.cpu_load_total
-      
-  #########
-  # AREAS #
-  #########
-  
-  rooms:
-    name: Areas
-    entities:
-      - switch.inside
-      - switch.outside
-      - switch.upstairs
-      - switch.downstairs
-      
-  #################
-  # HIDDEN AREAS #
-  #################
-      
-  inside:
-    name: Inside (Hidden)
-    entities:
-      - light.living_room
-      - light.kitchen_cans
-      - light.dining_room_chandelier
-      - light.kitchen_island
-      - light.hallway
-      - light.master_fixture
-      - light.master_closet
-      - light.master_bathroom_sink
-      - light.master_bathroom_cans
-      - switch.office_outlet
-      - switch.office_switch
-      - switch.garage_entry
-      - switch.foyer
-      - switch.garage_cans
-      - switch.dining_room_hutch
-      - switch.kitchen_cabinet
-      - switch.kitchen_pantry
-      - switch.master_nightstand_left
-      - switch.master_nightstand_right
-      - switch.basement_stairs
-      - switch.basement_cans
-      - switch.laundry
-      - switch.living_room_window
-      - switch.office_window
-      
-  outside:
-    name: Outside (Hidden)
-    entities:
-      - switch.sconces_garage
-      - switch.sconces_main_entrance
-      - switch.passenger_sconce
-      - switch.outside_porch
-      
-  upstairs:
-    name: Upstairs (Hidden)
-    entities:
-      - light.hallway
-      - light.master_fixture
-      - switch.master_nightstand_left
-      - switch.master_nightstand_right
-      - light.master_closet
-      - light.master_bathroom_sink
-      - light.master_bathroom_cans
+#########
+# AREAS #
+#########
+    
+inside_area:
+  entities:
+    - light.dining_room_chandelier
+    - light.hallway
+    - light.inovelli_lzw42_multi_color_bulb_level
+    - light.inovelli_lzw42_multi_color_bulb_level_2
+    - light.kitchen_cans
+    - light.kitchen_island
+    - light.living_room
+    - light.master_bathroom_cans
+    - light.master_bathroom_sink
+    - light.master_closet
+    - light.master_fixture
+    - switch.basement_cans
+    - switch.basement_stairs
+    - switch.dining_room_hutch
+    - switch.foyer
+    - switch.garage_cans
+    - switch.garage_entry
+    - switch.kitchen_cabinet
+    - switch.kitchen_pantry
+    - switch.laundry
+    - switch.living_room_window
+    - switch.master_nightstand_left
+    - switch.master_nightstand_right
+    - switch.office_outlet
+    - switch.office_switch
+    - switch.office_window
+    
+outside_area:
+  entities:
+    - switch.outside_porch
+    - switch.passenger_sconce
+    - switch.sconces_garage
+    - switch.sconces_main_entrance
+    
+upstairs_area:
+  entities:
+    - light.hallway
+    - light.master_bathroom_cans
+    - light.master_bathroom_sink
+    - light.master_closet
+    - light.master_fixture
+    - switch.master_nightstand_left
+    - switch.master_nightstand_right
 
-  downstairs:
-    name: Downstairs (Hidden)
-    entities:
-      - light.living_room
-      - light.kitchen_cans
-      - light.dining_room_chandelier
-      - light.kitchen_island
-      - switch.office_outlet
-      - switch.office_switch
-      - switch.garage_entry
-      - switch.foyer
-      - switch.garage_cans
-      - switch.dining_room_hutch
-      - switch.kitchen_cabinet
-      - switch.kitchen_pantry
-      - switch.laundry
-      - switch.living_room_window
-      - switch.office_window
-      
-  ###########
-  # SCONCES # 
-  ###########
-      
-  sconces:
-    name: Sconces
-    entities:
-      - switch.sconces_garage
-      - switch.sconces_main_entrance
-      - switch.passenger_sconce
-      
-  ###############
-  # LIVING ROOM #
-  ###############
-      
-  living_room:
-    name: Living Room Lights
-    entities:
-      - light.living_room
-      - switch.living_room_window
-      
-  ##########
-  # OFFICE #
-  ##########
-     
-  office:
-    name: Office Lights
-    entities:
-      - switch.office_switch
-      - switch.office_outlet
-      - switch.office_window
-     
-  ###############
-  # DINING ROOM #
-  ###############
-      
-  dining_room:
-    name: All Dining Room Lights
-    entities:
-      - light.dining_room_chandelier
-      - switch.dining_room_hutch
-      
-  ###########
-  # KITCHEN #
-  ###########
-  
-  kitchen:
-    name: All Kitchen Lights
-    entities:
-      - light.kitchen_island
-      - light.kitchen_cans
-      - switch.kitchen_cabinet
-      - switch.kitchen_pantry
-      
-  #############
-  # ENTRANCES #
-  #############
-      
-  entryway:
-    name: Entryway Lights
-    entities:
-      - switch.foyer
-      - switch.garage_entry
-      
-  ###########
-  # LAUNDRY #
-  ###########
-  
-  laundry:
-    name: Laundry Lights
-    entities:
-      - switch.laundry
-      
-  ############
-  # BASEMENT #
-  ############
+downstairs_area:
+  entities:
+    - light.dining_room_chandelier
+    - light.kitchen_cans
+    - light.kitchen_island
+    - light.living_room
+    - switch.dining_room_hutch
+    - switch.foyer
+    - switch.garage_cans
+    - switch.garage_entry
+    - switch.kitchen_cabinet
+    - switch.kitchen_pantry
+    - switch.laundry
+    - switch.living_room_window
+    - switch.office_outlet
+    - switch.office_switch
+    - switch.office_window
+    
+###############
+# LIVING ROOM #
+###############
+    
+living_room_area:
+  entities:
+    - light.living_room
+    - switch.living_room_window
+    
+#############
+# GAME ROOM #
+#############
+   
+game_room_area:
+  entities:
+    - switch.office_outlet
+    - switch.office_switch
+    - switch.office_window
 
-  basement:
-    name: Basement Lights
-    icon: mdi:numeric-0-box
-    entities:
-      - switch.basement_stairs
-      - switch.basement_cans
-      
-  ########
-  # HALL #
-  ########
-      
-  hall:
-    name: Hall Lights
-    entities:
-      - light.hallway
-     
-  ########
-  # MISC # 
-  ########
-  
-  miscellaneous:
-    name: Miscellaneous
-    entities:
-      - switch.foyer
-      - switch.laundry
-      - light.hallway
-     
-  ##########
-  # MASTER # 
-  ##########
-      
-  master:
-    name: Master Lights
-    entities:
-      - light.master_fixture
-      - fan.master_fixture
-      - switch.master_nightstand_left
-      - switch.master_nightstand_right
-      - light.master_closet
-      
-  master_bath:
-    name: Master Bath Lights
-    entities:
-      - light.master_bathroom_sink
-      - light.master_bathroom_cans
-      - switch.master_bathroom_fan
-      
-  ##################
-  # OUTDOOR LIGHTS # 
-  ##################
-      
-  outdoor_lights:
-    name: Outdoor Lights
-    entities:
-      - switch.sconces_garage
-      - switch.sconces_main_entrance
-      - switch.outside_porch
-      
-  #############
-  # CHRISTMAS # 
-  #############
-      
-  # christmas_lights:
-    # name: Christmas Lights
-    # entities:
-      # - switch.floating_outlet_switch
-      #- switch.outside_s_switch_8_0
-      
-  #############
-  # GARAGE    # 
-  #############
-      
-  garage:
-    name: Garage Lights
-    entities:
-      - switch.garage_cans
-      - switch.garage_entry
-      
-  ########
-  # MISC #
-  ########
-      
-  weather:
-    name: Weather
-    entities:
-      - sensor.yweather_condition
-      - sensor.yweather_current
-      - sensor.yweather_humidity
-      - sensor.yweather_pressure
-      - sensor.yweather_temperature
-      - sensor.yweather_temperature_max
-      - sensor.yweather_temperature_min
-      - sensor.yweather_visibility
-      - sensor.yweather_wind_speed
-      
-  network_1:
-    name: House Devices
-    entities:
-      - device_tracker.echo_living_room
-      - device_tracker.echo_master_bedroom
-      - device_tracker.harmonyhub
-      - device_tracker.hp6796cc
-      - device_tracker.98b6e923d8e0
-      - device_tracker.404e3620fc00
-      
-  network_2:
-    name: Mike's Devices
-    entities:
-      - device_tracker.mikeslaptop
-      - device_tracker.petrosipad
-      - device_tracker.mikes_iphone
-      - device_tracker.148f21f1e730
-      
-  network_3:
-    name: Lindsay's Devices
-    entities:
-      - device_tracker.lindsays_imac
-      - device_tracker.lindsays_work_pc
-      - device_tracker.lindsaysipad
-      - device_tracker.lindsaysiphone
-      
-  network_4:
-    name: Family & Friends
-    entities:
-      - device_tracker.owens_iphone
-      - device_tracker.jimpetrnoiphone
-      - device_tracker.jamesasipad
-      - device_tracker.andreapc
-      
-  ##########
-  # PEOPLE #
-  ##########
-  
-  petro:
-    name: Mike
-    entities:
-      - device_tracker.petro
-      - sensor.petro_battery_level
-      - sensor.petro_battery_state
-      - input_select.petro_status
-      - switch.petro_awake_sleep_automation
-      
-  lambo:
-    name: Lindsay
-    entities:
-      - device_tracker.lambo
-      - sensor.lindsays_iphone_battery_level
-      - sensor.lindsays_iphone_battery_state
-      - input_select.lambo_status
-      - switch.lambo_awake_sleep_automation
-      
-  ####################
-  # HOUSE ATTRIBUTES #
-  ####################
-      
-  house:
-    name: House
-    icon: mdi:home
-    entities:
-      - input_select.company
-      - input_select.house_sitting
-      - input_select.vacation
-      
-  harmony_hub:
-    name: Harmony Toggles
-    icon: mdi:remote
-    control: hidden
-    entities:
-      - switch.xbox_one
-      - switch.ps4
-      - switch.wii_u
-      - switch.pc
-      - switch.switch
-      - switch.tv
-      
-  harmony_hub_zone_1:
-    name: Yamaha Receiver
-    icon: mdi:speaker
-    control: hidden
-    entities:
-      - remote.harmony_hub
-      - sensor.harmony_activity
-      - switch.zone_1
-      - input_number.yamaha_receiver
-      - sensor.zone1_volume
-      - switch.audio_1
-      
-  harmony_hub_zone_2:
-    name: Yamaha Receiver Zone 2
-    icon: mdi:speaker
-    control: hidden
-    entities:
-      - switch.zone_2
-      - input_number.yamaha_receiver_zone_2
-      - sensor.zone2_volume
-      - switch.audio_2
+##########
+# OFFICE #
+##########
 
-  harmony_hub_3:
-    name: Harmony Activities
-    entities:
-      - switch.xbox_one
-      - switch.ps4
-      - switch.wii_u
-      - switch.pc
-      - switch.switch
-      - switch.tv
-      
-  xbox_live:
-    name: Xbox Activities
-    entities:
-      - sensor.pettr0
-      - sensor.xbox_current
-      
-  yamaha_sources:
-    name: Yamaha Sources
-    entities:
-      - switch.xbox_source
-      - switch.playstation_source
-      - switch.nintendo_switch_source
-      
-  # ground_floor:
-    # name: Ground Floor
-    # entities:
-      # - input_text.groundfloor
+office_area:
+  entities:
+    - light.inovelli_lzw42_multi_color_bulb_level
+    - light.inovelli_lzw42_multi_color_bulb_level_2
+
+###############
+# DINING ROOM #
+###############
+
+dining_room_area:
+  entities:
+    - light.dining_room_chandelier
+    - switch.dining_room_hutch
+
+###########
+# KITCHEN #
+###########
+
+kitchen_area:
+  entities:
+    - light.kitchen_island
+    - light.kitchen_cans
+    - switch.kitchen_cabinet
+    - switch.kitchen_pantry
+    - switch.kitchen_outlet_above_fridge
+    - switch.kitchen_outlet_above_microwave
+    
+#########
+# Foyer #
+#########
+    
+foyer_area:
+  entities:
+    - switch.foyer
+    
+###########
+# LAUNDRY #
+###########
+
+laundry_area:
+  entities:
+    - switch.laundry
+
+###################
+# GARAGE ENTRANCE #
+###################
+
+garage_entrance_area:
+  entities:
+    - switch.garage_entry
+
+############
+# BASEMENT #
+############
+basement_area:
+  entities:
+    - switch.basement_stairs
+    - switch.basement_cans
+    
+########
+# HALL #
+########
+    
+hall_area:
+  entities:
+    - light.hallway
+   
+##########
+# MASTER # 
+##########
+    
+master_bedroom_area:
+  entities:
+    - fan.master_fixture
+    - light.master_closet
+    - light.master_fixture
+    - switch.master_nightstand_left
+    - switch.master_nightstand_right
+    
+master_bathroom_area:
+  entities:
+    - light.master_bathroom_sink
+    - light.master_bathroom_cans
+    - switch.master_bathroom_fan
+
+#############
+# GARAGE    # 
+#############
+    
+garage_area:
+  entities:
+    - switch.garage_cans
+    
+##########
+# PEOPLE #
+##########
+
+petro_network:
+  name: Mike
+  entities:
+    - device_tracker.garmin_forerunner_935
+    - device_tracker.mike_s_computer
+    - device_tracker.mike_s_ipad
+    - device_tracker.petros_iphone
+    
+lambo_network:
+  name: Lindsay
+  entities:
+    - device_tracker.lindsay_s_imac
+    - device_tracker.lindsay_s_ipad
+    - device_tracker.lindsay_s_iphone
+    - device_tracker.lindsay_s_work_computer

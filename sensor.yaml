@@ -88,26 +88,6 @@
           {% else %}
             PowerOff
           {% endif %}
-          
-      zone1_volume:
-        value_template: >
-          {% if is_state('media_player.yamaha_receiver', 'on')  %}
-            {% set n = states.media_player.yamaha_receiver.attributes.volume_level | float %}
-            {{ '%.1f'%( (-1.0+n)*100.0 | round(1) ) }}
-          {% else %}
-            -80.0
-          {% endif %}
-        unit_of_measurement: "DB"
-
-      zone2_volume:
-        value_template: >
-          {% if is_state('media_player.yamaha_receiver_zone_2', 'on')  %}
-            {% set n = states.media_player.yamaha_receiver_zone_2.attributes.volume_level | float %}
-            {{ '%.1f'%( (-1.0+n)*100.0 | round(1) ) }}
-          {% else %}
-            -80.0
-          {% endif %}
-        unit_of_measurement: "DB"
         
       nuc_uptime:
         entity_id:
