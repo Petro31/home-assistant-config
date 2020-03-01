@@ -1,7 +1,11 @@
-#########
-# AREAS #
-#########
+####################
+# DEPRECATED AREAS # 
+####################
     
+# Removing to reduce configuration changes when a new item is added.
+# Goal is to just add a new 'light/device' to an area and the interface
+#  will handle the rest.
+
 inside_area:
   entities:
     - light.dining_room_chandelier
@@ -66,18 +70,75 @@ downstairs_area:
     - switch.office_switch
     - switch.office_window
     
-###############
-# LIVING ROOM #
-###############
+#########
+# AREAS #
+#########
+
+all_areas:
+  entities:
+  - group.basement_area
+  - group.bonus_room_area
+  - group.dining_room_area
+  - group.foyer_area
+  - group.game_room_area
+  - group.garage_area
+  - group.garage_entrance_area
+  - group.hall_area
+  - group.kitchen_area
+  - group.laundry_area
+  - group.living_room_area
+  - group.master_bathroom_area
+  - group.master_bedroom_area
+  - group.office_area
+  - group.outside_area
+
+inside_areas:
+  entities:
+  - group.basement_area
+  - group.bonus_room_area
+  - group.dining_room_area
+  - group.foyer_area
+  - group.game_room_area
+  - group.garage_entrance_area
+  - group.hall_area
+  - group.kitchen_area
+  - group.laundry_area
+  - group.living_room_area
+  - group.master_bathroom_area
+  - group.master_bedroom_area
+  - group.office_area
+
+outside_areas:
+  entities:
+  - group.garage_area
+  - group.outside_area
+
+upstairs_areas:
+  entities:
+  - group.bonus_room_area
+  - group.hall_area
+  - group.master_bathroom_area
+  - group.master_bedroom_area
+  - group.office_area
+
+downstairs_areas:
+  entities:
+  - group.dining_room_area
+  - group.foyer_area
+  - group.game_room_area
+  - group.garage_entrance_area
+  - group.kitchen_area
+  - group.laundry_area
+  - group.living_room_area
+
+#########
+# ROOMS #
+#########
     
 living_room_area:
   entities:
     - light.living_room
     - switch.living_room_window
-    
-#############
-# GAME ROOM #
-#############
    
 game_room_area:
   entities:
@@ -85,27 +146,15 @@ game_room_area:
     - switch.office_switch
     - switch.office_window
 
-##########
-# OFFICE #
-##########
-
 office_area:
   entities:
     - light.inovelli_lzw42_multi_color_bulb_level
     - light.inovelli_lzw42_multi_color_bulb_level_2
 
-###############
-# DINING ROOM #
-###############
-
 dining_room_area:
   entities:
     - light.dining_room_chandelier
     - switch.dining_room_hutch
-
-###########
-# KITCHEN #
-###########
 
 kitchen_area:
   entities:
@@ -116,49 +165,26 @@ kitchen_area:
     - switch.kitchen_outlet_above_fridge
     - switch.kitchen_outlet_above_microwave
     
-#########
-# Foyer #
-#########
-    
 foyer_area:
   entities:
     - switch.foyer
-    
-###########
-# LAUNDRY #
-###########
 
 laundry_area:
   entities:
     - switch.laundry
 
-###################
-# GARAGE ENTRANCE #
-###################
-
 garage_entrance_area:
   entities:
     - switch.garage_entry
 
-############
-# BASEMENT #
-############
 basement_area:
   entities:
     - switch.basement_stairs
     - switch.basement_cans
     
-########
-# HALL #
-########
-    
 hall_area:
   entities:
     - light.hallway
-   
-##########
-# MASTER # 
-##########
     
 master_bedroom_area:
   entities:
@@ -173,31 +199,140 @@ master_bathroom_area:
     - light.master_bathroom_sink
     - light.master_bathroom_cans
     - switch.master_bathroom_fan
-
-#############
-# GARAGE    # 
-#############
     
 garage_area:
   entities:
     - switch.garage_cans
     
-##########
-# PEOPLE #
-##########
+bonus_room_area:
+  entities:
+    - light.bonus_room_entrance
+    - light.bonus_room_office_fixture
+    - fan.bonus_room_office
+    - light.bonus_room_office_recessed
+    - light.bonus_room_bedroom_fixture
+    - fan.bonus_room_bedroom
+    - light.bonus_room_bedroom_recessed
+
+###########
+# NETWORK #
+###########
+
+all_networks:
+  entities:
+    - group.network_network
+    - group.petro_network
+    - group.lambo_network
+    - group.camera_network
+    - group.devices_network
+    - group.family_network
 
 petro_network:
-  name: Mike
   entities:
     - device_tracker.garmin_forerunner_935
     - device_tracker.mike_s_computer
     - device_tracker.mike_s_ipad
     - device_tracker.petros_iphone
+    - device_tracker.virtual_box_development
     
 lambo_network:
-  name: Lindsay
   entities:
     - device_tracker.lindsay_s_imac
     - device_tracker.lindsay_s_ipad
     - device_tracker.lindsay_s_iphone
     - device_tracker.lindsay_s_work_computer
+
+camera_network:
+  entities:
+    - device_tracker.backyard_camera
+    - device_tracker.driveway_camera
+    - device_tracker.floating_camera
+    - device_tracker.foyer_camera
+    - device_tracker.garage_camera
+    - device_tracker.kitchen_camera
+
+network_network:
+  entities:
+    - device_tracker.bonus_room_16_port_poe_switch
+    - device_tracker.garage_ac_lite
+    - device_tracker.hall_closet_ac_lite
+    - device_tracker.server_room_16_port_poe_switch
+    - device_tracker.server_room_ac_lite
+    - device_tracker.server_room_gateway_pro
+    - device_tracker.unifi_cloudkey
+
+devices_network:
+  entities:
+    - device_tracker.doorbell_sensor
+    - device_tracker.echo_living_room
+    - device_tracker.echo_master_bedroom
+    - device_tracker.harmony_hub
+    - device_tracker.hp6796cc
+    - device_tracker.intel_nuc
+    - device_tracker.living_room_roku
+    - device_tracker.nintendo_wii_u
+    - device_tracker.synology_ds216j
+    - device_tracker.xbox_one
+    - device_tracker.yamaha_rx_v677
+
+family_network:
+  entities:
+    - device_tracker.james_air
+    - device_tracker.james_iphone_10
+    - device_tracker.james_ipad
+    - device_tracker.owens_iphone
+    - device_tracker.andreas_pc
+    - device_tracker.hannas_iphone
+    - device_tracker.katies_iphone
+    - device_tracker.alexs_nintendo_switch
+    - device_tracker.alexs_phone
+
+#########
+# DOORS #
+#########
+
+doors:
+  entities:
+    - sensor.sliding_door
+    - binary_sensor.garage_door_tilt
+    - sensor.entry_door_hindge
+    - sensor.main_door_hindge
+
+#######################
+# ENTERTAINMENT ZONES #
+#######################
+
+receivers:
+  entities:
+    - media_player.yamaha_receiver
+    - media_player.yamaha_receiver_zone_2
+
+###########
+# CAMERAS #
+###########
+
+cameras:
+  entities:
+    - camera.backyard
+    - camera.driveway
+    - camera.floating
+    - camera.foyer
+    - camera.garage
+    - camera.kitchen
+
+post_processing:
+  entities:
+    - camera.backyard_post_process
+    - camera.driveway_post_process
+    - camera.floating_post_process
+    - camera.foyer_post_process
+    - camera.garage_post_process
+    - camera.kitchen_post_process
+
+camera_network_switches:
+  entities:
+    - switch.backyard_camera
+    - switch.driveway_camera
+    - switch.foyer_camera
+    - switch.garage_camera
+    - switch.kitchen_camera

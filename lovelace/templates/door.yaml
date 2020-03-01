@@ -1,0 +1,181 @@
+# lovelace_gen
+
+    # const element = document.createElement('hui-timestamp-display');
+    # element.ts = states[].state;
+    # element.hass = hass;
+    # element.format = "relative";
+    # console.log(element);
+    # console.log(html`${element}`);
+
+    #     var element = document.createElement('hui-timestamp-display');
+    # element.ts = date;
+    # element.hass = hass;
+    # element.format = "relative";
+
+    # element.render();
+
+    # console.log(element);
+
+    # console.log(tdelta);
+    # return `<hui-timestamp-display
+    #     hass=${hass}
+    #     ts=${date}
+    #     format="relative";>
+    #   </hui-timestamp-display>`;
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+
+type: custom:button-card
+show_state: false
+show_label: true
+label: |
+  [[[
+    var empty = '&nbsp;'
+    var last_opened = "{{ last_opened }}";
+    var ts_entity = states[last_opened];
+    if (ts_entity === undefined)
+      return empty;
+
+    if (ts_entity.attributes.who !== undefined)
+      return ts_entity.attributes.who;
+    return empty;
+  ]]]
+aspect_ratio: 5/1
+entity: {{ entity }}
+icon: |
+  [[[
+    var door_type = "{{ type }}";
+    var open;
+    var closed;
+    if (door_type === 'door'){
+      open = 'mdi:door-open';
+      closed = 'mdi:door-closed';
+    }
+    else if (door_type == 'garage'){
+      open = 'mdi:garage-open-variant';
+      closed = 'mdi:garage-variant';
+    }
+    else{
+      open = 'mdi:power-on'
+      closed = 'mdi:power-off'
+    }
+    if (entity === undefined)
+      return 'mdi:alert-circle';
+    
+    var on = ['on','open'];
+    if (on.includes(entity.state))
+      return open;
+    return closed;
+  ]]]
+name: {{ name }}
+color: auto
+size: 100%
+custom_fields:
+  last_opened: |
+    [[[
+      var last_opened = "{{ last_opened }}";
+      var ts_entity = states[last_opened];
+      if (ts_entity === undefined)
+        return 'Invalid Entity';
+  
+      let now = new Date();
+      let date = new Date(ts_entity.state);
+  
+      var tdelta = Math.floor((now - date)/1000);
+  
+      function plural(descriptor, divisor){
+        var ret = Math.floor(tdelta/divisor);
+        return (ret == 1) ? `${ret} ${descriptor} ago` : `${ret} ${descriptor}s ago`;
+      }
+  
+      function getEntityIcon(text, icon){
+        return `<ha-icon
+          icon="${icon}"
+          style="size: 10%; color: var(--button-card-light-color);">
+          </ha-icon><span> ${text}</span>`
+        }
+  
+      var tstring;
+      if (tdelta < 60)
+        tstring = plural('second', 1);
+      else if (tdelta < 60 * 60)
+        tstring = plural('minute', 60);
+      else if (tdelta < 60 * 60 * 24)
+        tstring = plural('hour', 60 * 60);
+      else
+        tstring = plural('day', 60 * 60 * 24);
+      return getEntityIcon(tstring, 'mdi:door-open');
+    ]]]
+styles:
+  card:
+  - border-radius: 15px
+  grid:
+  - grid-template-areas: '"i n s" "i l s"'
+  - grid-template-columns: 3fr 8fr 6fr
+  - grid-template-rows: 1fr 1fr
+  name:
+  - justify-self: start
+  - align-self: end
+  - padding-left: 10px
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 16px
+  label:
+  - align-self: start
+  - padding-left: 10px
+  - font-size: 12px
+  - justify-self: start
+  custom_fields:
+    last_opened:
+    - position: absolute
+    - top: 50%
+    - right: 5%
+    - transform: translateY(-50%)
+    - font-size: 13px
+    - justify-self: start
+    - text-align: start
+state:
+- value: |
+    [[[ 
+      if (entity === undefined)
+        return 'on';
+      var [domain, object_id] = entity.entity_id.split('.');
+      if (domain === 'sensor')
+        return 'open'
+      return 'on'
+    ]]]
+  styles:
+    icon:
+      - color: {{ color }}
+    name:
+      - color: white
+- value: |
+    [[[ 
+      if (entity === undefined)
+        return 'off';
+      var [domain, object_id] = entity.entity_id.split('.');
+      if (domain === 'sensor')
+        return 'closed'
+      return 'off'
+    ]]]
+  styles:
+    icon:
+      - color: var(--paper-item-icon-color)
+    name:
+      - color: var(--primary-text-color)
+- value: "unavailable"
+  styles:
+    card:
+      - opacity: 0.2
+    icon:
+      - color: hsl(0, 100%, 50%)
+    name:
+      - color: hsl(0, 100%, 50%)
+{% if cover is defined %}
+tap_action:
+  action: call-service
+  service: cover.toggle
+  service_data:
+    entity_id: {{ cover }}
+  haptic: light
+{% endif %}

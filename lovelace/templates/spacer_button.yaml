@@ -1,0 +1,5 @@
+# lovelace_gen
+
+type: custom:button-card
+color_type: blank-card
+aspect_ratio: {{ aspect_ratio|default('1/1') }}

@@ -1,0 +1,15 @@
+# lovelace_gen
+
+icon: mdi:test-tube
+path: testing
+title: Testing
+cards:
+- type: entities
+  state_color: true
+  entities: 
+    - media_player.living_room_dot
+    - switch.test_1
+    - switch.test_2
+    - light.test
+    - light.test_1
+    - light.test_2

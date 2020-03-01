@@ -1,0 +1,35 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+
+type: custom:button-card
+aspect_ratio: 1/1
+show_state: false
+show_name: false
+show_label: false
+show_icon: true
+icon: {{ icon }}
+entity: {{ entity }}
+tap_action:
+  action: toggle
+  haptic: light
+styles:
+  card:
+  - border-radius: 18%
+  - --ha-card-background: var(--primary-background-color)
+  - opacity: {{ opacity|default(1.0) }}
+  entity_picture:
+    - height: 100%
+    - width: 100%
+state:
+- value: 'on'
+  styles:
+    card:
+      - opacity: 1.0
+      - box-shadow: 0px 0px 10px 3px {{ color }}
+    icon:
+      - color: {{ color }}
+- value: 'off'
+  styles:
+    card:
+      - opacity: 0.5

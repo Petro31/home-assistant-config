@@ -1,0 +1,18 @@
+# Useable template for the active media player sensor from appdaemon.
+|
+  [[[
+    if (entity === undefined)
+      return 'mdi:eye';
+
+    var state = entity.state.split(" ").slice(-1)[0];
+    if (state === undefined)
+      return 'mdi:eye';
+    
+    var zone = parseInt(state);
+    if (isNaN(zone))
+      return 'mdi:alpha-a-box';
+    else if (zone >= 0 && zone <= 9)
+      return `mdi:numeric-${zone}-box`;
+    else
+      return 'numeric-9-plus-box'
+  ]]]

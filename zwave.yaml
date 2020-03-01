@@ -1,7 +1,7 @@
   usb_path: /dev/ttyACM0
   config_path: /config/ozwave/config
   device_config:
-    light.master_closet:
+    light.bonus_room_office_recessed:
       refresh_value: true
       delay: 3
       
@@ -33,7 +33,7 @@
       refresh_value: true
       delay: 3
       
-    light.master_fixture:
+    light.bonus_room_bedroom_recessed:
       refresh_value: true
       delay: 3
       

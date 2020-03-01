@@ -1,0 +1,135 @@
+# lovelace_gen
+
+
+
+type: custom:button-card
+color: var(--paper-item-icon-color)
+aspect_ratio: {{ aspect_ratio|default("4/3") }}
+show_name: true
+show_label: true
+layout: icon_label
+size: 75%
+entity: {{ entity }}
+name: {{ name }}
+icon: {{ icon }}
+label: |
+    [[[
+      var empty = '&nbsp;'
+      if (!entity)
+        return empty;
+
+      function trimList(instring){
+        let ret = [];
+        if (instring.includes(",")){
+          var items = instring.split(',');
+          var i;
+          for (i = 0; i < items.length; i++)
+            ret.push(items[i].trim())
+        }
+        else
+          ret.push(instring.trim())
+        return ret;
+      }
+
+      function getEntityIcon(count, icon, color){
+        if (count > 0) {
+          return `<ha-icon
+            icon="${icon}"
+            style="width: 40%; height: 40%; color: ${color};">
+            </ha-icon><span> ${count}</span>`
+        }
+        return empty;
+      }
+
+      function expand(entities, accepted, rejected, state, domains){
+        var i;
+        for (i = 0; i < entities.length; i++){
+          var [domain, object_id] = entities[i].split('.');
+          var state_obj = states[entities[i]];
+          if (state_obj === undefined)
+            rejected.push(entities[i]);
+          else if (domain === 'group')
+            expand(state_obj.attributes.entity_id, accepted, rejected, state, domains)
+          else if (domains.includes(domain) && state.includes(state_obj.state))
+            if (!accepted.includes(entities[i]))
+              accepted.push(entities[i])
+          else
+            if (!rejected.includes(entities[i]))
+              rejected.push(entities[i])
+        }
+      }
+
+      var dflt_state = ['on'];
+      var dflt_domains = ['light', 'switch'];
+      var dflt_icon = 'mdi:lightbulb-on';
+      var dflt_color = 'var(--paper-item-icon-active-color)';
+
+      var find = []
+
+      {% macro doit(junk) %}
+      {%- set x = junk %}
+      {% for i in range(x|length) %}
+      {{ 'find[%i] = {'%i }}
+      {%- for k, v in x[i].items() %}
+      {{ '  %s: "%s",'%(k,v) }}
+      {%- endfor %}
+      {{ '}' }}
+      {% endfor %}
+      {% endmacro %}
+
+      {{ doit(find|default([])) }}
+
+      var [domain, object_id] = entity.entity_id.split('.');
+      let ret = [];
+      if (domain === 'group'){
+        var i;
+        for (i = 0; i < find.length; i++){
+          let found = [];
+          let filtered = [];
+          var state = (find[i].hasOwnProperty('state')) ? trimList(find[i].state) : dflt_state;
+          var domains = (find[i].hasOwnProperty('domains')) ? trimList(find[i].domains) : dflt_domains;
+          var icon = (find[i].hasOwnProperty('icon')) ? find[i].icon : dflt_icon;
+          var color = (find[i].hasOwnProperty('color')) ? find[i].color : dflt_color;
+          expand(entity.attributes.entity_id, found, filtered, state, domains);
+          var add = getEntityIcon(found.length, icon, color);
+          if (add !== empty)
+            ret.push(add);
+        }
+        return ret.join("<br>");
+      }
+      return empty;
+    ]]]
+tap_action:
+  action: navigate
+  navigation_path: {{ path|default("/lovelace/home") }}
+  haptic: light
+styles:
+  card:
+  - border-radius: 12px
+  - --ha-card-background: var(--primary-background-color)
+  state:
+  - font-size: 11px
+  - font-family: Helvetica
+  - padding-left: 10px
+  - justify-self: start
+  - text-transform: capitalize
+  - font-weight: bold
+  grid:
+  - grid-template-rows: 1fr 0.5fr auto
+  - grid-template-columns: 1fr 1fr
+  img_cell:
+  - align-self: start
+  - text-align: start
+  name:
+  - justify-self: start
+  - padding-left: 10px
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 13px
+  lock:
+  - align-items: flex-end
+  label:
+  - font-size: 13px
+  - justify-self: start
+  - padding-left: 25%
+  - text-align: start

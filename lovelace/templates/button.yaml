@@ -1,0 +1,168 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+
+type: custom:button-card
+aspect_ratio: 1/1
+entity: {{ entity }}
+size: 80%
+name: |
+  [[[
+    var empty = '&nbsp;'
+    var name = "{{ name }}"
+    if (entity === undefined)
+      return empty;
+    
+    if (!name)
+      name = entity.attributes.friendly_name;
+
+    if (name === undefined)
+      return empty;
+
+    function greaterThanLength(strings, item, length){
+      var test = [...strings];
+      test.push(item);
+      return (test.join(' ').length > length);
+    }
+
+    var max_length = 15;
+    if (name.length > max_length){
+      var reta = [];
+      var retb = [];
+      var items = name.split(' ');
+      var i;
+      for (i = 0; i < name.length; i++){
+        if (greaterThanLength(reta, items[i], max_length))
+          retb.push(items[i]);
+        else
+          reta.push(items[i]);
+      }
+      return reta.join(' ') + '<br>' + retb.join(' ');
+    }
+    return name;
+  ]]]
+show_state: true
+show_name: true
+show_label: true
+label: |
+    [[[
+      var empty = '&nbsp;'
+      if (entity === undefined)
+        return empty;
+      
+      function getEntityIcon(icon, text, color){
+        return `<ha-icon
+          icon="${icon}"
+          style="height: 25%; width: 25%; color: ${color};">
+          </ha-icon><span> ${text}</span>`;
+        }
+
+      function capitalizeFirstLetter(string) {
+          return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+        }
+
+      var [domain, object_id] = entity.entity_id.split('.');
+
+      var text;
+      var icon;
+      var color = '{{ color }}'
+      if (domain === 'light' && entity.state == 'on'){
+        var bri = Math.round(entity.attributes.brightness / 2.55);
+        text = bri ? bri + '%' : empty;
+        icon = 'mdi:lightbulb-on';
+      }
+      if (domain === 'fan' && entity.state == 'on'){
+        var speed = entity.attributes.speed;
+        text = speed === 'off' ? empty : capitalizeFirstLetter(speed);
+        icon = 'mdi:speedometer';
+      }
+      if (icon !== undefined && text !== undefined)
+        return getEntityIcon(icon, text, color);
+      return empty;
+    ]]]
+styles:
+  icon:
+  - padding-left: 10px
+  grid:
+  - grid-template-areas: '"i l" "n n" "s s"'
+  - grid-template-rows: 1fr 1fr 1fr
+  - grid-template-columns: 1fr 2fr
+  card:
+    - border-radius: 15px
+  name:
+  - justify-self: start
+  - align-self: end
+  - padding-left: 10px
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  state:
+  - justify-self: start
+  - align-self: end
+  - padding-left: 10px
+  - padding-bottom: 10px
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  label:
+  - justify-self: end
+  - text-align: end
+  - padding-right: 10px
+  - font-size: 10px
+state:
+- value: 'on'
+  styles:
+    card:
+    - opacity: 1.0
+    icon:
+    - color: |
+        [[[
+          var [domain, object_id] = entity.entity_id.split('.');
+          if (domain === "light")
+            return 'var(--button-card-light-color)';
+          return '{{ color }}';
+        ]]]
+    name:
+      - color: white
+    state:
+      - color: gray
+    lock:
+      - color: white 
+    label:
+      - color: gray
+- value: 'off'
+  styles:
+    card:
+    - opacity: 0.5
+    icon:
+    - color: var(--paper-item-icon-color)
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: var(--primary-text-color)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)
+- value: "unavailable"
+  styles:
+    card:
+    - opacity: 0.2
+    icon:
+    - color: var(--paper-item-icon-color)')
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: hsl(0, 100%, 50%)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)
+tap_action:
+  action: toggle
+  haptic: light
+hold_action:
+  action: more-info
+  haptic: heavy

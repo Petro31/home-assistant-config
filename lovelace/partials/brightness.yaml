@@ -1,0 +1,12 @@
+# Template for Brightness; 1-255, 0 is not returned (personal preference)
+|
+  [[[
+    var empty = '&nbsp;';
+    if (entity === undefined)
+      return empty;
+    if ('brightness' in entity.attributes){
+      var bri = Math.round(entity.attributes.brightness / 2.55);
+      return bri ? bri + '%' : empty;
+    }
+    return emtpy;
+  ]]]

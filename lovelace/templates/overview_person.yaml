@@ -1,0 +1,51 @@
+# lovelace_gen
+
+type: custom:button-card
+color: auto
+layout: name_label
+show_state: true
+show_name: false
+show_entity_picture: true
+entity_picture: /local/images/petro_large.png
+entity: {{ entity|default('person.petro') }}
+tap_action:
+  action: navigate
+  navigation_path: {{ path|default("/lovelace/home") }}
+  haptic: light
+styles:
+  grid:
+    - grid-template-rows: auto auto auto
+    - grid-template-columns: auto auto
+  card:
+    - background-image: |
+        [[[
+          var [domain, object_id] = entity.entity_id.split('.');
+          return `url("/local/images/${object_id}_large.png")`;
+        ]]]
+    - background-repeat: no-repeat
+    - background-size: 100% 100%
+    - border-radius: 15px
+    - padding: 0px
+  entity_picture:
+    - width: 100%
+    - padding-bottom: 0%
+    - opacity: 0.0
+  state:
+    - font-size: 15px
+    - font-family: Helvetica
+    - text-transform: capitalize
+    - font-weight: bold
+    - align-self: end
+    - justify-self: start
+    - padding: 9px 10px
+    - text-shadow: 0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black
+state:
+  - value: 'home'
+    operator: '!='
+    styles:
+      card:
+        - background-image: |
+            [[[
+              var [domain, object_id] = entity.entity_id.split('.');
+              return `url("/local/images/${object_id}_large_grayscale.png")`;
+            ]]]

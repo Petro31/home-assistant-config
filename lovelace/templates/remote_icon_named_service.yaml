@@ -1,0 +1,39 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+
+type: custom:button-card
+layout: icon_state
+color: auto
+aspect_ratio: 1/1
+show_state: false
+show_label: false
+show_name: true
+icon: {{ icon }}
+name: {{ name }}
+size: 75%
+entity: {{ entity }}
+styles:
+  grid:
+  - grid-template-rows: 1fr 1fr auto
+  - grid-template-columns: 1fr 1.5fr
+  icon:
+  - color: {{ color }}
+  img_cell:
+  - align-self: start
+  card:
+  - border-radius: 18%
+  - --ha-card-background: var(--primary-background-color)
+  - opacity: 1.0
+  - box-shadow: 0px 0px 10px 3px {{ color }}
+  name:
+  - justify-self: start
+  - align-self: end
+  - padding: 10px 10px
+  - font-size: 13px
+  - font-family: Helvetica
+  - text-transform: capitalize
+tap_action:
+  action: call-service
+  service: {{ service|default('"[[[ return entity.entity_id; ]]]"') }}
+  haptic: light

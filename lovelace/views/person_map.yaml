@@ -1,0 +1,27 @@
+# lovelace_gen
+
+icon: mdi:map
+title: "{{ entity }}'s Location"
+path: "{{ entity.split('.')[-1] }}_map"
+panel: true
+cards:
+- type: map
+  default_zoom: 14
+  geo_location_sources: 
+  - all
+  style: |
+    ha-card { --primary-text-color: var(--paper-item-icon-active-color); }
+  entities:
+  - entity: {{ entity }}
+  - zone.cobbs_hill
+  - zone.flower_city_crossfit
+  - zone.home
+  - zone.lambs_lakehouse
+  - zone.lambs_springville
+  - zone.petros_lakehouse
+  - zone.pharos
+  - zone.qvi
+  - zone.rit_gym
+  - zone.ruckhouse
+  - zone.tops
+  - zone.wegmans

@@ -1,0 +1,78 @@
+# lovelace_gen
+
+type: custom:hui-entities-card
+show_header_toggle: off
+style: |
+  ha-card {
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px 3px var(--accent-color);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: center;
+    background-image: {% raw %}url("{{ state_attr('{% endraw %}{{ entity }}{% raw %}','entity_picture') }}");{% endraw %}
+  }
+entities:
+- !include
+  - active_media_player_volume_row.yaml
+  - opacity: 0.75
+- type: custom:button-card
+  name: |
+    [[[
+      var artist = states['{{ entity }}'].attributes.media_artist;
+      var title = states['{{ entity }}'].attributes.media_title;
+      if (title === undefined || artist === undefined)
+        return 'No Media';
+      return title + ' - ' + artist;
+    ]]]
+  show_entity_picture: true
+  entity_picture:
+  styles:
+    card:
+    - --ha-card-background: rgba(0, 0, 0, 0.0)
+    - box-shadow: none
+    name:
+    - font-family: Helvetica
+    - padding: 10px
+    - text-shadow: 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black, 1px -1px 2px black
+- type: custom:hui-horizontal-stack-card
+  cards:
+  - !include spacer_edge.yaml
+  {%- if bluetooth %}
+  - !include
+    - 'media_player_button.yaml'
+    - icon: mdi:speaker-bluetooth
+      entity: {{ bluetooth }}
+  {%- else %}
+  - !include spacer_button.yaml
+  {%- endif %}
+  - !include spacer_button.yaml
+  - !include
+    - 'media_player_button.yaml'
+    - icon: mdi:skip-previous
+      entity: {{ entity }}
+      tap_action:
+        haptic: light
+        action: call-service
+        service: media_player.media_previous_track
+        service_data:
+          entity_id: {{ entity }}
+  - !include
+    - 'media_player_button.yaml'
+    - entity: {{ entity }}
+      playpause: true
+      tap_action:
+        haptic: light
+        action: call-service
+        service_data:
+          entity_id: {{ entity }}
+  - !include
+    - 'media_player_button.yaml'
+    - entity: {{ entity }}
+      icon: mdi:skip-next
+      tap_action:
+        haptic: light
+        action: call-service
+        service: media_player.media_next_track
+        service_data:
+          entity_id: {{ entity }}
+  - !include spacer_edge.yaml

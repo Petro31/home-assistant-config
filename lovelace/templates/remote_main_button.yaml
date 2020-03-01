@@ -1,0 +1,97 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+{% set sensor = sensor|default('sensor.yamaha_receiver') %}
+
+type: custom:button-card
+color: auto
+aspect_ratio: 1/1
+show_state: true
+show_name: true
+show_label: true
+layout: icon_label
+entity: {{ entity }}
+icon: {{ icon }}
+name: {{ name }}
+label: {{ label|default('"&nbsp;"') }}
+size: 75%
+tap_action:
+  action: toggle
+  haptic: light
+hold_action:
+  action: more-info
+  haptic: heavy
+styles:
+  card:
+  - border-radius: 15%
+  - --ha-card-background: var(--primary-background-color)
+  label:
+  - font-size: 12px
+  - font-family: Helvetica
+  - font-weight: bold
+  - padding: 0px 10px
+  state:
+  - font-size: 12px
+  - font-family: Helvetica
+  - padding-left: 10px
+  - justify-self: start
+  - text-transform: capitalize
+  - font-weight: bold
+  grid:
+  - grid-template-rows: 1fr 1fr 0.5fr
+  - grid-template-columns: 1fr 1.5fr
+  img_cell:
+  - align-self: start
+  - text-align: start
+  name:
+  - justify-self: start
+  - padding-left: 10px
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 13px
+  lock:
+  - align-items: flex-end
+state:
+- value: "{{ state_on|default('on') }}"
+  styles:
+    card:
+      - opacity: 1.0
+      - box-shadow: 0px 0px 10px 3px {{ color }}
+    icon:
+      - color: {{ color }}
+    name:
+      - color: white
+    state:
+      - color: gray
+    lock:
+      - color: white 
+    label:
+      - color: gray
+- value: "{{ state_off|default('off') }}"
+  styles:
+    card:
+      - opacity: 0.5
+    icon:
+      - color: var(--paper-item-icon-color)
+    name:
+      - color: var(--primary-text-color)
+    state:
+      - color: var(--primary-text-color)
+    label:
+      - color: var(--primary-text-color)
+    lock:
+      - color: var(--paper-item-icon-color)
+- value: "unavailable"
+  styles:
+    card:
+      - opacity: 0.2
+    icon:
+      - color: var(--paper-item-icon-color)')
+    name:
+      - color: var(--primary-text-color)
+    state:
+      - color: hsl(0, 100%, 50%)
+    label:
+      - color: var(--primary-text-color)
+    lock:
+      - color: var(--paper-item-icon-color)

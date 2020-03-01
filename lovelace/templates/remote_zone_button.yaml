@@ -1,0 +1,121 @@
+# lovelace_gen
+
+# I didn't want to have to duplicate this file, but there's no way to pass variables the way I want.
+# This is stupid but required.
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+{% set sensor = sensor|default('sensor.yamaha_receiver') %}
+
+type: custom:button-card
+color: auto
+aspect_ratio: 1/1
+show_state: true
+show_name: true
+show_label: true
+layout: icon_label
+entity: {{ entity }}
+icon: {{ icon }}
+name: {{ name }}
+label: |
+  [[[
+    var empty = '&nbsp;';
+    var sensor = "{{ sensor }}";
+    var media_player = sensor.replace('sensor.','media_player.').replace('_volume','');
+    sensor = states[sensor];
+    media_player = states[media_player];
+    var color = "{{ color }}";
+    if (entity === undefined || sensor === undefined || media_player == undefined)
+      return empty;
+    var level = Math.round(parseFloat(sensor.state));
+    if ('is_volume_muted' in media_player.attributes && media_player.attributes.is_volume_muted)
+      return `<ha-icon
+      icon="mdi:volume-mute"
+      style="width: 30%; height: 30%; color: ${color};">
+      </ha-icon><span> Muted</span>`;
+    var ret = `<ha-icon
+      icon="mdi:volume-high"
+      style="width: 30%; height: 30%; color: ${color};">
+      </ha-icon><span> ${level} dB</span>`
+    return level != -80 ? ret : empty;
+  ]]]
+size: 75%
+tap_action:
+  action: toggle
+  haptic: light
+hold_action:
+  action: more-info
+  haptic: heavy
+styles:
+  card:
+  - border-radius: 15%
+  - --ha-card-background: var(--primary-background-color)
+  label:
+  - font-size: 12px
+  - font-family: Helvetica
+  - font-weight: bold
+  - text-align: start
+  state:
+  - font-size: 12px
+  - font-family: Helvetica
+  - padding-left: 10px
+  - justify-self: start
+  - text-transform: capitalize
+  - font-weight: bold
+  grid:
+  - grid-template-rows: 1fr 1fr 0.5fr
+  - grid-template-columns: 1fr 1.5fr
+  img_cell:
+  - align-self: start
+  - text-align: start
+  name:
+  - justify-self: start
+  - padding-left: 10px
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 13px
+  lock:
+  - align-items: flex-end
+state:
+- value: "{{ state_on|default('on') }}"
+  styles:
+    card:
+      - opacity: 1.0
+      - box-shadow: 0px 0px 10px 3px {{ color }}
+    icon:
+      - color: {{ color }}
+    name:
+      - color: white
+    state:
+      - color: gray
+    lock:
+      - color: white 
+    label:
+      - color: gray
+- value: "{{ state_off|default('off') }}"
+  styles:
+    card:
+      - opacity: 0.5
+    icon:
+      - color: var(--paper-item-icon-color)
+    name:
+      - color: var(--primary-text-color)
+    state:
+      - color: var(--primary-text-color)
+    label:
+      - color: var(--primary-text-color)
+    lock:
+      - color: var(--paper-item-icon-color)
+- value: "unavailable"
+  styles:
+    card:
+      - opacity: 0.2
+    icon:
+      - color: var(--paper-item-icon-color)')
+    name:
+      - color: var(--primary-text-color)
+    state:
+      - color: hsl(0, 100%, 50%)
+    label:
+      - color: var(--primary-text-color)
+    lock:
+      - color: var(--paper-item-icon-color)

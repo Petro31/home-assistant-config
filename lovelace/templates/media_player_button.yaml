@@ -1,0 +1,56 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+{% set playpause = playpause|default(False) %}
+
+type: custom:button-card
+show_icon: true
+show_name: false
+show_label: false
+show_state: false
+icon: |
+  [[[
+    var empty = '&nbsp;';
+
+    var input_icon = "{{ icon | default('') }}";
+    var color = "{{ color }}";
+    var playpause = "{{ playpause }}".toLowerCase() == 'true';
+    
+    if (input_icon && !playpause)
+      return input_icon;
+
+    if (entity === undefined)
+      return empty;
+
+    var icon;
+    if (playpause)
+      icon = (entity.state === 'paused') ? 'mdi:play' : 'mdi:pause';
+    else
+      icon = entity.attributes.icon;
+
+    return icon;
+  ]]]
+entity: {{ entity }}
+color: {{ color }}
+aspect_ratio: 1/1
+styles:
+  card:
+  - --ha-card-background: var(--primary-background-color)
+  - border-radius: 15%
+  - box-shadow: 0px 0px 10px 3px {{ color }}
+  - opacity: 0.75
+{%- if tap_action is defined %}
+tap_action:
+  haptic: {{ tap_action.haptic | default('light') }}
+  action: {{ tap_action.action | default('call-service') }}
+{%- if playpause %}
+  service: |
+    [[[ 
+      return (states["{{ entity }}"].state != "playing") ? "media_player.media_play" : "media_player.media_pause"; 
+    ]]]
+{%- else %}
+  service: {{ tap_action.service }}
+{%- endif %}
+  service_data:
+    entity_id: {{ entity }}
+{%- endif %}

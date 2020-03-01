@@ -51,8 +51,8 @@
 
 # Air Visual Card
 
-- url: /community_plugin/air-visual-card/air-visual-card.js?
-  type: js
+# - url: /community_plugin/air-visual-card/air-visual-card.js?
+#   type: js
 
 # Custom Header
 
@@ -88,3 +88,9 @@
 
 - url: /community_plugin/lovelace-state-switch/state-switch.js?
   type: module
+
+# State Switch Card
+
+- url: /community_plugin/lovelace-layout-card/layout-card.js
+  type: module
+

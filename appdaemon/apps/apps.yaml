@@ -54,7 +54,9 @@ sunsetlights:
   module: sunset_lights
   class: SunsetLights
   entities:
-    - group.sconces
+    - switch.passenger_sconce
+    - switch.sconces_garage
+    - switch.sconces_main_entrance
 
 # https://github.com/Petro31/ad_toggle_light
 
@@ -309,6 +311,7 @@ hac_living_room:
     name: Confirm
   - DirectionRight
   - DirectionDown
+  - Back
   custom_events:
   - event: HomeButton
     icon: mdi:home

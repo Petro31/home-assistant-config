@@ -1,0 +1,11 @@
+# Template for fan speed; High Medium Low
+|  
+  [[[
+    var empty = '&nbsp;';
+    if (entity === undefined)
+      return empty;
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+    if ('speed' in entity.attributes || entity.attributes.speed == 'off') ? empty : capitalizeFirstLetter(entity.attributes.speed);
+  ]]]

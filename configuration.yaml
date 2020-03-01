@@ -7,6 +7,7 @@ apcupsd:
   host: a722577e-apcupsd
 automation: !include_dir_merge_list automation
 binary_sensor: !include binary_sensor.yaml
+browser_mod: !include browser_mod.yaml
 camera: !include cameras.yaml
 cloud:
 config:
@@ -28,6 +29,7 @@ logbook:
 logger: !include logger.yaml
 lovelace:
   mode: yaml
+lovelace_gen:
 map:
 media_player: !include media_player.yaml
 mobile_app:
