@@ -1,0 +1,29 @@
+# lovelace_gen
+
+type: custom:button-card
+color: auto
+aspect_ratio: {{ aspect_ratio|default("1/1") }}
+show_name: true
+show_icon: true
+size: 75%
+entity: {{ entity }}
+name: {{ name }}
+icon: {{ icon }}
+tap_action:
+  action: call-service
+  service: {{ entity }}
+  haptic: light
+styles:
+  card:
+  - border-radius: 12px
+  - --ha-card-background: var(--primary-background-color)
+  grid:
+  - grid-template-areas: '"i l" "n n"'
+  - grid-template-rows: 2fr 1fr
+  - grid-template-columns: 1fr 2fr
+  name:
+  - justify-self: start
+  - padding-left: 10px
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 13px

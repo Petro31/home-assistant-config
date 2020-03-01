@@ -1,0 +1,35 @@
+# lovelace_gen
+
+{%- set entities = entities %}
+
+title: Areas
+path: areas
+icon: mdi:home-lightbulb
+cards:
+{%- for i in range(0, entities | length, 3) %}
+- type: horizontal-stack
+  cards:
+  {%- for j in range(3) %}
+  {%- set current = entities[i+j] %}
+  {%- if current is defined %}
+  {%- set current = current.entity %}
+  {%- set domain, object_id = current.split('.') %}
+  - !include
+    - '../templates/group_state_navigation.yaml'
+    - entity: {{ current }}
+      path: /lovelace/{{ object_id }}
+      find:
+      - state: 'on'
+        domains: 'light, switch'
+        icon: mdi:lightbulb-on
+      - state: 'on'
+        domains: 'fan'
+        icon: mdi:fan
+  {%- else %}
+  - !include
+    - '../templates/spacer_button.yaml'
+    - empty: why
+      aspect_ratio: 4/3
+  {%- endif %}
+  {%- endfor %}
+{%- endfor %}

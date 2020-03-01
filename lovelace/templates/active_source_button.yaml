@@ -1,0 +1,91 @@
+# lovelace_gen
+
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+{% set attribute = attribute|default('state') %}
+{% set value = value|default('on') %}
+
+
+type: custom:button-card
+color: |
+  [[[
+    var color = "{{ color }}"
+    var value = "{{ value }}"
+    var attr = "{{ attribute }}"
+    
+    if (entity === undefined)
+      return color;
+    
+    function isState(state, value){
+      return (state === value) ? color : 'var(--paper-item-icon-color)';
+    }
+
+    if (attr === 'state')
+      return isState(entity.state, value);
+    else if (attr in entity.attributes)
+      return isState(entity.attributes[attr], value);
+    return color;
+  ]]]
+aspect_ratio: 1/1
+show_state: false
+show_label: false
+show_name: false
+icon: {{ icon }}
+size: 50%
+entity: {{ entity }}
+styles:
+  icon:
+  - color: |
+      [[[
+        var color = "{{ color }}"
+        var value = "{{ value }}"
+        var attr = "{{ attribute }}"
+
+        if (entity === undefined)
+          return color;
+        
+        function isState(state, value){
+          return (state === value) ? color : 'var(--paper-item-icon-color)';
+        }
+
+        if (attr === 'state')
+          return isState(entity.state, value);
+        else if (attr in entity.attributes)
+          return isState(entity.attributes[attr], value);
+        return color;
+      ]]]
+  card:
+  - border-radius: 18%
+  - --ha-card-background: var(--primary-background-color)
+  - opacity: {{ opacity|default(1.0) }}
+  - box-shadow: |
+      [[[
+        var color = "0px 0px 10px 3px {{ color }}"
+        var value = "{{ value }}"
+        var attr = "{{ attribute }}"
+        
+        if (entity === undefined)
+          return color;
+        
+        function isState(state, value){
+          return (state === value) ? color : 'var(--ha-card-box-shadow)';
+        }
+    
+        if (attr === 'state')
+          return isState(entity.state, value);
+        else if (attr in entity.attributes)
+          return isState(entity.attributes[attr], value);
+        return color;
+      ]]]
+{% if tap_action is defined %}
+tap_action:
+  action: {{ tap_action.action|default('call-service') }}
+  haptic: {{ tap_action.haptic|default('light') }}
+  service: {{ tap_action.service|default('service') }}
+  service_data:
+    entity_id: {{ entity }}
+{% if attribute != 'state' %}
+    {{ attribute }}: {{ value }}
+{% endif %}
+  

@@ -9,51 +9,51 @@
             
       # INSIDE LIGHTS SWITCH
       inside:
-        value_template: "{{ is_state('group.inside','on') }}"
+        value_template: "{{ is_state('group.inside_area','on') }}"
         turn_on:
           service: homeassistant.turn_on
           data:
-            entity_id: group.inside
+            entity_id: group.inside_area
         turn_off:
           service: homeassistant.turn_off
           data:
-            entity_id: group.inside
+            entity_id: group.inside_area
       
       # OUTSIDE LIGHTS SWITCH
       outside:
-        value_template: "{{ is_state('group.outside','on') }}"
+        value_template: "{{ is_state('group.outside_area','on') }}"
         turn_on:
           service: homeassistant.turn_on
           data:
-            entity_id: group.outside
+            entity_id: group.outside_area
         turn_off:
           service: homeassistant.turn_off
           data:
-            entity_id: group.outside
+            entity_id: group.outside_area
       
       # UPSTAIRS LIGHTS SWITCH
       upstairs:
-        value_template: "{{ is_state('group.upstairs','on') }}"
+        value_template: "{{ is_state('group.upstairs_area','on') }}"
         turn_on:
           service: homeassistant.turn_on
           data:
-            entity_id: group.upstairs
+            entity_id: group.upstairs_area
         turn_off:
           service: homeassistant.turn_off
           data:
-            entity_id: group.upstairs
+            entity_id: group.upstairs_area
       
       # DOWNSTAIRS LIGHTS SWITCH
       downstairs:
-        value_template: "{{ is_state('group.downstairs','on') }}"
+        value_template: "{{ is_state('group.downstairs_area','on') }}"
         turn_on:
           service: homeassistant.turn_on
           data:
-            entity_id: group.downstairs
+            entity_id: group.downstairs_area
         turn_off:
           service: homeassistant.turn_off
           data:
-            entity_id: group.downstairs
+            entity_id: group.downstairs_area
             
       # ZONE 1 MEDIA SWITCH
       zone_1:
@@ -274,7 +274,26 @@
         turn_off:
           - service: switch.turn_off
             entity_id: switch.roku
-      
+            
+      # Plex
+      plex:
+        value_template: >
+          {{ is_state('switch.roku', 'on') and 
+             is_state_attr('media_player.roku_living_room', 'source', 'Plex - Stream Free TV & Movies') }}
+        turn_on:
+          - service: script.roku
+          - wait_template: "{{ is_state('switch.roku', 'on') }}"
+          - service: media_player.select_source
+            data:
+              entity_id: media_player.roku_living_room
+              source: Plex - Stream Free TV & Movies
+          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
+          - service: switch.turn_off
+            entity_id: switch.echo_through_receiver
+        turn_off:
+          - service: switch.turn_off
+            entity_id: switch.roku
+
       echo_through_receiver:
         value_template: >
           {{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'Echo')
@@ -397,3 +416,131 @@
             data:
               entity_id: media_player.yamaha_receiver
               source: Echo
+
+      # Surround Sound Modes
+
+# Sports Surround Mode
+      surround_mode_sports:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Sports') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Sports'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+
+      # Action Game Surround Mode
+      surround_mode_action_game:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Action Game') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Action Game'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+
+      # Roleplaying Game Surround Mode
+      surround_mode_roleplaying_game:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Roleplaying Game') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Roleplaying Game'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+
+      # Standard Surround Mode
+      surround_mode_standard:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Standard') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+
+      # Sci-Fi Surround Mode
+      surround_mode_sci_fi:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Sci-Fi') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Sci-Fi'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+
+      # Adventure Surround Mode
+      surround_mode_adventure:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Adventure') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Adventure'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+
+      # Drama Surround Mode
+      surround_mode_drama:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Drama') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Drama'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+
+      # Surround Decoder Surround Mode
+      surround_mode_surround_decoder:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Surround Decoder') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Surround Decoder'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'
+
+      # 7ch Stereo Surround Mode
+      surround_mode_7ch_stereo:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','7ch Stereo') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: '7ch Stereo'
+        turn_off:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_receiver
+            sound_mode: 'Standard'

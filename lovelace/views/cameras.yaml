@@ -1,0 +1,22 @@
+# lovelace_gen
+
+{% set cameras = [
+  {'entity': 'camera.driveway'},
+  {'entity': 'camera.backyard'},
+  {'entity': 'camera.foyer'},
+  {'entity': 'camera.garage'},
+  {'entity': 'camera.kitchen'},
+  {'entity': 'camera.floating'},
+] %}
+
+icon: mdi:cctv
+title: Cameras
+path: cameras
+cards:
+{%- for camera in cameras %}
+- type: picture-entity
+  style: |
+    ha-card { border-radius: 20px; }
+  entity: {{ camera.entity }}
+  show_state: false
+{%- endfor %}

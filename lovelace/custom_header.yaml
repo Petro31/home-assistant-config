@@ -1,0 +1,19 @@
+# lovelace_gen
+
+voice_hide: true
+shadow: 'false'
+exceptions:
+- conditions:
+    user_agent: iPhone
+  config:
+    hide_help: true
+    hide_unused: true
+    compact_mode: true
+    hide_config: true
+    hide_raw: true
+    hidden_tab_redirect: false
+    all_tabs_css: "width: calc(20vw - 3.6px) !important; padding: 0px !important;"
+    show_tabs:
+    - home
+    button_text:
+      options: {% raw %}"&nbsp; {{ user }}"{% endraw %}

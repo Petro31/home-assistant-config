@@ -1,0 +1,34 @@
+# lovelace_gen
+
+{% set name = name|default('network') %}
+
+icon: mdi:wan
+title: {{ name | title }}
+path: {{ object_id|default(name) }}
+cards:
+- !include
+  - '../templates/header.yaml'
+  - content: "#### {{ name | title }}"
+- type: custom:auto-entities
+  filter:
+    include:
+    - group: {{ group | default('group.network_network') }}
+      options:
+        !include
+        - '../templates/network_item.yaml'
+        - entity: this.entity_id
+    - type: custom:button-card
+      color_type: blank-card
+      aspect_ratio: 1/1
+    - type: custom:button-card
+      color_type: blank-card
+      aspect_ratio: 1/1
+  sort:
+    method: name
+    numeric: true
+  card:
+    type: custom:layout-card
+    min_columns: 3
+    max_columns: 3
+    justify_content: start
+    layout: horizontal

@@ -167,6 +167,11 @@ remote_living_room_directiondown:
   - event: remote_living_room
     event_data: {'command': 'DirectionDown'}
 
+remote_living_room_back:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Back'}
+
 remote_living_room_homebutton:
   sequence:
   - event: remote_living_room

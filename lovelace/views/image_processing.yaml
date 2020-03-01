@@ -1,0 +1,28 @@
+# lovelace_gen
+
+{% set cameras = [
+  {'entity': 'camera.driveway_post_process', 'name': 'Driveway', 'image_processing': 'image_processing.tensorflow_driveway'},
+  {'entity': 'camera.backyard_post_process', 'name': 'Backyard', 'image_processing': 'image_processing.tensorflow_backyard'},
+  {'entity': 'camera.foyer_post_process', 'name': 'Foyer', 'image_processing': 'image_processing.tensorflow_foyer'},
+  {'entity': 'camera.garage_post_process', 'name': 'Garage', 'image_processing': 'image_processing.tensorflow_garage'},
+  {'entity': 'camera.kitchen_post_process', 'name': 'Kitchen', 'image_processing': 'image_processing.tensorflow_kitchen'},
+  {'entity': 'camera.floating_post_process', 'name': 'Floating', 'image_processing': 'image_processing.tensorflow_floating'},
+] %}
+
+icon: mdi:image-search
+title: Image Processing
+path: image_processing
+cards:
+{%- for camera in cameras %}
+- type: picture-entity
+  name: {{ camera.name }}
+  entity: {{ camera.entity }}
+  style: |
+    ha-card { border-radius: 20px; }
+  show_state: false
+  hold_action:
+    action: call-service
+    service: image_processing.scan
+    service_data:
+      entity_id: '{{ camera.image_processing }}'
+{%- endfor %}

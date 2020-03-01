@@ -1,0 +1,19 @@
+# lovelace_gen
+
+type: custom:simple-weather-card
+{% raw %}
+style: |
+  ha-card {
+    border-radius: 12px;
+    box-shadow: none;
+    opacity: 0.8;
+    font-size: 12px;
+    font-family: Helvetica;
+  }
+{% endraw %}
+entity: weather.dark_sky
+name: {{ name }}
+backdrop: false
+tap_action:
+  action: navigate
+  navigation_path: {{ path|default("/lovelace/home") }}

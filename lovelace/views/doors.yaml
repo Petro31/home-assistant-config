@@ -1,0 +1,26 @@
+# lovelace_gen
+
+{% set doors = [
+  {'name': 'Main', 'entity': 'sensor.main_door_hindge', 'partial': 'sensor.main_entrance', 'type': 'door'},
+  {'name': 'Entry', 'entity': 'sensor.entry_door_hindge', 'partial': 'sensor.garage_entrance', 'type': 'door'},
+  {'name': 'Patio', 'entity': 'sensor.sliding_door', 'partial': 'sensor.patio_entrance', 'type': 'door'},
+  {'name': 'Garage', 'entity': 'binary_sensor.garage_door_tilt', 'partial': 'sensor.garage_door', 'type': 'garage', 'cover': 'cover.garage_door'},
+] %}
+
+icon: mdi:door
+title: Doors
+path: doors
+cards:
+- type: vertical-stack
+  cards: 
+  {%- for door in doors %}
+  - !include
+    - '../templates/door.yaml'
+    - entity: {{ door.entity }}
+      name: {{ door.name }}
+      last_opened: {{ door.partial ~ '_last_opened' }}
+      type: {{ door.type }}
+      {%- if door.cover is defined %}
+      cover: {{ door.cover }}
+      {%- endif %}
+  {%- endfor %}

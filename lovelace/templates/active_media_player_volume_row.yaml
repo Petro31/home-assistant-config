@@ -1,0 +1,37 @@
+# lovelace_gen
+
+{% set volume_btns = [
+  {'entity': 'sensor.active_media_player', 'service': 'script.multizone_cycle_zone'},
+  {},
+  {'entity': 'script.multizone_volume_up', 'name': 'Up', 'icon': 'mdi:volume-plus','repeat': 250},
+  {'entity': 'script.multizone_volume_down', 'name': 'Down', 'icon': 'mdi:volume-minus','repeat': 250},
+  {'entity': 'script.multizone_volume_mute', 'name': 'Mute', 'icon': 'mdi:volume-mute'},
+] %}
+
+{% set opacity = opacity|default(1.0) %}
+
+type: custom:hui-horizontal-stack-card
+cards:
+- !include '../templates/spacer_edge.yaml'
+{%- for btn in volume_btns %}
+{%- if btn %}
+- !include
+  - '../templates/remote_icon_service.yaml'
+  - entity: {{ btn.entity }}
+    {%- if btn.service is defined %}
+    service: {{ btn.service }}
+    {%- endif %}
+    {%- if btn.entity == 'sensor.active_media_player' %}
+    icon: '!include ../partials/active_media_player_icon.yaml'
+    {%- else %}
+    icon: {{ btn.icon }}
+    {%- endif %}
+    {%- if btn.repeat is defined %}
+    repeat: {{ btn.repeat }}
+    {%- endif %}
+    opacity: {{ opacity }}
+{%- else %}
+- !include '../templates/spacer_button.yaml'
+{%- endif %}
+{%- endfor %}
+- !include '../templates/spacer_edge.yaml'

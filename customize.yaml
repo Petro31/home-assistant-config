@@ -233,6 +233,44 @@ switch.zone_2:
   friendly_name: Zone Two
   icon: mdi:numeric-2-box
 
+# Surround Sound Switches.
+
+switch.surround_mode_sports:
+  friendly_name: Sports
+  icon: mdi:basketball
+
+switch.surround_mode_action_game:
+  friendly_name: Action
+  icon: mdi:pistol
+
+switch.surround_mode_roleplaying_game:
+  friendly_name: Roleplaying
+  icon: mdi:auto-fix
+
+switch.surround_mode_standard:
+  friendly_name: Standard
+  icon: mdi:filmstrip
+
+switch.surround_mode_sci_fi:
+  friendly_name: Sci Fi
+  icon: mdi:rocket
+
+switch.surround_mode_adventure:
+  friendly_name: Adventure
+  icon: mdi:account-cowboy-hat
+
+switch.surround_mode_drama:
+  friendly_name: Drama
+  icon: mdi:drama-masks
+
+switch.surround_mode_surround_decoder:
+  friendly_name: Surround Sound
+  icon: mdi:surround-sound-7-1
+
+switch.surround_mode_7ch_stereo:
+  friendly_name: Music
+  icon: mdi:music
+
 ##########
 # Lights #
 ##########
@@ -577,19 +615,68 @@ device_tracker.yamaha_rx_v677:
   friendly_name: Yamaha RX-V677
   icon: mdi:alpha-y
 
+device_tracker.james_air:
+  friendly_name: James's Laptop
+  icon: mdi:laptop-mac
+
+device_tracker.james_iphone_10:
+  friendly_name: James's iPhone 10
+  icon: mdi:cellphone-iphone
+
+device_tracker.james_ipad:
+  friendly_name: James's iPad
+  icon: mdi:tablet-ipad
+
+device_tracker.owens_iphone:
+  friendly_name: Owen's iPhone
+  icon: mdi:cellphone-iphone
+
+device_tracker.andreas_pc:
+  friendly_name: Andreas's Laptop
+  icon: mdi:laptop
+
+device_tracker.hannas_iphone:
+  friendly_name: Hanna's iPhone
+  icon: mdi:cellphone-iphone
+
+device_tracker.katies_iphone:
+  friendly_name: Katie's iPhone
+  icon: mdi:cellphone-iphone
+
+device_tracker.alexs_nintendo_switch:
+  friendly_name: Alex's Switch
+  icon: mdi:nintendo-switch
+
+device_tracker.alexs_iphone:
+  friendly_name: Alex's iPhone
+  icon: mdi:cellphone-iphone
+
+
 ##########
 # Groups #
 ##########
 
+group.all_areas:
+  friendly_name: All Areas
+  icon: mdi:home
+
 group.basement_area:
   friendly_name: Basement
   icon: mdi:home-floor-b
+
+group.bonus_room_area:
+  friendly_name: Bonus Room
+  icon: mdi:bed-king
 
 group.dining_room_area:
   friendly_name: Dining Room
   icon: mdi:silverware-fork-knife
 
 group.downstairs_area:
+  friendly_name: Downstairs
+  icon: mdi:home-floor-1
+
+group.downstairs_areas:
   friendly_name: Downstairs
   icon: mdi:home-floor-1
 
@@ -605,6 +692,10 @@ group.garage_area:
   friendly_name: Garage
   icon: mdi:home-floor-g
 
+group.garage_entrance_area:
+  friendly_name: Garage Entrance
+  icon: mdi:door
+
 group.hall_area:
   friendly_name: Hall
   icon: mdi:home-floor-2
@@ -613,9 +704,13 @@ group.inside_area:
   friendly_name: Inside
   icon: mdi:home-lightbulb
 
+group.inside_areas:
+  friendly_name: Inside
+  icon: mdi:home-lightbulb
+
 group.kitchen_area:
   friendly_name: Kitchen
-  icon: mdi:food-variant
+  icon: mdi:pasta
 
 group.lambo_network:
   friendly_name: Lindsay's Devices
@@ -626,8 +721,8 @@ group.laundry_area:
   icon: mdi:washing-machine
 
 group.living_room_area:
-  friendly_name: Living Room Lights
-  icon: mdi:television-classic
+  friendly_name: Living Room
+  icon: mdi:sofa
 
 group.master_bedroom_area:
   friendly_name: Master Bedroom
@@ -635,7 +730,7 @@ group.master_bedroom_area:
 
 group.master_bathroom_area:
   friendly_name: Master Bathroom
-  icon: mdi:toilet
+  icon: mdi:paper-roll
 
 group.office_area:
   friendly_name: Office
@@ -645,10 +740,18 @@ group.outside_area:
   friendly_name: Outside
   icon: mdi:tree
 
+group.outside_areas:
+  friendly_name: Outside
+  icon: mdi:tree
+
 group.petro_network:
   friendly_name: Mike's Devices
   icon: mdi:account-network
 
 group.upstairs_area:
+  friendly_name: Upstairs
+  icon: mdi:home-floor-2
+
+group.upstairs_areas:
   friendly_name: Upstairs
   icon: mdi:home-floor-2

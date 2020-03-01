@@ -1,0 +1,113 @@
+# lovelace_gen
+
+{% set connected = color_connected|default('var(--paper-item-icon-active-color)') %}
+{% set disconnected = color_disconnected|default('rgba(228, 94, 101)') %}
+{% set update = color_update|default(connected) %}
+
+type: custom:button-card
+aspect_ratio: 1/1
+entity: {{ entity }}
+size: 80%
+name: |
+  [[[
+    var empty = '&nbsp;'
+    var name = "{{ name }}"
+    if (entity === undefined)
+      return empty;
+    
+    if (!name)
+      name = entity.attributes.friendly_name;
+
+    if (name === undefined)
+      return empty;
+
+    function greaterThanLength(strings, item, length){
+      var test = [...strings];
+      test.push(item);
+      return (test.join(' ').length > length);
+    }
+
+    var max_length = 15;
+    if (name.length > max_length){
+      var reta = [];
+      var retb = [];
+      var items = name.split(' ');
+      var i;
+      for (i = 0; i < name.length; i++){
+        if (greaterThanLength(reta, items[i], max_length))
+          retb.push(items[i]);
+        else
+          reta.push(items[i]);
+      }
+      return reta.join(' ') + '<br>' + retb.join(' ');
+    }
+    return name;
+  ]]]
+show_state: false
+show_name: true
+show_label: true
+label: |
+    [[[
+      var empty = '&nbsp;'
+      if (entity === undefined)
+        return empty;
+      
+      function getEntityIcon(icon, color, animation=''){
+        return `<ha-icon
+          icon="${icon}"
+          style="size: 5%; color: ${color}; animation: ${animation}">
+          </ha-icon>`;
+        }
+
+      var home = ['on', 'home'];
+      var connected = '{{ connected }}';
+      var disconnected = '{{ disconnected }}';
+      var update = '{{ update }}';
+      var icons = []
+      if (entity.attributes.upgradable !== undefined)
+        if (entity.attributes.upgradable)
+          icons.push(getEntityIcon('mdi:cloud-download', update, 'blink 2s ease infinite'));
+      if (home.includes(entity.state))
+        if (entity.attributes.source_type !== undefined)
+          if (entity.attributes.source_type === 'router')
+            if (entity.attributes.is_wired !== undefined)
+              if (entity.attributes.is_wired)
+                icons.push(getEntityIcon('mdi:lan-connect', connected));
+              else
+                icons.push(getEntityIcon('mdi:wifi', connected));
+            else
+              icons.push(getEntityIcon('mdi:lan-connect', connected));
+          else if (entity.attributes.source_type === 'gps')
+            icons.push(getEntityIcon('mdi:crosshairs-gps', connected));
+          else
+            icons.push(getEntityIcon('mdi:network', connected));
+        else
+          icons.push(getEntityIcon('mdi:network', connected));
+      else
+        icons.push(getEntityIcon('mdi:lan-disconnect', disconnected, 'blink 2s ease infinite'));
+      return icons.join("<br>");
+    ]]]
+styles:
+  icon:
+  - color: var(--paper-item-icon-active-color)
+  - padding-left: 10px
+  grid:
+  - grid-template-areas: '"i l" "n n"'
+  - grid-template-rows: 1fr 1fr
+  - grid-template-columns: 1fr 2fr
+  card:
+    - border-radius: 15px
+    - box-shadow: 0px 0px 3px 1px var(--paper-item-icon-active-color)
+  name:
+  - justify-self: start
+  - align-self: end
+  - padding-left: 10px
+  - padding-bottom: 10px
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  label:
+  - justify-self: end
+  - text-align: end
+  - padding-right: 10px

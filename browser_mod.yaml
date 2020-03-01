@@ -1,0 +1,9 @@
+devices:
+  0045ecac_92d668e8:
+    name: browser_petro_iphone
+  b0bc8c81_8f869094:
+    name: browser_petro_chrome_desktop
+  0a8fbb64_80025f11:
+    name: browser_lambo_iphone
+disable:
+  - all

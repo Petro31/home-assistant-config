@@ -1,0 +1,66 @@
+# lovelace_gen
+
+{%- set lights = [
+  {'name': 'Basement', 'entity': 'group.basement_area', },
+  {'name': 'Bonus Room', 'entity': 'group.bonus_room_area', },
+  {'name': 'Dining Room', 'entity': 'group.dining_room_area', },
+  {'name': 'Foyer', 'entity': 'group.foyer_area', },
+  {'name': 'Game Room', 'entity': 'group.game_room_area', },
+  {'name': 'Garage', 'entity': 'group.garage_area', },
+  {'name': 'Garage Entrance', 'entity': 'group.garage_entrance_area', },
+  {'name': 'Hall', 'entity': 'group.hall_area', },
+  {'name': 'Kitchen', 'entity': 'group.kitchen_area', },
+  {'name': 'Laundry', 'entity': 'group.laundry_area', },
+  {'name': 'Living Room', 'entity': 'group.living_room_area', },
+  {'name': 'Master Bathroom', 'entity': 'group.master_bathroom_area', },
+  {'name': 'Master Bedroom', 'entity': 'group.master_bedroom_area', },
+  {'name': 'Office', 'entity': 'group.office_area', },
+  {'name': 'Outside', 'entity': 'group.outside_area',},
+  ] %}
+
+{%- set networks = [
+  {'name': 'Network Hardware', 'entity': 'group.network_network', },
+  {'name': 'Mikes Devices', 'entity': 'group.petro_network', },
+  {'name': 'Lindsays Devices', 'entity': 'group.lambo_network', },
+  {'name': 'Camera Devices', 'entity': 'group.camera_network', },
+  {'name': 'Devices', 'entity': 'group.devices_network', },
+  {'name': 'Family Devices', 'entity': 'group.family_network', },
+] %}
+
+
+- !include main.yaml
+- !include 
+  - areas.yaml
+  - entities: {{ lights }}
+- !include remote.yaml
+- !include
+  - person_map.yaml
+  - entity: person.petro
+- !include
+  - person_map.yaml
+  - entity: person.lambo
+- !include testing.yaml
+- !include doors.yaml
+- !include alexa_announce.yaml
+- !include cameras.yaml
+- !include image_processing.yaml
+- !include old_system.yaml
+- !include
+  - networks.yaml
+  - entities: {{ networks }}
+{%- for area in lights %}
+- !include
+  - area_template.yaml
+  {%- set object_id = area.entity.split('.')[-1] %}
+  - name: {{ area.name }}
+    object_id: {{ object_id }}
+    group: {{ area.entity }}
+{%- endfor %}
+{%- for network in networks %}
+- !include
+  - network_template.yaml
+  {%- set object_id = network.entity.split('.')[-1] %}
+  - name: {{ network.name }}
+    object_id: {{ object_id }}
+    group: {{ network.entity }}
+{%- endfor %}
