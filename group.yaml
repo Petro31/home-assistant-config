@@ -10,8 +10,8 @@ inside_area:
   entities:
     - light.dining_room_chandelier
     - light.hallway
-    - light.inovelli_lzw42_multi_color_bulb_level
-    - light.inovelli_lzw42_multi_color_bulb_level_2
+    - light.game_room_bulb
+    - light.game_room_bulb_2
     - light.kitchen_cans
     - light.kitchen_island
     - light.living_room
@@ -23,17 +23,18 @@ inside_area:
     - switch.basement_stairs
     - switch.dining_room_hutch
     - switch.foyer
+    - switch.game_room_outlet
+    - switch.game_room_switch
+    - switch.game_room_window
     - switch.garage_cans
     - switch.garage_entry
+    - switch.garage_workbench
     - switch.kitchen_cabinet
     - switch.kitchen_pantry
     - switch.laundry
     - switch.living_room_window
     - switch.master_nightstand_left
     - switch.master_nightstand_right
-    - switch.office_outlet
-    - switch.office_switch
-    - switch.office_window
     
 outside_area:
   entities:
@@ -44,6 +45,13 @@ outside_area:
     
 upstairs_area:
   entities:
+    - fan.bonus_room_bedroom
+    - fan.bonus_room_office
+    - light.bonus_room_bedroom_fixture
+    - light.bonus_room_bedroom_recessed
+    - light.bonus_room_entrance
+    - light.bonus_room_office_fixture
+    - light.bonus_room_office_recessed
     - light.hallway
     - light.master_bathroom_cans
     - light.master_bathroom_sink
@@ -62,6 +70,7 @@ downstairs_area:
     - switch.foyer
     - switch.garage_cans
     - switch.garage_entry
+    - switch.garage_workbench
     - switch.kitchen_cabinet
     - switch.kitchen_pantry
     - switch.laundry
@@ -142,14 +151,17 @@ living_room_area:
    
 game_room_area:
   entities:
-    - switch.office_outlet
-    - switch.office_switch
-    - switch.office_window
+    - light.game_room_bulb
+    - light.game_room_bulb_2
+    - switch.game_room_outlet
+    - switch.game_room_switch
+    - switch.game_room_window
 
 office_area:
   entities:
-    - light.inovelli_lzw42_multi_color_bulb_level
-    - light.inovelli_lzw42_multi_color_bulb_level_2
+    - light.bonus_room_office_fixture
+    - fan.bonus_room_office
+    - light.bonus_room_office_recessed
 
 dining_room_area:
   entities:
@@ -203,13 +215,11 @@ master_bathroom_area:
 garage_area:
   entities:
     - switch.garage_cans
+    - switch.garage_workbench
     
 bonus_room_area:
   entities:
     - light.bonus_room_entrance
-    - light.bonus_room_office_fixture
-    - fan.bonus_room_office
-    - light.bonus_room_office_recessed
     - light.bonus_room_bedroom_fixture
     - fan.bonus_room_bedroom
     - light.bonus_room_bedroom_recessed

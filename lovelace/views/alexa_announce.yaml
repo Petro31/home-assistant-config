@@ -2,9 +2,11 @@
 
 {% set scripts = [
   {'entity': 'script.alexa_say_all', 'icon': 'mdi:bullhorn', 'name': 'All'},
+  {'entity': 'script.clear_alexa_text', 'icon': 'mdi:close', 'name': 'Clear'},
   {'entity': 'script.alexa_say_living_room', 'icon': 'mdi:sofa', 'name': 'Living Room'},
   {'entity': 'script.alexa_say_master', 'icon': 'mdi:bed-king', 'name': 'Master'},
-  {'entity': 'script.clear_alexa_text', 'icon': 'mdi:close', 'name': 'Clear'},
+  {'entity': 'script.alexa_say_bonus_room', 'icon': 'mdi:bed-king', 'name': 'Bonus Room'},
+  {'entity': 'none'},
 ] %}
 
 icon: mdi:amazon-alexa
@@ -27,10 +29,16 @@ cards:
   - type: horizontal-stack
     cards:
   {%- endif %}
+  {%- if script.entity != 'none' %}
     - !include
       - '../templates/announce_button.yaml'
       - entity: {{ script.entity }}
         icon: {{ script.icon }}
         name: {{ script.name }}
         aspect_ratio: 2/1
+  {%- else %}
+    - !include 
+      - '../templates/spacer_button.yaml'
+      - aspect_ratio: 2/1
+  {%- endif %}
   {%- endfor %}
