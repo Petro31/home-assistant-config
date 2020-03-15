@@ -9,6 +9,7 @@ cards:
   - !include 
     - '../templates/overview_weather.yaml'
     - path: /lovelace/home
+  - !include '../templates/corona_virus_card.yaml'
   - type: horizontal-stack
     cards:
     - !include 
@@ -92,9 +93,11 @@ cards:
       - name: Detection
         icon: mdi:cctv
         path: /lovelace/image_processing
-    - !include 
-      - '../templates/spacer_button.yaml'
-      - aspect_ratio: 4/3
+    - !include
+      - '../templates/group_state_navigation.yaml'
+      - name: Announce
+        icon: mdi:amazon-alexa
+        path: /lovelace/announce
     - !include
       - '../templates/group_state_navigation.yaml'
       - name: Testing

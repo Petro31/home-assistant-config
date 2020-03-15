@@ -69,6 +69,18 @@ switch.foyer_2:
   friendly_name: Foyer Camera
   icon: mdi:lan-connect
 
+switch.game_room_outlet:
+  friendly_name: Desk
+  icon: mdi:floor-lamp-dual
+
+switch.game_room_switch:
+  friendly_name: Switch
+  icon: mdi:light-switch
+
+switch.game_room_window:
+  friendly_name: Window Outlet
+  icon: mdi:power-socket-us
+
 switch.garage_camera:
   friendly_name: Garage Camera
   icon: mdi:lan-connect
@@ -144,18 +156,6 @@ switch.netflix:
 switch.nintendo_switch_source:
   friendly_name: Switch Source
   icon: mdi:nintendo-switch
-
-switch.office_outlet:
-  friendly_name: Desk
-  icon: mdi:floor-lamp-dual
-
-switch.office_switch:
-  friendly_name: Switch
-  icon: mdi:light-switch
-
-switch.office_window:
-  friendly_name: Window Outlet
-  icon: mdi:power-socket-us
 
 switch.outside:
   friendly_name: Outside
@@ -286,11 +286,11 @@ light.hallway:
   friendly_name: Hallway
   icon: mdi:ceiling-light
 
-light.inovelli_lzw42_multi_color_bulb_level:
+light.game_room_bulb:
   friendly_name: Bulb 1
   supported_features: 179
 
-light.inovelli_lzw42_multi_color_bulb_level_2:
+light.game_room_bulb_2:
   friendly_name: Bulb 2
   supported_features: 179
 

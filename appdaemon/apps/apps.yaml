@@ -63,9 +63,11 @@ sunsetlights:
 office_toggle:
   module: toggle_light
   class: ToggleLight
-  entity: switch.office_switch
+  entity: switch.game_room_switch
   entities:
-    - switch.office_outlet
+    - light.game_room_bulb
+    - light.game_room_bulb_2
+    - switch.game_room_outlet
 
 basement_toggle:
   module: toggle_light

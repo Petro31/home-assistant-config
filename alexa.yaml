@@ -1,168 +1,198 @@
   smart_home:
     filter:
       include_entities:
+        - fan.bonus_room_bedroom
+        - fan.bonus_room_office
         - fan.master_fixture
-        - switch.roku
-        - switch.ps4
-        - switch.switch
-        - switch.tv
-        - switch.xbox_one
-        - switch.netflix
-        - switch.hbo_now
-        - switch.hulu
-        - switch.prime_video
-        - switch.disney_plus
-        - switch.zone_1
-        - switch.zone_2
-        - light.kitchen_cans
+        - light.bonus_room_bedroom_fixture
+        - light.bonus_room_bedroom_recessed
+        - light.bonus_room_entrance
+        - light.bonus_room_office_fixture
+        - light.bonus_room_office_recessed
         - light.dining_room_chandelier
+        - light.game_room_bulb
+        - light.game_room_bulb_2
         - light.hallway
+        - light.kitchen_cans
         - light.kitchen_island
         - light.living_room
         - light.master_bathroom_cans
+        - light.master_bathroom_sink
         - light.master_closet
         - light.master_fixture
-        - light.master_bathroom_sink
-        - switch.kitchen_outlet_above_microwave
-        - switch.kitchen_outlet_above_fridge
+        - media_player.dining_room_speakers
+        - media_player.living_room_speakers
         - switch.basement_cans
         - switch.basement_stairs
-        - switch.kitchen_cabinet
+        - switch.dining_room_hutch
+        - switch.disney_plus
         - switch.downstairs
-        - switch.passenger_sconce
-        - switch.garage_entry
+        - switch.echo_through_receiver
         - switch.floating_outlet_switch
         - switch.foyer
+        - switch.game_room_outlet
+        - switch.game_room_switch
+        - switch.game_room_window
         - switch.garage_cans
-        - switch.sconces_garage
-        - switch.dining_room_hutch
+        - switch.garage_entry
+        - switch.garage_workbench
+        - switch.hbo_now
+        - switch.hulu
         - switch.inside
+        - switch.kitchen_cabinet
+        - switch.kitchen_outlet_above_fridge
+        - switch.kitchen_outlet_above_microwave
+        - switch.kitchen_pantry
         - switch.laundry
-        - switch.sconces_main_entrance
+        - switch.living_room_window
         - switch.master_bathroom_fan
-        - switch.master_nightstand_right
         - switch.master_nightstand_left
-        - switch.office_outlet
-        - switch.office_switch
+        - switch.master_nightstand_right
+        - switch.netflix
         - switch.outside
         - switch.outside_porch
-        - switch.kitchen_pantry
+        - switch.passenger_sconce
+        - switch.prime_video
+        - switch.ps4
+        - switch.roku
+        - switch.sconces_garage
+        - switch.sconces_main_entrance
+        - switch.switch
+        - switch.tv
         - switch.upstairs
-        - switch.living_room_window
-        - switch.office_window
-        - switch.echo_through_receiver
-        - media_player.living_room_speakers
-        - media_player.dining_room_speakers
+        - switch.xbox_one
+        - switch.zone_1
+        - switch.zone_2
     entity_config:
+      fan.bonus_room_bedroom:
+        name: Bonusroom Fan
+      fan.bonus_room_office:
+        name: Office Fan
       fan.master_fixture:
         name: Master Fan
-      switch.audio_1:
-        name: Audio One
-      switch.audio_2:
-        name: Audio Two
-      switch.roku:
-        name: Roku
-      switch.ps4:
-        name: Playstation
-      switch.switch:
-        name: Switch
-      switch.tv:
-        name: Cable
-      switch.xbox_one:
-        name: Xbox One
-      switch.netflix:
-        name: Netflix
-      switch.hbo_now:
-        name: HBO Now
-      switch.hulu:
-        name: Hulu
-      switch.prime_video:
-        name: Prime Video
-      switch.disney_plus:
-        name: Disney Plus
-      switch.zone_1:
-        name: Zone One
-      switch.zone_2:
-        name: Zone Two
-      light.kitchen_cans:
-        name: Can Lights
+      light.bonus_room_bedroom_fixture:
+        name: Bonusroom Fixture
+      light.bonus_room_bedroom_recessed:
+        name: Bonusroom Cans
+      light.bonus_room_entrance:
+        name: Bonusroom Hallway
+      light.bonus_room_office_fixture:
+        name: Office Fixture
+      light.bonus_room_office_recessed:
+        name: Office Cans
       light.dining_room_chandelier:
         name: Chandelier
+      light.game_room_bulb:
+        name: Bulb 1
+      light.game_room_bulb_2:
+        name: Bulb 2
       light.hallway:
         name: Hallway
+      light.kitchen_cans:
+        name: Can Lights
       light.kitchen_island:
         name: Island Lights
       light.living_room:
         name: Living Room Light
       light.master_bathroom_cans:
         name: Master Can
+      light.master_bathroom_sink:
+        name: Master Sink
       light.master_closet:
         name: Master Closet
       light.master_fixture:
         name: Master Light
-      light.master_bathroom_sink:
-        name: Master Sink
-      switch.kitchen_outlet_above_microwave:
-        name: Kitchen Outlet Above Microwave
-      switch.kitchen_outlet_above_fridge:
-        name: Kitchen Outlet Above Refrigerator
+      media_player.dining_room_speakers:
+        name: Dining Room Speakers
+      media_player.living_room_speakers:
+        name: Living Room Speakers
+      switch.audio_1:
+        name: Audio One
+      switch.audio_2:
+        name: Audio Two
       switch.basement_cans:
         name: Basement Cans
       switch.basement_stairs:
         name: Basement Stairs
-      switch.kitchen_cabinet:
-        name: Cabinet Lights
+      switch.dining_room_hutch:
+        name: Hutch Lights
+      switch.disney_plus:
+        name: Disney Plus
       switch.downstairs:
         name: Downstairs
-      switch.garage_entry:
-        name: Entry Lights
+      switch.echo_through_receiver:
+        name: Echo
       switch.floating_outlet_switch:
         name: Echo Outlet
       switch.foyer:
         name: Foyer Lights
       switch.garage_cans:
         name: Garage Fixtures
-      switch.sconces_garage:
-        name: Garage Sconces
-      switch.passenger_sconce:
-        name: Passenger Sconce
-      switch.dining_room_hutch:
-        name: Hutch Lights
+      switch.garage_entry:
+        name: Entry Lights
+      switch.garage_workbench:
+        name: Workbench
+      switch.hbo_now:
+        name: HBO Now
+      switch.hulu:
+        name: Hulu
       switch.inside:
         name: Inside
+      switch.kitchen_cabinet:
+        name: Cabinet Lights
+      switch.kitchen_outlet_above_fridge:
+        name: Kitchen Outlet Above Refrigerator
+      switch.kitchen_outlet_above_microwave:
+        name: Kitchen Outlet Above Microwave
+      switch.kitchen_pantry:
+        name: Pantry Lights
       switch.lambo_awake_sleep_automation:
         name: Lambos Automation
       switch.laundry:
         name: Laundry
-      switch.sconces_main_entrance:
-        name: Main Sconces
+      switch.living_room_window:
+        name: Living Room Outlet
       switch.master_bathroom_fan:
         name: Master Bath Fan
-      switch.master_nightstand_right:
-        name: Lindsays Nightstand
       switch.master_nightstand_left:
         name: Mikes Nightstand
-      switch.office_outlet:
-        name: Office Desk Light
-      switch.office_switch:
-        name: Office Light Switch
+      switch.master_nightstand_right:
+        name: Lindsays Nightstand
+      switch.netflix:
+        name: Netflix
+      switch.game_room_outlet:
+        name: Game Room Light
+      switch.game_room_switch:
+        name: Game Room Switch
+      switch.game_room_window:
+        name: Game Room Outlet
       switch.outside:
         name: Outside
       switch.outside_porch:
         name: Outside Outlet
-      switch.kitchen_pantry:
-        name: Pantry Lights
+      switch.passenger_sconce:
+        name: Passenger Sconce
       switch.petro_awake_sleep_automation:
         name: Petros Automation
+      switch.prime_video:
+        name: Prime Video
+      switch.ps4:
+        name: Playstation
+      switch.roku:
+        name: Roku
+      switch.sconces_garage:
+        name: Garage Sconces
+      switch.sconces_main_entrance:
+        name: Main Sconces
+      switch.switch:
+        name: Switch
+      switch.tv:
+        name: Cable
       switch.upstairs:
         name: Upstairs
-      switch.living_room_window:
-        name: Living Room Outlet
-      switch.office_window:
-        name: Office Outlet
-      switch.echo_through_receiver:
-        name: Echo
-      media_player.living_room_speakers:
-        name: Living Room Speakers
-      media_player.dining_room_speakers:
-        name: Dining Room Speakers
+      switch.xbox_one:
+        name: Xbox One
+      switch.zone_1:
+        name: Zone One
+      switch.zone_2:
+        name: Zone Two

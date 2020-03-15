@@ -1,0 +1,26 @@
+# lovelace_gen
+
+type: custom:hui-entities-card
+show_header_toggle: off
+style: |
+  ha-card { 
+    border-radius: 20px;
+    }
+  .card-content {
+    padding: 1px 1px 1px;
+  }
+entities:
+- type: custom:hui-vertical-stack-card
+  cards:
+  - !include
+    - '../templates/corona_virus.yaml'
+    - entity: sensor.corona_virus_usa
+      image: /local/images/usa.png
+  - !include
+    - '../templates/corona_virus.yaml'
+    - entity: sensor.corona_virus_ny
+      image: /local/images/new york.png
+  - !include
+    - '../templates/corona_virus.yaml'
+    - entity: sensor.corona_virus_florida
+      image: /local/images/florida.png
