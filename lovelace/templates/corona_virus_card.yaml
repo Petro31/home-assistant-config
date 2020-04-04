@@ -24,3 +24,7 @@ entities:
     - '../templates/corona_virus.yaml'
     - entity: sensor.corona_virus_florida
       image: /local/images/florida.png
+  - !include
+    - '../templates/corona_virus.yaml'
+    - entity: sensor.corona_virus_county
+      image: /local/images/county.png

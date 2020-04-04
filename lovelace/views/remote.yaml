@@ -199,6 +199,7 @@ cards:
       - !include 
         - '../templates/remote_image_service.yaml'
         - entity: {{ btn.entity }}
+          service: {{ service }}
       {%- else %}
       - !include '../templates/spacer_button.yaml'
       {%- endif %}

@@ -1,4 +1,5 @@
-
+mode: yaml
+resources:
 # Button Card (Most of the interface)
 
 - url: /hacsfiles/button-card/button-card.js?
@@ -7,12 +8,12 @@
 # Weather Card
 
 - url: /hacsfiles/weather-card/weather-card.js?
-  type: js
+  type: module
 
 # Card Tools
 
 - url: /hacsfiles/lovelace-card-tools/card-tools.js?
-  type: js
+  type: module
 
 # Config Template Card
 
@@ -22,7 +23,7 @@
 # Text Input Row
 
 - url: /hacsfiles/lovelace-text-input-row/text-input-row.js?
-  type: js
+  type: module
 
 # Mini Graph Card
 
@@ -32,7 +33,7 @@
 # Bar Card
 
 - url: /hacsfiles/bar-card/bar-card.js?
-  type: js
+  type: module
 
 # Card Mod
 
@@ -42,7 +43,7 @@
 # Secondary Info Row
 
 - url: /hacsfiles/secondaryinfo-entity-row/secondaryinfo-entity-row.js?
-  type: js
+  type: module
 
 # Mini Media Player 
 
@@ -51,8 +52,8 @@
 
 # Air Visual Card
 
-# - url: /hacsfiles/air-visual-card/air-visual-card.js?
-#   type: js
+- url: /hacsfiles/air-visual-card/air-visual-card.js?
+  type: module
 
 # Custom Header
 
@@ -62,7 +63,7 @@
 # RGB Light Card
 
 - url: /hacsfiles/rgb-light-card/card.js?
-  type: js
+  type: module
 
 # Simple Weather Card
 
@@ -94,3 +95,7 @@
 - url: /hacsfiles/lovelace-layout-card/layout-card.js
   type: module
 
+# PreLoader
+
+- url: /hacsfiles/lovelace-card-preloader/lovelace-card-preloader.js
+  type: module

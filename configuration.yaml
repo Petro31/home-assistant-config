@@ -27,8 +27,7 @@ ios:
 light: !include light.yaml
 logbook:
 logger: !include logger.yaml
-lovelace:
-  mode: yaml
+lovelace: !include lovelace.yaml
 lovelace_gen:
 map:
 media_player: !include media_player.yaml
