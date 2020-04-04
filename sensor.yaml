@@ -278,6 +278,15 @@
     json_attributes:
       - features
   
+  - platform: rest
+    resource: !secret corona_virus_county_url
+    name: Corona Virus County Rest
+    value_template: >
+      {%- set last_updated = value_json.features | map(attribute='attributes.Last_Update') | list | max / 1000 %}
+      {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+    json_attributes:
+      - features
+
   - platform: template
     sensors:
       corona_virus_usa:
@@ -314,30 +323,55 @@
         value_template: >
           {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
           {%- set features = features | map(attribute='attributes') | list %}
-          {%- set items = features | selectattr('Province_State','eq','New York') | list | first %}
-          {%- set last_updated = items.Last_Update | int / 1000 %}
-          {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+          {%- set items = features | selectattr('Province_State','eq','New York') | list %}
+          {%- if items | length > 0 %}
+            {%- set item = items | first %}
+            {%- set last_updated = item.Last_Update | int / 1000 %}
+            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+          {%- else %}
+            {{ states('sensor.corona_virus_ny') }}
+          {%- endif %}
         attribute_templates:
           confirmed: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {%- set features = features | map(attribute='attributes') | list %}
-            {%- set items = features | selectattr('Province_State','eq','New York') | list | first %}
-            {{ items.Confirmed }}
+            {%- set items = features | selectattr('Province_State','eq','New York') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Confirmed }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_ny', 'confirmed') }}
+            {%- endif %}
           deaths: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {%- set features = features | map(attribute='attributes') | list %}
-            {%- set items = features | selectattr('Province_State','eq','New York') | list | first %}
-            {{ items.Deaths }}
+            {%- set items = features | selectattr('Province_State','eq','New York') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Deaths }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_ny', 'deaths') }}
+            {%- endif %}
           recovered: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {%- set features = features | map(attribute='attributes') | list %}
-            {%- set items = features | selectattr('Province_State','eq','New York') | list | first %}
-            {{ items.Recovered }}
+            {%- set items = features | selectattr('Province_State','eq','New York') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Recovered }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_ny', 'recovered') }}
+            {%- endif %}
           active: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {%- set features = features | map(attribute='attributes') | list %}
-            {%- set items = features | selectattr('Province_State','eq','New York') | list | first %}
-            {{ items.Active }}
+            {%- set items = features | selectattr('Province_State','eq','New York') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Active }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_ny', 'active') }}
+            {%- endif %}
       corona_virus_florida:
         friendly_name: Corona Virus Florida
         entity_id: sensor.corona_virus_rest
@@ -348,27 +382,124 @@
         value_template: >
           {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
           {%- set features = features | map(attribute='attributes') | list %}
-          {%- set items = features | selectattr('Province_State','eq','Florida') | list | first %}
-          {%- set last_updated = items.Last_Update | int / 1000 %}
-          {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+          {%- set items = features | selectattr('Province_State','eq','Florida') | list %}
+          {%- if items | length > 0 %}
+            {%- set item = items | first %}
+            {%- set last_updated = item.Last_Update | int / 1000 %}
+            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+          {%- else %}
+            {{ states('sensor.corona_virus_florida') }}
+          {%- endif %}
         attribute_templates:
           confirmed: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {%- set features = features | map(attribute='attributes') | list %}
-            {%- set items = features | selectattr('Province_State','eq','Florida') | list | first %}
-            {{ items.Confirmed }}
+            {%- set items = features | selectattr('Province_State','eq','Florida') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Confirmed }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_florida', 'confirmed') }}
+            {%- endif %}
           deaths: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {%- set features = features | map(attribute='attributes') | list %}
-            {%- set items = features | selectattr('Province_State','eq','Florida') | list | first %}
-            {{ items.Deaths }}
+            {%- set items = features | selectattr('Province_State','eq','Florida') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Deaths }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_florida', 'deaths') }}
+            {%- endif %}
           recovered: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {%- set features = features | map(attribute='attributes') | list %}
-            {%- set items = features | selectattr('Province_State','eq','Florida') | list | first %}
-            {{ items.Recovered }}
+            {%- set items = features | selectattr('Province_State','eq','Florida') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Recovered }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_florida', 'recovered') }}
+            {%- endif %}
           active: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {%- set features = features | map(attribute='attributes') | list %}
-            {%- set items = features | selectattr('Province_State','eq','Florida') | list | first %}
-            {{ items.Active }}
+            {%- set items = features | selectattr('Province_State','eq','Florida') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Active }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_florida', 'active') }}
+            {%- endif %}
+      corona_virus_county:
+        entity_id: sensor.corona_virus_county_rest
+        friendly_name_template: >
+          {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
+          {%- set items = features | map(attribute='attributes') | list %}
+          {%- if items | length > 0 %}
+            {%- set item = items | first %}
+            Corona Virus {{ item.Admin2 }}
+          {%- else %}
+            Corona Virus {{ state_attr('sensor.corona_virus_county_rest', 'county') }}
+          {%- endif %}
+        availability_template: >
+          {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
+          {%- set features = features | map(attribute='attributes') | list %}
+          {{ features | length > 0 }}
+        value_template: >
+          {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
+          {%- set items = features | map(attribute='attributes') | list %}
+          {%- if items | length > 0 %}
+            {%- set item = items | first %}
+            {%- set last_updated = item.Last_Update | int / 1000 %}
+            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+          {%- else %}
+            {{ states('sensor.corona_virus_county_rest') }}
+          {%- endif %}
+        attribute_templates:
+          confirmed: >
+            {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
+            {%- set items = features | map(attribute='attributes') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Confirmed }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_county_rest', 'confirmed') }}
+            {%- endif %}
+          deaths: >
+            {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
+            {%- set items = features | map(attribute='attributes') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Deaths }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_county_rest', 'deaths') }}
+            {%- endif %}
+          recovered: >
+            {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
+            {%- set items = features | map(attribute='attributes') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Recovered }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_county_rest', 'recovered') }}
+            {%- endif %}
+          active: >
+            {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
+            {%- set items = features | map(attribute='attributes') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Active }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_county_rest', 'active') }}
+            {%- endif %}
+          county: >
+            {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
+            {%- set items = features | map(attribute='attributes') | list %}
+            {%- if items | length > 0 %}
+              {%- set item = items | first %}
+              {{ item.Admin2 }}
+            {%- else %}
+              {{ state_attr('sensor.corona_virus_county_rest', 'county') }}
+            {%- endif %}
+            
