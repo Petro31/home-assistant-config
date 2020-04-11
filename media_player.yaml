@@ -22,97 +22,13 @@
       HDMI5: "Switch"
       AUDIO1: "Phone"
       AUDIO2: "Echo"
-      
+
   - platform: universal
     name: Living Room Speakers
     children:
     - media_player.yamaha_receiver
-    commands:
-      volume_up:
-        service: media_player.volume_set
-        data_template:
-          entity_id: media_player.yamaha_receiver
-          volume_level: >
-            {%- set entity_id = 'media_player.yamaha_receiver' %}
-            {%- set level = state_attr(entity_id, 'volume_level') | multiply(100) %}
-            {%- set level = (level - level % 5) / 100 %}
-            {%- set next = level + 0.05 %}
-            {{ next if next <= 1 else 1.0 }}
-      volume_down:
-        service: media_player.volume_set
-        data_template:
-          entity_id: media_player.yamaha_receiver
-          volume_level: >
-            {%- set entity_id = 'media_player.yamaha_receiver' %}
-            {%- set level = state_attr(entity_id, 'volume_level') | multiply(100) %}
-            {%- set level = (level - level % 5) / 100 %}
-            {%- set next = level - 0.05 %}
-            {{ next if next >= 0.2 else 0.2 }}
-      volume_set:
-        # service: script.test_media
-        # data_template:
-          # volume_level: "{{ volume_level }}"
-        service: media_player.volume_set
-        data_template:
-          entity_id: media_player.yamaha_receiver
-          volume_level: >
-            {%- set entity_id = 'media_player.living_room_speakers' %}
-            {%- set c = state_attr(entity_id, 'volume_level') %}
-            {%- set current = c | multiply(100) | round | int %}
-            {%- set d = (volume_level | float - c) %}
-            {%- set d = -0.1 if c < 0.08 else d %}
-            {%- set delta = d | multiply(100) | round | int %}
-            {%- set increments = range(9,12) | reject('eq',5) | list %}
-            {%- set next = current - delta if delta | abs in increments else current + delta %}
-            {%- set next = 1 - (next / 100) %}
-            {% if next > 0 %}
-              {{ next  if next <= 1.0 else 1.0 }}
-            {% else %}
-              0.0
-            {% endif %}
 
   - platform: universal
     name: Dining Room Speakers
     children:
     - media_player.yamaha_receiver_zone_2
-    commands:
-      volume_up:
-        service: media_player.volume_set
-        data_template:
-          entity_id: media_player.yamaha_receiver_zone_2
-          volume_level: >
-            {%- set entity_id = 'media_player.yamaha_receiver_zone_2' %}
-            {%- set level = state_attr(entity_id, 'volume_level') | multiply(100) %}
-            {%- set level = (level - level % 5) / 100 %}
-            {%- set next = level + 0.05 %}
-            {{ next if next <= 1 else 1.0 }}
-      volume_down:
-        service: media_player.volume_set
-        data_template:
-          entity_id: media_player.yamaha_receiver_zone_2
-          volume_level: >
-            {%- set entity_id = 'media_player.yamaha_receiver_zone_2' %}
-            {%- set level = state_attr(entity_id, 'volume_level') | multiply(100) %}
-            {%- set level = (level - level % 5) / 100 %}
-            {%- set next = level - 0.05 %}
-            {{ next if next >= 0.2 else 0.2 }}
-      volume_set:
-        service: media_player.volume_set
-        data_template:
-          entity_id: media_player.yamaha_receiver_zone_2
-          volume_level: >
-            {%- set entity_id = 'media_player.dining_room_speakers' %}
-            {%- set c = state_attr(entity_id, 'volume_level') %}
-            {%- set current = c | multiply(100) | round | int %}
-            {%- set d = (volume_level | float - c) %}
-            {%- set d = -0.1 if c < 0.08 else d %}
-            {%- set delta = d | multiply(100) | round | int %}
-            {%- set increments = range(9,12) | reject('eq',5) | list %}
-            {%- set next = current - delta if delta | abs in increments else current + delta %}
-            {%- set next = 1 - (next / 100) %}
-            {% if next > 0 %}
-              {{ next  if next <= 1.0 else 1.0 }}
-            {% else %}
-              0.0
-            {% endif %}
-         

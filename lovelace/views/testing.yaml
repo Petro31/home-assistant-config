@@ -13,3 +13,10 @@ cards:
     - light.test
     - light.test_1
     - light.test_2
+
+- type: media-control
+  style: |
+    ha-card {
+      border-radius: 20px;
+    }
+  entity: media_player.bonus_room_dot

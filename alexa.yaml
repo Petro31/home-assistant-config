@@ -61,8 +61,6 @@
         - switch.tv
         - switch.upstairs
         - switch.xbox_one
-        - switch.zone_1
-        - switch.zone_2
     entity_config:
       fan.bonus_room_bedroom:
         name: Bonusroom Fan
@@ -192,7 +190,3 @@
         name: Upstairs
       switch.xbox_one:
         name: Xbox One
-      switch.zone_1:
-        name: Zone One
-      switch.zone_2:
-        name: Zone Two

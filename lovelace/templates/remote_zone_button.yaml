@@ -19,15 +19,17 @@ name: {{ name }}
 label: |
   [[[
     var empty = '&nbsp;';
-    var sensor = "{{ sensor }}";
-    var media_player = sensor.replace('sensor.','media_player.').replace('_volume','');
-    sensor = states[sensor];
-    media_player = states[media_player];
-    var color = "{{ color }}";
-    if (entity === undefined || sensor === undefined || media_player == undefined)
+    if (entity == undefined)
       return empty;
+    var sensor = entity.entity_id.replace('media_player','sensor') + '_volume';
+    console.log(sensor)
+    sensor = states[sensor];
+    console.log(sensor)
+    if (entity === undefined || sensor === undefined)
+      return empty;
+    var color = "{{ color }}";
     var level = Math.round(parseFloat(sensor.state));
-    if ('is_volume_muted' in media_player.attributes && media_player.attributes.is_volume_muted)
+    if ('is_volume_muted' in entity.attributes && entity.attributes.is_volume_muted)
       return `<ha-icon
       icon="mdi:volume-mute"
       style="width: 30%; height: 30%; color: ${color};">
