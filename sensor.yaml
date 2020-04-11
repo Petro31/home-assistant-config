@@ -274,7 +274,7 @@
     name: Corona Virus Rest
     value_template: >
       {%- set last_updated = value_json.features | map(attribute='attributes.Last_Update') | list | max / 1000 %}
-      {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+      {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
     json_attributes:
       - features
   
@@ -283,7 +283,7 @@
     name: Corona Virus County Rest
     value_template: >
       {%- set last_updated = value_json.features | map(attribute='attributes.Last_Update') | list | max / 1000 %}
-      {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+      {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
     json_attributes:
       - features
 
@@ -299,7 +299,7 @@
         value_template: >
           {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
           {%- set last_updated = features | map(attribute='attributes.Last_Update') | list | max / 1000 %}
-          {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+          {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
         attribute_templates:
           confirmed: >
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
@@ -327,7 +327,7 @@
           {%- if items | length > 0 %}
             {%- set item = items | first %}
             {%- set last_updated = item.Last_Update | int / 1000 %}
-            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
           {%- else %}
             {{ states('sensor.corona_virus_ny') }}
           {%- endif %}
@@ -386,7 +386,7 @@
           {%- if items | length > 0 %}
             {%- set item = items | first %}
             {%- set last_updated = item.Last_Update | int / 1000 %}
-            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
           {%- else %}
             {{ states('sensor.corona_virus_florida') }}
           {%- endif %}
@@ -452,7 +452,7 @@
           {%- if items | length > 0 %}
             {%- set item = items | first %}
             {%- set last_updated = item.Last_Update | int / 1000 %}
-            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00') }}
+            {{ last_updated | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
           {%- else %}
             {{ states('sensor.corona_virus_county_rest') }}
           {%- endif %}

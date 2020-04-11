@@ -268,6 +268,7 @@ multizone_controller:
 zone1_volume:
   module: convert_media_volume
   class: ConvertMediaVolume
+  name: yamaha receiver volume
   media_player: media_player.yamaha_receiver
   unit_of_measurement: dB
   min_volume:
@@ -281,6 +282,7 @@ zone1_volume:
 zone2_volume:
   module: convert_media_volume
   class: ConvertMediaVolume
+  name: yamaha receiver zone 2 volume
   media_player: media_player.yamaha_receiver_zone_2
   unit_of_measurement: dB
   min_volume:
