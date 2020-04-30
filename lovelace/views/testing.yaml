@@ -14,9 +14,38 @@ cards:
     - light.test_1
     - light.test_2
 
-- type: media-control
-  style: |
-    ha-card {
-      border-radius: 20px;
-    }
-  entity: media_player.bonus_room_dot
+- type: horizontal-stack
+  cards:
+  - !include
+    - '../templates/sensor_button.yaml'
+    - entity: sensor.speedtest_download
+  - !include
+    - '../templates/sensor_button.yaml'
+    - entity: sensor.speedtest_upload
+  - !include
+    - '../templates/sensor_button.yaml'
+    - entity: sensor.speedtest_ping
+
+- type: horizontal-stack
+  cards:
+  - !include
+    - '../templates/sensor_button.yaml'
+    - entity: sensor.memory_use_percent
+  - !include
+    - '../templates/sensor_button.yaml'
+    - entity: sensor.cpu_temperature
+  - !include
+    - '../templates/sensor_button.yaml'
+    - entity: sensor.bonus_room_switch_uptime
+
+- type: horizontal-stack
+  cards:
+  - !include
+    - '../templates/on_off_button.yaml'
+    - entity: fan.bonus_room_office
+  - !include
+    - '../templates/on_off_button.yaml'
+    - entity: light.bonus_room_office_fixture
+  - !include
+    - '../templates/on_off_button.yaml'
+    - entity: switch.basement_stairs

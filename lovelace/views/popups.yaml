@@ -1,0 +1,49 @@
+# lovelace_gen
+
+{%- set lights = [
+  {'entity': 'light.bonus_room_bedroom_fixture', },
+  {'entity': 'light.bonus_room_bedroom_recessed', },
+  {'entity': 'light.bonus_room_entrance', },
+  {'entity': 'light.bonus_room_office_fixture', },
+  {'entity': 'light.bonus_room_office_recessed', },
+  {'entity': 'light.browser_petro_chrome_desktop', },
+  {'entity': 'light.color_bulbs', },
+  {'entity': 'light.dining_room_chandelier', },
+  {'entity': 'light.game_room_bulb', },
+  {'entity': 'light.game_room_bulb_2', },
+  {'entity': 'light.hallway', },
+  {'entity': 'light.kitchen_cans', },
+  {'entity': 'light.kitchen_island', },
+  {'entity': 'light.living_room', },
+  {'entity': 'light.master_bathroom_cans', },
+  {'entity': 'light.master_bathroom_sink', },
+  {'entity': 'light.master_closet', },
+  {'entity': 'light.master_fixture', },
+  {'entity': 'light.test', },
+  {'entity': 'light.test_1', },
+  {'entity': 'light.test_2', },
+] %} 
+
+{%- for light in lights %}
+{{ light.entity }}:
+  title: ""
+  style:
+    position: fixed
+    z-index: 999
+    top: 0
+    left: 0
+    height: 100%
+    width: 100%
+    display: block
+    align-items: center
+    justify-content: center
+    background: rgba(0, 0, 0, 0.5)
+    flex-direction: column
+    margin: 0
+  card:
+    type: custom:light-popup-card
+    entity: {{ light.entity }}
+    icon: None
+    sliderTrackColor: var(--paper-item-icon-color)
+    sliderThumbColor: var(--paper-item-icon-color)
+{%- endfor %}

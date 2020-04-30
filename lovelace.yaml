@@ -99,3 +99,8 @@ resources:
 
 - url: /hacsfiles/lovelace-card-preloader/lovelace-card-preloader.js
   type: module
+
+# Light popup card
+
+- url: /hacsfiles/light-popup-card/light-popup-card.js
+  type: module

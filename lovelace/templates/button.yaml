@@ -5,112 +5,105 @@
 type: custom:button-card
 aspect_ratio: 1/1
 entity: {{ entity }}
-size: 80%
-name: |
-  [[[
-    var empty = '&nbsp;'
-    var name = "{{ name }}"
-    if (entity === undefined)
-      return empty;
-    
-    if (!name)
-      name = entity.attributes.friendly_name;
-
-    if (name === undefined)
-      return empty;
-
-    function greaterThanLength(strings, item, length){
-      var test = [...strings];
-      test.push(item);
-      return (test.join(' ').length > length);
-    }
-
-    var max_length = 15;
-    if (name.length > max_length){
-      var reta = [];
-      var retb = [];
-      var items = name.split(' ');
-      var i;
-      for (i = 0; i < name.length; i++){
-        if (greaterThanLength(reta, items[i], max_length))
-          retb.push(items[i]);
-        else
-          reta.push(items[i]);
-      }
-      return reta.join(' ') + '<br>' + retb.join(' ');
-    }
-    return name;
-  ]]]
+size: 60%
+name: {{ name }}
 show_state: true
 show_name: true
-show_label: true
-label: |
-    [[[
-      var empty = '&nbsp;'
-      if (entity === undefined)
-        return empty;
-      
-      function getEntityIcon(icon, text, color){
-        return `<ha-icon
-          icon="${icon}"
-          style="height: 25%; width: 25%; color: ${color};">
-          </ha-icon><span> ${text}</span>`;
-        }
-
-      function capitalizeFirstLetter(string) {
-          return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-        }
-
-      var [domain, object_id] = entity.entity_id.split('.');
-
-      var text;
-      var icon;
-      var color = '{{ color }}'
-      if (domain === 'light' && entity.state == 'on'){
-        var bri = Math.round(entity.attributes.brightness / 2.55);
-        text = bri ? bri + '%' : empty;
-        icon = 'mdi:lightbulb-on';
-      }
-      if (domain === 'fan' && entity.state == 'on'){
-        var speed = entity.attributes.speed;
-        text = speed === 'off' ? empty : capitalizeFirstLetter(speed);
-        icon = 'mdi:speedometer';
-      }
-      if (icon !== undefined && text !== undefined)
-        return getEntityIcon(icon, text, color);
-      return empty;
-    ]]]
+show_label: false
 styles:
   icon:
-  - padding-left: 10px
+  - height: auto
+  img_cell:
+  - justify-content: start
+  - align-items: start
   grid:
-  - grid-template-areas: '"i l" "n n" "s s"'
-  - grid-template-rows: 1fr 1fr 1fr
-  - grid-template-columns: 1fr 2fr
+  - grid-template-areas: '"i info" "n n" "s s" "l l"'
+  - grid-template-columns: 1fr 35%
+  - grid-template-rows: 1fr 0.min-content min-content min-content
+  - position: relative
   card:
     - border-radius: 15px
+    - padding: 10px
   name:
   - justify-self: start
   - align-self: end
-  - padding-left: 10px
   - font-weight: bold
   - font-family: Helvetica 
   - font-size: 12px
   - text-align: start
+  - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
   state:
   - justify-self: start
   - align-self: end
-  - padding-left: 10px
-  - padding-bottom: 10px
   - font-weight: bold
   - font-family: Helvetica 
   - font-size: 12px
   - text-align: start
-  label:
-  - justify-self: end
-  - text-align: end
-  - padding-right: 10px
-  - font-size: 10px
+  custom_fields:
+    info:
+    - align-self: start
+custom_fields:
+  info: >
+      [[[
+        function capitalizeFirstLetter(string) {
+          return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+        }
+        
+        const length = 41;
+        const width = 3;
+
+        if (entity.state === 'on' && entity.attributes.brightness) {
+          const radius = length / 2;
+          const brightness = Math.round(entity.attributes.brightness / 2.54);
+          const circumference = radius * 2 * Math.PI;
+          return `
+            <svg viewBox="0 0 50 50">
+              <circle cx="25" cy="25" r="${radius}" fill="none" stroke="var(--paper-item-icon-color)" opacity="0.5" stroke-width="${width}" />
+              <circle style="
+                  transform: rotate(-90deg);
+                  transform-origin: 50% 50%;
+                  stroke-dasharray: ${circumference};
+                  stroke-dashoffset: ${circumference - brightness / 100 * circumference};
+                "
+                id="c_brightness" cx="25" cy="25" r="${radius}" stroke="var(--paper-item-icon-active-color)" stroke-width="${width}" fill="none" stroke-linecap="round" />
+              <text x="50%" y="54%" fill="var(--primary-text-color)" font-size="14" text-anchor="middle" alignment-baseline="middle">${brightness}<tspan font-size="10">%</tspan>
+              </text>
+            </svg>
+            `;
+          }
+        else if (entity.state === 'on' && entity.attributes.speed && entity.attributes.speed_list)  {
+          const text = capitalizeFirstLetter(entity.attributes.speed);
+          const gap = 5;
+          const edge = (50 - length) / 2;
+          const y = 50 - edge;
+          var items = entity.attributes.speed_list;
+          if (items.indexOf('off') !== -1){
+            items.splice(items.indexOf('off'), 1);
+          }
+          const current = items.indexOf(entity.attributes.speed)
+          var i;
+          var x1 = edge;
+          var ret = `<svg  viewBox="0 0 50 50">`;
+          var l = (length - gap * (items.length - 1)) / items.length;
+          for (i = 0; i < items.length; i++) {
+            var x2 = x1 + l;
+            var color = (i <= current) ? "var(--paper-item-icon-active-color)" : "var(--paper-item-icon-color)";
+            var opacity = (i <= current) ? "1.0" : "0.5";
+            ret += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="${width}" opacity="${opacity}" stroke-linecap="round" />`;
+            x1 = x2 + gap;
+          }
+          ret += `<text x="50%" y="54%" fill="var(--primary-text-color)" font-size="14" text-anchor="middle" alignment-baseline="middle">${text}</text></svg>`
+          return ret;
+        }
+      ]]]
 state:
 - value: 'on'
   styles:
