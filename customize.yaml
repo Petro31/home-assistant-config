@@ -232,6 +232,7 @@ sensor.active_media_player:
   icon: mdi:surround-sound
 sensor.bonus_room_switch_uptime:
   friendly_name: Bonus Room Switch Uptime
+  device_class: timestamp
   icon: mdi:timer
 sensor.disk_use_total:
   friendly_name: disk_use_total
@@ -269,8 +270,8 @@ sensor.main_entrance_last_opened:
 sensor.memory_use_total:
   friendly_name: memory_use_total
   icon: mdi:memory
-sensor.nuc_uptime:
-  friendly_name: nuc_uptime
+sensor.last_boot:
+  friendly_name: Nuc Uptime
   icon: mdi:timer
 sensor.patio_entrance_last_closed:
   friendly_name: Patio Entrance Last Closed
@@ -280,9 +281,11 @@ sensor.patio_entrance_last_opened:
   icon: mdi:door
 sensor.server_room_gateway_uptime:
   friendly_name: Server Room Gateway Uptime
+  device_class: timestamp
   icon: mdi:timer
 sensor.server_room_switch_uptime:
   friendly_name: Server Room Switch Uptime
+  device_class: timestamp
   icon: mdi:timer
 sensor.sliding_door:
   friendly_name: Patio Entrance
@@ -298,9 +301,11 @@ sensor.speedtest_upload:
   icon: mdi:speedometer
 sensor.synology_uptime:
   friendly_name: Synology Uptime
+  device_class: timestamp
   icon: mdi:timer
 sensor.ups_uptime:
-  friendly_name: ups_uptime
+  friendly_name: UPS Uptime
+  device_class: timestamp
   icon: mdi:timer
 binary_sensor.door_bell_sensor:
   friendly_name: Doorbell Sensor

@@ -148,6 +148,7 @@ midnight:
   
   # Background colors
   primary-background-color: rgba(40, 40, 40)                                      # Settings background
+  sidebar-background-color: "var(--paper-listbox-background-color)"               # Sidebar background
   secondary-background-color: rgba(94, 94, 94)                                    # Main card UI background
   divider-color: 'rgba(0, 0, 0, .12)'                                             # Divider
   

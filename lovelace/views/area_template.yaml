@@ -23,7 +23,7 @@ cards:
     - group: {{ group }}
       options:
         !include
-        - '../templates/button.yaml'
+        - '../templates/on_off_button.yaml'
         - entity: this.entity_id
     - type: custom:button-card
       color_type: blank-card
