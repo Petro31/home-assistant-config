@@ -292,13 +292,13 @@ sensor.sliding_door:
   icon: mdi:door
 sensor.speedtest_download:
   friendly_name: Download
-  icon: mdi:speedometer
+  icon: mdi:download
 sensor.speedtest_ping:
   friendly_name: Ping
   icon: mdi:speedometer
 sensor.speedtest_upload:
   friendly_name: Upload
-  icon: mdi:speedometer
+  icon: mdi:upload
 sensor.synology_uptime:
   friendly_name: Synology Uptime
   device_class: timestamp
@@ -544,3 +544,16 @@ media_player.yamaha_receiver:
 media_player.yamaha_receiver_zone_2:
   friendly_name: Yamaha Zone Two
   icon: mdi:numeric-2-box
+sensor.server_room_ac_lite_uptime:
+  device_class: timestamp
+  friendly_name: Server Room AC Lite Uptime
+  icon: mdi:timer
+sensor.hall_closet_ac_lite_uptime:
+  device_class: timestamp
+  friendly_name: Hall Closet AC Lite Uptime
+  icon: mdi:timer
+sensor.garage_ac_lite_uptime:
+  device_class: timestamp
+  icon: mdi:timer
+sensor.entity_counter_light:
+  icon: mdi:lightbulb-multiple

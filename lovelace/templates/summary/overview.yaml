@@ -1,0 +1,388 @@
+# lovelace_gen
+
+{%- macro fixstate(state) %}
+{%- if state in [True, False] %}{{- 'on' if state else 'off' -}}
+{%- else %}{{- state -}}
+{%- endif %}
+{%- endmacro %}
+
+{%- set aspect_ratio = aspect_ratio|default('1/1') %}
+
+{%- if triggers_update is not defined and entities is defined and display is defined %}
+{%- set triggers_update = entities %}
+{%- else %}
+{%- set triggers_update = triggers_update | default([]) %}
+{%- endif %}
+{%- set display = display | default([]) %}
+{%- set max_display = max_display | default(4) %}
+
+{%- if triggers_update and triggers_update is iterable %}
+  {%- set ns = namespace(filtered=[]) %}
+  {%- for entity_id in triggers_update if entity_id is string and entity_id.count('.') == 1 %}
+    {%- set ns.filtered = ns.filtered + [ entity_id ] %}
+  {%- endfor %}
+  {%- set triggers_update = ns.filtered %}
+{%- endif %}
+
+{%- if display and display is iterable %}
+  {%- set ns = namespace(sensors=[], display=[]) %}
+  {%- for object in display | select('mapping') | list %}
+    {%- set sub = namespace(entities=[]) %}
+    {%- if object.domain is defined and object.state is defined and object.icon is defined %}
+      {%- for entity_id in triggers_update %}
+        {%- if entity_id.split('.')[0] in object.domain %}
+          {% set sub.entities = sub.entities + [ entity_id ] %}
+        {%- endif %}
+      {%- endfor %}
+    {%- endif %}
+    {%- if sub.entities %}
+      {%- set values = namespace(state=[]) %}
+      {%- for state in object.get('state')  %}
+        {%- set values.state = values.state + [ fixstate(state) ] %}
+      {%- endfor %}
+      {%- set current = {
+        'state': values.state,
+        'icon': object.get('icon'),
+        'units': fixstate(object.get('units')),
+        'color': object.get('color'),
+        'entities': sub.entities } %}
+      {%- set ns.display = ns.display + [ current ] %}
+    {%- endif %}
+  {%- endfor %}
+  {%- set display = ns.display %}
+  {%- set sensors = triggers_update | reject('in', ns.display | sum(attribute='entities', start=[])) | list %}
+{%- endif %}
+
+{%- set updating_card = triggers_update and triggers_update is iterable and (display or sensors) %}
+
+type: custom:button-card
+color: var(--paper-item-icon-color)
+aspect_ratio: {{ aspect_ratio }}
+show_name: true
+show_label: true
+{%- if image %}
+show_entity_picture: true
+{%- else %}
+show_icon: true
+{%- endif %}
+size: 75%
+name: {{ name }}
+icon: {{ icon }}
+entity_picture: {{ image }}
+{%- if updating_card %}
+triggers_update:
+{%- for entity_id in triggers_update %}
+- {{ entity_id }}
+{%- endfor %}
+{%- endif %}
+tap_action:
+  action: navigate
+  navigation_path: {{ path|default("/home") }}
+  haptic: light
+styles:
+  icon:
+  - opacity: {{ 0.5 if image else 0.3 }}
+  - width: 100%
+  img_cell:
+  - top: 0%
+  - left: 30%
+  - position: absolute
+  - z-index: 1
+  entity_picture:
+  - filter: grayscale(100%)
+  grid:
+  - grid-template-areas: '"info" "n"'
+  - grid-template-columns: 100%
+  - grid-template-rows: 1fr min-content
+  - position: relative
+  card:
+  - padding: {{ '10px 10px 0px 10px' if image else '10px' }}
+  - border-radius: 15px
+  name:
+  {%- if image %}
+  - padding-bottom: 10px
+  {%- endif %}
+  - z-index: 2
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 13px
+  - text-align: start
+  - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  lock:
+  - align-items: flex-end
+  custom_fields:
+    info:
+    - z-index: 2
+    - justify-self: start
+    - align-self: start
+    - font-family: Helvetica 
+    - font-size: 12px
+    - text-align: start
+    - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - position: relative
+    - display: inline-block
+    - width: 100%
+    - align-content: start
+    - text-align: start
+    - text-overflow: unset
+custom_fields:
+  info: |
+{%- if updating_card %}
+    [[[
+      var ret = [];
+
+      function getEntityIcon(state, units, icon, color){
+        units = (units !== null) ? `<span style="font-size: 75%;">${units}</span>` : '';
+        icon = (icon) ? icon : 'mdi:eye';
+        return `<ha-icon
+          icon="${icon}"
+          style="width: 1.4em; height: 1.4em; color: var(--paper-item-icon-active-color);">
+          </ha-icon><span style="font-weight: bold;"> ${state}</span>${units}`;
+        };
+        
+      String.prototype.plural = function(revert){
+      
+          var plural = {
+              '(quiz)$'               : "$1zes",
+              '^(ox)$'                : "$1en",
+              '([m|l])ouse$'          : "$1ice",
+              '(matr|vert|ind)ix|ex$' : "$1ices",
+              '(x|ch|ss|sh)$'         : "$1es",
+              '([^aeiouy]|qu)y$'      : "$1ies",
+              '(hive)$'               : "$1s",
+              '(?:([^f])fe|([lr])f)$' : "$1$2ves",
+              '(shea|lea|loa|thie)f$' : "$1ves",
+              'sis$'                  : "ses",
+              '([ti])um$'             : "$1a",
+              '(tomat|potat|ech|her|vet)o$': "$1oes",
+              '(bu)s$'                : "$1ses",
+              '(alias)$'              : "$1es",
+              '(octop)us$'            : "$1i",
+              '(ax|test)is$'          : "$1es",
+              '(us)$'                 : "$1es",
+              '([^s]+)$'              : "$1s"
+          };
+
+          var singular = {
+              '(quiz)zes$'             : "$1",
+              '(matr)ices$'            : "$1ix",
+              '(vert|ind)ices$'        : "$1ex",
+              '^(ox)en$'               : "$1",
+              '(alias)es$'             : "$1",
+              '(octop|vir)i$'          : "$1us",
+              '(cris|ax|test)es$'      : "$1is",
+              '(shoe)s$'               : "$1",
+              '(o)es$'                 : "$1",
+              '(bus)es$'               : "$1",
+              '([m|l])ice$'            : "$1ouse",
+              '(x|ch|ss|sh)es$'        : "$1",
+              '(m)ovies$'              : "$1ovie",
+              '(s)eries$'              : "$1eries",
+              '([^aeiouy]|qu)ies$'     : "$1y",
+              '([lr])ves$'             : "$1f",
+              '(tive)s$'               : "$1",
+              '(hive)s$'               : "$1",
+              '(li|wi|kni)ves$'        : "$1fe",
+              '(shea|loa|lea|thie)ves$': "$1f",
+              '(^analy)ses$'           : "$1sis",
+              '((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$': "$1$2sis",        
+              '([ti])a$'               : "$1um",
+              '(n)ews$'                : "$1ews",
+              '(h|bl)ouses$'           : "$1ouse",
+              '(corpse)s$'             : "$1",
+              '(us)es$'                : "$1",
+              's$'                     : ""
+          };
+
+          var irregular = {
+              'move'   : 'moves',
+              'foot'   : 'feet',
+              'goose'  : 'geese',
+              'sex'    : 'sexes',
+              'child'  : 'children',
+              'man'    : 'men',
+              'tooth'  : 'teeth',
+              'person' : 'people'
+          };
+
+          var uncountable = [
+              'sheep', 
+              'fish',
+              'deer',
+              'moose',
+              'series',
+              'species',
+              'money',
+              'rice',
+              'information',
+              'equipment'
+          ];
+
+          // save some time in the case that singular and plural are the same
+          if(uncountable.indexOf(this.toLowerCase()) >= 0)
+            return this;
+          var word;
+          // check for irregular forms
+          for(word in irregular){
+          
+            if(revert){
+                    var pattern = new RegExp(irregular[word]+'$', 'i');
+                    var replace = word;
+            } else{ var pattern = new RegExp(word+'$', 'i');
+                    var replace = irregular[word];
+            }
+            if(pattern.test(this))
+              return this.replace(pattern, replace);
+          }
+
+          if(revert) var array = singular;
+               else  var array = plural;
+          var reg;
+          // check for matches using regular expressions
+          for(reg in array){
+          
+            var pattern = new RegExp(reg, 'i');
+
+            if(pattern.test(this))
+              return this.replace(pattern, array[reg]);
+          }
+
+          return this;
+      }
+
+      var max_display = {{ max_display }};
+      if (max_display > 0)
+        max_display = max_display;
+      else {
+        if (String(navigator.userAgent).includes('iPhone'))
+          max_display = 4;
+        else
+          max_display = 6;
+      }
+        
+  {%- if sensors %}
+      var items = {{ sensors }};
+      var limit = max_display - {{ display | length if display else 0 }};
+      items.forEach(item => {
+        var entity = states[item];
+        if (entity && entity.state){
+          var entity_id = entity.entity_id;
+          var statestr = entity.state.trim();
+          var units = (entity.attributes.unit_of_measurement) ? entity.attributes.unit_of_measurement : null;
+          var date = (statestr && entity.attributes.device_class === 'timestamp') ? new Date(statestr) : null;
+          var icon = (entity.attributes.icon) ? entity.attributes.icon : '';
+          var value;
+
+          if (statestr && date === null) {
+            if (statestr.split('.').length - 1 <= 1){
+              var test = parseFloat(parseFloat(statestr).toFixed(2));
+              value = (isNaN(test)) ? null : test;
+
+              // test if units are in the state because some sensors are stupid.  Looking
+              //   at you synology.
+
+              const expr = /[^-.0-9]+/;
+              var has_units = expr.test(statestr);
+
+              // console.log(`${entity_id}: "${statestr}" ${matches}`);
+              if (value && has_units)
+                units = statestr.replace(/[.0-9]+/, '');
+            }
+          }
+
+          if (date){
+            let now = new Date();
+            var tdelta = Math.floor((now - date)/1000);
+
+            // console.log(`${entity_id}: ${tdelta}`);
+
+            function plural(descriptor, divisor){
+              var ret = Math.floor(tdelta/divisor);
+              return (ret == 1) ? [ret, descriptor] : [ret, `${descriptor}s`];
+            }
+
+            var values;
+            if (tdelta < 60)
+              values = plural('second', 1);
+            else if (tdelta < 60 * 60)
+              values = plural('minute', 60);
+            else if (tdelta < 60 * 60 * 24)
+              values = plural('hour', 60 * 60);
+            else if (tdelta < 7 * 60 * 60 * 24)
+              values = plural('day', 60 * 60 * 24);
+            else
+              values = plural('week', 7 * 60 * 60 * 24);
+            statestr = values[0];
+            units = values[1];
+          }
+          if (value && units){
+            statestr = value;
+            if (units.includes('°') && !icon)
+              icon = 'mdi:thermometer'
+          }
+          
+          if(entity_id.includes('device_tracker.') || ['on', 'off'].includes(statestr)) {
+            const on = ['home','on'];
+            icon = (on.includes(statestr)) ? 'mdi:check-network' : 'mdi:close-network';
+            statestr = (on.includes(statestr)) ? 'Online' : 'Offline';
+            units = '';
+          }
+          if (ret.length < limit)
+            ret.push(getEntityIcon(statestr, units, icon))
+        }
+      });
+  {%- endif %}
+
+  {%- if display %}
+      var items = [
+      {%- for item in display %}
+        {%- if loop.first -%}{{ '{' }} {%- endif %}
+        state: {{ item.state }},
+        icon: "{{ item.icon }}",
+        color: "{{ item.color if item.color is defined and item.color != None else 'var(--paper-item-icon-active-color)' }}",
+        units: "{{ item.units }}",
+        entities: {{ item.entities }}
+        {%- if loop.last %}
+      {{ '}];' }}
+        {%- else %}
+      {{ '}, {' }}
+        {%- endif %}
+      {%- endfor %}
+
+      items.forEach(item => {
+        var count = 0;
+        item.entities.forEach(entity_id => {
+          var stateobj = states[entity_id];
+          // if (stateobj === undefined)
+          //   console.warn(`{{ name }} card: entity_id '${entity_id}' doesn't exist!`)
+          // else
+          if (stateobj !== undefined)
+            if (item.state.includes(stateobj.state))
+              count = count + 1
+        });
+        if (count > 0){
+          var units = (count == 1) ? item.units.plural(true) : item.units;
+          ret.push(getEntityIcon(count, units, item.icon, item.color));
+        }
+      });
+
+  {%- endif %}
+      return ret.slice(0, max_display).join("<br>");
+    ]]]
+{%- else %}
+    [[[
+      return '&nbsp;';
+    ]]]
+{%- endif %}

@@ -1,0 +1,25 @@
+# lovelace_gen
+
+{%- set entities = entities | default([]) %}
+
+# card
+type: custom:config-template-card
+variables:
+{%- for entity in entities %}
+- states['{{ entity }}'].state
+{%- endfor %}
+entities:
+{%- for entity in entities %}
+- {{ entity }}
+{%- endfor %}
+card:
+  type: custom:hui-markdown-card
+  style: |
+    ha-card {
+      box-shadow: none;
+      height: 33px;
+      background: none;
+      padding: 0px 11px;
+      color: var(--header-color);
+    }
+  content: "${ '#### ' + {{ content }} }"

@@ -1,0 +1,15 @@
+# lovelace_gen
+
+{%- set aspect_ratio = aspect_ratio|default('1/1') %}
+
+type: custom:button-card
+aspect_ratio: {{ aspect_ratio }}
+entity: {{ entity }}
+name: "Empty"
+show_name: true
+show_state: false
+show_icon: false
+show_label: false
+styles:
+  card:
+  - border-radius: 15px

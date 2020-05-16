@@ -1,0 +1,170 @@
+# lovelace_gen
+
+{%- set color = color|default('var(--paper-item-icon-active-color)') %}
+{%- set entities = entities | default([]) %}
+
+{%- set valid_domains = ['light','switch','fan'] %}
+
+{%- set ns = namespace(entities=[]) %}
+{%- for entity_id in entities if entity_id.count('.') == 1 %}
+{%- set domain, object_id = entity_id.split(".") %}
+{%- if domain in valid_domains %}
+{%- set ns.entities = ns.entities + [ entity_id ] %}
+{%- endif %}
+{%- endfor %}
+
+{%- set entities = ns.entities %}
+
+anchors:
+  base: &base
+    type: custom:button-card
+    show_state: false
+    show_label: false
+    show_name: true
+    show_icon: true
+    aspect_ratio: 2.5/1
+    size: 100%
+    triggers_update:
+      {%- for entity_id in entities %}
+      - {{ entity_id }}
+      {%- endfor %}
+
+  style: &style
+    card:
+    - border-radius: 15px
+    grid:
+    - grid-template-areas: '"i n"'
+    - grid-template-columns: 1fr 1.5fr
+    name:
+    - justify-self: start
+    - padding-left: 10px
+    - font-weight: bold
+    - font-family: Helvetica 
+    - font-size: 20px
+  button_on: &button_on
+    icon:
+      - color: {{ color }}
+    name:
+      - color: white
+    state:
+      - color: gray
+    lock:
+      - color: white 
+    label:
+      - color: gray
+  button_off: &button_off
+    card:
+    - opacity: 0.5
+    icon:
+    - color: var(--paper-item-icon-color)
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: var(--primary-text-color)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)
+
+type: horizontal-stack
+cards:
+- <<: *base
+  icon: mdi:lightbulb-multiple
+  name: 'On'
+  styles: *style
+  state:
+  - operator: template
+    value: |
+      [[[
+        var entities = {{ entities }};
+        var ret = [];
+        entities.forEach(entity_id => {
+          entity = states[entity_id];
+          if (entity && entity.state && entity.state == 'on')
+            ret.push(entity_id)
+        })
+        return (ret.length > 0);
+      ]]]
+    styles: *button_on
+  - operator: template
+    value: |
+      [[[
+        var entities = {{ entities }};
+        var ret = [];
+        entities.forEach(entity_id => {
+          entity = states[entity_id];
+          if (entity && entity.state && entity.state == 'off')
+            ret.push(entity_id)
+        })
+        return (ret.length > 0);
+      ]]]
+    styles: *button_off
+  tap_action:
+    action: call-service
+    service: homeassistant.turn_on
+    service_data:
+      entity_id: |
+        [[[
+          var entities = {{ entities }};
+          var ret = [];
+          entities.forEach(entity_id => {
+            entity = states[entity_id];
+            if (entity && entity.state && entity.state == 'off')
+              ret.push(entity_id)
+          })
+          if (ret.length > 0)
+            return ret.join(', ');
+          else
+            return 'none';
+        ]]]
+    haptic: light
+- <<: *base
+  icon: mdi:lightbulb-multiple-off
+  name: 'Off'
+  styles: *style
+  state:
+  - operator: template
+    value: |
+      [[[
+        var entities = {{ entities }};
+        var ret = [];
+        entities.forEach(entity_id => {
+          entity = states[entity_id];
+          if (entity && entity.state && entity.state == 'off')
+            ret.push(entity_id)
+        })
+        return (ret.length > 0);
+      ]]]
+    styles: *button_on
+  - operator: template
+    value: |
+      [[[
+        var entities = {{ entities }};
+        var ret = [];
+        entities.forEach(entity_id => {
+          entity = states[entity_id];
+          if (entity && entity.state && entity.state == 'on')
+            ret.push(entity_id)
+        })
+        return (ret.length > 0);
+      ]]]
+    styles: *button_off
+  tap_action:
+    action: call-service
+    service: homeassistant.turn_off
+    service_data:
+      entity_id: |
+        [[[
+          var entities = {{ entities }};
+          var ret = [];
+          entities.forEach(entity_id => {
+            entity = states[entity_id];
+            if (entity && entity.state && entity.state == 'on')
+              ret.push(entity_id)
+          })
+          if (ret.length > 0)
+            return ret.join(', ');
+          else
+            return 'none';
+        ]]]
+    haptic: light

@@ -1,0 +1,149 @@
+# lovelace_gen
+
+# lovelace_gen
+
+{%- set color = color|default('var(--paper-item-icon-active-color)') %}
+{%- set ratio = ratio|default('1/1') %}
+{%- set connected = color_connected|default('var(--paper-item-icon-active-color)') %}
+{%- set disconnected = color_disconnected|default('rgba(228, 94, 101)') %}
+
+
+type: custom:button-card
+aspect_ratio: {{ ratio }}
+entity: {{ entity }}
+icon: {{ icon }}
+color: var(--paper-item-icon-color)
+show_name: true
+show_label: true
+show_icon: true
+show_last_changed: true
+size: 70%
+tap_action:
+  action: more-info
+  haptic: light
+styles:
+  icon:
+  - opacity: 0.3
+  - width: 100%
+  img_cell:
+  - top: 0%
+  - left: 30%
+  - position: absolute
+  - z-index: 1
+  grid:
+  - grid-template-areas: '"info" "n" "l"'
+  - grid-template-columns: 100%
+  - grid-template-rows: 1fr min-content min-content
+  - position: relative
+  card:
+  - padding: 10px
+  - border-radius: 15px
+  name:
+  - z-index: 2
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  label:
+  - z-index: 2
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  custom_fields:
+    info:
+    - align-self: start
+    - width: 40%
+custom_fields:
+  info: |
+    [[[
+
+      const length = 50;
+      const width = 3;
+      const radius = (length - width) / 2;
+
+      var statestr = (entity === undefined) ? 'invalid' : entity.state;
+      var entity_id = (entity === undefined) ? 'invalid' : entity.entity_id;
+
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+      }
+
+      var paths = {
+        wifi: {
+          home: "M12,21L15.6,16.2C14.6,15.45 13.35,15 12,15C10.65,15 9.4,15.45 8.4,16.2L12,21M12,3C7.95,3 4.21,4.34 1.2,6.6L3,9C5.5,7.12 8.62,6 12,6C15.38,6 18.5,7.12 21,9L22.8,6.6C19.79,4.34 16.05,3 12,3M12,9C9.3,9 6.81,9.89 4.8,11.4L6.6,13.8C8.1,12.67 9.97,12 12,12C14.03,12 15.9,12.67 17.4,13.8L19.2,11.4C17.19,9.89 14.7,9 12,9Z",
+          not_home: "M2.28,3L1,4.27L2.47,5.74C2.04,6 1.61,6.29 1.2,6.6L3,9C3.53,8.6 4.08,8.25 4.66,7.93L6.89,10.16C6.15,10.5 5.44,10.91 4.8,11.4L6.6,13.8C7.38,13.22 8.26,12.77 9.2,12.47L11.75,15C10.5,15.07 9.34,15.5 8.4,16.2L12,21L14.46,17.73L17.74,21L19,19.72M12,3C9.85,3 7.8,3.38 5.9,4.07L8.29,6.47C9.5,6.16 10.72,6 12,6C15.38,6 18.5,7.11 21,9L22.8,6.6C19.79,4.34 16.06,3 12,3M12,9C11.62,9 11.25,9 10.88,9.05L14.07,12.25C15.29,12.53 16.43,13.07 17.4,13.8L19.2,11.4C17.2,9.89 14.7,9 12,9Z",
+        },
+        lan: {
+          home: "M4,1C2.89,1 2,1.89 2,3V7C2,8.11 2.89,9 4,9H1V11H13V9H10C11.11,9 12,8.11 12,7V3C12,1.89 11.11,1 10,1H4M4,3H10V7H4V3M3,13V18L3,20H10V18H5V13H3M14,13C12.89,13 12,13.89 12,15V19C12,20.11 12.89,21 14,21H11V23H23V21H20C21.11,21 22,20.11 22,19V15C22,13.89 21.11,13 20,13H14M14,15H20V19H14V15Z",
+          not_home: "M4,1C2.89,1 2,1.89 2,3V7C2,8.11 2.89,9 4,9H1V11H13V9H10C11.11,9 12,8.11 12,7V3C12,1.89 11.11,1 10,1H4M4,3H10V7H4V3M14,13C12.89,13 12,13.89 12,15V19C12,20.11 12.89,21 14,21H11V23H23V21H20C21.11,21 22,20.11 22,19V15C22,13.89 21.11,13 20,13H14M3.88,13.46L2.46,14.88L4.59,17L2.46,19.12L3.88,20.54L6,18.41L8.12,20.54L9.54,19.12L7.41,17L9.54,14.88L8.12,13.46L6,15.59L3.88,13.46M14,15H20V19H14V15Z",
+        },
+        gps: {
+          home: "M12,3L2,12H5V20H19V12H22L12,3M12,7.7C14.1,7.7 15.8,9.4 15.8,11.5C15.8,14.5 12,18 12,18C12,18 8.2,14.5 8.2,11.5C8.2,9.4 9.9,7.7 12,7.7M12,10A1.5,1.5 0 0,0 10.5,11.5A1.5,1.5 0 0,0 12,13A1.5,1.5 0 0,0 13.5,11.5A1.5,1.5 0 0,0 12,10Z",
+          not_home: "M12,2C8.14,2 5,5.14 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9C19,5.14 15.86,2 12,2M12.88,15.75H11.13V14H12.88M12.88,12.88H11.13C11.13,10.04 13.75,10.26 13.75,8.5A1.75,1.75 0 0,0 12,6.75A1.75,1.75 0 0,0 10.25,8.5H8.5A3.5,3.5 0 0,1 12,5A3.5,3.5 0 0,1 15.5,8.5C15.5,10.69 12.88,10.91 12.88,12.88Z", 
+        },
+        none: {
+          home: "M4,1C2.89,1 2,1.89 2,3V7C2,8.11 2.89,9 4,9H1V11H13V9H10C11.11,9 12,8.11 12,7V3C12,1.89 11.11,1 10,1H4M4,3H10V7H4V3M3,13V18L3,20H10V18H5V13H3M14,13C12.89,13 12,13.89 12,15V19C12,20.11 12.89,21 14,21H11V23H23V21H20C21.11,21 22,20.11 22,19V15C22,13.89 21.11,13 20,13H14M14,15H20V19H14V15Z",
+          not_home: "M4,1C2.89,1 2,1.89 2,3V7C2,8.11 2.89,9 4,9H1V11H13V9H10C11.11,9 12,8.11 12,7V3C12,1.89 11.11,1 10,1H4M4,3H10V7H4V3M14,13C12.89,13 12,13.89 12,15V19C12,20.11 12.89,21 14,21H11V23H23V21H20C21.11,21 22,20.11 22,19V15C22,13.89 21.11,13 20,13H14M3.88,13.46L2.46,14.88L4.59,17L2.46,19.12L3.88,20.54L6,18.41L8.12,20.54L9.54,19.12L7.41,17L9.54,14.88L8.12,13.46L6,15.59L3.88,13.46M14,15H20V19H14V15Z",
+          unavailable: "M10 3H14V14H10V3M10 21V17H14V21H10Z",
+          invalid: "M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z",
+        }
+      };
+
+      var items = {
+        on: { color: '{{ color }}', state: 'home' },
+        home: { color: '{{ color }}', state: 'home'},
+        off: { color: 'rgba(228, 94, 101)', state: 'not_home'},
+        not_home: { color: 'rgba(228, 94, 101)', state: 'not_home'},
+        unavailable: { color: 'hsl(0, 100%, 50%)', state: 'unavailable'},
+        invalid: { color: 'hsl(0, 100%, 50%)', state: 'invalid'},
+      };
+
+      var pathtype = 'none';
+      if (entity.attributes.source_type && entity.attributes.source_type === 'router')
+        if (entity.attributes.is_wired === undefined || entity.attributes.is_wired)
+          pathtype = 'lan';
+        else
+          pathtype = 'wifi';
+      else if (entity.attributes.source_type && entity.attributes.source_type === 'gps')
+        pathtype = 'gps';
+
+      var item = (statestr in items) ? items[statestr] : items['invalid'];
+      console.log(`${entity_id}: ${pathtype}, ${item.state}`)
+      var path = (item.state in paths[pathtype]) ? paths[pathtype][item.state] : paths['none']['invalid'];
+
+      return `
+        <svg viewBox="0 0 50 50">
+          <circle cx="25" cy="25" r="${radius}" fill="${item.color}" />
+          <path transform="translate(13, 13)" fill="var(--paper-card-background-color)" d="${path}" />
+          </text>
+        </svg>
+        `;
+    ]]]
+state:
+- value: "unavailable"
+  styles:
+    card:
+    - opacity: 0.2
