@@ -1,8 +1,10 @@
 # lovelace_gen
 
+{% set name = entity.split('.')[-1] | default('Person') %}
+
 icon: mdi:map
-title: "{{ entity }}'s Location"
-path: "{{ entity.split('.')[-1] }}_map"
+title: {{ name | title }}
+path: {{ name }}_map
 panel: true
 cards:
 - type: map

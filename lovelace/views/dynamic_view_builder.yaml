@@ -1,0 +1,215 @@
+# lovelace_gen
+
+{%- set name = name | default('sub view') %}
+{%- set entities = entities | default([]) %}
+{%- set rows = rows | default(3) %}
+{%- set columns = columns | default(3) %}
+{%- set aspect_ratio = aspect_ratio | default('1/1') %}
+{%- set label = label | default(None) %}
+{%- set type = type | default(None) %}
+{%- set headers = headers | default([]) %}
+
+{%- set extra_attrs = {
+  'aspect_ratio': aspect_ratio,
+  } %}
+
+{%- set mapped_button_cards = {
+    'automation': '/templates/buttons/empty.yaml',
+    'binary_sensor': '/templates/buttons/sensor.yaml',
+    'camera': '/templates/buttons/empty.yaml',
+    'cover': '/templates/buttons/toggle.yaml',
+    'device_tracker': '/templates/buttons/device_tracker.yaml',
+    'fan': '/templates/buttons/toggle.yaml',
+    'group': '/templates/buttons/empty.yaml',
+    'image_processing': '/templates/buttons/empty.yaml',
+    'input_number': '/templates/buttons/empty.yaml',
+    'input_select': '/templates/buttons/empty.yaml',
+    'input_text': '/templates/buttons/empty.yaml',
+    'light': '/templates/buttons/toggle.yaml',
+    'media_player': '/templates/buttons/empty.yaml',
+    'person': '/templates/buttons/empty.yaml',
+    'remote': '/templates/buttons/empty.yaml',
+    'script': '/templates/buttons/script.yaml',
+    'sensor': '/templates/buttons/sensor.yaml',
+    'sun': '/templates/buttons/empty.yaml',
+    'switch': '/templates/buttons/toggle.yaml',
+    'weather': '/templates/buttons/empty.yaml',
+    'zone': '/templates/buttons/empty.yaml',
+    'zwave': '/templates/buttons/empty.yaml',
+} %}
+
+{#- # Macro for building a Dictionary #}
+{%- macro buildmapping(indent, items, iterfunc) %}
+{%- for attr, value in items.items() %}
+{%- set line = indent ~ '- ' if loop.first else indent ~ '  ' %}
+{%- if value is iterable and value is not string and value is not mapping %}
+{{ line }}{{ attr }}:
+{{- iterfunc(indent ~ '  ', value) }}
+{%- elif value is mapping %}
+{{ line }}{{ attr }}:
+{{- buildmapping(indent+'  ', value, iterfunc) }}
+{%- elif value %}
+{{ line }}{{ attr }}: {{ value }}
+{%- endif %}
+{%- endfor %}
+{%- endmacro %}
+
+{#- # Macro for building a List #}
+{%- macro builditerable(indent, values) %}
+{%- for value in values %}
+{%- if value is iterable and value is not string and value is not mapping %}
+{{ indent ~ '- ' }}
+{{- builditerable(indent+'  ', value) }}
+{%- elif value is mapping %}
+{{- buildmapping(indent, value, builditerable) }}
+{%- elif value %}
+{{ indent  ~ '- ' }}{{ value }}
+{%- endif %}
+{%- endfor %}
+{%- endmacro %}
+
+{#- # Macro for turning an object into yaml #}
+{%- macro toyaml(indent, attr, value, first=False) %}
+{%- set line = indent[:-2] ~ '- ' if first else indent %}
+{%- if value is iterable and value is not string and value is not mapping %}
+{{- line }}{{ attr }}:
+{{- builditerable(indent, value) }}
+{%- elif value is mapping %}
+{{- line }}{{ attr }}:
+{{- buildmapping(indent, value, builditerable) }}
+{%- elif value %}
+{{- line }}{{ attr }}: {{ value }}
+{%- endif %}
+{%- endmacro %}
+
+{#- # Macro for adding a header card #}
+{%- macro card(indent, kwargs, entities=[]) %}
+{%- set type = kwargs.items() | selectattr('0','eq','type') | map(attribute='1') | first %}
+{%- set kwargs = kwargs.items() | rejectattr('0','eq','type') | list %}
+{%- if 'entity' not in kwargs or 'entities' not in kwargs %}
+{%- set kwargs = kwargs + [('entities', entities)] %}
+{%- endif %}
+{%- if type %}
+{{ indent }}- !include
+{{ indent }}  - '{{ type }}'
+{%- for attr, value in kwargs %}
+{{ toyaml(indent + '    ', attr, value, loop.first) }}
+{%- endfor %}
+{%- endif %}
+{%- endmacro %}
+
+icon: {{ icon }}
+title: {{ name | title }}
+path: {{ path | default(name.lower()) }}
+cards:
+{#- # Header. #}
+{%- if header is defined and header is iterable %}
+- type: vertical-stack
+  cards:
+{%- set indent = '  ' %}
+{%- for inner in header %}
+  - type: horizontal-stack
+    cards:
+    - !include '../templates/buttons/edge.yaml'
+{%- if inner is mapping %}
+{{- card(indent ~ '  ', inner, entities) }}
+{%- else %}
+{%- for sub in inner %}
+{{- card(indent ~ '  ', sub, entities) }}
+{%- endfor %}
+{%- endif %}
+    - !include '../templates/buttons/edge.yaml'
+{%- endfor %}
+{%- endif %}
+{#- # Sort entity list here if needed. #}
+
+{#- # Cut up the entities to fit the r x c grid. #}
+{#- # Example, 17 entities in a 3x3 grid will layout like this: #}
+{#- #      View        #}
+{#- # set 1 |  set 2   #}
+{#- # 1 2 3 | 10 11 12 #}
+{#- # 4 5 6 | 13 14 15 #}
+{#- # 7 8 9 | 16 17    #}
+
+{%- set n = namespace(clusters=[]) %}
+{%- for i in range(0, entities | length, rows * columns) %}
+{%- set m = namespace(rows=[]) %}
+{%- set cluster = entities[i:i + rows * columns] %}
+{%- for i in range(0, cluster | length, columns) %}
+{%- set row = cluster[i:i + columns] %}
+{%- set row = row + [ 'spacer' ] * (columns - row | length ) %}
+{%- set m.rows = m.rows + [ row ] %}
+{%- endfor %}
+{%- set n.clusters = n.clusters + [ m.rows ] %}
+{%- endfor %}
+
+{#- # Add the cards, each row is set up edge spacer - n buttons - edge spacer. #}
+{%- for cluster in n.clusters %}
+{{ indent }}- type: vertical-stack
+{{ indent }}  cards:
+{#- # Check to see if we need to make a label. #}
+  {%- if label %}
+{{ indent }}  - !include
+    {%- if label is mapping and label.content is defined and label.entities is defined %}
+{{ indent }}    - '..templates/headers/label_dynamic.yaml'
+{{ indent }}    - content: "{{ label.content }}"
+{{ indent }}      entities: {{ label.entities }}
+    {%- else %}
+{{ indent }}    - '..templates/headers/label.yaml'
+{{ indent }}    - content: "#### {{ label | title }}"
+    {%- endif %}
+  {%- endif %}
+  {%- for row in cluster %}
+{{ indent }}  - type: horizontal-stack
+{{ indent }}    cards:
+{{ indent }}    - !include '../templates/buttons/edge.yaml'
+    {%- for object in row %}
+      {%- set domain = None %}
+      {%- set spacer = False %}
+      {%- set attrs = [] %}
+      {#- # If the object is a dictionary, get the information we care about out #}
+      {%- if object is mapping and object.entity is defined %}
+        {%- set attrs = object.items() | list %}
+        {%- set objecttype = attrs | selectattr('0','eq','type') | first %}
+        {%- if objecttype is defined %}
+          {%- set type = objecttype[-1] %}
+          {%- set attrs = attrs | rejectattr('0', 'eq', 'type') | list %}
+        {%- else %}
+          {%- set entity_id = object.entity %}
+          {%- set domain, object_id = entity_id.split('.') %}
+        {%- endif %}
+      {%- elif object is mapping %}
+        {%- set attrs = object.items() | list %}
+        {%- set objecttype = attrs | selectattr('0','eq','type') | first %}
+        {%- if objecttype is defined %}
+          {%- set type = objecttype[-1] %}
+          {%- set attrs = attrs | rejectattr('0', 'eq', 'type') | list %}
+        {%- endif %}
+        {%- set attrs = attrs + [('path', object.name.lower())] %}
+      {%- elif object is string and object != 'spacer' %}
+        {% set domain, object_id = object.split('.') %}
+        {%- set attrs = [('entity', object)] %}
+      {%- else %}
+        {%- set spacer = True %}
+      {%- endif %}
+      {#- # Choose the proper card to use #}
+{{ indent }}    - !include
+      {%- if spacer %}
+{{ indent }}      - '../templates/buttons/spacer.yaml'
+      {%- elif type %}
+{{ indent }}      - '{{ type }}'
+      {%- elif domain is defined and domain in mapped_button_cards %}
+{{ indent }}      - '..{{ mapped_button_cards[domain] }}'
+      {%- else %}
+{{ indent }}      - '../templates/buttons/empty.yaml'
+      {%- endif %}
+      {#- # provide the entity and attributes #}
+      {%- for attr, value in attrs + extra_attrs.items() | list %}
+        {%- if value is defined %}
+{{ toyaml(indent ~ '        ', attr, value, loop.first) }}
+        {%- endif %}
+      {%- endfor %}
+    {%- endfor %}
+{{ indent }}    - !include '../templates/buttons/edge.yaml'
+  {%- endfor %}
+{%- endfor %}

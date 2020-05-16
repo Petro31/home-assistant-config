@@ -1,6 +1,6 @@
 # lovelace_gen
 
-{% set cameras = [
+{% set default_entities = [
   {'entity': 'camera.driveway'},
   {'entity': 'camera.backyard'},
   {'entity': 'camera.foyer'},
@@ -8,12 +8,14 @@
   {'entity': 'camera.kitchen'},
   {'entity': 'camera.floating'},
 ] %}
+{% set entities = entities | default(default_entities) %}
+{%- set name = name | default('Cameras') %}
 
-icon: mdi:cctv
-title: Cameras
-path: cameras
+icon: {{ icon | default('mdi:cctv') }}
+title: {{ name | title }}
+path: {{ path | default(name.lower()) }}
 cards:
-{%- for camera in cameras %}
+{%- for camera in entities %}
 - type: picture-entity
   style: |
     ha-card { border-radius: 20px; }

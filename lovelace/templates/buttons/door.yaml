@@ -1,0 +1,226 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+{% set aspect_ratio = aspect_ratio|default('1/1') %}
+{% set imgratio = 'transparent_' ~ 'to'.join(aspect_ratio.split('/')) ~ '.png' %}
+
+type: custom:button-card
+aspect_ratio: {{ aspect_ratio }}
+entity: {{ entity }}
+icon: |
+  [[[
+    var door_type = "{{ door_type }}";
+    var open;
+    var closed;
+    if (door_type === 'door'){
+      open = 'mdi:door-open';
+      closed = 'mdi:door-closed';
+    }
+    else if (door_type == 'garage'){
+      open = 'mdi:garage-open-variant';
+      closed = 'mdi:garage-variant';
+    }
+    else{
+      open = 'mdi:power-on'
+      closed = 'mdi:power-off'
+    }
+    if (entity === undefined)
+      return 'mdi:alert-circle';
+    
+    var on = ['on','open'];
+    if (on.includes(entity.state))
+      return open;
+    return closed;
+  ]]]
+color: var(--paper-item-icon-color)
+show_name: true
+show_label: false
+show_icon: true
+size: 70%
+{% if cover is defined %}
+tap_action:
+  action: call-service
+  service: cover.toggle
+  service_data:
+    entity_id: {{ cover }}
+  haptic: light
+{% endif %}
+styles:
+  icon:
+  - opacity: 0.3
+  - width: 100%
+  img_cell:
+  - top: 0%
+  - left: 30%
+  - position: absolute
+  - z-index: 1
+  grid:
+  - grid-template-areas: '"info" "n" "who" "last_opened"'
+  - grid-template-columns: 100%
+  - grid-template-rows: 1fr min-content min-content min-content
+  - position: relative
+  card:
+  - padding: 10px
+  - border-radius: 15px
+  name:
+  - z-index: 2
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  custom_fields:
+    who:
+    - z-index: 2
+    - justify-self: start
+    - align-self: end
+    - font-weight: bold
+    - font-family: Helvetica 
+    - font-size: 12px
+    - text-align: start
+    - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - position: relative
+    - display: inline-block
+    - width: 100%
+    - align-content: start
+    - text-align: start
+    - text-overflow: unset
+    last_opened:
+    - z-index: 2
+    - justify-self: start
+    - align-self: end
+    - font-weight: bold
+    - font-family: Helvetica 
+    - font-size: 12px
+    - text-align: start
+    - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - position: relative
+    - display: inline-block
+    - width: 100%
+    - align-content: start
+    - text-align: start
+    - text-overflow: unset
+    info:
+    - align-self: start
+    - width: 40%
+custom_fields:
+  who: |
+    [[[
+      var empty = '&nbsp;'
+      var last_opened = "{{ last_opened }}";
+      var ts_entity = states[last_opened];
+      if (ts_entity === undefined)
+        return empty;
+
+      if (ts_entity.attributes.who !== undefined)
+        return ts_entity.attributes.who;
+      return empty;
+    ]]]
+  last_opened: |
+    [[[
+      var last_opened = "{{ last_opened }}";
+      var ts_entity = states[last_opened];
+      if (ts_entity === undefined)
+        return 'Invalid Entity';
+  
+      let now = new Date();
+      let date = new Date(ts_entity.state);
+  
+      var tdelta = Math.floor((now - date)/1000);
+  
+      function plural(descriptor, divisor){
+        var ret = Math.floor(tdelta/divisor);
+        return (ret == 1) ? `${ret} ${descriptor} ago` : `${ret} ${descriptor}s ago`;
+      }
+  
+      var tstring;
+      if (tdelta < 60)
+        tstring = plural('second', 1);
+      else if (tdelta < 60 * 60)
+        tstring = plural('minute', 60);
+      else if (tdelta < 60 * 60 * 24)
+        tstring = plural('hour', 60 * 60);
+      else if (tdelta < 7 * 60 * 60 * 24)
+        tstring = plural('day', 60 * 60 * 24);
+      else
+        tstring = plural('week', 7 * 60 * 60 * 24);
+      return tstring;
+    ]]]
+  info: |
+    [[[
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+      }
+      
+      const length = 50;
+      const width = 3;
+
+      var statemap = {
+        on: 'open',
+        open: 'open',
+        off: 'closed',
+        closed: 'closed',
+      }
+
+      if (entity.state in statemap) {
+        const radius = (length - width) / 2;
+        return `
+          <svg viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="${radius}" fill="{{ color }}" />
+            <text x="50%" y="51%" fill="var(--paper-card-background-color)" font-weight="bold" font-size="14" text-anchor="middle" alignment-baseline="middle">${capitalizeFirstLetter(statemap[entity.state])}
+            </text>
+          </svg>
+          `;
+      }
+    ]]]
+state:
+- value: 'on'
+  styles:
+    card:
+    - opacity: 1.0
+    name:
+      - color: white
+    state:
+      - color: gray
+    lock:
+      - color: white 
+    label:
+      - color: gray
+- value: 'off'
+  styles:
+    card:
+    - opacity: 0.5
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: var(--primary-text-color)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)
+- value: "unavailable"
+  styles:
+    card:
+    - opacity: 0.2
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: hsl(0, 100%, 50%)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)

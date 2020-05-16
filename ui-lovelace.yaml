@@ -5,6 +5,7 @@ preload_cards:
 - horizontal-stack
 - vertical-stack
 - entities
+- markdown
 
 preload_rows:
 - sensor-entity

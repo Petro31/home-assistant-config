@@ -1,0 +1,10 @@
+# lovelace_gen
+
+type: entities
+style: |
+  ha-card {
+    border-radius: 15px; 
+    }
+entities:
+- type: custom:text-input-row
+  entity: {{ entity }}

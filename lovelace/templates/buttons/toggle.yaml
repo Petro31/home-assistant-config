@@ -31,6 +31,7 @@ styles:
   - z-index: 1
   grid:
   - grid-template-areas: '"info" "n" "l"'
+  - grid-template-columns: 100%
   - grid-template-rows: 1fr min-content min-content
   - position: relative
   card:

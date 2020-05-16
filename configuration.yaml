@@ -13,7 +13,7 @@ cloud:
 config:
 conversation:
 cover: !include cover.yaml
-discovery: !include discovery.yaml
+discovery:
 frontend: !include frontend.yaml
 group: !include group.yaml
 history: !include history.yaml

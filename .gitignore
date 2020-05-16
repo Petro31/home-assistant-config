@@ -163,3 +163,17 @@ www/images/county.png
 www/images/Monroe.png
 
 harmony_9888285.conf
+
+appdaemon/apps/ad_count_entities/
+
+www/images/home_transparent_2.png
+
+www/images/home_transparent_3.png
+
+www/images/home_transparent_4.png
+
+www/images/home_transparent_5.png
+
+www/images/home_transparent.png
+
+lovelace/views/testing.yaml

@@ -410,9 +410,38 @@ hac_living_room:
   log_level: INFO
   make_scripts: True
 
+# https://github.com/Petro31/ad_count_entities
+
+count_entities:
+  module: count_entities
+  class: CountEntities
+  exclude:
+  - sun
+  - input_select
+  - input_text
+  - input_number
+  - image_processing
+  - persistent_notification
+  - weather
+  - remote
+  - group
+
 #############
 # TEST APPS #
 #############
+
+# test_count_entities:
+#   module: count_entities
+#   class: CountEntities
+#   exclude:
+#   - sun
+#   - input_select
+#   - input_text
+#   - input_number
+#   - image_processing
+#   - persistent_notification
+#   - weather
+#   - remote
 
 # test_harmony:
 #   module: harmony_activity_controls

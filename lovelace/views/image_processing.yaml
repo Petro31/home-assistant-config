@@ -1,6 +1,6 @@
 # lovelace_gen
 
-{% set cameras = [
+{%- set default_entities = [
   {'entity': 'camera.driveway_post_process', 'name': 'Driveway', 'image_processing': 'image_processing.tensorflow_driveway'},
   {'entity': 'camera.backyard_post_process', 'name': 'Backyard', 'image_processing': 'image_processing.tensorflow_backyard'},
   {'entity': 'camera.foyer_post_process', 'name': 'Foyer', 'image_processing': 'image_processing.tensorflow_foyer'},
@@ -8,12 +8,14 @@
   {'entity': 'camera.kitchen_post_process', 'name': 'Kitchen', 'image_processing': 'image_processing.tensorflow_kitchen'},
   {'entity': 'camera.floating_post_process', 'name': 'Floating', 'image_processing': 'image_processing.tensorflow_floating'},
 ] %}
+{%- set entities = entities | default(default_entities) %}
+{%- set name = name | default('Image Processing') %}
 
-icon: mdi:image-search
-title: Image Processing
-path: image_processing
+icon: {{ icon | default('mdi:image-search') }}
+title: {{ name | title }}
+path: {{ path | default(name.lower()) }}
 cards:
-{%- for camera in cameras %}
+{%- for camera in entities %}
 - type: picture-entity
   name: {{ camera.name }}
   entity: {{ camera.entity }}
