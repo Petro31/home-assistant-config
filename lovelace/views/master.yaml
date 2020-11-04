@@ -611,19 +611,19 @@
 
 {%- set doors = [
   {
-    'entity': 'sensor.main_door_hindge',
+    'entity': 'binary_sensor.main_door',
     'name': 'Main',
     'last_opened': 'sensor.main_entrance_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
   },{
-    'entity': 'sensor.entry_door_hindge',
+    'entity': 'binary_sensor.garage_entry_door',
     'name': 'Entry',
     'last_opened': 'sensor.garage_entrance_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
   },{
-    'entity': 'sensor.sliding_door',
+    'entity': 'binary_sensor.sliding_door',
     'name': 'Patio',
     'last_opened': 'sensor.patio_entrance_last_opened',
     'type': '../templates/buttons/door.yaml',
@@ -726,7 +726,7 @@
     'name': 'Remote',
     'icon': 'mdi:remote-tv',
     'image': '/local/images/remote_2.png',
-    'view': 'remote.yaml',
+    'view': 'old_remote.yaml',
     'triggers_update': [ 'media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2' ],
     'display': [
       {'domain': ['media_player'], 'state': ['on'], 'icon': 'mdi:speaker-wireless', 'units': 'zones' },
@@ -734,7 +734,7 @@
     'type': '../templates/summary/overview.yaml',
   },{
     'name': 'System',
-    'icon': 'mdi:settings',
+    'icon': 'mdi:cog',
     'entities': systems,
     'image': '/local/images/gears_3.png',
     'type': '../templates/summary/overview.yaml',
@@ -789,7 +789,7 @@
 ] %}
 
 
-{%- set testing = False %}
+{%- set testing = True %}
 
 # Set up the home page.
 - !include

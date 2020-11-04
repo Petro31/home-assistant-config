@@ -6,7 +6,7 @@
     file_out:
       - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
     model:
-      graph: /config/tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb
+      graph: /config/tensorflow/models/efficientdet_d0_coco17_tpu-32/
       categories:
         - car
         - truck
@@ -22,7 +22,7 @@
     file_out:
       - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
     model:
-      graph: /config/tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb
+      graph: /config/tensorflow/models/efficientdet_d0_coco17_tpu-32/
       categories:
         - person
         - dog
@@ -35,7 +35,7 @@
     file_out:
       - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
     model:
-      graph: /config/tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb
+      graph: /config/tensorflow/models/efficientdet_d0_coco17_tpu-32/
       categories:
         - person
         - dog
@@ -48,7 +48,7 @@
     file_out:
       - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
     model:
-      graph: /config/tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb
+      graph: /config/tensorflow/models/efficientdet_d0_coco17_tpu-32/
       categories:
         - person
         - dog
@@ -61,7 +61,7 @@
     file_out:
       - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
     model:
-      graph: /config/tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb
+      graph: /config/tensorflow/models/efficientdet_d0_coco17_tpu-32/
       categories:
         - car
         - truck
@@ -77,7 +77,7 @@
     file_out:
       - "/config/www/motion/{{ camera_entity.split('.')[1] }}_latest.jpg"
     model:
-      graph: /config/tensorflow/graph/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb
+      graph: /config/tensorflow/models/efficientdet_d0_coco17_tpu-32/
       categories:
         - car
         - truck

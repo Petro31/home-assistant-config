@@ -157,7 +157,7 @@ people_at_home:
 main_door:
   module: who_used_the_door
   class: WhoUsedTheDoor
-  sensor: sensor.main_door_hindge
+  sensor: binary_sensor.main_door
   people_tracker: sensor.people_at_home
   message_name: Main Door
   notify:
@@ -173,7 +173,7 @@ main_door:
 garage_entry_door:
   module: who_used_the_door
   class: WhoUsedTheDoor
-  sensor: sensor.entry_door_hindge
+  sensor: binary_sensor.garage_entry_door
   people_tracker: sensor.people_at_home
   message_name: Garage Entry Door
   notify:
@@ -189,7 +189,7 @@ garage_entry_door:
 sliding_door:
   module: who_used_the_door
   class: WhoUsedTheDoor
-  sensor: sensor.sliding_door
+  sensor: binary_sensor.sliding_door
   people_tracker: sensor.people_at_home
   message_name: Sliding Door
   notify:
@@ -222,7 +222,7 @@ garage_door:
 main_door_illumination:
   module: illuminate_door
   class: IlluminateDoor
-  sensor: sensor.main_door_hindge
+  sensor: binary_sensor.main_door
   turn_on:
   - switch.foyer
   duration: 120
@@ -231,7 +231,7 @@ main_door_illumination:
 garage_entry_door_illumination:
   module: illuminate_door
   class: IlluminateDoor
-  sensor: sensor.entry_door_hindge
+  sensor: binary_sensor.garage_entry_door
   turn_on:
   - switch.garage_entry
   - switch.garage_cans
@@ -242,7 +242,7 @@ garage_entry_door_illumination:
 sliding_door_illumination:
   module: illuminate_door
   class: IlluminateDoor
-  sensor: sensor.sliding_door
+  sensor: binary_sensor.sliding_door
   turn_on:
   - entity: light.dining_room_chandelier
     data:
@@ -333,6 +333,7 @@ hac_living_room:
     activities:
     - <<: *roku
       command: 'Options*'
+      icon: mdi:asterisk
     - <<: *xbox
       command: Menu
       icon: mdi:xbox-controller-menu
@@ -425,6 +426,26 @@ count_entities:
   - weather
   - remote
   - group
+
+# https://github.com/Petro31/ad_emulated_roku_event_sensor
+
+# emulated_roku_keypresses:
+#   module: emulated_roku_event_sensor
+#   class: EventSensor
+#   source_name: Home Assistant
+#   map:
+#   - keypress: Up
+#     value: Xbox One
+#   - keypress: Right
+#     value: PS4
+#   - keypress: Down
+#     value: Switch
+#   - keypress: Left
+#     value: TV
+#   - keypress: Select
+#     value: Roku
+#   - keypress: Play
+#     value: PowerOff
 
 #############
 # TEST APPS #

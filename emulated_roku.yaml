@@ -1,0 +1,3 @@
+servers:
+- name: Home Assistant
+  listen_port: 8060

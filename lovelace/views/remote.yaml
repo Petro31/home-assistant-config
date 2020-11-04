@@ -1,106 +1,55 @@
 # lovelace_gen
 
 {% set activities = [
-  {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote_icon_button.yaml'},
-  {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote_icon_button.yaml'},
-  {'entity':'switch.roku', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote_image_button.yaml', 'image': '/local/images/roku.png'},
-  {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote_icon_button.yaml'},
-  {'entity':'switch.tv', 'color': 'var(--button-card-light-color)', 'template': '../templates/remote_icon_button.yaml'},
+  {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote/harmony/switch.yaml'},
+  {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote/harmony/switch.yaml'},
+  {'entity':'switch.roku', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote/harmony/switch.yaml', 'icon': 'ptr:roku-r'},
+  {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote/harmony/switch.yaml'},
+  {'entity':'switch.tv', 'color': 'var(--button-card-light-color)', 'template': '../templates/remote/harmony/switch.yaml'},
 ] %}
 
 {% set roku_apps = [
-  {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'image': '/local/images/netflix.png'},
-  {'entity':'switch.hbo_now', 'color': 'rgba(255, 255, 255)', 'image': '/local/images/hbo_now.png'},
-  {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'image': '/local/images/hulu.png'},
-  {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'image': '/local/images/prime_video.png'},
-  {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'image': '/local/images/disney_plus.png'},
-  {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'image': '/local/images/plex.png'},
-] %}
-
-{% set volume_btns = [
-  {},
-  {'entity': 'sensor.active_media_player', 'service': 'script.multizone_cycle_zone'},
-  {'entity': 'script.multizone_volume_up', 'name': 'Up', 'icon': 'mdi:volume-plus','repeat': 250},
-  {'entity': 'script.multizone_volume_down', 'name': 'Down', 'icon': 'mdi:volume-minus','repeat': 250},
-  {'entity': 'script.multizone_volume_mute', 'name': 'Mute', 'icon': 'mdi:volume-mute'},
+  {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'icon': 'ptr:netflix'},
+  {'entity':'switch.hbo_now', 'color': 'rgba(255, 255, 255)', 'icon': 'ptr:hbo'},
+  {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'icon': 'ptr:hulu'},
+  {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'icon': 'ptr:prime-video'},
+  {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'icon': 'ptr:disney-plus'},
+  {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'icon': 'ptr:plex'},
 ] %}
 
 {% set controls = [
-  {'entity': 'sensor.active_media_player', 'service': 'script.multizone_cycle_zone'},
-  {'entity': 'binary_sensor.remote_living_room_rewind' },
-  {'entity': 'binary_sensor.remote_living_room_play' },
-  {'entity': 'binary_sensor.remote_living_room_pause' },
-  {'entity': 'binary_sensor.remote_living_room_fastforward' },
-  {'entity': 'script.multizone_volume_up', 'icon': 'mdi:volume-plus','repeat': 250},
-  {'entity': 'binary_sensor.remote_living_room_back' },
-  {'entity': 'binary_sensor.remote_living_room_directionup' },
   {'entity': 'binary_sensor.remote_living_room_homebutton' },
   {'entity': 'binary_sensor.remote_living_room_menubutton' },
-  {'entity': 'script.multizone_volume_down', 'icon': 'mdi:volume-minus','repeat': 250},
-  {'entity': 'binary_sensor.remote_living_room_directionleft' },
-  {'entity': 'binary_sensor.remote_living_room_ok' },
-  {'entity': 'binary_sensor.remote_living_room_directionright' },
-  {},
-  {'entity': 'script.multizone_volume_mute', 'icon': 'mdi:volume-mute'},
   {'entity': 'binary_sensor.remote_living_room_lowerleft' },
-  {'entity': 'binary_sensor.remote_living_room_directiondown' },
   {'entity': 'binary_sensor.remote_living_room_lowerright' },
-  {},
-] %}
-
-{% set controller_buttons = [
-  {'entity': 'binary_sensor.remote_living_room_bottombutton' },
-  {'entity': 'binary_sensor.remote_living_room_rightbutton' },
-  {'entity': 'binary_sensor.remote_living_room_topbutton' },
-  {'entity': 'binary_sensor.remote_living_room_leftbutton' },
-  {},
-]%}
-
-{% set sources = [
-  {'entity':'switch.xbox_source', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote_icon_button.yaml'},
-  {'entity':'switch.playstation_source', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote_icon_button.yaml'},
-  {'entity':'switch.roku_source', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote_image_button.yaml', 'image': '/local/images/roku.png'},
-  {'entity':'switch.nintendo_switch_source', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote_icon_button.yaml'},
-  {'entity':'switch.alexa_source', 'color': 'rgba(49, 196, 243)', 'template': '../templates/remote_icon_button.yaml'},
-] %}
-
-{% set surround_modes = [
-  {'entity': 'switch.surround_mode_sci_fi', 'name': 'Sci Fi', 'sound_mode':'Sci-Fi', 'icon': 'mdi:rocket',},
-  {'entity': 'switch.surround_mode_7ch_stereo', 'name': 'Music', 'sound_mode':'7ch Stereo', 'icon': 'mdi:music',},
-  {'entity': 'switch.surround_mode_standard', 'name': 'Standard', 'sound_mode':'Standard', 'icon': 'mdi:filmstrip',},
-  {'entity': 'switch.surround_mode_surround_decoder', 'name': 'Surround Sound', 'sound_mode':'Surround Decoder', 'icon': 'mdi:surround-sound-7-1',},
-  {'entity': 'switch.surround_mode_adventure', 'name': 'Adventure', 'sound_mode':'Adventure', 'icon': 'mdi:account-cowboy-hat',},
-  {'entity': 'switch.surround_mode_drama', 'name': 'Drama', 'sound_mode':'Drama', 'icon': 'mdi:drama-masks',},
-  {'entity': 'switch.surround_mode_action_game', 'name': 'Action', 'sound_mode':'Action Game', 'icon': 'mdi:pistol',},
-  {'entity': 'switch.surround_mode_roleplaying_game', 'name': 'Roleplaying', 'sound_mode':'Roleplaying Game', 'icon': 'mdi:auto-fix',},
-  {'entity': 'switch.surround_mode_sports', 'name': 'Sports', 'sound_mode':'Sports', 'icon': 'mdi:basketball',},
 ] %}
 
 title: Remote
-path: remote
+path: testing
 icon: mdi:remote-tv
 cards:
 - type: vertical-stack
   cards:
   - type: horizontal-stack
     cards:
-    - !include '../templates/spacer_edge.yaml'
+    - !include '../templates/buttons/edge.yaml'
     - !include
-      - '../templates/remote_main_button.yaml'
+      - '../templates/remote/harmony/switch.yaml'
       - entity: switch.poweroff
-        name: Harmony
         color: rgba(228, 94, 101)
+    - !include '../templates/buttons/spacer.yaml'
     - !include
-      - '../templates/remote_zone_button.yaml'
+      - '../templates/remote/harmony/switch.yaml'
       - entity: media_player.yamaha_receiver
-        name: Zone 1
+        icon: ptr:power-zone-1
         color: rgba(228, 94, 101)
     - !include
-      - '../templates/remote_zone_button.yaml'
+      - '../templates/remote/harmony/switch.yaml'
       - entity: media_player.yamaha_receiver_zone_2
-        name: Zone 2
+        icon: ptr:power-zone-2
         color: rgba(228, 94, 101)
-    - !include '../templates/spacer_edge.yaml'
+    - !include '../templates/buttons/spacer.yaml'
+    - !include '../templates/buttons/edge.yaml'
   - type: horizontal-stack
     cards:
     - !include '../templates/spacer_edge.yaml'
@@ -109,8 +58,8 @@ cards:
       - {{ activity.template }}
       - entity: {{ activity.entity }}
         color: {{ activity.color }}
-        {%- if activity.image is defined %}
-        image: {{ activity.image }}
+        {%- if activity.icon is defined %}
+        icon: {{ activity.icon }}
         {%- endif %}
     {%- endfor %}
     - !include '../templates/spacer_edge.yaml'
@@ -121,24 +70,15 @@ cards:
     card:
       type: horizontal-stack
       cards:
-      - !include '../templates/spacer_edge.yaml'
+      - !include '../templates/buttons/edge.yaml'
       {%- for app in roku_apps %}
       - !include
-        - '../templates/remote_image_button.yaml'
+        - '../templates/remote/harmony/switch.yaml'
         - entity: {{ app.entity }}
           color: {{ app.color }}
-          image: {{ app.image }}
+          icon: {{ app.icon }}
       {%- endfor %}
-      - !include '../templates/spacer_edge.yaml'
-  - type: conditional
-    conditions:
-    - entity: binary_sensor.yamaha_receiver
-      state: 'on'
-    - entity: binary_sensor.remote_living_room_control
-      state_not: 'on'
-    - entity: switch.alexa_source
-      state_not: 'on'
-    card: !include '../templates/active_media_player_volume_row.yaml'
+      - !include '../templates/buttons/edge.yaml'
   - type: conditional
     conditions:
     - entity: binary_sensor.remote_living_room_control
@@ -146,108 +86,120 @@ cards:
     card:
       type: vertical-stack
       cards:
-      {%- for i in range(controls | length) %}
-      {%- set control = controls[i] %}
-      {%- if i % 5 == 0 %}
       - type: horizontal-stack
         cards:
-        - !include '../templates/spacer_edge.yaml'
-      {%- endif %}
-      {%- if 'entity' in control %}
-      {%- if 'service' not in control %}
-      {%- set service = control.entity.replace('binary_sensor','script') %}
-      {%- else %}
-      {%- set service = control.service %}
-      {%- endif %}
+        - !include '../templates/buttons/edge.yaml'
         - !include
-          - '../templates/remote_icon_service.yaml'
-          - entity: {{ control.entity }}
-            service: {{ service }}
-      {%- if control.entity == 'sensor.active_media_player' %}
-            icon: '!include ../partials/active_media_player_icon.yaml'
-      {%- else %}
-      {%- if 'icon' in control %}
-            icon: {{ control.icon }}
-      {%- endif %}
-      {%- endif %}
-      {%- else %}
-        - !include '../templates/spacer_button.yaml'
-      {%- endif %}
-      {%- if i % 5 == 4 %}
-        - !include '../templates/spacer_edge.yaml'
-      {%- endif %}
-      {%- endfor %}
-  - type: conditional
-    conditions:
-    - entity: sensor.harmony_activity
-      state_not: 'PowerOff'
-    - entity: sensor.harmony_activity
-      state_not: 'Switch'
-    - entity: sensor.harmony_activity
-      state_not: 'TV'
-    - entity: sensor.harmony_activity
-      state_not: 'Roku'
-    card:
-      type: horizontal-stack
-      cards:
-      - !include '../templates/spacer_edge.yaml'
-      {%- for btn in controller_buttons %}
-      {%- if btn %}
-      {%- set service = btn.entity.replace('binary_sensor','script') %}
-      - !include 
-        - '../templates/remote_image_service.yaml'
-        - entity: {{ btn.entity }}
-          service: {{ service }}
-      {%- else %}
-      - !include '../templates/spacer_button.yaml'
-      {%- endif %}
-      {%- endfor %}
-      - !include '../templates/spacer_edge.yaml'
-  - type: conditional
-    conditions:
-      - entity: switch.alexa_source
-        state: 'on'
-      - entity: media_player.living_room_dot
-        state_not: 'off'
-    card:
-      type: horizontal-stack
-      cards:
-      - !include '../templates/spacer_edge.yaml'
-      - !include 
-        - '../templates/media_player_custom.yaml'
-        - entity: media_player.living_room_dot
-          bluetooth: switch.floating_outlet_switch
-      - !include '../templates/spacer_edge.yaml'
-  - type: conditional
-    conditions:
-      - entity: binary_sensor.yamaha_receiver
-        state: 'on'
-    card:
-      type: horizontal-stack
-      cards:
-      - !include '../templates/spacer_edge.yaml'
-      {%- for source in sources %}
-      - !include
-        - {{ source.template }}
-        - entity: {{ source.entity }}
-          color: {{ source.color }}
-          {%- if source.image is defined %}
-          image: {{ source.image }}
-          {%- endif %}
-      {%- endfor %}
-      - !include '../templates/spacer_edge.yaml'
-  - type: conditional
-    conditions:
-      - entity: binary_sensor.yamaha_receiver
-        state: 'on'
-    card:
-      type: horizontal-stack
-      cards:
-      - !include '../templates/spacer_edge.yaml'
-      {%- for sound in surround_modes %}
-      - !include
-        - '../templates/remote_icon_button.yaml'
-        - entity: {{ sound.entity }}
-          icon: {{ sound.icon }}
-      {%- endfor %}
-      - !include '../templates/spacer_edge.yaml'
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_back
+            service: script.remote_living_room_back
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_homebutton
+            service: script.remote_living_room_homebutton
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_menubutton
+            service: script.remote_living_room_menubutton
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_lowerleft
+            service: script.remote_living_room_lowerleft
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_lowerright
+            service: script.remote_living_room_lowerright
+        - !include '../templates/buttons/edge.yaml'
+      - type: custom:mod-card
+        style:
+          "ha-card > hui-horizontal-stack-card":
+            $: |
+              #root > layout-card { margin: 0px; padding: 0px; }
+        card:
+          type: horizontal-stack
+          cards:
+          - !include '../templates/buttons/edge.yaml'
+          - type: custom:layout-card
+            layout: grid
+            gridrows: auto
+            gridcols: 20% 80%
+            cards:
+            - type: vertical-stack
+              gridrow: 1 / 1
+              gridcol: 1 / 2
+              cards:
+              - !include
+                - '../templates/remote/harmony/control.yaml'
+                - entity: sensor.active_media_player
+                  service: script.multizone_cycle_zone
+                  icon: '!include /config/lovelace/partials/active_media_player_icon.yaml'
+              - !include
+                - '../templates/remote/harmony/control.yaml'
+                - entity: script.multizone_volume_up
+                  icon: mdi:volume-plus
+                  repeat: 250
+              - !include
+                - '../templates/remote/harmony/control.yaml'
+                - entity: script.multizone_volume_down
+                  icon: mdi:volume-minus
+                  repeat: 250
+              - !include
+                - '../templates/remote/harmony/control.yaml'
+                - entity: script.multizone_volume_mute
+                  icon: mdi:volume-mute
+            - type: vertical-stack
+              gridrow: 1 / 1
+              gridcol: 2 / 2
+              cards:
+              - type: horizontal-stack
+                cards:
+                - !include '../templates/buttons/spacer.yaml'
+                - !include
+                  - '../templates/remote/harmony/control.yaml'
+                  - entity: binary_sensor.remote_living_room_directionup
+                    service: script.remote_living_room_directionup
+                - !include '../templates/buttons/spacer.yaml'
+              - type: horizontal-stack
+                cards:
+                - !include
+                  - '../templates/remote/harmony/control.yaml'
+                  - entity: binary_sensor.remote_living_room_directionleft
+                    service: script.remote_living_room_directionleft
+                - !include
+                  - '../templates/remote/harmony/control.yaml'
+                  - entity: binary_sensor.remote_living_room_ok
+                    service: script.remote_living_room_ok
+                - !include
+                  - '../templates/remote/harmony/control.yaml'
+                  - entity: binary_sensor.remote_living_room_directionright
+                    service: script.remote_living_room_directionright
+              - type: horizontal-stack
+                cards:
+                - !include '../templates/buttons/spacer.yaml'
+                - !include
+                  - '../templates/remote/harmony/control.yaml'
+                  - entity: binary_sensor.remote_living_room_directiondown
+                    service: script.remote_living_room_directiondown
+                - !include '../templates/buttons/spacer.yaml'
+          - !include '../templates/buttons/edge.yaml'
+      - type: horizontal-stack
+        cards:
+        - !include '../templates/buttons/edge.yaml'
+        - !include '../templates/buttons/spacer.yaml'
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_rewind
+            service: script.remote_living_room_rewind
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_play
+            service: script.remote_living_room_play
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_pause
+            service: script.remote_living_room_pause
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: binary_sensor.remote_living_room_fastforward
+            service: script.remote_living_room_fastforward
+        - !include '../templates/buttons/edge.yaml'

@@ -181,7 +181,8 @@ custom_fields:
       if (max_display > 0)
         items = items.slice(0, max_display);
       else {
-        if (String(navigator.userAgent).includes('iPhone'))
+        var uAgent = String(navigator.userAgent);
+        if (uAgent.includes('iPhone') || uAgent.includes('iOS'))
           items = items.slice(0, 4)
         else
           items = items.slice(0, 6)
