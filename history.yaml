@@ -38,6 +38,16 @@
       - sensor.ups_input_voltage
       - sensor.ups_battery
       - sensor.outside_temperature
+      - sensor.sensor_1_humidity
+      - sensor.sensor_1_temperature
+      - sensor.sensor_2_humidity
+      - sensor.sensor_2_temperature
+      - sensor.sensor_3_humidity
+      - sensor.sensor_3_temperature
+      - sensor.sensor_4_humidity
+      - sensor.sensor_4_temperature
+      - sensor.sensor_5_humidity
+      - sensor.sensor_5_temperature
     domains:
       - light
       - switch

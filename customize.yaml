@@ -125,7 +125,7 @@ switch.phone_source:
   icon: mdi:headphones
 switch.playstation_source:
   friendly_name: Playstation Source
-  icon: mdi:playstation
+  icon: mdi:sony-playstation
 switch.poweroff:
   friendly_name: Power Off
   icon: mdi:power
@@ -134,7 +134,7 @@ switch.prime_video:
   icon: mdi:amazon
 switch.ps4:
   friendly_name: Playstation
-  icon: mdi:playstation
+  icon: mdi:sony-playstation
 switch.roku:
   friendly_name: Roku
   icon: mdi:alpha-r
@@ -158,10 +158,10 @@ switch.upstairs:
   icon: mdi:home-floor-2
 switch.xbox_one:
   friendly_name: Xbox One
-  icon: mdi:xbox
+  icon: mdi:microsoft-xbox
 switch.xbox_source:
   friendly_name: Xbox One Source
-  icon: mdi:xbox
+  icon: mdi:microsoft-xbox
 switch.surround_mode_sports:
   friendly_name: Sports
   icon: mdi:basketball

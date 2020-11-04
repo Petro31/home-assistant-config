@@ -1,0 +1,75 @@
+# lovelace_gen
+
+{%- set on = namespace(radius='2px', offset='0px') %}
+
+{%- if icon is defined and icon.startswith('ptr:') %}
+{%- set i = icon.split(':')[-1] %}
+{%- set svgs = {
+} %}
+{%- set svg = svgs[i] if i in svgs else None %}
+{%- endif %}
+{%- set color = 'var(--paper-item-icon-active-color)' %}
+
+type: custom:button-card
+color: var(--primary-background-color)
+aspect_ratio: {{ aspect_ratio | default('1/1') }}
+entity: {{ entity }}
+{%- if svg is not defined or svg == None %}
+icon: {{ icon }}
+show_icon: true
+size: 75%
+{%- else %}
+show_icon: false
+size: 100%
+{%- endif %}
+show_state: false
+show_name: false
+show_label: false
+styles:
+  card:
+  - --ha-card-background: none
+  - box-shadow: none
+  - padding: 0px
+{%- if svg is defined and svg != None %}
+  grid:
+  - grid-template-areas: '"custom_icon"'
+  - grid-template-columns: 100%
+  - grid-template-rows: 100%
+  - padding: 0px
+  custom_fields:
+    custom_icon:
+    - width: 75%
+    - height: auto
+    - align-self: center
+    - justify-self: center
+    - overflow: visible
+    - color: var(--primary-background-color)
+    - filter: drop-shadow({{on.offset}} {{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow({{ on.offset }} -{{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow(-{{ on.offset }} {{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow(-{{ on.offset }} -{{ on.offset }} {{ on.radius }} {{ color }})
+{%- else %}
+  icon:
+  - color: var(--primary-background-color)
+  - filter: drop-shadow({{on.offset}} {{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow({{ on.offset }} -{{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow(-{{ on.offset }} {{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow(-{{ on.offset }} -{{ on.offset }} {{ on.radius }} {{ color }})
+{%- endif %}
+{%- if svg is defined and svg != None %}
+custom_fields:
+  custom_icon: |
+    [[[
+      return `
+        <svg viewBox="0 0 24 24">
+          <path fill="var(--primary-background-color)" d="{{ svg }}" />
+        </svg>
+        `;
+    ]]]
+{%- endif %}
+
+tap_action:
+  action: call-service
+  service: {{ service | default('\"[[[ return entity.entity_id; ]]]\"') }}
+  haptic: light
+{%- if repeat is defined %}
+hold_action:
+  action: call-service
+  service: {{ service | default('\"[[[ return entity.entity_id; ]]]\"') }}
+  haptic: light
+  repeat: {{ repeat }}
+{%- endif %}

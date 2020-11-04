@@ -21,6 +21,6 @@ background: center / cover no-repeat url("/local/images/background.jpg") fixed
 #     - person.petro
 #     - person.lambo
 
-popup_cards: !include lovelace/views/popups.yaml
+# popup_cards: !include lovelace/views/popups.yaml
 
 views: !include lovelace/views/master.yaml

@@ -1,0 +1,10 @@
+- alias: Garage Door Turn Off Band Aide
+  trigger:
+  - platform: state
+    entity_id: switch.fortrezz_mimolite_switch
+    to: 'on'
+  action:
+  - delay:
+      milliseconds: 500
+  - service: switch.turn_off
+    entity_id: switch.fortrezz_mimolite_switch

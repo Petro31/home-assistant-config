@@ -177,3 +177,11 @@ www/images/home_transparent_5.png
 www/images/home_transparent.png
 
 lovelace/views/testing.yaml
+
+image/
+
+automation/suppport.yaml
+
+appdaemon/apps/ad_emulated_roku_event_sensor/
+
+rainbird.yaml
