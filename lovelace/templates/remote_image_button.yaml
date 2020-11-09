@@ -21,7 +21,7 @@ tap_action:
   haptic: light
 styles:
   card:
-  - border-radius: 15px
+  - border-radius: 10px
   - --ha-card-background: var(--primary-background-color)
   entity_picture:
     - height: 100%

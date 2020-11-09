@@ -10,11 +10,12 @@
 
 {% set roku_apps = [
   {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'image': '/local/images/netflix.png'},
-  {'entity':'switch.hbo_now', 'color': 'rgba(255, 255, 255)', 'image': '/local/images/hbo_now.png'},
+  {'entity':'switch.hbo', 'color': 'rgba(255, 255, 255)', 'image': '/local/images/hbo_now.png'},
   {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'image': '/local/images/hulu.png'},
   {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'image': '/local/images/prime_video.png'},
   {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'image': '/local/images/disney_plus.png'},
   {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'image': '/local/images/plex.png'},
+  {'entity':'switch.peacock', 'color': 'rgba(81, 105, 170)', 'image': '/local/images/peacock.png'},
 ] %}
 
 {% set volume_btns = [
