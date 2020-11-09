@@ -185,3 +185,5 @@ automation/suppport.yaml
 appdaemon/apps/ad_emulated_roku_event_sensor/
 
 rainbird.yaml
+
+lovelace/custom-svg/

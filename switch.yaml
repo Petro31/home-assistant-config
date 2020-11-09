@@ -179,18 +179,18 @@
           - service: switch.turn_off
             entity_id: switch.roku
             
-      # HBO NOW
-      hbo_now:
+      # HBO
+      hbo:
         value_template: >
           {{ is_state('switch.roku', 'on') and 
-             is_state_attr('media_player.roku_living_room', 'source', 'HBO NOW') }}
+             is_state_attr('media_player.roku_living_room', 'source', 'HBO') }}
         turn_on:
           - service: script.roku
           - wait_template: "{{ is_state('switch.roku', 'on') }}"
           - service: media_player.select_source
             data:
               entity_id: media_player.roku_living_room
-              source: HBO NOW
+              source: HBO
           - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
           - service: switch.turn_off
             entity_id: switch.echo_through_receiver
@@ -259,14 +259,33 @@
       plex:
         value_template: >
           {{ is_state('switch.roku', 'on') and 
-             is_state_attr('media_player.roku_living_room', 'source', 'Plex - Stream Free Movies & TV') }}
+             is_state_attr('media_player.roku_living_room', 'source', 'Plex - Stream for Free') }}
         turn_on:
           - service: script.roku
           - wait_template: "{{ is_state('switch.roku', 'on') }}"
           - service: media_player.select_source
             data:
               entity_id: media_player.roku_living_room
-              source: Plex - Stream Free Movies & TV
+              source: Plex - Stream for Free
+          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
+          - service: switch.turn_off
+            entity_id: switch.echo_through_receiver
+        turn_off:
+          - service: switch.turn_off
+            entity_id: switch.roku
+
+      # Peacock
+      peacock:
+        value_template: >
+          {{ is_state('switch.roku', 'on') and 
+             is_state_attr('media_player.roku_living_room', 'source', 'Peacock TV') }}
+        turn_on:
+          - service: script.roku
+          - wait_template: "{{ is_state('switch.roku', 'on') }}"
+          - service: media_player.select_source
+            data:
+              entity_id: media_player.roku_living_room
+              source: Peacock TV
           - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
           - service: switch.turn_off
             entity_id: switch.echo_through_receiver
