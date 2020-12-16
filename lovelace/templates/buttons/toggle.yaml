@@ -88,16 +88,22 @@ custom_fields:
         const radius = (length - width) / 2;
         const brightness = Math.round(entity.attributes.brightness / 2.54);
         const circumference = radius * 2 * Math.PI;
+        console.log(entity.attributes.rgb_color)
+        color = "{{ color }}";
+        if (entity.attributes.rgb_color){
+          var [r, g, b] = entity.attributes.rgb_color;
+          color = `rgba(${r}, ${g}, ${b})`;
+        }
         return `
           <svg viewBox="0 0 50 50">
-            <circle cx="25" cy="25" r="${radius}" fill="none" stroke="var(--paper-item-icon-color)" opacity="0.5" stroke-width="${width}" />
+            <circle cx="25" cy="25" r="${radius}" fill="none" stroke="${color}" opacity="0.5" stroke-width="${width}" />
             <circle style="
                 transform: rotate(-90deg);
                 transform-origin: 50% 50%;
                 stroke-dasharray: ${circumference};
                 stroke-dashoffset: ${circumference - brightness / 100 * circumference};
               "
-              id="c_brightness" cx="25" cy="25" r="${radius}" stroke="var(--paper-item-icon-active-color)" stroke-width="${width}" fill="none" stroke-linecap="round" />
+              id="c_brightness" cx="25" cy="25" r="${radius}" stroke="${color}" stroke-width="${width}" fill="none" stroke-linecap="round" />
             <text x="50%" y="54%" fill="var(--primary-text-color)" font-weight="bold" font-size="14" text-anchor="middle" alignment-baseline="middle">${brightness}<tspan font-size="10">%</tspan>
             </text>
           </svg>

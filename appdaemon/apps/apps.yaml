@@ -40,10 +40,9 @@ holiday_lights:
     month: 1
     week: 3
     day: 0
-  turn_on_time: '17:00:00'
-  turn_off_time: '22:00:00'
+  turn_on_time: '16:00:00'
+  turn_off_time: '23:00:00'
   entities:
-  - switch.office_window
   - switch.living_room_window
   - switch.kitchen_outlet_above_microwave
   - switch.kitchen_outlet_above_fridge
@@ -54,20 +53,21 @@ sunsetlights:
   module: sunset_lights
   class: SunsetLights
   entities:
-    - switch.passenger_sconce
-    - switch.sconces_garage
-    - switch.sconces_main_entrance
+    - light.main_door_left_bulb
+    - light.main_door_right_bulb
+    - light.passenger_door_bulb
+    - light.garage_sconce_left_bulb
+    - light.garage_sconce_right_bulb
 
 # https://github.com/Petro31/ad_toggle_light
 
-office_toggle:
+game_room_toggle:
   module: toggle_light
   class: ToggleLight
   entity: switch.game_room_switch
   entities:
-    - light.game_room_bulb
-    - light.game_room_bulb_2
-    - switch.game_room_outlet
+    - switch.game_room_window
+    - switch.game_room_wall_outlet
 
 basement_toggle:
   module: toggle_light

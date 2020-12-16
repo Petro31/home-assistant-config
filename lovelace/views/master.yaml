@@ -185,9 +185,7 @@
     'image': '',
     'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
     'entities': [
-      'light.game_room_bulb',
-      'light.game_room_bulb_2',
-      'switch.game_room_outlet',
+      'switch.game_room_wall_outlet',
       'switch.game_room_switch',
       'switch.game_room_window',
     ],
@@ -349,6 +347,12 @@
       'switch.sconces_garage',
       'switch.sconces_main_entrance',
       'sensor.outside_temperature',
+      'spacer',
+      'light.main_door_left_bulb',
+      'light.main_door_right_bulb',
+      'light.passenger_door_bulb',
+      'light.garage_sconce_left_bulb',
+      'light.garage_sconce_right_bulb',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -856,5 +860,5 @@
 # Testing
 
 {%- if testing %}
-- !include testing.yaml
+- !include remote.yaml
 {%- endif %}

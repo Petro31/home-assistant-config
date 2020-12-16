@@ -45,9 +45,9 @@ switch.foyer:
 switch.foyer_2:
   friendly_name: Foyer Camera
   icon: mdi:lan-connect
-switch.game_room_outlet:
-  friendly_name: Desk
-  icon: mdi:floor-lamp-dual
+switch.game_room_wall_outlet:
+  friendly_name: Buffet
+  icon: mdi:buffet
 switch.game_room_switch:
   friendly_name: Switch
   icon: mdi:light-switch
