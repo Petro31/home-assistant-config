@@ -123,8 +123,6 @@
     'entities': [
       'switch.basement_stairs',
       'switch.basement_cans',
-      'sensor.ms_temperature',
-      'sensor.ms_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -142,6 +140,8 @@
       'light.bonus_room_bedroom_fixture',
       'fan.bonus_room_bedroom',
       'light.bonus_room_bedroom_recessed',
+      'sensor.ms_temperature',
+      'sensor.ms_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -203,6 +203,8 @@
     'entities': [
       'switch.garage_cans',
       'switch.garage_workbench',
+      'sensor.garage_temperature',
+      'sensor.garage_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -250,6 +252,8 @@
       'switch.kitchen_pantry',
       'switch.kitchen_outlet_above_fridge',
       'switch.kitchen_outlet_above_microwave',
+      'sensor.kitchen_temperature',
+      'sensor.kitchen_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -295,6 +299,8 @@
       'light.master_bathroom_sink',
       'light.master_bathroom_cans',
       'switch.master_bathroom_fan',
+      'sensor.master_bathroom_temperature',
+      'sensor.master_bathroom_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -313,6 +319,8 @@
       'light.master_fixture',
       'switch.master_nightstand_left',
       'switch.master_nightstand_right',
+      'sensor.master_bedroom_temperature',
+      'sensor.master_bedroom_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -329,6 +337,8 @@
       'light.bonus_room_office_fixture',
       'fan.bonus_room_office',
       'light.bonus_room_office_recessed',
+      'sensor.ms_temperature',
+      'sensor.ms_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -346,13 +356,17 @@
       'switch.passenger_sconce',
       'switch.sconces_garage',
       'switch.sconces_main_entrance',
-      'sensor.outside_temperature',
+      'switch.sliding_door_sconce',
+      'switch.flood_light',
+      'spacer',
+      'spacer',
       'spacer',
       'light.main_door_left_bulb',
       'light.main_door_right_bulb',
       'light.passenger_door_bulb',
       'light.garage_sconce_left_bulb',
       'light.garage_sconce_right_bulb',
+      'sensor.outside_temperature',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -549,6 +563,8 @@
       'sensor.server_room_switch_uptime',
       'sensor.server_room_switch_temperature',
       'device_tracker.server_room_16_port_poe_switch',
+      'sensor.bonus_server_room_temperature',
+      'sensor.bonus_server_room_humidity',
     ],
   },{
     'name': 'Bonus Room Switch',
@@ -789,6 +805,12 @@
     'entities': corona,
     'image': '/local/images/corona_3.png',
     'type': '../templates/summary/overview.yaml',
+  },{
+    'name': 'Plants',
+    'icon': 'mdi:flower',
+    'type': '../templates/summary/overview.yaml',
+    'image': '/local/images/plants.png',
+    'view': '../views/plants.yaml',
   }
 ] %}
 

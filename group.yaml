@@ -346,3 +346,16 @@ camera_network_switches:
     - switch.foyer_camera
     - switch.garage_camera
     - switch.kitchen_camera
+
+##################
+# PEOPLE AT HOME #
+##################
+
+people:
+  entities:
+  - person.petro
+  - person.lambo
+  - person.james
+  - person.owen
+  - person.bonnie
+  - input_boolean.company

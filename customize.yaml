@@ -39,6 +39,9 @@ switch.echo_through_receiver:
 switch.floating_outlet_switch:
   friendly_name: Echo Outlet
   icon: mdi:amazon-alexa
+switch.flood_light:
+  friendly_name: Flood Light
+  icon: mdi:spotlight-beam
 switch.foyer:
   friendly_name: Foyer
   icon: mdi:ceiling-light
@@ -146,6 +149,9 @@ switch.sconces_garage:
   icon: mdi:coach-lamp
 switch.sconces_main_entrance:
   friendly_name: Main
+  icon: mdi:coach-lamp
+switch.sliding_door_sconce:
+  friendly_name: Sliding
   icon: mdi:coach-lamp
 switch.switch:
   friendly_name: Switch
@@ -557,3 +563,7 @@ sensor.garage_ac_lite_uptime:
   icon: mdi:timer
 sensor.entity_counter_light:
   icon: mdi:lightbulb-multiple
+sensor.bonus_server_room_humidity:
+  icon: mdi:water-percent
+sensor.ms_humidity:
+  icon: mdi:water-percent

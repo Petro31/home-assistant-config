@@ -16,6 +16,10 @@
     name: Foyer
     input: !secret rtmp_foyer_stream
 
+  - platform: ffmpeg
+    name: Backyard
+    input: !secret rtmp_backyard_stream
+
   # - platform: ffmpeg
   #   name: Driveway
   #   input: !secret rtmp_driveway_stream
@@ -53,14 +57,14 @@
   #   protocol: rtmp
   #   scan_interval: 5
 
-  - platform: reolink_dev
-    host: !secret backyard_host
-    username: !secret camera_user
-    password: !secret camera_password
-    name: Backyard
-    stream: main
-    protocol: rtmp
-    scan_interval: 10
+  # - platform: reolink_dev
+  #   host: !secret backyard_host
+  #   username: !secret camera_user
+  #   password: !secret camera_password
+  #   name: Backyard
+  #   stream: main
+  #   protocol: rtmp
+  #   scan_interval: 10
   
   - platform: synology
     url: !secret synology_camera_host

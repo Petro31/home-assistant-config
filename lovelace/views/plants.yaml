@@ -1,0 +1,14 @@
+# lovelace_gen
+
+title: Plants
+path: plants
+cards:
+- type: custom:flower-card
+  entity: plant.kitty
+  species: "chamaedorea elegans"
+- type: custom:flower-card
+  entity: plant.yucca
+  species: "yucca elephantipes"
+- type: custom:flower-card
+  entity: plant.markus
+  species: "chlorophytum comosum"

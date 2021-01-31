@@ -1,0 +1,47 @@
+markus:
+  sensors:
+    moisture: sensor.markus_3_moisture
+    battery: sensor.markus_3_battery_level
+    temperature: sensor.markus_temperature
+    conductivity: sensor.markus_3_soil_conductivity
+    brightness: sensor.markus_3_illuminance
+  min_brightness: 500
+  max_brightness: 30000
+  min_temperature: 50
+  max_temperature: 89.6
+  min_moisture: 15
+  max_moisture: 60
+  min_conductivity: 200
+  max_conductivity: 1300
+
+kitty:
+  sensors:
+    moisture: sensor.kitty_moisture
+    battery: sensor.kitty_battery_level
+    temperature: sensor.kitty_temperature
+    conductivity: sensor.kitty_soil_conductivity
+    brightness: sensor.kitty_illuminance
+  min_brightness: 800
+  max_brightness: 22000
+  min_temperature: 50
+  max_temperature: 89.6
+  min_moisture: 15
+  max_moisture: 60
+  min_conductivity: 350
+  max_conductivity: 2000
+
+yucca:
+  sensors:
+    moisture: sensor.yucca_moisture
+    battery: sensor.yucca_battery_level
+    temperature: sensor.yucca_temperature
+    conductivity: sensor.yucca_soil_conductivity
+    brightness: sensor.yucca_illuminance
+  min_brightness: 1500
+  max_brightness: 20000
+  min_temperature: 46.4
+  max_temperature: 89.6
+  min_moisture: 15
+  max_moisture: 60
+  min_conductivity: 350
+  max_conductivity: 2000

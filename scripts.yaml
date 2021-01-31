@@ -226,3 +226,413 @@ remote_living_room_leftbutton:
   sequence:
   - event: remote_living_room
     event_data: {'command': 'LeftButton'}
+
+mqtt_automated_states:
+  sequence:
+  - variables: &mqtt-variables
+      root: "homeassistant"
+      topic_root: >
+        {%- if domain is not defined or unique_id is not defined %}
+          {{- [ root, 'error'] | join('/') }}
+        {%- else %}
+          {{- [ root, domain, unique_id ] | join('/') }}
+        {%- endif %}
+  - service: mqtt.publish
+    data:
+      topic: "{{ topic_root ~ '/state' }}"
+      payload: >
+        {{ { 'state': state, 'attributes': attributes | default({}) } | tojson }}
+      retain: "{{ retain | default('true') }}"
+
+mqtt_automated_config:
+  sequence:
+  - variables:
+      name: >
+        {{ unique_id | replace('_', ' ') | title }}
+      <<: *mqtt-variables
+      payload: >
+        {%- set items = [
+          ( "name", name),
+          ( "unique_id", unique_id),
+          ( "state_topic", topic_root ~ "/state"),
+          ( "value_template", "{{ value_json.state }}"),
+          ( "json_attributes_topic", topic_root ~ "/state"),
+          ( "json_attributes_template", "{{ value_json.attributes | tojson }}"),
+          ( "device_class", device_class ),
+        ] %}
+        {% set ns = namespace(items=[]) %}
+        {%- for k, v in items %}
+          {%- if v is defined %}
+            {%- set ns.items = ns.items + [ '"{}": "{}"'.format(k, v) ] %}
+          {%- endif %}
+        {%- endfor %}
+        {{ ("{" ~ ns.items | join(', ') ~ "}") }}
+  - service: mqtt.publish
+    data:
+      topic: "{{ topic_root ~ '/config' }}"
+      payload: "{{ payload | tojson }}"
+
+lzw45_quick_strip_effect:
+  alias: LZW45 Quick Strip Effect
+  description: Sets quick strip effects for the Inovelli LZW45 LED Strip
+  mode: restart
+  fields:
+    service: 
+      description:
+        (required) The name of the service. 
+          OpenZwave (Beta) -> 'ozw.set_config_parameter'
+          OpenZwave (1.4) -> 'zwave.set_config_parameter'
+          Zwave JS -> 'zwave_js.set_config_parameter'
+      example: ozw.set_config_parameter
+    lzw45: 
+      description: (required) The entity_id for the lzw45 LED Strip.
+      example: light.lzw45_light_strip_level
+    effect:
+      description: (required) The desired effect - 'off', 'solid', 'chase', 'fast-blink', 'slow-blink', 'fast-fade', 'slow-fade'
+      example: slow-fade
+    hue:
+      description: (exclusive) The Hue.  Valid ranges are 0 to 360.  You cannot combine this with color_temp.
+      example: 360
+    color_temp:
+      description: (exclusive) The color temperature (2700 - 6500).  You cannot combine this with hue.
+      example: 2700
+    brightness_pct:
+      description: (optional) The brightness percent, 0 - 100.  Defaults to 100 if omitted.
+      example: 10
+    seconds:
+      description: (optional) Duration of the effect in seconds (0 - 60 seconds).  Cannot be combined with 'minutes' or 'hours'.
+      example: 1
+    minutes:
+      description: (optional) Duration of the effect in minutes (0 - 60 minutes).  Cannot be combined with 'seconds' or 'hours'.
+      example: 1
+    hours:
+      description: (optional) Duration of the effect in hours (0 - 60 hours).  Cannot be combined with 'seconds' or 'minutes'.
+      example: 1
+    endless:
+      description: (optional) Set to true if you want the effect to stay 'forever'.
+      example: true
+  variables:
+    service: >
+      {{ service | default('ozw.set_config_parameter') }}
+    node_id: >
+      {%- if lzw45 is not defined %}
+        0
+      {%- else %}
+        {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {{ node_id if node_id else 0 }}
+      {%- endif %}
+    byte1: >
+      {%- if hue is defined and color_temp is not defined %}
+        {%- set hue = hue | int %}
+        {%- set hue = hue if hue >= 0 else 0 %}
+        {%- set hue = hue if hue <= 360 else 360 %}
+        {{ (hue / 360 * 255) | int }}
+      {%- elif color_temp is defined and hue is not defined %}
+        {%- set color_temp = color_temp | int %}
+        {%- set color_temp = color_temp if color_temp >= 2700 else 2700 %}
+        {%- set color_temp = color_temp if color_temp <= 6500 else 6500 %}
+        {{ ((color_temp - 2700) / (6500 - 2700) * 255) | int }}
+      {% else %}
+        0
+      {%- endif %}
+    byte2: >
+      {%- set pct = (brightness_pct | default(100)) | int %}
+      {%- if 0 <= pct <= 100 %}
+        {%- if pct == 100 %}
+          10
+        {%- else %}
+          {{ 128 + pct }}
+        {%- endif %}
+      {%- else %}
+        0
+      {%- endif %}
+    byte3: >
+      {%- set seconds = (seconds | default(0)) | int %}
+      {%- set minutes = (minutes | default(0)) | int %}
+      {%- set hours = (hours | default(0)) | int %}
+      {%- set forever = endless | default(false) %}
+      {%- if forever %}
+        255
+      {%- elif 0 < seconds <= 60 %}
+        {{ seconds }}
+      {%- elif 0 < minutes <= 60 %}
+        {{ minutes + 60 }}
+      {%- elif 0 < hours <= 60 %}
+        {{ hours + 120 }}
+      {%- else %}
+        0
+      {%- endif %}
+    byte4: >
+      {%- if hue is defined or color_temp is defined %}
+        {%- set effect = effect | default('static') | lower | replace(' ', '-') %}
+        {%- set color_type = 64 if color_temp is defined else 0 %}
+        {%- set effects = { 'off': 0, 'solid': 1, 'chase': 2, 'fast-blink': 3, 'slow-blink': 4, 'fast-fade': 5, 'slow-fade': 6 } %}
+        {%- set value = 0 %}
+        {%- set value = value + effects.get(effect, 0) %}
+        {{ value + color_type }}
+      {%- else %}
+        0
+      {%- endif %}
+    bytes: >
+      {{ byte4 * 2**24 + byte3 * 2**16 + byte2 * 2**8 + byte1 }}
+  sequence:
+  - condition: template
+    value_template: "{{ node_id != 0 }}"
+  - service: "{{ service }}"
+    data:
+      node_id: "{{ node_id }}"
+      parameter: 21
+      value: "{{ bytes }}"
+
+lzw45_pixel_effect:
+  alias: LZW45 Pixel Effect
+  description: Sets the pixel effects for the Inovelli LZW45 LED Strip
+  mode: restart
+  fields:
+    service: 
+      description:
+        (required) The name of the service. 
+          OpenZwave (Beta) -> 'ozw.set_config_parameter'
+          OpenZwave (1.4) -> 'zwave.set_config_parameter'
+          Zwave JS -> 'zwave_js.set_config_parameter'
+      example: ozw.set_config_parameter
+    lzw45: 
+      description: (required) The entity_id for the lzw45 LED Strip.
+      example: light.lzw45_light_strip_level
+    effect:
+      description: (required) The desired effect - static, blink, breath, color-wipe, color-wipe-reverse-inverse, color-wipe-random, random-color, single-dynamic, multi-dynamic, rainbow, rainbow-cycle, scan, dual-scan, fade, running-lights, twinkle, twinkle-random, twinkle-fade, twinkle-fade-random, sparkle, flash-sparkle, hyper-sparkle, strobe, blink-rainbow, chase-white, chase-color, chase-random, chase-rainbow, chase-flash, chase-flash-random, chase-rainbow-white, chase-blackout, chase-blackout-rainbow, color-sweep-random, running-color, running-red-blue, running-random, larson-scanner, comet, fireworks, fireworks-random, merry-christmas, circus-combustus, halloween, aurora
+      example: breath
+    brightness_pct:
+      description: (optional) The brightness percent, 0 - 99.  Defaults to 99 if omitted.
+      example: 99
+  variables:
+    service: >
+      {{ service | default('ozw.set_config_parameter') }}
+    node_id: >
+      {%- if lzw45 is not defined %}
+        0
+      {%- else %}
+        {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {{ node_id if node_id else 0 }}
+      {%- endif %}
+    byte1: >
+      {%- set effect = effect | default('static') | lower | replace(' ', '-') %}
+      {%- set effects = [
+        'static',
+        'blink',
+        'breath',
+        'color-wipe',
+        'color-wipe-reverse-inverse',
+        'color-wipe-random',
+        'random-color',
+        'single-dynamic',
+        'multi-dynamic',
+        'rainbow',
+        'rainbow-cycle',
+        'scan',
+        'dual-scan',
+        'fade',
+        'running-lights',
+        'twinkle',
+        'twinkle-random',
+        'twinkle-fade',
+        'twinkle-fade-random',
+        'sparkle',
+        'flash-sparkle',
+        'hyper-sparkle',
+        'strobe',
+        'blink-rainbow',
+        'chase-white',
+        'chase-color',
+        'chase-random',
+        'chase-rainbow',
+        'chase-flash',
+        'chase-flash-random',
+        'chase-rainbow-white',
+        'chase-blackout',
+        'chase-blackout-rainbow',
+        'color-sweep-random',
+        'running-color',
+        'running-red-blue',
+        'running-random',
+        'larson-scanner',
+        'comet',
+        'fireworks',
+        'fireworks-random',
+        'merry-christmas',
+        'circus-combustus',
+        'halloween',
+        'aurora'
+      ] %}
+      {{ effects.index(effect) + 1 if effect in effects else 1 }}
+    byte2: >
+      {%- set pct = (brightness_pct | default(99)) | int %}
+      {%- if 0 <= pct <= 99 %}
+        {{ pct }}
+      {%- else %}
+        99
+      {%- endif %}
+    bytes: >
+      {{ byte2 * 2**8 + byte1 }}
+  sequence:
+  - condition: template
+    value_template: "{{ node_id != 0 }}"
+  - service: "{{ service }}"
+    data:
+      node_id: "{{ node_id }}"
+      parameter: 31
+      value: "{{ bytes }}"
+
+lzw45_custom_effect:
+  alias: LZW45 Custom Effect
+  description: Sets the custom effects for the Inovelli LZW45 LED Strip
+  mode: restart
+  fields:
+    service: 
+      description:
+        (required) The name of the service. 
+          OpenZwave (Beta) -> 'ozw.set_config_parameter'
+          OpenZwave (1.4) -> 'zwave.set_config_parameter'
+          Zwave JS -> 'zwave_js.set_config_parameter'
+      example: ozw.set_config_parameter
+    lzw45: 
+      description: (required) The entity_id for the lzw45 LED Strip.
+      example: light.lzw45_light_strip_level
+    colors:
+      description: (required) A list of colors, (1 to 4 colors).  Color choices are off, 2700k, 4500k, 6500k, red, orange, yellow, yellow-green, green, spring-green, cyan, azure, blue, violet, magenta, and random.
+      example: "[ 'red', 'orange', 'yellow', 'off' ]"
+    effects:
+      description: (required) A list of colors (1 to 4 effects).  Color choices are fade, fade-blend, flash, chase, and chase-blend.
+      example: "[ 'fade', 'fade-blend', 'fade', 'chase' ]"
+    brightness_pcts:
+      description: (optional) A list of brightness percents, 0 - 99.  Defaults to 99 if omitted.
+      example: "[ 99, 99, 99, 99 ]"
+    duration_units:
+      description: (required) The units of the duration.  Choices are 100ms, seconds, minutes, hours.
+      example: 100ms
+    durations:
+      description: (required) A list of durations (1-60).
+      example: "[ 10, 10, 10, 10 ]"
+    finish_behavior:
+      description: (optional) The behavior when the effect reaches the max number of iterations.  Choices are off, previous-color, last-color-in-program.  Default is previous-color.
+      example: previous-color
+    iterations:
+      description: (optional) The number of times the custom effect repeats (1-254).  255 is forever.  Default is 255.
+      example: 255
+  variables:
+    service: >
+      {{ service | default('ozw.set_config_parameter') }}
+    node_id: >
+      {%- if lzw45 is not defined %}
+        0
+      {%- else %}
+        {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {{ node_id if node_id else 0 }}
+      {%- endif %}
+    transitions: >
+      {%- set ns = namespace(counts=[]) %}
+      {%- for item in [ colors, effects, brightness_pcts, durations ] %}
+        {%- set ns.counts = ns.counts + [ item | length ] %}
+      {%- endfor %}
+      {{ ns.counts | min }}
+    levels: >
+      {%- set levels = brightness_pcts | default([]) %}
+      {%- if not levels %}
+        {{ [ 99 ] * transitions }}
+      {%- else %}
+        {%- set ns = namespace(levels = []) %}
+        {%- for i in range(transitions) %}
+          {%- set pct = levels[i] | int %}
+          {%- set pct = pct if pct >= 0 else 0 %}
+          {%- set pct = pct if pct <= 99 else 99 %}
+          {%- set ns.levels = ns.levels + [ pct ] %}
+        {%- endfor %}
+        {{ ns.levels }}
+      {%- endif %}
+    parameter22: >
+      {%- macro byte(color, effect) %}
+        {%- set colors = [
+          'off',
+          '2700k',
+          '4500k',
+          '6500k',
+          'red',
+          'orange',
+          'yellow',
+          'yellow green',
+          'green',
+          'spring green',
+          'cyan',
+          'azure',
+          'blue',
+          'violet',
+          'magenta',
+          'random'
+        ] %}
+        {% set effects = [
+          'fade', 
+          'fade-blend', 
+          'flash', 
+          'chase', 
+          'chase-blend'
+        ] %}
+        {%- if color in colors and effect in effects %}
+          {%- set ci = colors.index(color) %}
+          {%- set ei = effects.index(effect) %}
+          {{- '{0:05b}{1:03b}'.format(ci, ei) }}
+        {%- else %}
+          {{- '00000000' }}
+        {%- endif %}
+      {%- endmacro %}
+      {%- set ns = namespace(bytes=[]) %}
+      {%- for i in range(transitions) %}
+        {%- set ns.bytes = ns.bytes + [ byte(colors[i], effects[i]) | int('', 2) * 2**(i * 8) ] %}
+      {%- endfor %}
+      {{ ns.bytes | sum }}
+    parameter23: >
+      {%- set ns = namespace(bytes=[]) %}
+      {%- for i in range(transitions) %}
+        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(levels[i]) | int('', 2) * 2**(i * 8) ] %}
+      {%- endfor %}
+      {{ ns.bytes | sum }}
+    parameter24: >
+      {%- set ns = namespace(bytes=[]) %}
+      {%- for i in range(transitions) %}
+        {%- set duration = durations[i] | int %}
+        {%- set duration = duration if duration >= 1 else 1 %}
+        {%- set duration = duration if duration <= 60 else 60 %}
+        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(duration) | int('', 2) * 2**(i * 8) ] %}
+      {%- endfor %}
+      {{ ns.bytes | sum }}
+    parameter30: >
+      {%- set iterations = iterations | default(255) | int %}
+      {%- set iterations = iterations if iterations >= 0 else 0 %}
+      {%- set byte1 = iterations if iterations <= 255 else 255 %}
+      {%- set behaviors = [ 'off', 'previous-color', 'last-color-in-program' ] %}
+      {%- set units = ['100ms', 'seconds', 'minutes', 'hours'] %}
+      {%- set byte2 = behaviors.index(behavior) if behavior in behaviors else 1 %}
+      {%- set byte3 = units.index(duration_units) if duration_units in units else 0 %}
+      {{ '{0:08b}{1:08b}{2:08b}'.format(byte3, byte2, byte1) | int('', 2) }}
+  sequence:
+  - condition: template
+    value_template: "{{ node_id != 0 and transitions > 0 }}"
+  - service: "{{ service }}"
+    data:
+      node_id: "{{ node_id }}"
+      parameter: 22
+      value: "{{ parameter22 }}"
+  - service: "{{ service }}"
+    data:
+      node_id: "{{ node_id }}"
+      parameter: 23
+      value: "{{ parameter23 }}"
+  - service: "{{ service }}"
+    data:
+      node_id: "{{ node_id }}"
+      parameter: 24
+      value: "{{ parameter24 }}"
+  - service: "{{ service }}"
+    data:
+      node_id: "{{ node_id }}"
+      parameter: 30
+      value: "{{ parameter30 }}"

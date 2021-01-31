@@ -1,16 +1,16 @@
 # lovelace_gen
 
 {% set activities = [
-  {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote/harmony/switch.yaml'},
-  {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote/harmony/switch.yaml'},
-  {'entity':'switch.roku', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote/harmony/switch.yaml', 'icon': 'ptr:roku-r'},
-  {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote/harmony/switch.yaml'},
-  {'entity':'switch.tv', 'color': 'var(--button-card-light-color)', 'template': '../templates/remote/harmony/switch.yaml'},
+  {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote/harmony/toggle.yaml'},
+  {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote/harmony/toggle.yaml'},
+  {'entity':'switch.roku', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote/harmony/toggle.yaml', 'icon': 'ptr:roku-r'},
+  {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote/harmony/toggle.yaml'},
+  {'entity':'switch.tv', 'color': 'var(--button-card-light-color)', 'template': '../templates/remote/harmony/toggle.yaml'},
 ] %}
 
 {% set roku_apps = [
   {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'icon': 'ptr:netflix'},
-  {'entity':'switch.hbo_now', 'color': 'rgba(255, 255, 255)', 'icon': 'ptr:hbo'},
+  {'entity':'switch.hbo', 'color': 'rgba(255, 255, 255)', 'icon': 'ptr:hbo'},
   {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'icon': 'ptr:hulu'},
   {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'icon': 'ptr:prime-video'},
   {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'icon': 'ptr:disney-plus'},
@@ -34,17 +34,17 @@ cards:
     cards:
     - !include '../templates/buttons/edge.yaml'
     - !include
-      - '../templates/remote/harmony/switch.yaml'
+      - '../templates/remote/harmony/toggle.yaml'
       - entity: switch.poweroff
         color: rgba(228, 94, 101)
     - !include '../templates/buttons/spacer.yaml'
     - !include
-      - '../templates/remote/harmony/switch.yaml'
+      - '../templates/remote/harmony/toggle.yaml'
       - entity: media_player.yamaha_receiver
         icon: ptr:power-zone-1
         color: rgba(228, 94, 101)
     - !include
-      - '../templates/remote/harmony/switch.yaml'
+      - '../templates/remote/harmony/toggle.yaml'
       - entity: media_player.yamaha_receiver_zone_2
         icon: ptr:power-zone-2
         color: rgba(228, 94, 101)
@@ -73,7 +73,7 @@ cards:
       - !include '../templates/buttons/edge.yaml'
       {%- for app in roku_apps %}
       - !include
-        - '../templates/remote/harmony/switch.yaml'
+        - '../templates/remote/harmony/toggle.yaml'
         - entity: {{ app.entity }}
           color: {{ app.color }}
           icon: {{ app.icon }}
@@ -111,10 +111,8 @@ cards:
             service: script.remote_living_room_lowerright
         - !include '../templates/buttons/edge.yaml'
       - type: custom:mod-card
-        style:
-          "ha-card > hui-horizontal-stack-card":
-            $: |
-              #root > layout-card { margin: 0px; padding: 0px; }
+        style: |
+          :host { margin: 0px; padding: 0px; --ha-card-background: none; }
         card:
           type: horizontal-stack
           cards:

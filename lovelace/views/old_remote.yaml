@@ -10,7 +10,7 @@
 
 {% set roku_apps = [
   {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'image': '/local/images/netflix.png'},
-  {'entity':'switch.hbo', 'color': 'rgba(255, 255, 255)', 'image': '/local/images/hbo_now.png'},
+  {'entity':'switch.hbo', 'color': 'rgba(153, 30, 235)', 'image': '/local/images/hbo_max.png'},
   {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'image': '/local/images/hulu.png'},
   {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'image': '/local/images/prime_video.png'},
   {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'image': '/local/images/disney_plus.png'},
@@ -118,7 +118,7 @@ cards:
   - type: conditional
     conditions:
     - entity: switch.roku
-      state: 'on'
+      state_not: 'unavailable'
     card:
       type: horizontal-stack
       cards:

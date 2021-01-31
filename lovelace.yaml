@@ -57,7 +57,7 @@ resources:
 
 # Custom Header
 
-- url: /hacsfiles/custom-header/custom-header.js?
+- url: /local/community_archived/custom-header/custom-header.js?
   type: module
 
 # RGB Light Card
@@ -103,4 +103,9 @@ resources:
 # Light popup card
 
 - url: /hacsfiles/light-popup-card/light-popup-card.js
+  type: module
+
+# Plant Card
+
+- url: /local/lovelace-flower-card/flower-card.js?
   type: module

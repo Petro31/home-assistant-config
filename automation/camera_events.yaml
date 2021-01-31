@@ -25,13 +25,10 @@
 
 - alias: Turn off Outside Cameras based on temperature
   trigger:
-  - platform: template
-    value_template: >
-      {% set below = states('sensor.outside_temperature') | float < 16 %}
-      {% set falling = is_state('binary_sensor.outside_temperature_falling', 'on') %}
-      {% set switches = [states.switch.driveway_camera, states.switch.backyard_camera] %}
-      {% set are_on = switches | selectattr('state','eq','on') | list | length > 0 %}
-      {{ are_on and below and falling }}
+  - platform: state
+    entity_id: binary_sensor.camera_shutoff
+    from: 'off'
+    to: 'on'
   action:
   - service: notify.homeowners
     data_template:
@@ -45,13 +42,10 @@
 
 - alias: Turn on Outside Cameras based on temperature
   trigger:
-  - platform: template
-    value_template: >
-      {% set above = states('sensor.outside_temperature') | float > 20 %}
-      {% set rising = is_state('binary_sensor.outside_temperature_rising','on') %}
-      {% set switches = [states.switch.driveway_camera, states.switch.backyard_camera] %}
-      {% set off = switches | selectattr('state','eq','off') | list | length > 0 %}
-      {{ above and off and rising }}
+  - platform: state
+    entity_id: binary_sensor.camera_turn_on
+    from: 'off'
+    to: 'on'
   action:
   - service: notify.homeowners
     data_template:

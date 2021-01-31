@@ -459,3 +459,47 @@
               {{ state_attr('sensor.corona_virus_county_rest', 'county') }}
             {%- endif %}
             
+  - platform: template
+    sensors:
+      people_at_home:
+        unique_id: people_at_home
+        friendly_name: People at Home
+        value_template: >
+          {%- set people = expand('group.people') %}
+          {{ people | selectattr('state', 'in', ['home', 'on'] ) | list | count }}
+        icon_template: >
+          {%- set icons = ['account-off', 'account', 'account-multiple'] %}
+          {%- set people = expand('group.people') %}
+          {%- set cnt = people | selectattr('state', 'in', ['home', 'on'] ) | list | count %}
+          {%- if cnt >= 0 %}
+            mdi:{{ icons[cnt] if cnt in range(icons | count) else 'account-group' }}
+          {%- else %}
+            mdi:account-alert
+          {%- endif %}
+        attribute_templates:
+          people: > 
+            {%- set people = expand('group.people') | selectattr('state', 'eq', 'home') | map(attribute='name') | list %}
+            {%- set company = expand('group.people') | selectattr('state', 'eq', 'on') | map(attribute='name') | list %}
+            {%- set people = people + company %}
+            {{ people }}
+          and: >
+            {%- set people = expand('group.people') | selectattr('state', 'eq', 'home') | map(attribute='name') | list %}
+            {%- set company = expand('group.people') | selectattr('state', 'eq', 'on') | map(attribute='name') | list %}
+            {%- set people = people + company %}
+            {%- if people | count > 0 %}
+              {{- [people[:-1] | join(', '), 'and', people[-1]] | join(' ') if people | count > 1 else people[0] }}
+            {%- else %}unknown
+            {%- endif %}
+          or: >
+            {%- set people = expand('group.people') | selectattr('state', 'eq', 'home') | map(attribute='name') | list %}
+            {%- set company = expand('group.people') | selectattr('state', 'eq', 'on') | map(attribute='name') | list %}
+            {%- set people = people + company %}
+            {%- if people | count > 0 %}
+              {{- [people[:-1] | join(', '), 'or', people[-1]] | join(' ') if people | count > 1 else people[0] }}
+            {%- else %}unknown
+            {%- endif %}
+          count: >
+            {%- set people = expand('group.people') | selectattr('state', 'eq', 'home') | map(attribute='name') | list %}
+            {%- set company = expand('group.people') | selectattr('state', 'eq', 'on') | map(attribute='name') | list %}
+            {%- set people = people + company %}
+            {{ people | count }}

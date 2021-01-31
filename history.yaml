@@ -16,6 +16,16 @@
       - sensor.processor_use
       - sensor.average_disk_temp_volume_1
       - sensor.dining_room_temperature
+      - sensor.bonus_server_room_temperature
+      - sensor.bonus_server_room_humidity
+      - sensor.garage_temperature
+      - sensor.garage_humidity
+      - sensor.kitchen_temperature
+      - sensor.kitchen_humidity
+      - sensor.master_bathroom_temperature
+      - sensor.master_bathroom_humidity
+      - sensor.master_bedroom_temperature
+      - sensor.master_bedroom_humidity
       - sensor.ms_temperature
       - sensor.ms_humidity
       - sensor.ms_ultraviolet
@@ -38,16 +48,6 @@
       - sensor.ups_input_voltage
       - sensor.ups_battery
       - sensor.outside_temperature
-      - sensor.sensor_1_humidity
-      - sensor.sensor_1_temperature
-      - sensor.sensor_2_humidity
-      - sensor.sensor_2_temperature
-      - sensor.sensor_3_humidity
-      - sensor.sensor_3_temperature
-      - sensor.sensor_4_humidity
-      - sensor.sensor_4_temperature
-      - sensor.sensor_5_humidity
-      - sensor.sensor_5_temperature
     domains:
       - light
       - switch

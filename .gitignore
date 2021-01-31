@@ -187,3 +187,11 @@ appdaemon/apps/ad_emulated_roku_event_sensor/
 rainbird.yaml
 
 lovelace/custom-svg/
+
+blueprints/automation/homeassistant/motion_light.yaml
+
+blueprints/automation/homeassistant/notify_leaving_zone.yaml
+
+blueprints/automation/who_used_the_door.yaml
+
+www/community_archived/custom-header/custom-header.js

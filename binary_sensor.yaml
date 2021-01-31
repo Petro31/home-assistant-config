@@ -8,10 +8,43 @@
       yamaha_receiver:
         device_class: power
         value_template: >
-          {%- set media_players = [
-            states.media_player.yamaha_receiver,
-            states.media_player.yamaha_receiver_zone_2 ] %}
-          {{ media_players | selectattr('state','eq','on') | list | length >= 1 }}
+          {{ expand('media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2') 
+                    | selectattr('state','eq','on') | list | length >= 1 }}
+
+      camera_shutoff:
+        device_class: cold
+        value_template: >
+          {% set below = states('sensor.outside_temperature') | float < 16 %}
+          {% set falling = is_state('binary_sensor.outside_temperature_falling', 'on') %}
+          {% set are_on = expand('switch.driveway_camera', 'switch.backyard_camera') | selectattr('state','eq','on') | list | length > 0 %}
+          {{ are_on and below and falling }}
+        availability_template: >
+          {{ expand('sensor.outside_temperature', 'binary_sensor.outside_temperature_falling', 
+                    'switch.driveway_camera', 'switch.backyard_camera') 
+                    | selectattr('state', 'in', ['unknown', 'unavailable']) 
+                    | list | length == 0 }}
+
+      camera_turn_on:
+        device_class: heat
+        value_template: >
+          {% set above = states('sensor.outside_temperature') | float > 20 %}
+          {% set rising = is_state('binary_sensor.outside_temperature_rising', 'on') %}
+          {% set are_off = expand('switch.driveway_camera', 'switch.backyard_camera') | selectattr('state','eq','off') | list | length > 0 %}
+          {{ are_off and above and rising }}
+        availability_template: >
+          {{ expand('sensor.outside_temperature', 'binary_sensor.outside_temperature_rising', 
+                    'switch.driveway_camera', 'switch.backyard_camera') 
+                    | selectattr('state', 'in', ['unknown', 'unavailable']) 
+                    | list | length == 0 }}
+
+      doorbell_chime:
+        device_class: sound
+        value_template: >
+          {{ is_state('switch.doorbell_chime', 'on') }}
+        availability_template: >
+          {{ expand('switch.doorbell_chime') 
+                    | selectattr('state', 'in', ['unknown', 'unavailable']) 
+                    | list | length == 0 }}
 
   - platform: trend
     sensors:
