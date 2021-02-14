@@ -1,0 +1,220 @@
+- name: Holiday Bulbs Christmas
+  icon: mdi:string-lights
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  0, 179,  44]
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  0, 179,  44]
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
+
+- name: Holiday Bulbs Thanksgiving
+  icon: mdi:turkey
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [108,  47,   0]
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [158, 104,  42]
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [241, 185,  48]
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [181,  71,  48]
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [138, 151,  72]
+
+- name: Holiday Bulbs Easter
+  icon: mdi:rabbit
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      rgb_color: [255, 212, 229]
+    light.main_door_right_bulb:
+      state: 'on'
+      rgb_color: [224, 205, 225]
+    light.passenger_door_bulb:
+      state: 'on'
+      rgb_color: [189, 232, 239]
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      rgb_color: [183, 215, 132]
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      rgb_color: [254, 255, 162]
+
+#
+# All valentines day colors
+#
+#      rgb_color: [ 94,   8,  30]
+#      rgb_color: [181,  26,  58]
+#      rgb_color: [226,  71, 103] 
+#      rgb_color: [228, 131, 151]
+#
+
+- name: Holiday Bulbs Valentines Day
+  icon: mdi:heart-multiple
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 94,   8,  30]
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [228, 131, 151]
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 94,   8,  30]
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [228, 131, 151]
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 94,   8,  30]
+
+- name: Holiday Bulbs St Patricks Day
+  icon: mdi:clover
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 34,  77,  23]
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  9, 148,  65]
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 96, 168,  48]
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [159, 218,  64]
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [217, 223,  29]
+       
+- name: Holiday Bulbs Patriotic
+  icon: mdi:flag-variant
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 30,  45,  96]
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [196,  31,  64] 
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 260
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 30,  45,  96]
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [196,  31,  64] 
+      
+- name: Holiday Bulbs Halloween
+  icon: mdi:halloween
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [247,  95, 28]
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [255, 154,  0]
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  0,   0,  0]
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [136, 30, 228]
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [133, 226, 31]
+      
+- name: Holiday Bulbs Soft White
+  icon: mdi:weather-sunset
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 370
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 370
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 370
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 370
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 370
+      
+- name: Holiday Bulbs DayLight
+  icon: mdi:white-balance-sunny
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 153
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 153
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 153
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 153
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp: 153
+      

@@ -14,7 +14,15 @@
 icon: {{ icon | default('mdi:cctv') }}
 title: {{ name | title }}
 path: {{ path | default(name.lower()) }}
+visible: {{ visible | default(false) }}
 cards:
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - !include
+      - ../templates/headers/navigator.yaml
+      - name: {{ name | title }}
+    - !include '../templates/buttons/edge.yaml'
 {%- for camera in entities %}
 - type: picture-entity
   style: |

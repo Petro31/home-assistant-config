@@ -119,7 +119,9 @@
     'name': 'Basement',
     'icon': 'mdi:home-floor-b',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'switch.basement_stairs',
       'switch.basement_cans',
@@ -134,7 +136,9 @@
     'name': 'Bonus Room',
     'icon': 'mdi:bed-king',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'light.bonus_room_entrance',
       'light.bonus_room_bedroom_fixture',
@@ -153,7 +157,9 @@
     'name': 'Dining Room',
     'icon': 'mdi:silverware-fork-knife',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'light.dining_room_chandelier',
       'switch.dining_room_hutch',
@@ -169,7 +175,9 @@
     'name': 'Foyer',
     'icon': 'mdi:door',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', },  
+    ],
     'entities': [
       'switch.foyer',
     ],
@@ -183,10 +191,13 @@
     'name': 'Game Room',
     'icon': 'mdi:gamepad-square',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
-      'switch.game_room_wall_outlet',
       'switch.game_room_switch',
+      'switch.game_room_buffet_outlet',
+      'switch.game_room_bookcase_outlet',
       'switch.game_room_window',
     ],
     'type': '../templates/summary/overview.yaml',
@@ -199,7 +210,9 @@
     'name': 'Garage',
     'icon': 'mdi:home-floor-g',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'switch.garage_cans',
       'switch.garage_workbench',
@@ -216,7 +229,9 @@
     'name': 'Garage Entrance',
     'icon': 'mdi:door',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'switch.garage_entry',
     ],
@@ -230,7 +245,9 @@
     'name': 'Hall',
     'icon': 'mdi:home-floor-2',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'light.hallway',
     ],
@@ -244,7 +261,9 @@
     'name': 'Kitchen',
     'icon': 'mdi:pasta',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'light.kitchen_island',
       'light.kitchen_cans',
@@ -265,7 +284,9 @@
     'name': 'Laundry Room',
     'icon': 'mdi:washing-machine',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'switch.laundry',
     ],
@@ -279,7 +300,9 @@
     'name': 'Living Room',
     'icon': 'mdi:sofa',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', },  
+    ],
     'entities': [
       'light.living_room',
       'switch.living_room_window',
@@ -294,7 +317,9 @@
     'name': 'Master Bathroom',
     'icon': 'mdi:paper-roll',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'light.master_bathroom_sink',
       'light.master_bathroom_cans',
@@ -312,7 +337,9 @@
     'name': 'Master Bedroom',
     'icon': 'mdi:bed-king',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'fan.master_fixture',
       'light.master_closet',
@@ -332,7 +359,9 @@
     'name': 'Office',
     'icon': 'mdi:desk',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'light.bonus_room_office_fixture',
       'fan.bonus_room_office',
@@ -350,7 +379,9 @@
     'name': 'Outside',
     'icon': 'mdi:tree',
     'image': '',
-    'header': [ { 'type': '../templates/headers/toggle_all.yaml', } ],
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
     'entities': [
       'switch.outside_porch',
       'switch.passenger_sconce',
@@ -381,6 +412,7 @@
     'name': "Mike's Devices",
     'icon': 'mdi:account-network',
     'image': '',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'device_tracker.garmin_forerunner_935',
       'device_tracker.mike_s_computer',
@@ -397,6 +429,7 @@
     'name': "Lindsay's Devices",
     'icon': 'mdi:account-network',
     'image': '',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'device_tracker.lindsay_s_imac',
       'device_tracker.lindsay_s_ipad',
@@ -412,6 +445,7 @@
     'name': 'Camera Devices',
     'icon': '',
     'image': '',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'device_tracker.backyard_camera',
       'device_tracker.driveway_camera',
@@ -429,6 +463,7 @@
     'name': 'Devices',
     'icon': '',
     'image': '',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'device_tracker.doorbell_sensor',
       'device_tracker.echo_living_room',
@@ -451,6 +486,7 @@
     'name': 'Family Devices',
     'icon': '',
     'image': '',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'device_tracker.james_air',
       'device_tracker.james_iphone_10',
@@ -474,6 +510,7 @@
     'name': 'Speed Test',
     'icon': 'mdi:speedometer',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.speedtest_download',
       'sensor.speedtest_upload',
@@ -483,6 +520,7 @@
     'name': 'Intel Nuc',
     'image': '/local/images/devices/nuc_5.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.last_boot',
       'sensor.memory_use_percent',
@@ -499,6 +537,7 @@
     'name': 'HomeAssistant',
     'image': '/local/images/devices/home-assistant-logo.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'triggers_update': 'all',
     'entities': [
       'sensor.uptime',
@@ -523,6 +562,7 @@
     'name': 'sensor.ups_model',
     'image': '/local/images/devices/BR1500G_1.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.ups_uptime',
       'sensor.ups_load',
@@ -535,6 +575,7 @@
     'name': 'Synology',
     'image': '/local/images/devices/synology_ds216j.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.synology_uptime',
       'sensor.synology_volume_used_volume_1',
@@ -551,6 +592,7 @@
     'name': 'Gateway Pro',
     'image': '/local/images/devices/unifi_gateway_pro.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.server_room_gateway_uptime',
       'device_tracker.server_room_gateway_pro',
@@ -559,6 +601,7 @@
     'name': 'Server Room Switch',
     'image': '/local/images/devices/unifi_16port_switch_2.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.server_room_switch_uptime',
       'sensor.server_room_switch_temperature',
@@ -570,6 +613,7 @@
     'name': 'Bonus Room Switch',
     'image': '/local/images/devices/unifi_16port_switch_2.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.bonus_room_switch_uptime',
       'sensor.bonus_room_switch_temperature',
@@ -579,6 +623,7 @@
     'name': 'Server Room AC-Lite',
     'image': '/local/images/devices/unifi_aclite.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.server_room_ac_lite_uptime',
       'device_tracker.server_room_ac_lite',
@@ -587,6 +632,7 @@
     'name': 'Hall Closet AC-Lite',
     'image': '/local/images/devices/unifi_aclite.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.hall_closet_ac_lite_uptime',
       'device_tracker.hall_closet_ac_lite',
@@ -595,6 +641,7 @@
     'name': 'Garage AC-Lite',
     'image': '/local/images/devices/unifi_aclite.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.garage_ac_lite_uptime',
       'device_tracker.garage_ac_lite',
@@ -603,6 +650,7 @@
     'name': 'Cloud Key',
     'image': '/local/images/devices/unifi_cloud_key_gen1.png',
     'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'device_tracker.unifi_cloudkey',
     ],
@@ -725,6 +773,7 @@
     'icon': 'mdi:home-lightbulb',
     'entities': areas,
     'image': '/local/images/home_transparent_5.png',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'triggers_update': areas | sum(attribute='entities', start=[]) | sort,
     'display': [
       {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
@@ -737,6 +786,7 @@
     'icon': 'mdi:door',
     'entities': doors,
     'image': '/local/images/door_4.png',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'triggers_update': doors | map(attribute='entity') | list | sort,
     'display': [
       {'domain': ['sensor','binary_sensor'] , 'state': ['on', 'open'], 'icon': 'mdi:door-open', 'units': 'doors' },
@@ -746,7 +796,7 @@
     'name': 'Remote',
     'icon': 'mdi:remote-tv',
     'image': '/local/images/remote_2.png',
-    'view': 'old_remote.yaml',
+    'view': 'remote.yaml',
     'triggers_update': [ 'media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2' ],
     'display': [
       {'domain': ['media_player'], 'state': ['on'], 'icon': 'mdi:speaker-wireless', 'units': 'zones' },
@@ -756,6 +806,7 @@
     'name': 'System',
     'icon': 'mdi:cog',
     'entities': systems,
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'image': '/local/images/gears_3.png',
     'type': '../templates/summary/overview.yaml',
   },{
@@ -763,6 +814,7 @@
     'icon': 'mdi:wan',
     'entities': wan,
     'image': '/local/images/network.png',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'triggers_update': wan | sum(attribute='entities', start=[]) | list | sort,
     'display': [
       {'domain': ['device_tracker'], 'state': ['home'], 'icon': 'mdi:lan-connect', 'units': 'online' },
@@ -774,6 +826,7 @@
     'icon': 'mdi:cctv',
     'entities': cameras,
     'image': '/local/images/camera.png',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'triggers_update': wan | selectattr('name','eq','Camera Devices') | sum(attribute='entities', start=[]) | sort,
     'display': [
       {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
@@ -784,6 +837,7 @@
     'name': 'Detection',
     'icon': 'mdi:image-search',
     'entities': image_processing,
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'image': '/local/images/camera_2.png',
     'type': '../templates/summary/overview.yaml',
     'view': '../views/image_processing.yaml',
@@ -791,23 +845,26 @@
     'name': 'Echos',
     'icon': 'mdi:amazon-alexa',
     'entities': echos,
-    'image': '/local/images/echo_2.png',
-    'type': '../templates/summary/overview.yaml',
     'header': [
+      { 'type': '../templates/headers/navigator.yaml', },
       {
         'type': '../templates/headers/full_text_box.yaml',
         'entity': 'input_text.alexa_say',
       },
     ],
+    'image': '/local/images/echo_2.png',
+    'type': '../templates/summary/overview.yaml',
   },{
     'name': 'CoronaVirus',
     'icon': 'mdi:biohazard',
     'entities': corona,
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'image': '/local/images/corona_3.png',
     'type': '../templates/summary/overview.yaml',
   },{
     'name': 'Plants',
     'icon': 'mdi:flower',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'type': '../templates/summary/overview.yaml',
     'image': '/local/images/plants.png',
     'view': '../views/plants.yaml',
@@ -815,13 +872,14 @@
 ] %}
 
 
-{%- set testing = True %}
+{%- set testing = False %}
 
 # Set up the home page.
 - !include
   - dynamic_view_builder.yaml
   - name: Home
     icon: mdi:home
+    visible: true
     header:
     - type: '../templates/headers/weather.yaml'
       path: 'home'
@@ -873,14 +931,18 @@
   - dynamic_view_builder.yaml
     {%- set attrs = subview.items() | list %}
     {%- set attrs = attrs | rejectattr('0', 'in', ['view', 'type']) | list %}
+    {%- set attrs = attrs + [('back_path', main_view.name.lower())] %}
     {%- for attr, value in attrs %}
 {{ toyaml('    ', attr, value, loop.first) }}
     {%- endfor %}
   {%- endfor %}
 {%- endfor %}
 
+# Create the reciever view
+- !include receiver.yaml
+
 # Testing
 
 {%- if testing %}
-- !include remote.yaml
+- !include testing.yaml
 {%- endif %}

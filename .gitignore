@@ -195,3 +195,7 @@ blueprints/automation/homeassistant/notify_leaving_zone.yaml
 blueprints/automation/who_used_the_door.yaml
 
 www/community_archived/custom-header/custom-header.js
+
+frontend_themes.yaml
+
+home-assistant-rollback.log

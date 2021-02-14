@@ -80,6 +80,7 @@
 title: Remote
 path: remote
 icon: mdi:remote-tv
+visible: {{ visible | default(false) }}
 cards:
 - type: vertical-stack
   cards:

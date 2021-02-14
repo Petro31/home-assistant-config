@@ -15,11 +15,12 @@ config:
 conversation:
 cover: !include cover.yaml
 discovery:
-frontend: !include frontend.yaml
+frontend:
+  themes: !include_dir_merge_named themes/
 group: !include group.yaml
 history: !include history.yaml
 http: 
-image_processing: !include image_processing.yaml
+#image_processing: !include image_processing.yaml
 input_boolean:
 input_select:
 input_text:
@@ -39,8 +40,8 @@ notify: !include notify.yaml
 person: 
 plant: !include plants.yaml
 recorder: !include recorder.yaml
-remote: !include remote.yaml
 roku: !include roku.yaml
+scene: !include scenes.yaml
 script: !include scripts.yaml
 sensor: !include sensor.yaml
 speedtestdotnet: !include speedtestdotnet.yaml

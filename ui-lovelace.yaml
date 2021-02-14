@@ -10,9 +10,9 @@ preload_cards:
 preload_rows:
 - sensor-entity
 
-custom_header: !include lovelace/custom_header.yaml
+#custom_header: !include lovelace/custom_header.yaml
 
-background: center / cover no-repeat url("/local/images/background.jpg") fixed
+# background: center / cover no-repeat url("/local/images/background.jpg") fixed
 # views:
 # - title: main
 #   cards:

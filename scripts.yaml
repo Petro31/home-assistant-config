@@ -1,3 +1,17 @@
+# A Toggle for the UI.  Helps create global on/off buttons that don't error 
+# when the button is pressed and everything is off.  e.g.  all lights are off and press off does not
+# result in a lovelace call-service error.
+lovelace_toggle:
+  variables:
+    entities: >
+      {{ expand(entities) | selectattr('state', '!=', state) | map(attribute='entity_id') | list }}
+  sequence:
+  - condition: template
+    value_template: "{{ entities | length > 0 }}"
+  - service: homeassistant.turn_{{ state }}
+    data:
+      entity_id: "{{ entities }}"
+
 # Living Room Dot
 alexa_say_living_room:
   sequence:

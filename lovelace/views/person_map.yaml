@@ -6,6 +6,7 @@ icon: mdi:map
 title: {{ name | title }}
 path: {{ name }}_map
 panel: true
+visible: {{ visible | default(false) }}
 cards:
 - type: map
   default_zoom: 14

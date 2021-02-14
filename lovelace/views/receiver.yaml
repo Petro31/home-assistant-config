@@ -1,0 +1,104 @@
+# lovelace_gen
+{%- set sources_cols = 5 %}
+{%- set sources_rows = 1 %}
+{% set sources = [
+  {'entity':'switch.xbox_source', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote_icon_button.yaml'},
+  {'entity':'switch.playstation_source', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote_icon_button.yaml'},
+  {'entity':'switch.roku_source', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote_image_button.yaml', 'image': '/local/images/roku.png'},
+  {'entity':'switch.nintendo_switch_source', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote_icon_button.yaml'},
+  {'entity':'switch.alexa_source', 'color': 'rgba(49, 196, 243)', 'template': '../templates/remote_icon_button.yaml'},
+] %}
+
+{%- set surround_cols = 5 %}
+{%- set surround_rows = 2 %}
+{% set surround_modes = [
+  {'entity': 'switch.surround_mode_sci_fi', 'name': 'Sci Fi', 'sound_mode':'Sci-Fi', 'icon': 'mdi:rocket',},
+  {'entity': 'switch.surround_mode_7ch_stereo', 'name': 'Music', 'sound_mode':'7ch Stereo', 'icon': 'mdi:music',},
+  {'entity': 'switch.surround_mode_standard', 'name': 'Standard', 'sound_mode':'Standard', 'icon': 'mdi:filmstrip',},
+  {'entity': 'switch.surround_mode_surround_decoder', 'name': 'Surround Sound', 'sound_mode':'Surround Decoder', 'icon': 'mdi:surround-sound-7-1',},
+  {'entity': 'switch.surround_mode_adventure', 'name': 'Adventure', 'sound_mode':'Adventure', 'icon': 'mdi:account-cowboy-hat',},
+  {'entity': 'switch.surround_mode_drama', 'name': 'Drama', 'sound_mode':'Drama', 'icon': 'mdi:drama-masks',},
+  {'entity': 'switch.surround_mode_action_game', 'name': 'Action', 'sound_mode':'Action Game', 'icon': 'mdi:pistol',},
+  {'entity': 'switch.surround_mode_roleplaying_game', 'name': 'Roleplaying', 'sound_mode':'Roleplaying Game', 'icon': 'mdi:auto-fix',},
+  {'entity': 'switch.surround_mode_sports', 'name': 'Sports', 'sound_mode':'Sports', 'icon': 'mdi:basketball',},
+] %}
+
+title: Yamaha Receiver
+path: yamaha receiver
+icon: mdi:audio-video
+visible: {{ visible | default(false) }}
+cards:
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - !include
+      - ../templates/headers/navigator.yaml
+      - name: Yamaha Receiver
+        back_path: remote
+    - !include '../templates/buttons/edge.yaml'
+- type: vertical-stack
+  cards:
+  - !include
+    - ../templates/headers/label.yaml
+    - content: 'Source'
+  {%- for i in range(sources_cols * sources_rows) %}
+  {%- set source = sources[i] %}
+    {%- if i % sources_cols == 0 %}
+  - type: horizontal-stack
+    cards:
+    - !include '../templates/spacer_edge.yaml'
+    {%- endif %}
+    {% if source %}
+    - !include
+      {%- if source.template %}
+      - {{ source.template }}
+      {%- else %}
+      - '../templates/remote/harmony/toggle.yaml'
+      {%- endif %}
+      - entity: {{ source.entity }}
+        color: {{ source.color }}
+        {%- if source.icon is defined %}
+        icon: {{ source.icon }}
+        {%- endif %}
+        {%- if source.image is defined %}
+        image: {{ source.image }}
+        {%- endif %}
+    {% else %}
+    - !include '../templates/buttons/spacer.yaml'
+    {% endif %}
+    {%- if i % sources_cols == sources_cols - 1 %}
+    - !include '../templates/spacer_edge.yaml'
+    {%- endif %}
+  {%- endfor %}
+- type: vertical-stack
+  cards:
+  - !include
+    - ../templates/headers/label.yaml
+    - content: 'Surround Mode'
+
+  {%- for i in range(surround_cols * surround_rows) %}
+  {%- set surround_mode = surround_modes[i] %}
+    {%- if i % surround_cols == 0 %}
+  - type: horizontal-stack
+    cards:
+    - !include '../templates/spacer_edge.yaml'
+    {%- endif %}
+    {% if surround_mode %}
+    - !include
+      {%- if surround_mode.template %}
+      - {{ surround_mode.template }}
+      {%- else %}
+      - '../templates/remote/harmony/toggle.yaml'
+      {%- endif %}
+      - entity: {{ surround_mode.entity }}
+        color: {{ surround_mode.color }}
+        {%- if surround_mode.icon is defined %}
+        icon: {{ surround_mode.icon }}
+        {%- endif %}
+    {% else %}
+    - !include '../templates/buttons/spacer.yaml'
+    {% endif %}
+    {%- if i % surround_cols == surround_cols - 1 %}
+    - !include '../templates/spacer_edge.yaml'
+    {%- endif %}
+  {%- endfor %}

@@ -1,6 +1,35 @@
 - platform: demo
+
 - platform: group
-  name: Color Bulbs
+  name: Main Door Bulbs
   entities:
-  - light.inovelli_lzw42_multi_color_bulb_level
-  - light.inovelli_lzw42_multi_color_bulb_level_2
+  - light.main_door_left_bulb
+  - light.main_door_right_bulb
+
+- platform: group
+  name: Garage Sconces Bulbs
+  entities:
+  - light.garage_sconce_left_bulb
+  - light.garage_sconce_right_bulb
+
+- platform: group
+  name: Outdoor Bulbs
+  entities:
+  - light.main_door_left_bulb
+  - light.main_door_right_bulb
+  - light.passenger_door_bulb
+  - light.garage_sconce_left_bulb
+  - light.garage_sconce_right_bulb
+
+- platform: group
+  name: Primary Holiday Bulbs Set
+  entities:
+  - light.main_door_left_bulb
+  - light.passenger_door_bulb
+  - light.garage_sconce_right_bulb
+
+- platform: group
+  name: Secondary Holiday Bulbs Set
+  entities:
+  - light.main_door_right_bulb
+  - light.garage_sconce_left_bulb

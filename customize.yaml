@@ -61,8 +61,8 @@ switch.garage_camera:
   friendly_name: Garage Camera
   icon: mdi:lan-connect
 switch.garage_cans:
-  friendly_name: Garage
-  icon: mdi:lightbulb
+  friendly_name: Car Bays
+  icon: mdi:car
 switch.garage_entry:
   friendly_name: Entry
   icon: mdi:ceiling-light
@@ -567,3 +567,9 @@ sensor.bonus_server_room_humidity:
   icon: mdi:water-percent
 sensor.ms_humidity:
   icon: mdi:water-percent
+switch.garage_workbench:
+  icon: mdi:hammer
+switch.game_room_buffet_outlet:
+  icon: mdi:buffet
+switch.game_room_bookcase_outlet:
+  icon: mdi:bookshelf

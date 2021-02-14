@@ -69,8 +69,8 @@ game_room_toggle:
   class: ToggleLight
   entity: switch.game_room_switch
   entities:
-    - switch.game_room_window
-    - switch.game_room_wall_outlet
+    - switch.game_room_bookcase_outlet
+    - switch.game_room_buffet_outlet
 
 basement_toggle:
   module: toggle_light

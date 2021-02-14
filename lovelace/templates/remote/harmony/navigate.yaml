@@ -1,0 +1,20 @@
+# lovelace_gen
+
+type: custom:button-card
+color: var(--paper-item-icon-active-color)
+aspect_ratio: {{ aspect_ratio | default('1/1') }}
+icon: {{ icon }}
+show_icon: true
+size: 75%
+show_state: false
+show_name: false
+show_label: false
+tap_action:
+  action: navigate
+  navigation_path: /lovelace/{{ path }}
+  haptic: light
+styles:
+  card:
+  - border-radius: 18%
+  - padding: 0px
+  - --ha-card-background: var(--primary-background-color)

@@ -55,11 +55,6 @@ resources:
 - url: /hacsfiles/air-visual-card/air-visual-card.js?
   type: module
 
-# Custom Header
-
-- url: /local/community_archived/custom-header/custom-header.js?
-  type: module
-
 # RGB Light Card
 
 - url: /hacsfiles/rgb-light-card/card.js?

@@ -1,0 +1,58 @@
+# lovelace_gen
+
+{%- set scene_cols = 5 %}
+{%- set scene_rows = 2 %}
+{% set scenes = [
+  {'entity': 'scene.holiday_bulbs_daylight' },
+  {'entity': 'scene.holiday_bulbs_soft_white' },
+  {'entity': 'scene.holiday_bulbs_christmas' },
+  {'entity': 'scene.holiday_bulbs_easter' },
+  {'entity': 'scene.holiday_bulbs_halloween' },
+  {'entity': 'scene.holiday_bulbs_patriotic' },
+  {'entity': 'scene.holiday_bulbs_st_patricks_day' },
+  {'entity': 'scene.holiday_bulbs_thanksgiving' },
+  {'entity': 'scene.holiday_bulbs_valentines_day' },
+] %}
+
+title: Outside Scenes
+path: outside scenes
+icon: mdi:audio-video
+visible: {{ visible | default(false) }}
+cards:
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - !include
+      - ../templates/headers/navigator.yaml
+      - name: Outside Scenes
+        back_path: outside
+    - !include '../templates/buttons/edge.yaml'
+  {%- for i in range(scene_cols * scene_rows) %}
+  {%- set scene = scenes[i] %}
+    {%- if i % scene_cols == 0 %}
+  - type: horizontal-stack
+    cards:
+    - !include '../templates/spacer_edge.yaml'
+    {%- endif %}
+    {% if scene %}
+    - !include
+      {%- if scene.template %}
+      - {{ scene.template }}
+      {%- else %}
+      - '../templates/remote/harmony/toggle.yaml'
+      {%- endif %}
+      - entity: {{ scene.entity }}
+        color: {{ scene.color }}
+        {%- if scene.icon is defined %}
+        icon: {{ scene.icon }}
+        {%- endif %}
+        {%- if scene.image is defined %}
+        image: {{ scene.image }}
+        {%- endif %}
+    {% else %}
+    - !include '../templates/buttons/spacer.yaml'
+    {% endif %}
+    {%- if i % scene_cols == scene_cols - 1 %}
+    - !include '../templates/spacer_edge.yaml'
+    {%- endif %}
+  {%- endfor %}

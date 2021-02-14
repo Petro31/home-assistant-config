@@ -1,23 +1,22 @@
 # lovelace_gen
 
-{% set activities = [
-  {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote/harmony/toggle.yaml'},
-  {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote/harmony/toggle.yaml'},
-  {'entity':'switch.roku', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote/harmony/toggle.yaml', 'icon': 'ptr:roku-r'},
-  {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote/harmony/toggle.yaml'},
-  {'entity':'switch.tv', 'color': 'var(--button-card-light-color)', 'template': '../templates/remote/harmony/toggle.yaml'},
-] %}
-
-{% set roku_apps = [
+{%- set activity_cols = 6 %}
+{%- set activity_rows = 2 %}
+{%- set activities = [
+  {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)'},
+  {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)'},
+  {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)'},
+  {'entity':'switch.tv', 'color': 'var(--button-card-light-color)'},
+  {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'icon': 'ptr:plex'},
+  {'entity':'switch.peacock', 'color': 'rgba(81, 105, 170)', 'image': '/local/images/peacock.png', 'template': '../templates/remote_image_button.yaml'},
   {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'icon': 'ptr:netflix'},
   {'entity':'switch.hbo', 'color': 'rgba(255, 255, 255)', 'icon': 'ptr:hbo'},
   {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'icon': 'ptr:hulu'},
   {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'icon': 'ptr:prime-video'},
   {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'icon': 'ptr:disney-plus'},
-  {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'icon': 'ptr:plex'},
 ] %}
 
-{% set controls = [
+{%- set controls = [
   {'entity': 'binary_sensor.remote_living_room_homebutton' },
   {'entity': 'binary_sensor.remote_living_room_menubutton' },
   {'entity': 'binary_sensor.remote_living_room_lowerleft' },
@@ -25,14 +24,19 @@
 ] %}
 
 title: Remote
-path: testing
+path: remote
 icon: mdi:remote-tv
+visible: {{ visible | default(false) }}
 cards:
 - type: vertical-stack
   cards:
   - type: horizontal-stack
     cards:
     - !include '../templates/buttons/edge.yaml'
+    - !include
+      - '../templates/remote/harmony/navigate.yaml'
+      - icon: mdi:arrow-left
+        path: home
     - !include
       - '../templates/remote/harmony/toggle.yaml'
       - entity: switch.poweroff
@@ -48,37 +52,40 @@ cards:
       - entity: media_player.yamaha_receiver_zone_2
         icon: ptr:power-zone-2
         color: rgba(228, 94, 101)
-    - !include '../templates/buttons/spacer.yaml'
+    - !include
+      - '../templates/remote/harmony/navigate.yaml'
+      - icon: mdi:audio-video
+        path: yamaha receiver
     - !include '../templates/buttons/edge.yaml'
+  {%- for i in range(activity_cols * activity_rows) %}
+  {%- set activity = activities[i] %}
+    {%- if i % activity_cols == 0 %}
   - type: horizontal-stack
     cards:
     - !include '../templates/spacer_edge.yaml'
-    {%- for activity in activities %}
+    {%- endif %}
+    {% if activity %}
     - !include
+      {%- if activity.template %}
       - {{ activity.template }}
+      {%- else %}
+      - '../templates/remote/harmony/toggle.yaml'
+      {%- endif %}
       - entity: {{ activity.entity }}
         color: {{ activity.color }}
         {%- if activity.icon is defined %}
         icon: {{ activity.icon }}
         {%- endif %}
-    {%- endfor %}
+        {%- if activity.image is defined %}
+        image: {{ activity.image }}
+        {%- endif %}
+    {% else %}
+    - !include '../templates/buttons/spacer.yaml'
+    {% endif %}
+    {%- if i % activity_cols == activity_cols - 1 %}
     - !include '../templates/spacer_edge.yaml'
-  - type: conditional
-    conditions:
-    - entity: switch.roku
-      state: 'on'
-    card:
-      type: horizontal-stack
-      cards:
-      - !include '../templates/buttons/edge.yaml'
-      {%- for app in roku_apps %}
-      - !include
-        - '../templates/remote/harmony/toggle.yaml'
-        - entity: {{ app.entity }}
-          color: {{ app.color }}
-          icon: {{ app.icon }}
-      {%- endfor %}
-      - !include '../templates/buttons/edge.yaml'
+    {%- endif %}
+  {%- endfor %}
   - type: conditional
     conditions:
     - entity: binary_sensor.remote_living_room_control
@@ -201,3 +208,4 @@ cards:
           - entity: binary_sensor.remote_living_room_fastforward
             service: script.remote_living_room_fastforward
         - !include '../templates/buttons/edge.yaml'
+

@@ -4,7 +4,7 @@
 {%- set off = namespace(radius='1px', offset='0px') %}
 {%- set off_color = 'var(--paper-item-icon-color)' %}
 {%- set unavailable_color = 'hsl(0, 100%, 50%)' %}
-{%- if icon is defined and icon.startswith('ptr:') %}
+{%- if icon is defined and icon is not none and icon.startswith('ptr:') %}
 {%- set i = icon.split(':')[-1] %}
 {%- set svgs = {
   'roku-r': "m20.902 21.997h-6.0486l-4.8064-6.662h-1.6169v6.6509h-5.3324v-19.986h7.6336c4.4025 0 7.9986 2.9951 7.9986 6.6787 0 2.2484-1.3782 4.2568-3.4698 5.4837l5.6405 7.8376m-7.4948-13.324a3.3421 3.3421 0 0 0-3.331-3.356h-1.6447v6.6842h1.6489a3.3393 3.3393 0 0 0 3.3255-3.3282z",

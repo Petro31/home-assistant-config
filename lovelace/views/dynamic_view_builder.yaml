@@ -13,6 +13,13 @@
   'aspect_ratio': aspect_ratio,
   } %}
 
+{#- Basic Information for headers #}
+{%- set extra_header_attrs = [
+        ('back_path', back_path | default('home')),
+        ('name', name | default('home')),
+        ('icon', icon | default('home')),
+] %}
+
 {%- set mapped_button_cards = {
     'automation': '/templates/buttons/empty.yaml',
     'binary_sensor': '/templates/buttons/sensor.yaml',
@@ -83,11 +90,14 @@
 {%- endmacro %}
 
 {#- # Macro for adding a header card #}
-{%- macro card(indent, kwargs, entities=[]) %}
+{%- macro card(indent, kwargs, entities=[], extras=[]) %}
 {%- set type = kwargs.items() | selectattr('0','eq','type') | map(attribute='1') | first %}
 {%- set kwargs = kwargs.items() | rejectattr('0','eq','type') | list %}
 {%- if 'entity' not in kwargs or 'entities' not in kwargs %}
 {%- set kwargs = kwargs + [('entities', entities)] %}
+{%- endif %}
+{%- if extras %}
+{%- set kwargs = kwargs + extras %}
 {%- endif %}
 {%- if type %}
 {{ indent }}- !include
@@ -101,6 +111,7 @@
 icon: {{ icon }}
 title: {{ name | title }}
 path: {{ path | default(name.lower()) }}
+visible: {{ visible | default(false) }}
 cards:
 {#- # Header. #}
 {%- if header is defined and header is iterable %}
@@ -112,10 +123,10 @@ cards:
     cards:
     - !include '../templates/buttons/edge.yaml'
 {%- if inner is mapping %}
-{{- card(indent ~ '  ', inner, entities) }}
+{{- card(indent ~ '  ', inner, entities, extra_header_attrs) }}
 {%- else %}
 {%- for sub in inner %}
-{{- card(indent ~ '  ', sub, entities) }}
+{{- card(indent ~ '  ', sub, entities, extra_header_attrs) }}
 {%- endfor %}
 {%- endif %}
     - !include '../templates/buttons/edge.yaml'
@@ -186,6 +197,7 @@ cards:
           {%- set attrs = attrs | rejectattr('0', 'eq', 'type') | list %}
         {%- endif %}
         {%- set attrs = attrs + [('path', object.name.lower())] %}
+        {%- set attrs = attrs + [('back_path', back_path | default('home'))] %}
       {%- elif object is string and object != 'spacer' %}
         {% set domain, object_id = object.split('.') %}
         {%- set attrs = [('entity', object)] %}
