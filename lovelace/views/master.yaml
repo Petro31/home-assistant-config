@@ -868,6 +868,13 @@
     'type': '../templates/summary/overview.yaml',
     'image': '/local/images/plants.png',
     'view': '../views/plants.yaml',
+  },{
+    'name': 'Mood Lighting',
+    'icon': 'mdi:glass-wine',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'type': '../templates/summary/overview.yaml',
+    'image': '/local/images/wine.png',
+    'view': '../views/mood_lighting.yaml',
   }
 ] %}
 

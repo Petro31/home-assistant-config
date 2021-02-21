@@ -286,6 +286,36 @@ mqtt_automated_config:
       topic: "{{ topic_root ~ '/config' }}"
       payload: "{{ payload | tojson }}"
 
+zwavejs2mqtt_mqtt_set_config_parameter:
+  alias: Set Config Parameter to ZwaveJS2MQTT via MQTT
+  description: Publishes to ZwaveJS2MQTT
+  fields:
+    node_id:
+      description: Zwave Node Id
+      example: 3
+    parameter:
+      description: Parameter to be set.
+      example: 4
+    value:
+      description: Value to be set for the parameter
+      example: 256
+    bytes:
+      description: Size of parameter (1, 2, or 4)
+      example: 4
+  variables:
+    payload:
+      args:
+      - nodeId: "{{ node_id }}"
+        commandClass: 112
+        property: "{{ parameter }}"
+      - set
+      - "{{ [ parameter, value, bytes ] }}"
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zwave/_CLIENTS/ZWAVE_GATEWAY-Mosquitto/api/sendCommand/set
+      payload: "{{ payload | tojson }}"
+
 lzw45_quick_strip_effect:
   alias: LZW45 Quick Strip Effect
   description: Sets quick strip effects for the Inovelli LZW45 LED Strip
@@ -299,11 +329,17 @@ lzw45_quick_strip_effect:
           Zwave JS -> 'zwave_js.set_config_parameter'
       example: ozw.set_config_parameter
     lzw45: 
-      description: (required) The entity_id for the lzw45 LED Strip.
+      description: (exclusive) The entity_id for the lzw45 LED Strip.
       example: light.lzw45_light_strip_level
+    node:
+      description: (exclusive) The node number for the lzw45 LED Strip.
+      example: 8
     effect:
       description: (required) The desired effect - 'off', 'solid', 'chase', 'fast-blink', 'slow-blink', 'fast-fade', 'slow-fade'
       example: slow-fade
+    color:
+      description: (optional) hue or color_temp
+      example: hue
     hue:
       description: (exclusive) The Hue.  Valid ranges are 0 to 360.  You cannot combine this with color_temp.
       example: 360
@@ -328,26 +364,30 @@ lzw45_quick_strip_effect:
   variables:
     service: >
       {{ service | default('ozw.set_config_parameter') }}
+    color_type: >
+      {{ 64 if color == 'color_temp' else 0 }}
     node_id: >
-      {%- if lzw45 is not defined %}
+      {%- if lzw45 is not defined and node is not defined %}
         0
       {%- else %}
-        {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {%- if node is not defined %}
+          {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {%- else %}
+          {%- set node_id = node %}
+        {%- endif %}
         {{ node_id if node_id else 0 }}
       {%- endif %}
     byte1: >
-      {%- if hue is defined and color_temp is not defined %}
+      {%- if color_type == 0 %}
         {%- set hue = hue | int %}
         {%- set hue = hue if hue >= 0 else 0 %}
         {%- set hue = hue if hue <= 360 else 360 %}
-        {{ (hue / 360 * 255) | int }}
-      {%- elif color_temp is defined and hue is not defined %}
+        {{ (hue | default(360) / 360 * 255) | int }}
+      {%- else %}
         {%- set color_temp = color_temp | int %}
         {%- set color_temp = color_temp if color_temp >= 2700 else 2700 %}
         {%- set color_temp = color_temp if color_temp <= 6500 else 6500 %}
-        {{ ((color_temp - 2700) / (6500 - 2700) * 255) | int }}
-      {% else %}
-        0
+        {{ ((color_temp | default(2700) - 2700) / (6500 - 2700) * 255) | int }}
       {%- endif %}
     byte2: >
       {%- set pct = (brightness_pct | default(100)) | int %}
@@ -377,26 +417,71 @@ lzw45_quick_strip_effect:
         0
       {%- endif %}
     byte4: >
-      {%- if hue is defined or color_temp is defined %}
-        {%- set effect = effect | default('static') | lower | replace(' ', '-') %}
-        {%- set color_type = 64 if color_temp is defined else 0 %}
-        {%- set effects = { 'off': 0, 'solid': 1, 'chase': 2, 'fast-blink': 3, 'slow-blink': 4, 'fast-fade': 5, 'slow-fade': 6 } %}
-        {%- set value = 0 %}
-        {%- set value = value + effects.get(effect, 0) %}
-        {{ value + color_type }}
-      {%- else %}
-        0
-      {%- endif %}
+      {%- set effect = effect | default('static') | lower | replace(' ', '-') %}
+      {%- set effects = { 'off': 0, 'solid': 1, 'chase': 2, 'fast-blink': 3, 'slow-blink': 4, 'fast-fade': 5, 'slow-fade': 6 } %}
+      {%- set value = 0 %}
+      {%- set value = value + effects.get(effect, 0) %}
+      {{ value + color_type }}
     bytes: >
       {{ byte4 * 2**24 + byte3 * 2**16 + byte2 * 2**8 + byte1 }}
+    payload:
+      args:
+      - nodeId: "{{ node_id }}"
+        commandClass: 112
+        property: 21
+      - set
+      - "{{ [ 21, bytes, 4 ] }}"
   sequence:
   - condition: template
     value_template: "{{ node_id != 0 }}"
-  - service: "{{ service }}"
+
+  - service: script.zwavejs2mqtt_mqtt_set_config_parameter
     data:
       node_id: "{{ node_id }}"
       parameter: 21
       value: "{{ bytes }}"
+      bytes: 4
+
+#  - service: persistent_notification.create
+#    data:
+#      message: >
+#        {%- set inputs = {
+#          'effect': effect,
+#          'hue': hue,
+#          'color_temp': color_temp,
+#          'brightness_pct': brightness_pct,
+#          'seconds': seconds,
+#          'minutes': minutes,
+#          'hours': hours,
+#          'endless': endless
+#        } %}
+#        {%- set ns = namespace(ret=[]) %}
+#        {%- for k, v in inputs.items() %}
+#          {%- if v %}
+#          {%- set ns.ret = ns.ret + [ '<tr><th align="right">{0}: </th><td align="left">{1}</td>'.format(k, v) ] %}
+#          {%- endif %}
+#        {%- endfor %}
+#        {{ '<table>' ~ ns.ret | join('') ~ '</table>\n'  }}
+#        {%- set params = { 
+#          '1': (byte1, byte1),
+#          '2': (byte2, byte2 * 2**8),
+#          '3': (byte3, byte3 * 2**16),
+#          '4': (byte4, byte4 * 2**24),
+#          'Total': (0, bytes),
+#        } %}
+#        {%- set ns = namespace(ret=[]) %}
+#        {%- set ns.ret = ns.ret + [ '<tr><th>Byte</th><th>Int</th><th>Bin</th><th>Total</th></tr>' ] %}
+#        {%- for k, v in params.items() %}
+#          {%- set ns.ret = ns.ret + [ '<tr><td align="center">{0}</td><td align="center">{1}</td><td align="center">{1:08b}</td><td align="center">{2}</td></tr>'.format(k, v[0], v[1]) ] %}
+#        {%- endfor %}
+#        {{ '<table>' ~ ns.ret | join('') ~ '</table>'  }}
+#        {{ payload }}
+
+#  - service: "{{ service }}"
+#    data:
+#      node_id: "{{ node_id }}"
+#      parameter: 21
+#      value: "{{ bytes }}"
 
 lzw45_pixel_effect:
   alias: LZW45 Pixel Effect
@@ -410,6 +495,9 @@ lzw45_pixel_effect:
           OpenZwave (1.4) -> 'zwave.set_config_parameter'
           Zwave JS -> 'zwave_js.set_config_parameter'
       example: ozw.set_config_parameter
+    node:
+      description: (exclusive) The node number for the lzw45 LED Strip.
+      example: 8
     lzw45: 
       description: (required) The entity_id for the lzw45 LED Strip.
       example: light.lzw45_light_strip_level
@@ -423,10 +511,14 @@ lzw45_pixel_effect:
     service: >
       {{ service | default('ozw.set_config_parameter') }}
     node_id: >
-      {%- if lzw45 is not defined %}
+      {%- if lzw45 is not defined and node is not defined %}
         0
       {%- else %}
-        {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {%- if node is not defined %}
+          {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {%- else %}
+          {%- set node_id = node %}
+        {%- endif %}
         {{ node_id if node_id else 0 }}
       {%- endif %}
     byte1: >
@@ -491,11 +583,19 @@ lzw45_pixel_effect:
   sequence:
   - condition: template
     value_template: "{{ node_id != 0 }}"
-  - service: "{{ service }}"
+
+  - service: script.zwavejs2mqtt_mqtt_set_config_parameter
     data:
       node_id: "{{ node_id }}"
       parameter: 31
       value: "{{ bytes }}"
+      bytes: 2
+
+#  - service: "{{ service }}"
+#    data:
+#      node_id: "{{ node_id }}"
+#      parameter: 31
+#      value: "{{ bytes }}"
 
 lzw45_custom_effect:
   alias: LZW45 Custom Effect
@@ -509,6 +609,9 @@ lzw45_custom_effect:
           OpenZwave (1.4) -> 'zwave.set_config_parameter'
           Zwave JS -> 'zwave_js.set_config_parameter'
       example: ozw.set_config_parameter
+    node:
+      description: (exclusive) The node number for the lzw45 LED Strip.
+      example: 8
     lzw45: 
       description: (required) The entity_id for the lzw45 LED Strip.
       example: light.lzw45_light_strip_level
@@ -537,10 +640,14 @@ lzw45_custom_effect:
     service: >
       {{ service | default('ozw.set_config_parameter') }}
     node_id: >
-      {%- if lzw45 is not defined %}
+      {%- if lzw45 is not defined and node is not defined %}
         0
       {%- else %}
-        {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {%- if node is not defined %}
+          {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {%- else %}
+          {%- set node_id = node %}
+        {%- endif %}
         {{ node_id if node_id else 0 }}
       {%- endif %}
     transitions: >
@@ -630,23 +737,125 @@ lzw45_custom_effect:
   sequence:
   - condition: template
     value_template: "{{ node_id != 0 and transitions > 0 }}"
-  - service: "{{ service }}"
+
+  - service: script.zwavejs2mqtt_mqtt_set_config_parameter
     data:
       node_id: "{{ node_id }}"
       parameter: 22
       value: "{{ parameter22 }}"
-  - service: "{{ service }}"
+      bytes: 4
+
+  - service: script.zwavejs2mqtt_mqtt_set_config_parameter
     data:
       node_id: "{{ node_id }}"
       parameter: 23
       value: "{{ parameter23 }}"
-  - service: "{{ service }}"
+      bytes: 4
+
+  - service: script.zwavejs2mqtt_mqtt_set_config_parameter
     data:
       node_id: "{{ node_id }}"
       parameter: 24
       value: "{{ parameter24 }}"
-  - service: "{{ service }}"
+      bytes: 4
+
+  - service: script.zwavejs2mqtt_mqtt_set_config_parameter
     data:
       node_id: "{{ node_id }}"
       parameter: 30
       value: "{{ parameter30 }}"
+      bytes: 4
+
+#  - service: "{{ service }}"
+#    data:
+#      node_id: "{{ node_id }}"
+#      parameter: 22
+#      value: "{{ parameter22 }}"
+#  - service: "{{ service }}"
+#    data:
+#      node_id: "{{ node_id }}"
+#      parameter: 23
+#      value: "{{ parameter23 }}"
+#  - service: "{{ service }}"
+#    data:
+#      node_id: "{{ node_id }}"
+#      parameter: 24
+#      value: "{{ parameter24 }}"
+#  - service: "{{ service }}"
+#    data:
+#      node_id: "{{ node_id }}"
+#      parameter: 30
+#      value: "{{ parameter30 }}"
+
+lzw45_ui_custom_effect:
+  variables:
+    nodes: [ 91, 92 ]
+    count: >
+      {{ states('input_number.custom_effects_count') | default(2) }}
+    info: >
+      {%- set name = 'custom_effects' %}
+      {%- set items = {
+        'input_number': ['brightness', 'duration'],
+        'input_select': ['color', 'effect']
+      } %}
+      {%- set ns = namespace(ret=[]) %}
+      {%- for domain, ids in items.items() %}
+        {%- for id in ids %}
+          {%- set inner = namespace(ret=[]) %}
+          {%- for i in range(1, count | int + 1) %}
+            {%- set value = states('{0}.{1}_{2}_{3}'.format(domain, name, id, i)) %}
+            {%- set inner.ret = inner.ret + [ value | int if domain == 'input_number' else '"{0}"'.format(value) ] %}
+          {%- endfor %}
+          {%- set ns.ret = ns.ret + [ '"{0}":['.format(id) ~ inner.ret | join(',') ~ ']' ] %}
+        {%- endfor %}
+      {%- endfor %}
+      {{ '{' ~ ns.ret | join(',') ~ '}'}}
+  sequence:
+  - repeat:
+      count: "{{ nodes | length }}"
+      sequence:
+      - service: script.lzw45_custom_effect
+        data:
+          node: "{{ nodes[repeat.index - 1] | int }}"
+          colors: "{{ info.color }}"
+          effects: "{{ info.effect }}"
+          brightness_pcts: "{{ info.brightness }}"
+          durations: "{{ info.duration }}"
+          iterations: >
+            {{ states('input_number.custom_effects_iterations') | int | default(255) }}
+          iterations: >
+            {{ states('input_select.custom_effects_behavior') | default('off') }}
+          duration_units: >
+            {{ states('input_select.custom_effects_units') | default('100ms') }}
+
+lzw45_ui_pixel_effect:
+  variables:
+    nodes: [ 91, 92 ]
+  sequence:
+  - repeat:
+      count: "{{ nodes | length }}"
+      sequence:
+      - service: script.lzw45_pixel_effect
+        data:
+          node: "{{ nodes[repeat.index - 1] | int }}"
+          effect: "{{ states('input_select.pixel_effect') | default('static') }}"
+          brightness_pct: "{{ states('input_number.pixel_effect_brightness') | int | default(99) }}"
+  - delay:
+      seconds: 1
+
+lzw45_ui_quick_effect:
+  variables:
+    nodes: [ 91, 92 ]
+  sequence:
+  - repeat:
+      count: "{{ nodes | length }}"
+      sequence:
+      - service: script.lzw45_quick_strip_effect
+        data:
+          node: "{{ nodes[repeat.index - 1] | int }}"
+          endless: true
+          color: "{{ 'color_temp' if is_state('input_boolean.hue_color_temp', 'on') else 'hue' }}"
+          effect: "{{ states('input_select.quick_strip_effect') | default('slow-fade') }}"
+          brightness_pct: "{{ states('input_number.quick_strip_brightness') | int | default(99) }}"
+          hue: "{{ states('input_number.quick_strip_hue') | int | default(360) }}"
+          color_temp: "{{ states('input_number.quick_strip_color_temp') | int | default(2700) }}"

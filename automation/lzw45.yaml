@@ -1,0 +1,83 @@
+- alias: Execute Quick Effects on UI updates.
+  mode: restart
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.quick_strip_brightness
+    - input_number.quick_strip_color_temp
+    - input_number.quick_strip_hue
+    - input_select.quick_strip_effect
+  variables:
+    valid_trigger: >
+      {{ trigger.from_state is defined and trigger.from_state is not none 
+         and trigger.to_state is defined and trigger.to_state is not none 
+         and trigger.from_state.state != trigger.to_state.state }}
+    choose_service: >
+      {# Should we run a choose service? Returns 0 if we shouldn't #}
+      {%- if valid_trigger %}
+        {%- set color_temp = 'color_temp' in trigger.to_state.object_id %}
+        {%- set hue = 'hue' in trigger.to_state.object_id %}
+        {%- set effect = 'effect' in trigger.to_state.object_id %}
+        {%- if hue or color_temp %}
+          input_boolean.turn_{{ 'on' if color_temp else 'off' }}
+        {%- elif effect %}
+          {# This is because you can't turn it off in hue mode for some reason #}
+          {{ 'input_boolean.turn_on' if trigger.to_state.state == 'off' else 0 }}
+        {%- else %}
+          0
+        {%- endif %}
+      {%- else %}
+        0
+      {%- endif %}
+    continue_actions: >
+      {%- if valid_trigger %}
+        {%- if 'effect' in trigger.to_state.object_id %}
+          true
+        {%- else %}
+          {{ states('input_select.quick_strip_effect') != 'off' }}
+        {%- endif %}
+      {%- else %}
+        false
+      {%- endif %}
+  condition:
+  - condition: template
+    value_template: "{{ continue_actions }}"
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ choose_service != 0 }}"
+      sequence:
+      - service: "{{ choose_service }}"
+        data:
+          entity_id: input_boolean.hue_color_temp
+  - service: script.lzw45_ui_quick_effect
+    
+
+- alias: Manage LZW Pixel Effects & Quick Strip Effects
+  trigger:
+  - platform: state
+    entity_id: 
+    - input_select.quick_strip_effect
+    - script.lzw45_ui_pixel_effect
+  variables:
+    valid_trigger: >
+      {{ trigger.from_state is defined and trigger.from_state is not none 
+         and trigger.to_state is defined and trigger.to_state is not none 
+         and trigger.from_state.state != trigger.to_state.state }}
+    last_effect: >
+      {%- if valid_trigger %}
+        {%- if trigger.to_state.object_id == 'lzw45_ui_pixel_effect' %}
+          {{ states('input_select.pixel_effect') }}
+        {%- else %}
+          {{ trigger.to_state.state }}
+        {%- endif %}
+      {%- endif %}
+  condition:
+  - condition: template
+    value_template: "{{ valid_trigger }}"
+  action:
+  - service: input_text.set_value
+    data:
+      entity_id: input_text.lzw45_last_effect
+      value: "{{ last_effect }}"

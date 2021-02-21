@@ -7,6 +7,37 @@
 - platform: template
   switches:
             
+      # LZW MOOD LIGHTING
+      lzw45_mood_lighting:
+        unique_id: lzw45_mood_lighting
+        friendly_name: Mood Lighting
+        value_template: "{{ states('input_text.lzw45_last_effect') != 'off' }}"
+        turn_on:
+        - service: input_number.set_value
+          data:
+            entity_id: input_number.quick_strip_color_temp
+            value: 2700
+        - service: input_select.select_option
+          data:
+            entity_id: input_select.quick_strip_effect
+            option: solid
+        turn_off:
+        - choose:
+          - conditions:
+            - condition: template
+              value_template: "{{ is_state('input_select.quick_strip_effect', 'off') }}"
+            sequence:
+            - service: script.lzw45_ui_quick_effect
+            - service: input_text.set_value
+              data:
+                entity_id: input_text.lzw45_last_effect
+                value: "off"
+          default:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.quick_strip_effect
+              option: 'off'
+
       # INSIDE LIGHTS SWITCH
       inside:
         value_template: "{{ is_state('group.inside_area','on') }}"

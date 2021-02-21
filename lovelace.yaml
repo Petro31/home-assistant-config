@@ -104,3 +104,8 @@ resources:
 
 - url: /local/lovelace-flower-card/flower-card.js?
   type: module
+
+# lovelace-slider-entity-row
+
+- url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js
+  type: module

@@ -1,0 +1,107 @@
+# lovelace_gen
+
+# linear-gradient(to right, red 0%, #ff0 17%, lime 33%, cyan 50%, blue 66%, #f0f 83%, red 100%);
+# linear-gradient( right, rgb(166, 209, 255) 100%, white 50%, rgb(255, 160, 0) 0%);
+
+title: Mood Lighting
+path: mood lighting
+visible: {{ visible | default(false) }}
+cards:
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - !include
+      - ../templates/headers/navigator.yaml
+      - name: Mood Lighting
+        entities:
+        - switch.lzw45_mood_lighting
+    - !include '../templates/buttons/edge.yaml'
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - type: entities
+      title: Pixel Effects
+      style: |
+        ha-card {
+          border-radius: 15px;
+          }
+      entities:
+      - entity: input_number.pixel_effect_brightness
+        name: Brightness
+      - input_select.pixel_effect
+      - entity: script.lzw45_ui_pixel_effect
+        icon: ' '
+        name: ' '
+    - !include '../templates/buttons/edge.yaml'
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - type: entities
+      title: Quick Effects
+      style: |
+        ha-card {
+          border-radius: 15px;
+          --paper-item-icon-color:
+      {% raw %}
+            {%- if is_state('input_boolean.hue_color_temp','on') %}
+              {%- set t = states('input_number.quick_strip_color_temp') | int / 100 %}
+              {%- if t <= 66 %}
+                {%- set r = 255 %}
+                {%- set g = 99.4708025861 * log(t) - 161.1195681661 %}
+                {%- set b = 0 if t <= 19 else 138.5177312231 * log(t-10) - 305.0447927307 %}
+              {%- else %}
+                {%- set r = 329.698727446 * (t - 60) ** -0.1332047592 %}
+                {%- set g = 288.1221695283 * (t - 60) ** -0.0755148492 %}
+                {%- set b = 255 %}
+              {%- endif %}
+              {{ 'rgb({0},{1},{2})'.format(r | int, g | int, b | int) }}
+            {%- else %}
+              {%- set hue = states('input_number.quick_strip_hue') | int / 360 %}
+              {%- set s = 1 %}
+              {%- set v = 1 %}
+              {%- set i = (hue * 6.0) | int %}
+              {%- set f = hue * 6.0 - i %}
+              {%- set p = (255 * (1 * (1.0 - s))) | int %}
+              {%- set q = (255 * (v * (1.0 - s * f))) | int %}
+              {%- set t = (255 * (v * (1.0 - s * (1.0 - f)))) | int %}
+              {%- set v = 255 %}
+              {%- set i = i % 6 %}
+              {%- set ret = [
+                (v, t, p),
+                (q, v, p),
+                (p, v, t),
+                (p, q, v),
+                (t, p, v),
+                (v, p, q),
+              ] %}
+              {%- set r, g, b = ret[i] %}
+              {{ 'rgb({0},{1},{2})'.format(r,g,b) }}
+            {%- endif %}
+            ;
+        }
+      {% endraw %}
+      entities:
+      - entity: input_number.quick_strip_brightness
+        name: Brightness
+      - input_select.quick_strip_effect
+      - type: custom:slider-entity-row
+        entity: input_number.quick_strip_color_temp
+        full_row: true
+        hide_state: true
+        style:
+          .: |
+            ha-slider { 
+              background: linear-gradient(to right, #ffa657 0%, #fffefa 100%);
+              border-radius: 10px;
+            }
+      - type: custom:slider-entity-row
+        entity: input_number.quick_strip_hue
+        full_row: true
+        hide_state: true
+        style:
+          .: |
+            ha-slider { 
+              background: linear-gradient(to right, red 0%, #ff0 17%, lime 33%, cyan 50%, blue 66%, #f0f 83%, red 100%);
+              border-radius: 10px;
+            }
+    - !include '../templates/buttons/edge.yaml'
