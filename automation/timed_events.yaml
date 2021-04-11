@@ -73,3 +73,21 @@
     - service: notify.homeowners
       data:
         message: "Give mosby heartworm and flee medication."
+
+- alias: DST Warning
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '19:00:00'
+  condition:
+    - condition: template
+      value_template: >
+        {{ state_attr('sensor.dst', 'next').days_to_event in [7,1] }}
+  action:
+    - service: notify.homeowners
+      data:
+        message: >
+          {%- set next = state_attr('sensor.dst', 'next') %}
+          {%- set plural = 's' if next.days_to_event > 1 else '' %}
+          "Daylight savings in {{ next.days_to_event }} day{{plural}}, you will {{ next.phrase }}!"
