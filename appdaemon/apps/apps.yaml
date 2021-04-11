@@ -31,29 +31,6 @@ anchors:
 # CURRENT APPS #
 ################
 
-# https://github.com/Petro31/ad_seasonal_lights
-
-holiday_lights:
-  module: seasonal_lights
-  class: SeasonalLights
-  start_date:
-    # Thanksgiving Day
-    month: 11
-    week: 4
-    day: 3
-  end_date:
-    # Sometime in the middle of January
-    month: 1
-    week: 3
-    day: 0
-  turn_on_time: '16:00:00'
-  turn_off_time: '23:00:00'
-  entities:
-  - switch.living_room_window
-  - switch.kitchen_outlet_above_microwave
-  - switch.kitchen_outlet_above_fridge
-  log_level: INFO
-
 # https://github.com/Petro31/ad_sunset_lights
 
 sunsetlights:

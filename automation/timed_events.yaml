@@ -1,4 +1,5 @@
 - alias: Daily Snapshot
+  id: daily_snapshot
   trigger:
     - platform: time
       at: '04:00:00'
@@ -11,25 +12,9 @@
         title: Daily Snapshot
         message: "Successfully created daily snapshot."
         notification_id: Daily Snapshot
-
-- alias: Reboot Once A Week
-  trigger:
-    - platform: time
-      at: '10:00:00'
-  condition:
-    - condition: time
-      weekday:
-        - wed
-  action:
-    - service: notify.ios_petro
-      data:
-        message: "Rebooting..."
-        data:
-          push:
-            badge: 5
-    - service: hassio.host_reboot
     
 - alias: Garbage Day Message
+  id: garbage_day_message
   trigger:
     - platform: time
       at: '10:00:00'
@@ -47,6 +32,7 @@
         message: "Trash day tomorrow!"
         
 - alias: Change Filters Message
+  id: change_filters_message
   trigger:
     - platform: time
       at: '10:00:00'
@@ -61,6 +47,7 @@
         message: "Change HVAC filter."
             
 - alias: Mosby Heartworm and Flee Medication.
+  id: mosby_heartworm
   trigger:
     - platform: time
       at: '10:00:00'
@@ -75,6 +62,7 @@
         message: "Give mosby heartworm and flee medication."
 
 - alias: DST Warning
+  id: dst_warning
   trigger:
     - platform: time
       at: '10:00:00'
@@ -91,3 +79,21 @@
           {%- set next = state_attr('sensor.dst', 'next') %}
           {%- set plural = 's' if next.days_to_event > 1 else '' %}
           "Daylight savings in {{ next.days_to_event }} day{{plural}}, you will {{ next.phrase }}!"
+
+- alias: Indoor Christmas Lights
+  id: indoor_christmas_lights
+  trigger:
+  - platform: time
+    at: '16:00:00'
+  - platform: time
+    at: '23:00:00'
+  variables:
+    time: >
+      {%- set dt = trigger.now | default(now()) %}
+      {{ dt.time().replace(second=0, microsecond=0) | string }}
+  condition:
+  - condition: template
+    value_template: "{{ is_state('sensor.christmas_season', 'on') }}"
+  action:
+  - service: switch.turn_o{{ 'n' if time == '16:00:00' else 'ff' }}
+  

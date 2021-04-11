@@ -429,6 +429,8 @@
               {{ state_attr('sensor.corona_virus_county_rest', 'county') }}
             {%- endif %}
             
+  # People at home sensor
+
   - platform: template
     sensors:
       people_at_home:
@@ -473,3 +475,20 @@
             {%- set company = expand('group.people') | selectattr('state', 'eq', 'on') | map(attribute='name') | list %}
             {%- set people = people + company %}
             {{ people | count }}
+
+  # Christmas Season Sensor
+
+  - platform: template
+    sensors:
+      christmas_season:
+        unique_id: christmas_season
+        friendly_name: Christmas Season
+        value_template: >
+          {%- set month, week, day = 11, 4, 3 %}
+          {%- set today = now().date() %}
+          {%- set temp = today.replace(month=month, day=1) %}
+          {%- set adjust = (day - temp.weekday()) % 7 %}
+          {%- set temp = temp + timedelta(days=adjust) %}
+          {%- set thanksgiving = temp + timedelta(weeks = week - 1) %}
+          {%- set jan15th = temp.replace(month=1, day=15) %}
+          {{ today <= jan15th or today > thanksgiving }}
