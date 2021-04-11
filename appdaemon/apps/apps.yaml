@@ -31,20 +31,6 @@ anchors:
 # CURRENT APPS #
 ################
 
-# https://github.com/Petro31/ad_sunset_lights
-
-sunsetlights:
-  module: sunset_lights
-  class: SunsetLights
-  entities:
-    - light.main_door_left_bulb
-    - light.main_door_right_bulb
-    - light.passenger_door_bulb
-    - light.garage_sconce_left_bulb
-    - light.garage_sconce_right_bulb
-    - switch.flood_light
-    - switch.sliding_door_sconce
-
 # https://github.com/Petro31/ad_toggle_light
 
 game_room_toggle:

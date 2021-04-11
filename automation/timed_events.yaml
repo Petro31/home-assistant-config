@@ -96,4 +96,33 @@
     value_template: "{{ is_state('sensor.christmas_season', 'on') }}"
   action:
   - service: switch.turn_o{{ 'n' if time == '16:00:00' else 'ff' }}
+    target:
+      entity_id:
+      - switch.living_room_window
+      - switch.kitchen_outlet_above_microwave
+      - switch.kitchen_outlet_above_fridge
   
+- alias: Outdoor Lights On at Sunset, Off at Sunrise
+  id: outdoor_lights_on_off
+  trigger:
+  - platform: sun
+    event: sunset
+  - platform: sun
+    event: sunrise
+  variables:
+    event: >
+      {% set event = trigger.event | default('invalid') %}
+  condition:
+  - condition: template
+    value_template: "{{ event in ['sunset','sunrise'] }}"
+  action:
+  - service: homeassistant.turn_o{{ 'n' if event == 'sunset' else 'ff' }}
+    target:
+      entity_id:
+      - light.main_door_left_bulb
+      - light.main_door_right_bulb
+      - light.passenger_door_bulb
+      - light.garage_sconce_left_bulb
+      - light.garage_sconce_right_bulb
+      - switch.flood_light
+      - switch.sliding_door_sconce
