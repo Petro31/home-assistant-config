@@ -31,23 +31,6 @@ anchors:
 # CURRENT APPS #
 ################
 
-# https://github.com/Petro31/ad_toggle_light
-
-game_room_toggle:
-  module: toggle_light
-  class: ToggleLight
-  entity: switch.game_room_switch
-  entities:
-    - switch.game_room_bookcase_outlet
-    - switch.game_room_buffet_outlet
-
-basement_toggle:
-  module: toggle_light
-  class: ToggleLight
-  entity: switch.basement_stairs
-  entities:
-    - switch.basement_cans
-
 # https://github.com/Petro31/ad_simple_door_bell
 
 door_bell:

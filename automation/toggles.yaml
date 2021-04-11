@@ -18,3 +18,42 @@
     target:
       entity_id: light.living_room
     
+- alias: Toggle Game Room Lights
+  id: toggle_game_room_lights
+  trigger:
+  - platform: state
+    entity_id: switch.game_room_switch
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    to_state: >
+      {{ trigger.to_state.state | default('') if continue else '' }}
+  condition:
+  - condition: template
+    value_template: "{{ continue and to_state in ['on','off'] }}"
+  action:
+  - service: switch.turn_{{ to_state }}
+    target:
+      entity_id:
+      - switch.game_room_bookcase_outlet
+      - switch.game_room_buffet_outlet
+
+
+- alias: Toggle Basement Lights
+  id: toggle_basement_lights
+  trigger:
+  - platform: state
+    entity_id: switch.basement_stairs
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    to_state: >
+      {{ trigger.to_state.state | default('') if continue else '' }}
+  condition:
+  - condition: template
+    value_template: "{{ continue and to_state in ['on','off'] }}"
+  action:
+  - service: switch.turn_{{ to_state }}
+    target:
+      entity_id:
+      - switch.basement_cans
