@@ -4,23 +4,30 @@
   - platform: template
     sensors:
       outside_temperature: # CREATED FOR TREND TESTING AND POSSIBLE USE
+        unique_id: outside_temperature
         friendly_name: Outside Temperature
         value_template: > 
           {{ state_attr('weather.dark_sky', 'temperature') }}
         unit_of_measurement: '°F'
         
       ups_uptime:
+        unique_id: ups_uptime
+        friendly_name: UPS Uptime
         device_class: timestamp
         value_template: >
           {%- set dt = strptime(states('sensor.ups_startup_time'), '%Y-%m-%d %H:%M:%S %z') %}
           {{ dt.timestamp() | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
         
       disk_use_total:
+        unique_id: disk_use_total
+        friendly_name: Disk Use Total
         value_template: >
           {{ (states('sensor.disk_free_home') | float + states('sensor.disk_use_home') | float) | round(1) }}
         unit_of_measurement: "GiB"
         
       memory_use_total:
+        unique_id: memory_use_total
+        friendly_name: Memory Use Total
         value_template: >
           {{ (states('sensor.memory_free') | float + states('sensor.memory_use') | float) | round(1) }}
         unit_of_measurement: "MiB"
@@ -65,6 +72,7 @@
   - platform: template
     sensors:
       dst:
+        unique_id: dst
         friendly_name: Daylight Savings Times
         device_class: timestamp
         value_template: >
@@ -204,6 +212,7 @@
   - platform: template
     sensors:
       corona_virus_usa:
+        unique_id: corona_virus_usa
         friendly_name: Corona Virus USA
         entity_id: sensor.corona_virus_rest
         availability_template: >
@@ -228,6 +237,7 @@
             {%- set features = state_attr('sensor.corona_virus_rest', 'features') %}
             {{ features | map(attribute='attributes.Active') | list | sum }}
       corona_virus_ny:
+        unique_id: corona_virus_ny
         friendly_name: Corona Virus New York
         entity_id: sensor.corona_virus_rest
         availability_template: >
@@ -287,6 +297,7 @@
               {{ state_attr('sensor.corona_virus_ny', 'active') }}
             {%- endif %}
       corona_virus_florida:
+        unique_id: corona_virus_florida
         friendly_name: Corona Virus Florida
         entity_id: sensor.corona_virus_rest
         availability_template: >
@@ -346,6 +357,7 @@
               {{ state_attr('sensor.corona_virus_florida', 'active') }}
             {%- endif %}
       corona_virus_county:
+        unique_id: corona_virus_county
         entity_id: sensor.corona_virus_county_rest
         friendly_name_template: >
           {%- set features = state_attr('sensor.corona_virus_county_rest', 'features') %}
