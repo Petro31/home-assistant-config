@@ -66,8 +66,8 @@
   #   protocol: rtmp
   #   scan_interval: 10
   
-  - platform: synology
-    url: !secret synology_camera_host
-    username: !secret synology_username
-    password: !secret synology_password
-    verify_ssl: false
+  # - platform: synology
+  #   url: !secret synology_camera_host
+  #   username: !secret synology_username
+  #   password: !secret synology_password
+  #   verify_ssl: false

@@ -18,10 +18,16 @@
 {%- set entities = ns.entities %}
 
 {%- if entities %}
+{%- set template_areas = '"back allon alloff label"' %}
+{%- set template_cols = '16.66% 16.66% 16.66% 50%' %}
+{%- set gap = '4px' %}
 {%- set cols = '1fr 4px 1fr 4px 1fr 3fr' %}
 {%- set total = 6 %}
 {%- set ratio = 4 %}
 {%- else %}
+{%- set template_areas = '"back label"' %}
+{%- set template_cols = '16.66% 83.33%' %}
+{%- set gap = '8px' %}
 {%- set cols = '1fr 8px 5fr' %}
 {%- set total = 3 %}
 {%- set ratio = 2 %}
@@ -44,31 +50,38 @@ anchors:
 
 type: custom:mod-card
 style: 
-  layout-card$: |
-    .grid > * {
-      margin: 0px !important;
-    }
-    .grid {
-      margin: 0px !important;
-    }
+  layout-card:
+    $:
+      grid-layout:
+        $: |
+          div {
+              margin: 0px !important;
+              --masonry-view-card-margin: 0px;
+            }
 
 card:
   type: custom:layout-card
-  layout: grid
+  layout_type: custom:grid-layout
+  layout:
+    grid-template-columns: {{ template_cols }}
+    grid-template-rows: auto
+    grid-template-areas: |
+      {{ template_areas }}
+    grid-gap: {{ gap }}
   gridcols: {{ cols }}
   cards:
   - <<: *base
-    gridrow: 1 / 1
-    gridcol: 1 / 1
+    view_layout:
+      grid-area: back
     icon: mdi:arrow-left
     tap_action:
       action: navigate
       navigation_path: /lovelace/{{ back_path }}
       haptic: light
-{%- if entities %}
+  {%- if entities %}
   - <<: *base
-    gridrow: 1 / 1
-    gridcol: 3 / 3
+    view_layout:
+      grid-area: allon
     icon: mdi:lightbulb-multiple
     tap_action:
       action: call-service
@@ -78,8 +91,8 @@ card:
         state: 'on'
       haptic: light
   - <<: *base
-    gridrow: 1 / 1
-    gridcol: 5 / 5
+    view_layout:
+      grid-area: alloff
     icon: mdi:lightbulb-multiple-off
     tap_action:
       action: call-service
@@ -88,12 +101,11 @@ card:
         entities: {{ entities }}
         state: 'off'
       haptic: light
-{%- endif %}
+  {%- endif %}
   - type: custom:button-card
-    gridrow: 1 / 1
-    gridcol: {{ total }} / {{ total }}
     color: var(--paper-item-icon-color)
-    layout: 
+    view_layout:
+      grid-area: label
     icon: {{ icon }}
     label: {{ name }}
     aspect_ratio: {{ 6 - ratio + 1 }}/1

@@ -269,6 +269,7 @@
       'light.kitchen_cans',
       'switch.kitchen_cabinet',
       'switch.kitchen_pantry',
+      'switch.lzw45_mood_lighting',
       'switch.kitchen_outlet_above_fridge',
       'switch.kitchen_outlet_above_microwave',
       'sensor.kitchen_temperature',
@@ -879,7 +880,7 @@
 ] %}
 
 
-{%- set testing = False %}
+{%- set testing = false %}
 
 # Set up the home page.
 - !include

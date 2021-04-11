@@ -1,0 +1,31 @@
+# lovelace_gen
+
+{%- set swatch = swatch | default('var(--paper-item-icon-active-color)') %}
+{% set aspect_ratio = aspect_ratio|default('1/1') %}
+
+type: custom:button-card
+aspect_ratio: {{ aspect_ratio }}
+entity: {{ entity }}
+show_name: false
+show_label: false
+show_icon: false
+tap_action:
+  action: call-service
+  service: input_select.select_option
+  service_data:
+    entity_id: {{ entity }}
+    option: "{{ option }}"
+styles:
+  card:
+  - padding: 10px
+  - border-radius: 50%
+  - --card-background-color: "{{ swatch }}"
+state:
+- operator: template
+  value: >
+    [[[
+      return entity.state === "{{ option }}";
+    ]]] 
+  styles:
+    card:
+    - --ha-card-box-shadow: 0px 0px 10px 3px {{ color|default('var(--paper-item-icon-active-color)') }}

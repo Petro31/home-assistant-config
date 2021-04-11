@@ -105,3 +105,133 @@ cards:
               border-radius: 10px;
             }
     - !include '../templates/buttons/edge.yaml'
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - type: custom:hui-entities-card
+      title: Custom Effects
+      style: |
+        ha-card {
+          border-radius: 15px;
+        }
+      entities:
+      - type: custom:slider-entity-row
+        entity: input_number.custom_effects_brightness
+        name: Brightness
+        hide_state: false
+      - type: custom:slider-entity-row
+        entity: input_select.custom_effects_effect
+        name: Effect
+        hide_state: false
+      - type: custom:slider-entity-row
+        entity: input_number.custom_effects_duration
+        name: Duration
+        hide_state: false
+      - type: custom:slider-entity-row
+        entity: input_number.custom_effects_count
+        name: Transitions
+        hide_state: false
+    {%- for i in range(1,5) %}
+      - type: conditional
+        conditions:
+        - entity: binary_sensor.custom_effects_use_color_{{ i }}
+          state: 'on'
+        row:
+          type: section
+          label: Color {{ i }}
+      - type: conditional
+        conditions:
+        - entity: binary_sensor.custom_effects_use_color_{{ i }}
+          state: 'on'
+        row:
+          type: custom:hui-vertical-stack-card
+          cards:
+          - type: horizontal-stack
+            cards:
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: 'linear-gradient(45deg, black 0%, black 40%, red 50%, black 60%, black 100%)'
+                entity: input_select.custom_effects_color_{{ i }}
+                option: 'off'
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: rgb(255,166,87)
+                entity: input_select.custom_effects_color_{{ i }}
+                option: 2700k
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: rgb(255,217,187)
+                entity: input_select.custom_effects_color_{{ i }}
+                option: 4500k
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: rgb(255,254,250)
+                entity: input_select.custom_effects_color_{{ i }}
+                option: 6500k
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: rgb(255,0,0)
+                entity: input_select.custom_effects_color_{{ i }}
+                option: red
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: rgb(255,165,0)
+                entity: input_select.custom_effects_color_{{ i }}
+                option: orange
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: rgb(255,255,0)
+                entity: input_select.custom_effects_color_{{ i }}
+                option: yellow
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: '#9ACD32'
+                entity: input_select.custom_effects_color_{{ i }}
+                option: yellow green
+          - type: horizontal-stack
+            cards:
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: rgb(0,255,0)
+                entity: input_select.custom_effects_color_{{ i }}
+                option: green
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: '#00FF7F'
+                entity: input_select.custom_effects_color_{{ i }}
+                option: spring green
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: '#00FFFF'
+                entity: input_select.custom_effects_color_{{ i }}
+                option: cyan
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: '#007FFF'
+                entity: input_select.custom_effects_color_{{ i }}
+                option: azure
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: rgb(0,0,255)
+                entity: input_select.custom_effects_color_{{ i }}
+                option: blue
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: '#7F00FF'
+                entity: input_select.custom_effects_color_{{ i }}
+                option: violet
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: '#FF00FF'
+                entity: input_select.custom_effects_color_{{ i }}
+                option: magenta
+            - !include 
+              - '../templates/buttons/input_select_color_swatch.yaml'
+              - swatch: 'linear-gradient(45deg, #ff0, lime, cyan, blue, #f0f, red)'
+                entity: input_select.custom_effects_color_{{ i }}
+                option: random
+    {%- endfor %}
+      - entity: script.lzw45_ui_custom_effect
+        name: ' '
+        icon: ' '
+    - !include '../templates/buttons/edge.yaml'

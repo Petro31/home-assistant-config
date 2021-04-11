@@ -573,3 +573,5 @@ switch.game_room_buffet_outlet:
   icon: mdi:buffet
 switch.game_room_bookcase_outlet:
   icon: mdi:bookshelf
+switch.lzw45_mood_lighting:
+  icon: mdi:glass-wine

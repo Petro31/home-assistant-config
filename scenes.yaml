@@ -98,29 +98,39 @@
       brightness: 255
       rgb_color: [ 94,   8,  30]
 
+#
+# All St Patricks Day colors
+#
+#      rgb_color: [ 34,  77,  23]
+#      rgb_color: [  9, 148,  65]
+#      rgb_color: [ 96, 168,  48]
+#      rgb_color: [159, 218,  64]
+#      rgb_color: [217, 223,  29]
+#
+
 - name: Holiday Bulbs St Patricks Day
   icon: mdi:clover
   entities:
     light.main_door_left_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [ 34,  77,  23]
+      rgb_color: [  9, 148,  65]
     light.main_door_right_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [  9, 148,  65]
+      rgb_color: [217, 223,  29]
     light.passenger_door_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [ 96, 168,  48]
+      rgb_color: [  9, 148,  65]
     light.garage_sconce_left_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [159, 218,  64]
+      rgb_color: [217, 223,  29]
     light.garage_sconce_right_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [217, 223,  29]
+      rgb_color: [  9, 148,  65]
        
 - name: Holiday Bulbs Patriotic
   icon: mdi:flag-variant

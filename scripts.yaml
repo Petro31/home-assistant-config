@@ -201,6 +201,76 @@ remote_living_room_back:
   - event: remote_living_room
     event_data: {'command': 'Back'}
 
+remote_living_room_channelup:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'ChannelUp'}
+
+remote_living_room_channeldown:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'ChannelDown'}
+
+remote_living_room_channelprev:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'ChannelPrev'}
+
+remote_living_room_0:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '0'}
+
+remote_living_room_1:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '1'}
+
+remote_living_room_2:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '2'}
+
+remote_living_room_3:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '3'}
+
+remote_living_room_4:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '4'}
+
+remote_living_room_5:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '5'}
+
+remote_living_room_6:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '6'}
+
+remote_living_room_7:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '7'}
+
+remote_living_room_8:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '8'}
+
+remote_living_room_9:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '9'}
+
+remote_living_room_period:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Period'}
+
 remote_living_room_homebutton:
   sequence:
   - event: remote_living_room
@@ -483,6 +553,102 @@ lzw45_quick_strip_effect:
 #      parameter: 21
 #      value: "{{ bytes }}"
 
+lzw45_quick_strip_effect_zwave_js:
+  alias: LZW45 Quick Strip Effect
+  description: Sets quick strip effects for the Inovelli LZW45 LED Strip
+  mode: restart
+  fields:
+    lzw45: 
+      description: (exclusive) The entity_id for the lzw45 LED Strip.
+      example: light.lzw45_light_strip_level
+    effect:
+      description: (required) The desired effect - 'off', 'solid', 'chase', 'fast-blink', 'slow-blink', 'fast-fade', 'slow-fade'
+      example: slow-fade
+    color:
+      description: (optional) hue or color_temp
+      example: hue
+    hue:
+      description: (exclusive) The Hue.  Valid ranges are 0 to 360.  You cannot combine this with color_temp.
+      example: 360
+    color_temp:
+      description: (exclusive) The color temperature (2700 - 6500).  You cannot combine this with hue.
+      example: 2700
+    brightness_pct:
+      description: (optional) The brightness percent, 0 - 100.  Defaults to 100 if omitted.
+      example: 10
+    seconds:
+      description: (optional) Duration of the effect in seconds (0 - 60 seconds).  Cannot be combined with 'minutes' or 'hours'.
+      example: 1
+    minutes:
+      description: (optional) Duration of the effect in minutes (0 - 60 minutes).  Cannot be combined with 'seconds' or 'hours'.
+      example: 1
+    hours:
+      description: (optional) Duration of the effect in hours (0 - 60 hours).  Cannot be combined with 'seconds' or 'minutes'.
+      example: 1
+    endless:
+      description: (optional) Set to true if you want the effect to stay 'forever'.
+      example: true
+  variables:
+    color_type: >
+      {{ 64 if color == 'color_temp' else 0 }}
+    byte1: >
+      {%- if color_type == 0 %}
+        {%- set hue = hue | int %}
+        {%- set hue = hue if hue >= 0 else 0 %}
+        {%- set hue = hue if hue <= 360 else 360 %}
+        {{ (hue | default(360) / 360 * 255) | int }}
+      {%- else %}
+        {%- set color_temp = color_temp | int %}
+        {%- set color_temp = color_temp if color_temp >= 2700 else 2700 %}
+        {%- set color_temp = color_temp if color_temp <= 6500 else 6500 %}
+        {{ ((color_temp | default(2700) - 2700) / (6500 - 2700) * 255) | int }}
+      {%- endif %}
+    byte2: >
+      {%- set pct = (brightness_pct | default(100)) | int %}
+      {%- if 0 <= pct <= 100 %}
+        {%- if pct == 100 %}
+          10
+        {%- else %}
+          {{ 128 + pct }}
+        {%- endif %}
+      {%- else %}
+        0
+      {%- endif %}
+    byte3: >
+      {%- set seconds = (seconds | default(0)) | int %}
+      {%- set minutes = (minutes | default(0)) | int %}
+      {%- set hours = (hours | default(0)) | int %}
+      {%- set forever = endless | default(false) %}
+      {%- if forever %}
+        255
+      {%- elif 0 < seconds <= 60 %}
+        {{ seconds }}
+      {%- elif 0 < minutes <= 60 %}
+        {{ minutes + 60 }}
+      {%- elif 0 < hours <= 60 %}
+        {{ hours + 120 }}
+      {%- else %}
+        0
+      {%- endif %}
+    byte4: >
+      {%- set effect = effect | default('static') | lower | replace(' ', '-') %}
+      {%- set effects = { 'off': 0, 'solid': 1, 'chase': 2, 'fast-blink': 3, 'slow-blink': 4, 'fast-fade': 5, 'slow-fade': 6 } %}
+      {%- set value = 0 %}
+      {%- set value = value + effects.get(effect, 0) %}
+      {{ value + color_type }}
+    bytes: >
+      {{ byte4 * 2**24 + byte3 * 2**16 + byte2 * 2**8 + byte1 }}
+  sequence:
+  - condition: template
+    value_template: "{{ lzw45 is defined }}"
+
+  - service: zwave_js.bulk_set_partial_config_parameters
+    target:
+      entity_id: "{{ lzw45 }}"
+    data:
+      parameter: 21
+      value: "{{ bytes }}"
+
 lzw45_pixel_effect:
   alias: LZW45 Pixel Effect
   description: Sets the pixel effects for the Inovelli LZW45 LED Strip
@@ -591,11 +757,96 @@ lzw45_pixel_effect:
       value: "{{ bytes }}"
       bytes: 2
 
-#  - service: "{{ service }}"
+#  - service: zwave_js.set_config_parameter
 #    data:
-#      node_id: "{{ node_id }}"
+#      entity_id: "{{ lzw45 }}"
 #      parameter: 31
 #      value: "{{ bytes }}"
+
+lzw45_pixel_effect_zwave_js:
+  alias: LZW45 Pixel Effect
+  description: Sets the pixel effects for the Inovelli LZW45 LED Strip
+  mode: restart
+  fields:
+    lzw45: 
+      description: (required) The entity_id for the lzw45 LED Strip.
+      example: light.light_strip
+    effect:
+      description: (required) The desired effect - static, blink, breath, color-wipe, color-wipe-reverse-inverse, color-wipe-random, random-color, single-dynamic, multi-dynamic, rainbow, rainbow-cycle, scan, dual-scan, fade, running-lights, twinkle, twinkle-random, twinkle-fade, twinkle-fade-random, sparkle, flash-sparkle, hyper-sparkle, strobe, blink-rainbow, chase-white, chase-color, chase-random, chase-rainbow, chase-flash, chase-flash-random, chase-rainbow-white, chase-blackout, chase-blackout-rainbow, color-sweep-random, running-color, running-red-blue, running-random, larson-scanner, comet, fireworks, fireworks-random, merry-christmas, circus-combustus, halloween, aurora
+      example: breath
+    brightness_pct:
+      description: (optional) The brightness percent, 0 - 99.  Defaults to 99 if omitted.
+      example: 99
+  variables:
+    byte1: >
+      {%- set effect = effect | default('static') | lower | replace(' ', '-') %}
+      {%- set effects = [
+        'static',
+        'blink',
+        'breath',
+        'color-wipe',
+        'color-wipe-reverse-inverse',
+        'color-wipe-random',
+        'random-color',
+        'single-dynamic',
+        'multi-dynamic',
+        'rainbow',
+        'rainbow-cycle',
+        'scan',
+        'dual-scan',
+        'fade',
+        'running-lights',
+        'twinkle',
+        'twinkle-random',
+        'twinkle-fade',
+        'twinkle-fade-random',
+        'sparkle',
+        'flash-sparkle',
+        'hyper-sparkle',
+        'strobe',
+        'blink-rainbow',
+        'chase-white',
+        'chase-color',
+        'chase-random',
+        'chase-rainbow',
+        'chase-flash',
+        'chase-flash-random',
+        'chase-rainbow-white',
+        'chase-blackout',
+        'chase-blackout-rainbow',
+        'color-sweep-random',
+        'running-color',
+        'running-red-blue',
+        'running-random',
+        'larson-scanner',
+        'comet',
+        'fireworks',
+        'fireworks-random',
+        'merry-christmas',
+        'circus-combustus',
+        'halloween',
+        'aurora'
+      ] %}
+      {{ effects.index(effect) + 1 if effect in effects else 1 }}
+    byte2: >
+      {%- set pct = (brightness_pct | default(99)) | int %}
+      {%- if 0 <= pct <= 99 %}
+        {{ pct }}
+      {%- else %}
+        99
+      {%- endif %}
+    bytes: >
+      {{ byte2 * 2**8 + byte1 }}
+  sequence:
+  - condition: template
+    value_template: "{{ lzw45 is defined }}"
+
+  - service: zwave_js.bulk_set_partial_config_parameters
+    target:
+      entity_id: "{{ lzw45 }}"
+    data:
+      parameter: 31
+      value: "{{ bytes }}"
 
 lzw45_custom_effect:
   alias: LZW45 Custom Effect
@@ -735,6 +986,39 @@ lzw45_custom_effect:
       {%- set byte3 = units.index(duration_units) if duration_units in units else 0 %}
       {{ '{0:08b}{1:08b}{2:08b}'.format(byte3, byte2, byte1) | int('', 2) }}
   sequence:
+
+#  - service: persistent_notification.create
+#    data:
+#      message: >
+#        {%- set inputs = {
+#          'colors': colors,
+#          'effects': effects,
+#          'brightness_pcts': brightness_pcts,
+#          'durations': durations,
+#          'duration_units': duration_units,
+#          'finish_behavior': finish_behavior,
+#          'iterations': iterations
+#        } %}
+#        {%- set ns = namespace(ret=[]) %}
+#        {%- for k, v in inputs.items() %}
+#          {%- if v %}
+#          {%- set ns.ret = ns.ret + [ '<tr><th align="right">{0}: </th><td align="left">{1}</td>'.format(k, v) ] %}
+#          {%- endif %}
+#        {%- endfor %}
+#        {{ '<table>' ~ ns.ret | join('') ~ '</table>\n'  }}
+#        {%- set params = { 
+#          '1': (parameter30byte1, parameter30byte1),
+#          '2': (parameter30byte2, parameter30byte2 * 2**8),
+#          '3': (parameter30byte3, parameter30byte3 * 2**16),
+#          'Total': (0, parameter30),
+#        } %}
+#        {%- set ns = namespace(ret=[]) %}
+#        {%- set ns.ret = ns.ret + [ '<tr><th>Byte</th><th>Int</th><th>Bin</th><th>Total</th></tr>' ] %}
+#        {%- for k, v in params.items() %}
+#          {%- set ns.ret = ns.ret + [ '<tr><td align="center">{0}</td><td align="center">{1}</td><td align="center">{1:08b}</td><td align="center">{2}</td></tr>'.format(k, v[0], v[1]) ] %}
+#        {%- endfor %}
+#        {{ '<table>' ~ ns.ret | join('') ~ '</table>'  }}
+
   - condition: template
     value_template: "{{ node_id != 0 and transitions > 0 }}"
 
@@ -766,26 +1050,196 @@ lzw45_custom_effect:
       value: "{{ parameter30 }}"
       bytes: 4
 
-#  - service: "{{ service }}"
+#  - condition: template
+#    value_template: "{{ lzw45 is defined and transitions > 0 }}"
+#
+#  - service: zwave_js.bulk_set_partial_config_parameters
+#    target:
+#      entity_id: "{{ lzw45 }}"
 #    data:
-#      node_id: "{{ node_id }}"
 #      parameter: 22
 #      value: "{{ parameter22 }}"
-#  - service: "{{ service }}"
+#
+#  - service: zwave_js.bulk_set_partial_config_parameters
+#    target:
+#      entity_id: "{{ lzw45 }}"
 #    data:
-#      node_id: "{{ node_id }}"
 #      parameter: 23
 #      value: "{{ parameter23 }}"
-#  - service: "{{ service }}"
+#
+#  - service: zwave_js.bulk_set_partial_config_parameters
+#    target:
+#      entity_id: "{{ lzw45 }}"
 #    data:
-#      node_id: "{{ node_id }}"
 #      parameter: 24
 #      value: "{{ parameter24 }}"
-#  - service: "{{ service }}"
+#
+#  - service: zwave_js.bulk_set_partial_config_parameters
+#    target:
+#      entity_id: "{{ lzw45 }}"
 #    data:
-#      node_id: "{{ node_id }}"
 #      parameter: 30
 #      value: "{{ parameter30 }}"
+
+lzw45_custom_effect_zwave_js:
+  alias: LZW45 Custom Effect
+  description: Sets the custom effects for the Inovelli LZW45 LED Strip
+  mode: restart
+  fields:
+    lzw45: 
+      description: (required) The entity_id for the lzw45 LED Strip.
+      example: light.lzw45_light_strip_level
+    colors:
+      description: (required) A list of colors, (1 to 4 colors).  Color choices are off, 2700k, 4500k, 6500k, red, orange, yellow, yellow-green, green, spring-green, cyan, azure, blue, violet, magenta, and random.
+      example: "[ 'red', 'orange', 'yellow', 'off' ]"
+    effects:
+      description: (required) A list of colors (1 to 4 effects).  Color choices are fade, fade-blend, flash, chase, and chase-blend.
+      example: "[ 'fade', 'fade-blend', 'fade', 'chase' ]"
+    brightness_pcts:
+      description: (optional) A list of brightness percents, 0 - 99.  Defaults to 99 if omitted.
+      example: "[ 99, 99, 99, 99 ]"
+    duration_units:
+      description: (required) The units of the duration.  Choices are 100ms, seconds, minutes, hours.
+      example: 100ms
+    durations:
+      description: (required) A list of durations (1-60).
+      example: "[ 10, 10, 10, 10 ]"
+    finish_behavior:
+      description: (optional) The behavior when the effect reaches the max number of iterations.  Choices are off, previous-color, last-color-in-program.  Default is previous-color.
+      example: previous-color
+    iterations:
+      description: (optional) The number of times the custom effect repeats (1-254).  255 is forever.  Default is 255.
+      example: 255
+  variables:
+    service: >
+      {{ service | default('ozw.set_config_parameter') }}
+    node_id: >
+      {%- if lzw45 is not defined and node is not defined %}
+        0
+      {%- else %}
+        {%- if node is not defined %}
+          {%- set node_id = state_attr(lzw45, 'node_id') %}
+        {%- else %}
+          {%- set node_id = node %}
+        {%- endif %}
+        {{ node_id if node_id else 0 }}
+      {%- endif %}
+    transitions: >
+      {%- set ns = namespace(counts=[]) %}
+      {%- for item in [ colors, effects, brightness_pcts, durations ] %}
+        {%- set ns.counts = ns.counts + [ item | length ] %}
+      {%- endfor %}
+      {{ ns.counts | min }}
+    levels: >
+      {%- set levels = brightness_pcts | default([]) %}
+      {%- if not levels %}
+        {{ [ 99 ] * transitions }}
+      {%- else %}
+        {%- set ns = namespace(levels = []) %}
+        {%- for i in range(transitions) %}
+          {%- set pct = levels[i] | int %}
+          {%- set pct = pct if pct >= 0 else 0 %}
+          {%- set pct = pct if pct <= 99 else 99 %}
+          {%- set ns.levels = ns.levels + [ pct ] %}
+        {%- endfor %}
+        {{ ns.levels }}
+      {%- endif %}
+    parameter22: >
+      {%- macro byte(color, effect) %}
+        {%- set colors = [
+          'off',
+          '2700k',
+          '4500k',
+          '6500k',
+          'red',
+          'orange',
+          'yellow',
+          'yellow green',
+          'green',
+          'spring green',
+          'cyan',
+          'azure',
+          'blue',
+          'violet',
+          'magenta',
+          'random'
+        ] %}
+        {% set effects = [
+          'fade', 
+          'fade-blend', 
+          'flash', 
+          'chase', 
+          'chase-blend'
+        ] %}
+        {%- if color in colors and effect in effects %}
+          {%- set ci = colors.index(color) %}
+          {%- set ei = effects.index(effect) %}
+          {{- '{0:05b}{1:03b}'.format(ci, ei) }}
+        {%- else %}
+          {{- '00000000' }}
+        {%- endif %}
+      {%- endmacro %}
+      {%- set ns = namespace(bytes=[]) %}
+      {%- for i in range(transitions) %}
+        {%- set ns.bytes = ns.bytes + [ byte(colors[i], effects[i]) | int('', 2) * 2**(i * 8) ] %}
+      {%- endfor %}
+      {{ ns.bytes | sum }}
+    parameter23: >
+      {%- set ns = namespace(bytes=[]) %}
+      {%- for i in range(transitions) %}
+        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(levels[i]) | int('', 2) * 2**(i * 8) ] %}
+      {%- endfor %}
+      {{ ns.bytes | sum }}
+    parameter24: >
+      {%- set ns = namespace(bytes=[]) %}
+      {%- for i in range(transitions) %}
+        {%- set duration = durations[i] | int %}
+        {%- set duration = duration if duration >= 1 else 1 %}
+        {%- set duration = duration if duration <= 60 else 60 %}
+        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(duration) | int('', 2) * 2**(i * 8) ] %}
+      {%- endfor %}
+      {{ ns.bytes | sum }}
+    parameter30: >
+      {%- set iterations = iterations | default(255) | int %}
+      {%- set iterations = iterations if iterations >= 0 else 0 %}
+      {%- set byte1 = iterations if iterations <= 255 else 255 %}
+      {%- set behaviors = [ 'off', 'previous-color', 'last-color-in-program' ] %}
+      {%- set units = ['100ms', 'seconds', 'minutes', 'hours'] %}
+      {%- set byte2 = behaviors.index(behavior) if behavior in behaviors else 1 %}
+      {%- set byte3 = units.index(duration_units) if duration_units in units else 0 %}
+      {{ '{0:08b}{1:08b}{2:08b}'.format(byte3, byte2, byte1) | int('', 2) }}
+  sequence:
+
+  - condition: template
+    value_template: "{{ lzw45 is defined and transitions > 0 }}"
+
+  - service: zwave_js.bulk_set_partial_config_parameters
+    target:
+      entity_id: "{{ lzw45 }}"
+    data:
+      parameter: 22
+      value: "{{ parameter22 }}"
+
+  - service: zwave_js.bulk_set_partial_config_parameters
+    target:
+      entity_id: "{{ lzw45 }}"
+    data:
+      parameter: 23
+      value: "{{ parameter23 }}"
+
+  - service: zwave_js.bulk_set_partial_config_parameters
+    target:
+      entity_id: "{{ lzw45 }}"
+    data:
+      parameter: 24
+      value: "{{ parameter24 }}"
+
+  - service: zwave_js.bulk_set_partial_config_parameters
+    target:
+      entity_id: "{{ lzw45 }}"
+    data:
+      parameter: 30
+      value: "{{ parameter30 }}"
 
 lzw45_ui_custom_effect:
   variables:
@@ -803,7 +1257,11 @@ lzw45_ui_custom_effect:
         {%- for id in ids %}
           {%- set inner = namespace(ret=[]) %}
           {%- for i in range(1, count | int + 1) %}
-            {%- set value = states('{0}.{1}_{2}_{3}'.format(domain, name, id, i)) %}
+            {%- if id == 'color' %}
+              {%- set value = states('{0}.{1}_{2}_{3}'.format(domain, name, id, i)) %}
+            {%- else %}
+              {%- set value = states('{0}.{1}_{2}'.format(domain, name, id)) %}
+            {%- endif %}
             {%- set inner.ret = inner.ret + [ value | int if domain == 'input_number' else '"{0}"'.format(value) ] %}
           {%- endfor %}
           {%- set ns.ret = ns.ret + [ '"{0}":['.format(id) ~ inner.ret | join(',') ~ ']' ] %}
@@ -823,10 +1281,12 @@ lzw45_ui_custom_effect:
           durations: "{{ info.duration }}"
           iterations: >
             {{ states('input_number.custom_effects_iterations') | int | default(255) }}
-          iterations: >
+          behavior: >
             {{ states('input_select.custom_effects_behavior') | default('off') }}
           duration_units: >
             {{ states('input_select.custom_effects_units') | default('100ms') }}
+  - delay:
+      seconds: 1
 
 lzw45_ui_pixel_effect:
   variables:
