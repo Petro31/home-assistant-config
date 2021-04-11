@@ -48,51 +48,6 @@ basement_toggle:
   entities:
     - switch.basement_cans
 
-entertainment_xbox_one:
-  module: toggle_light
-  class: ToggleLight
-  entity: switch.xbox_one
-  turn_off: false
-  sundown: true
-  entities:
-  - light.living_room
-
-entertainment_ps4:
-  module: toggle_light
-  class: ToggleLight
-  entity: switch.ps4
-  turn_off: false
-  sundown: true
-  entities:
-  - light.living_room
-
-entertainment_roku:
-  module: toggle_light
-  class: ToggleLight
-  entity: switch.roku
-  turn_off: false
-  sundown: true
-  entities:
-  - light.living_room
-
-entertainment_switch:
-  module: toggle_light
-  class: ToggleLight
-  entity: switch.switch
-  turn_off: false
-  sundown: true
-  entities:
-  - light.living_room
-
-entertainment_tv:
-  module: toggle_light
-  class: ToggleLight
-  entity: switch.tv
-  turn_off: false
-  sundown: true
-  entities:
-  - light.living_room
-
 # https://github.com/Petro31/ad_simple_door_bell
 
 door_bell:
