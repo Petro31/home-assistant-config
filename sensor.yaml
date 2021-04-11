@@ -8,86 +8,6 @@
         value_template: > 
           {{ state_attr('weather.dark_sky', 'temperature') }}
         unit_of_measurement: '°F'
-
-      main_door_hindge: # MAIN DOOR SENSOR #
-        value_template: >
-          {{ 'open' if is_state('sensor.main_door_t_access_control', '22') else 'closed' }}
-        
-      entry_door_hindge: # GARAGE ENTRY DOOR SENSOR #
-        value_template: >
-          {{ 'open' if is_state('sensor.garage_door_access_control', '22') else 'closed' }}
-      
-      sliding_door: # SLIDING DOOR SENSOR #
-        value_template: >
-          {{ 'open' if is_state('sensor.sliding_door_access_control', '22') else 'closed' }}
-      
-      main_door_battery: # MAIN DOOR BATTERY #
-        device_class: battery
-        value_template: >
-          {% if states.zwave.main_door_t.state %}
-            {{ states.zwave.main_door_t.attributes.battery_level }}
-          {% else %}
-            0
-          {% endif %}
-        unit_of_measurement: "%"
-      
-      entry_door_battery: # GARAGE ENTRY DOOR BATTERY #
-        device_class: battery
-        value_template: >
-          {% if states.zwave.garage_door.state %}
-            {{ states.zwave.garage_door.attributes.battery_level }}
-          {% else %}
-            0
-          {% endif %}
-        unit_of_measurement: "%"
-        
-      sliding_door_battery:
-        device_class: battery
-        value_template: >
-          {% if states.zwave.sliding_door.state %}
-            {{ states.zwave.sliding_door.attributes.battery_level }}
-          {% else %}
-            0
-          {% endif %}
-        unit_of_measurement: "%"
-      
-      hallway_motion_battery:
-        device_class: battery
-        value_template: >
-          {% if states.zwave.hallway_ms.state %}
-            {{ states.zwave.hallway_ms.attributes.battery_level }}
-          {% else %}
-            0
-          {% endif %}
-        unit_of_measurement: "%"
-        
-      door_bell_battery:
-        device_class: battery
-        value_template: >
-          {% if states.zwave.door_bell.state %}
-            {{ states.zwave.door_bell.attributes.battery_level }}
-          {% else %}
-            0
-          {% endif %}
-        unit_of_measurement: "%"
-        
-      dining_room_temperature:
-          device_class: temperature
-          value_template: >
-            {% if states.sensor.sliding_door_temperature.state %}
-              {{ states.sensor.sliding_door_temperature.state | float }}
-            {% else %}
-              0.0
-            {% endif %}
-          unit_of_measurement: ºF
-          
-      harmony_activity:
-        value_template: >
-          {% if is_state("remote.living_room", 'on') %}
-            {{ states.remote.living_room.attributes.current_activity }}
-          {% else %}
-            PowerOff
-          {% endif %}
         
       ups_uptime:
         device_class: timestamp
@@ -474,7 +394,7 @@
             {%- set items = features | map(attribute='attributes') | list %}
             {%- if items | length > 0 %}
               {%- set item = items | first %}
-              {{ item.Recovered }}
+              {{ item.Recovered if item.Recovered else 0 }}
             {%- else %}
               {{ state_attr('sensor.corona_virus_county_rest', 'recovered') }}
             {%- endif %}
@@ -483,7 +403,7 @@
             {%- set items = features | map(attribute='attributes') | list %}
             {%- if items | length > 0 %}
               {%- set item = items | first %}
-              {{ item.Active }}
+              {{ item.Active if item.Active else 0 }}
             {%- else %}
               {{ state_attr('sensor.corona_virus_county_rest', 'active') }}
             {%- endif %}
