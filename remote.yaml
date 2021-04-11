@@ -1,3 +1,0 @@
-  - platform: harmony
-    name: living_room
-    host: !secret remote_host

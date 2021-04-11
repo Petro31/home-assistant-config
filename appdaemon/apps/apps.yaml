@@ -14,12 +14,18 @@ anchors:
   roku: &roku
     activity: Roku
     device: Roku Ultra
+
   xbox: &xbox
     activity: Xbox One
     device: Microsoft Xbox One
+
   ps4: &ps4
     activity: PS4
     device: Sony PS4
+
+  tv: &tv
+    activity: TV
+    device: Sony TV
 
 ################
 # CURRENT APPS #
@@ -314,6 +320,7 @@ hac_living_room:
   - <<: *roku
   - <<: *xbox
   - <<: *ps4
+  - <<: *tv
   commands:
   - Rewind
   - Play
@@ -327,7 +334,25 @@ hac_living_room:
   - DirectionRight
   - DirectionDown
   - Back
+  - ChannelUp
+  - ChannelDown
+  - ChannelPrev
+  - "0"
+  - "1"
+  - "2"
+  - "3"
+  - "4"
+  - "5"
+  - "6"
+  - "7"
+  - "8"
+  - "9"
   custom_events:
+  - event: Period
+    name: Period
+    activities:
+    - <<: *tv
+      command: "."
   - event: HomeButton
     icon: mdi:home
     name: Home
@@ -338,6 +363,8 @@ hac_living_room:
       command: Xbox
     - <<: *ps4
       command: PS
+    - <<: *tv
+      command: Home
   - event: MenuButton
     icon: mdi:menu
     name: Menu
@@ -350,6 +377,8 @@ hac_living_room:
       icon: mdi:xbox-controller-menu
     - <<: *ps4
       command: Options
+    - <<: *tv
+      command: Menu
   - event: LowerLeft
     activities:
     - <<: *roku
@@ -362,6 +391,9 @@ hac_living_room:
     - <<: *ps4
       name: Info
       command: Info
+    - <<: *tv
+      command: Options
+      icon: mdi:asterisk
   - event: LowerRight
     activities:
     - <<: *roku
@@ -374,6 +406,9 @@ hac_living_room:
     - <<: *ps4
       name: Share
       command: Share
+    - <<: *tv
+      name: Info
+      command: TrackId
 
   - event: BottomButton
     name: Confirm

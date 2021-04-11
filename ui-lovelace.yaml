@@ -10,17 +10,4 @@ preload_cards:
 preload_rows:
 - sensor-entity
 
-#custom_header: !include lovelace/custom_header.yaml
-
-# background: center / cover no-repeat url("/local/images/background.jpg") fixed
-# views:
-# - title: main
-#   cards:
-#   - type: entities
-#     entities:
-#     - person.petro
-#     - person.lambo
-
-# popup_cards: !include lovelace/views/popups.yaml
-
 views: !include lovelace/views/master.yaml

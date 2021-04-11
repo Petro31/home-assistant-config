@@ -3,6 +3,7 @@ logs:
   requests.packages.urllib3.connectionpool: critical
   frontend.js.latest: critical
   py.warnings: critical
+  homeassistant.components.analytics: info
   #homeassistant.components.mqtt: debug
   #homeassistant.components.mqtt.discovery: debug
   #homeassistant.components.waze_travel_time: debug

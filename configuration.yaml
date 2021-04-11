@@ -3,11 +3,11 @@ homeassistant:
 
 alexa: !include alexa.yaml
 alexa_media: !include alexa_media.yaml
+analytics:
 apcupsd:
   host: a722577e-apcupsd
 automation: !include_dir_merge_list automation
 binary_sensor: !include binary_sensor.yaml
-browser_mod: !include browser_mod.yaml
 camera: !include cameras.yaml
 cloud:
 counter:
@@ -36,6 +36,7 @@ lovelace_gen:
 media_player: !include media_player.yaml
 mobile_app:
 mqtt: !include mqtt.yaml
+my:
 notify: !include notify.yaml
 person: 
 plant: !include plants.yaml
