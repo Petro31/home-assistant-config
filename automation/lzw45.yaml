@@ -1,4 +1,5 @@
 - alias: Execute Quick Effects on UI updates.
+  id: execute_quick_effects_on_ui_updates
   mode: restart
   trigger:
   - platform: state
@@ -55,6 +56,7 @@
     
 
 - alias: Manage LZW Pixel Effects & Quick Strip Effects
+  id: manage_lzw_pixel_effects_and_quick_strip_effects
   trigger:
   - platform: state
     entity_id: 

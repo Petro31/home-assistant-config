@@ -1,4 +1,5 @@
 - alias: MQTT - Store Door States
+  id: mqtt_store_door_states
   mode: parallel
   trigger:
   - platform: state
@@ -21,6 +22,7 @@
       attributes: "{{ { 'who': who } | tojson }}"
 
 - alias: MQTT - Store Door States Discovery
+  id: mqtt_store_door_states_discovery
   mode: single
   trigger:
   - platform: homeassistant
