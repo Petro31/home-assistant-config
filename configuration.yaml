@@ -49,6 +49,7 @@ speedtestdotnet: !include speedtestdotnet.yaml
 sun:
 switch: !include switch.yaml
 system_health:
+template: !include template.yaml
 timer:
 weather: !include weather.yaml
 updater:

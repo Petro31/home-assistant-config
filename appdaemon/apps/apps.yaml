@@ -48,20 +48,6 @@ door_bell:
   #     - media_player.living_room_dot
   #     - media_player.master_dot
 
-# https://github.com/Petro31/ad_people_tracker
-
-# people_at_home:
-#   module: people_tracker
-#   class: PeopleTracker
-#   guest_entity_id: input_select.company
-#   name: People At Home
-#   entities:
-#   - device_tracker.owens_iphone
-#   - device_tracker.james_ipad
-#   - device_tracker.james_iphone_10
-#   - person.petro
-#   - person.lambo
-
 # https://github.com/Petro31/ad_who_used_the_door
 
 main_door:
@@ -357,22 +343,6 @@ hac_living_room:
       command: Square
   log_level: INFO
   make_scripts: True
-
-# https://github.com/Petro31/ad_count_entities
-
-count_entities:
-  module: count_entities
-  class: CountEntities
-  exclude:
-  - sun
-  - input_select
-  - input_text
-  - input_number
-  - image_processing
-  - persistent_notification
-  - weather
-  - remote
-  - group
 
 # https://github.com/Petro31/ad_emulated_roku_event_sensor
 

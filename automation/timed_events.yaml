@@ -111,7 +111,7 @@
     event: sunrise
   variables:
     event: >
-      {% set event = trigger.event | default('invalid') %}
+      {{ trigger.event | default('invalid') }}
   condition:
   - condition: template
     value_template: "{{ event in ['sunset','sunrise'] }}"
