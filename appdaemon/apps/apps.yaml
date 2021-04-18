@@ -167,36 +167,6 @@ multizone_controller:
   volume_max: 1.0
   volume_min: 0.2
 
-# https://github.com/Petro31/ad_convert_media_volume
-
-zone1_volume:
-  module: convert_media_volume
-  class: ConvertMediaVolume
-  name: yamaha receiver volume
-  media_player: media_player.yamaha_receiver
-  unit_of_measurement: dB
-  min_volume:
-    device: -80.0
-    media_player: 0.2
-  max_volume:
-    device: 0.0
-    media_player: 1.0
-  precision: 0
-
-zone2_volume:
-  module: convert_media_volume
-  class: ConvertMediaVolume
-  name: yamaha receiver zone 2 volume
-  media_player: media_player.yamaha_receiver_zone_2
-  unit_of_measurement: dB
-  min_volume:
-    device: -80.0
-    media_player: 0.2
-  max_volume:
-    device: 0.0
-    media_player: 1.0
-  precision: 0
-
 # https://github.com/Petro31/ad_harmony_activity_controls
 
 hac_living_room:

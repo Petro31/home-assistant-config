@@ -177,16 +177,6 @@
     value_template: >
       {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
 
-  - platform: sun2
-    monitored_conditions:
-      - dawn
-      - daylight
-      - dusk
-      - night
-      - solar_noon
-      - sunrise
-      - sunset
-
   # CORONAVIRUS SENSORS
 
   - platform: rest

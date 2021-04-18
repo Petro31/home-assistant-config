@@ -1,0 +1,19 @@
+yamaha_receiver_volume:
+  unique_id: yamaha_receiver_volume
+  source: media_player.yamaha_receiver
+  attribute: volume_level
+  unit_of_measurement: dB
+  precision: 1
+  data_points:
+    - [0.2, -80.0]
+    - [1.0, 0.0]
+
+yamaha_receiver_zone_2_volume:
+  unique_id: yamaha_receiver_zone_2_volume
+  source: media_player.yamaha_receiver_zone_2
+  attribute: volume_level
+  unit_of_measurement: dB
+  precision: 1
+  data_points:
+    - [0.2, -80.0]
+    - [1.0, 0.0]

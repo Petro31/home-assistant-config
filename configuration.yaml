@@ -11,6 +11,7 @@ binary_sensor: !include binary_sensor.yaml
 camera: !include cameras.yaml
 cloud:
 counter:
+compensation: !include compensation.yaml
 config:
 conversation:
 cover: !include cover.yaml
