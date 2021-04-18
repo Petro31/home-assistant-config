@@ -1319,3 +1319,84 @@ lzw45_ui_quick_effect:
           brightness_pct: "{{ states('input_number.quick_strip_brightness') | int | default(99) }}"
           hue: "{{ states('input_number.quick_strip_hue') | int | default(360) }}"
           color_temp: "{{ states('input_number.quick_strip_color_temp') | int | default(2700) }}"
+
+debug_script_variables:
+  fields:
+    script_variables:
+      description: Dictionary of variables
+      example: Make a dictionary of variables under info.
+  variables:
+    table: >
+      {%- macro tableline(c, items) %}
+      <tr>{%- for item in items -%}<t{{c}}>{{item}}</t{{c}}>{%- endfor -%}</tr>
+      {%- endmacro %}
+      {%- set ns = namespace(ret=[ tableline('h', ['Variable', 'Value']) ]) %}
+      {%- for k, v in script_variables.items() %}
+      {%- set ns.ret = ns.ret + [ tableline('d', [k, v]) ] %}
+      {%- endfor %}
+      {{ '<table>{}</table>'.format(ns.ret | join('')) }}
+  sequence:
+  - service: persistent_notification.create
+    data:
+      title: Debug Variables
+      message: "{{ table if table else 'No Information Provided' }}"
+
+notify:
+  fields:
+    format: 
+      description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
+      example: "%-I:%M:%S %p"
+    persistent_notification:
+      description: On/Off for Persistent Notifications
+      example: on
+    title:
+      description: Title of the persistent notification.
+      example: "Title"
+    message:
+      description: Message to be sent/annouced.
+      example: "Hello"
+    notify:
+      description: Devices to notify.
+      example: notify.mobile_app_petro
+    debug:
+      description: Create a persistent notification with the variables.
+      example: on
+  variables:
+    timestamp: >
+      {%- set format = format | default("%-I:%M:%S %p") %}
+      {{ as_timestamp(now()) | timestamp_custom(format) }}
+    persistent_notification: >
+      {{ persistent_notification | default(true) }}
+    debug: >
+      {{ debug | default(false) }}
+    out_notify: >
+      {{ notify | default('') }}
+    out_title: >
+      {{ title | default('') }}
+    out_message: >
+      {%- set message = message | default('No Message Provided') %}
+      {{ '[{}] {}'.format(timestamp, message) }}
+  sequence:
+  - choose:
+    - conditions: "{{ debug }}"
+      sequence:
+      - service: script.debug_script_variables
+        data:
+          script_variables:
+            timestamp: "{{ timestamp }}"
+            persistent_notification: "{{ persistent_notification }}"
+            out_notify: "{{ out_notify }}"
+            out_title: "{{ out_title }}"
+            out_message: "{{ out_message }}"
+  - choose:
+    - conditions: "{{ persistent_notification }}"
+      sequence:
+      - service: persistent_notification.create
+        data:
+          title: "{{ out_title }}"
+          message: "{{ out_message }}"
+  - condition: template
+    value_template: "{{ out_notify.startswith('notify.') }}"
+  - service: "{{ out_notify }}"
+    data:
+      message: "{{ out_message }}"

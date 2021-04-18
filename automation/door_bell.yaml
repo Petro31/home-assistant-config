@@ -1,0 +1,45 @@
+- alias: Doorbell - Notify
+  id: announce_and_notify_on_doorbell_press
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id: 
+    - binary_sensor.doorbell_chime
+    to: 'on'
+    from: 'off'
+  variables:
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    timeout: >
+      {%- if valid %}
+        {{ as_timestamp(trigger.to_state.last_changed) - as_timestamp(trigger.from_state.last_changed) }}
+      {% endif %}
+    continue: >
+      {{ timeout and timeout > 15 }}
+  condition:
+  - condition: template
+    value_template: "{{ continue }}"
+  action:
+  - service: script.notify
+    data:
+      title: "Door Bell!"
+      message: "Door Bell!"
+      notify: notify.homeowners
+
+- alias: Doorbell - Suppress Chime
+  id: suppress_doorbell_chime
+  mode: single
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.doorbell_chime
+    to: 'on'
+    from: 'off'
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.doorbell_chime_active
+  - delay: "00:00:15"
+  - service: switch.turn_on
+    target:
+      entity_id: switch.doorbell_chime_active

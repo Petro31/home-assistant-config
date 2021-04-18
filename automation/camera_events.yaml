@@ -1,4 +1,4 @@
-- alias: Webhook Motion From Cameras
+- alias: Camera Event - Webhook Motion From Cameras
   id: webhook_motion_from_cameras
   trigger:
   - platform: webhook
@@ -24,7 +24,7 @@
       entity_id: >
         image_processing.tensorflow_{{ trigger.webhook_id.split('_')[-1] }}
 
-- alias: Turn off Outside Cameras based on temperature
+- alias: Camera Event - Turn off Outside Cameras based on temperature
   id: turn_off_outside_cameras_based_on_temperature
   trigger:
   - platform: state
@@ -42,7 +42,7 @@
       - switch.driveway_camera
       - switch.backyard_camera
 
-- alias: Turn on Outside Cameras based on temperature
+- alias: Camera Event - Turn on Outside Cameras based on temperature
   id: turn_on_outside_cameras_based_on_temperature
   trigger:
   - platform: state

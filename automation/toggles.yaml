@@ -1,24 +1,4 @@
-- alias: Turn On Livingroom lights with Harmony Activities
-  id: turn_on_livingroom_lights_with_harmony_activities
-  trigger:
-  - platform: state
-    entity_id:
-    - switch.xbox_one
-    - switch.ps4
-    - switch.roku
-    - switch.switch
-    - switch.tv
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: sun.sun
-    state: below_horizon
-  action:
-  - service: light.turn_on
-    target:
-      entity_id: light.living_room
-    
-- alias: Toggle Game Room Lights
+- alias: Toggle - Game Room Lights
   id: toggle_game_room_lights
   trigger:
   - platform: state
@@ -39,7 +19,7 @@
       - switch.game_room_buffet_outlet
 
 
-- alias: Toggle Basement Lights
+- alias: Toggle - Basement Lights
   id: toggle_basement_lights
   trigger:
   - platform: state

@@ -31,23 +31,6 @@ anchors:
 # CURRENT APPS #
 ################
 
-# https://github.com/Petro31/ad_simple_door_bell
-
-door_bell:
-  module: simple_door_bell
-  class: DoorBell
-  sensor: binary_sensor.doorbell_chime
-  timestamp: '%-I:%M:%S %p'
-  <<: *notify
-  tts_services: [] 
-  # - service: notify.alexa_media
-  #   data:
-  #     data:
-  #       type: announce
-  #     target: 
-  #     - media_player.living_room_dot
-  #     - media_player.master_dot
-
 # https://github.com/Petro31/ad_who_used_the_door
 
 main_door:
