@@ -1,0 +1,211 @@
+- alias: Doors - MQTT Discovery on Startup
+  id: mqtt_store_door_states_discovery
+  mode: single
+  trigger:
+  - platform: homeassistant
+    event: start
+  variables:
+    doors:
+    - test_door_last_opened
+    - main_door_last_opened
+    - sliding_door_last_opened
+    - garage_door_tilt_last_opened
+    - garage_entry_door_last_opened
+    - back_garage_door_tilt_last_opened
+  action:
+  - repeat:
+      count: "{{ doors | length }}"
+      sequence:
+      - service: script.mqtt_automated_config
+        data:
+          domain: sensor
+          unique_id: "{{ doors[repeat.index - 1] }}"
+          device_class: timestamp
+
+- alias: Doors - Notify when Open
+  id: notify_on_door_state_change
+  mode: parallel
+  trigger: &door_trigger
+  - platform: state
+    entity_id:
+    - input_boolean.test_door
+    - binary_sensor.main_door
+    - binary_sensor.garage_entry_door
+    - binary_sensor.sliding_door
+    - binary_sensor.garage_door_tilt
+    - binary_sensor.back_garage_door_tilt
+    from: 'off'
+    to: 'on'
+  variables:
+    # notify: notify.mobile_app_petro
+    notify: notify.homeowners
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    source: >
+      {%- if valid %}
+        {{ trigger.to_state.entity_id }}
+      {%- endif %}
+    timestamp: >
+      {%- set datetime = datetime | default(now()) %}
+      {{ as_timestamp(datetime) | timestamp_custom("%Y-%m-%dT%H:%M:%S.%f+00:00", datetime.tzinfo == 'UTC') }}
+    object_id: >
+      {{ source.split('.')[-1] }}
+    unique_id: >
+      {{ object_id }}_last_opened
+    count_script: >
+      script.notify_count_{{ object_id }}
+    sensor: > 
+      sensor.{{ unique_id }}
+    last_opened: >
+      {{ states(sensor) }}
+    delta: >
+      {{ as_timestamp(timestamp) - as_timestamp(last_opened) }}
+    quiet_window: >
+      {%- set times = {
+        'binary_sensor.main_door': 120,
+        'binary_sensor.garage_entry_door': 120,
+        'binary_sensor.sliding_door': 120,
+        'input_boolean.test_door': 10,
+      } %}
+      {%- if valid and source in times %}
+        {{ times[source] }}
+      {%- else %}
+        0
+      {%- endif %}
+    in_quiet_window: >
+      {{ delta < quiet_window }}
+    count: >
+      {%- if in_quiet_window %}
+        {%- set current = state_attr(sensor, 'count') %}
+        {%- if current is none %}
+          1
+        {%- else %}
+          {{ current | int + 1 }}
+        {%- endif %}
+      {%- else %}
+        0
+      {%- endif %}
+    count_timestamp: >
+      {%- if count == 0 %}
+        {{ timestamp }}
+      {%- else %}
+        {{ state_attr(sensor, 'count_timestamp') }}
+      {%- endif %}
+    who: >
+      {{ state_attr('sensor.people_at_home', 'or') }}
+    what: >
+      {{ state_attr(trigger.entity_id, 'friendly_name') }}
+
+  condition: &door_condition
+  - condition: template
+    value_template: "{{ valid }}"
+
+  action:
+
+  # Update Door Sensors.
+
+  - service: script.mqtt_automated_states
+    data:
+      domain: sensor
+      unique_id: "{{ unique_id }}"
+      state: "{{ timestamp }}"
+      attributes: "{{ { 'who': who, 'count': count, 'source': source, 'count_timestamp': count_timestamp } | tojson }}"
+
+  # Notify if this is the first time the door has been opened in a while.
+  # Otherwise start a 'quiet time' duration and announce the number
+  # of times the door has been opened over the duration.  The quiet duration
+  # should be reset each parallel run.
+
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ count > 0 }}"
+      sequence:
+      - service: "{{ count_script }}"
+        data:
+          door_name: "{{ what }}"
+          duration: "{{ quiet_window }}"
+          count: "{{ count + 1 }}"
+          count_timestamp: "{{ count_timestamp }}"
+          notify: "{{ notify }}"
+    default:
+    - service: script.notify
+      data:
+        title: "{{ what }} Opened!"
+        message: >
+          {{ who }} used the {{ what }}.
+        notify: "{{ notify }}"
+
+  # Handle an unknown person.
+
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ who in ['unknown'] }}"
+      sequence:
+      - wait_for_trigger:
+        - platform: template
+          value_template: "{{ states('sensor.people_at_home') | int > 0 }}"
+        timeout:
+          seconds: 30
+      - choose: 
+          conditions:
+          - condition: template
+            value_template: >
+              {{ as_timestamp(now()) - as_timestamp(timestamp) >= 30 }}
+          sequence:
+          - service: script.notify
+            data:
+              title: "{{ what }} user is still unknown!"
+              message: >
+                The person who used the {{ what | lower }} is still unknown!
+              notify: "{{ notify }}"
+        default:
+        - service: script.notify
+          data:
+            title: "Found {{ what }} user!"
+            message: >
+              The person who used the {{ what | lower }} is {{ states('sensor.people_at_home', 'or') }}!
+            notify: "{{ notify }}"
+
+- alias: Doors - Notify when Open too long.
+  id: notify_on_door_ajar
+  mode: parallel
+  trigger: *door_trigger
+  variables:
+    # notify: notify.mobile_app_petro
+    notify: notify.homeowners
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    source: >
+      {%- if valid %}
+        {{ trigger.to_state.entity_id }}
+      {%- endif %}
+    timestamp: >
+      {%- set datetime = datetime | default(now()) %}
+      {{ as_timestamp(datetime) | timestamp_custom("%Y-%m-%dT%H:%M:%S.%f+00:00", datetime.tzinfo == 'UTC') }}
+    duration: >
+      {%- set times = {
+        'binary_sensor.main_door': 90,
+        'binary_sensor.garage_entry_door': 90,
+        'binary_sensor.sliding_door': 240,
+        'binary_sensor.garage_door_tilt': 300,
+        'binary_sensor.back_garage_door_tilt': 300,
+        'input_boolean.test_door': 5,
+      } %}
+      {%- if valid and trigger.to_state.entity_id in times %}
+        {{ times[trigger.to_state.entity_id] }}
+      {%- endif %}
+    door_name: >
+      {{ state_attr(trigger.entity_id, 'friendly_name') }}
+
+  condition: *door_condition
+
+  action:
+  - service: script.notify_if_ajar
+    data:
+      duration: "{{ duration }}"
+      door: "{{ source }}"
+      door_name: "{{ door_name }}"
+      timestamp: "{{ timestamp }}"
+      notify: "{{ notify }}"

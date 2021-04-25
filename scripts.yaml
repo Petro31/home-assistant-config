@@ -1400,3 +1400,140 @@ notify:
   - service: "{{ out_notify }}"
     data:
       message: "{{ out_message }}"
+
+notify_count_base:
+  fields:
+    door_name:
+      description: Door that caused the notification
+      example: "Main Door"
+    count: 
+      description: Door open count.
+      example: 1
+    count_timestamp:
+      description: Timestamp when the door was first opened.
+      example: '2021-04-25T17:56:06.448826+00:00'
+    notify:
+      description: What device to notify
+      example: notify.ios_petro
+  variables:
+    debug: >
+      {{ debug | default(false) }}
+    duration: >
+      {%- set up_time = as_timestamp(now())-as_timestamp(count_timestamp) %}
+
+      {%- macro phrase(name, divisor, mod=None) %}
+        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
+        {%- set end = 's' if value > 1 else '' %}
+        {{- '{} {}{}'.format(value, name, end) if value | int > 0 else '' }}
+      {%- endmacro %}
+      
+      {%- set values = [ 
+                 phrase('minute', 60, 604800), 
+                 phrase('second', 1, 60) 
+             ] | select('!=','') | list %}
+                    
+      {{ values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first }}
+    message: >
+      The {{ door_name }} was opened {{ count }} time{{'s' if count > 1 else ''}} over the past {{ duration }}.
+  sequence:
+
+  - choose:
+    - conditions: "{{ debug }}"
+      sequence:
+      - service: script.debug_script_variables
+        data:
+          script_variables:
+            door_name: "{{ door_name }}"
+            count: "{{ count }}"
+            count_timestamp: "{{ count_timestamp }}"
+            notify: "{{ notify }}"
+
+  - service: script.notify
+    data:
+      title: "{{ door_name }} Open Tally"
+      message: "{{ message }}"
+      notify: "{{ notify }}"
+
+# These automations are for the ability to restart the script & duration over again.
+
+notify_count_test_door: &door_count_script
+  mode: restart
+  fields:
+    duration:
+      description: Duration that we have to wait before sending the notification
+      example: 60
+    door_name:
+      description: Door that caused the notification
+      example: "Main Door"
+    count: 
+      description: Door open count.
+      example: 1
+    count_timestamp:
+      description: Timestamp when the door was first opened.
+      example: '2021-04-25T17:56:06.448826+00:00'
+    notify:
+      description: What device to notify
+      example: notify.ios_petro
+  sequence:
+
+  - delay: "{{ duration }}"
+
+  # passes door_name, count, count_timestamp, and notify to the base door notification.
+
+  - service: script.notify_count_base
+    data:
+      door_name: "{{ door_name }}"
+      count: "{{ count }}"
+      count_timestamp: "{{ count_timestamp }}"
+      notify: "{{ notify }}"
+
+notify_count_main_door: *door_count_script
+notify_count_garage_entry_door: *door_count_script
+notify_count_sliding_door: *door_count_script
+notify_count_garage_door_tilt: *door_count_script
+notify_count_back_garage_door_tilt: *door_count_script
+
+notify_if_ajar:
+  mode: parallel
+  fields:
+    door:
+      description: Entity Id for the door
+      example: binary_sensor.main_door
+    duration:
+      description: Duration that we have to wait before sending the notification
+      example: 60
+    door_name:
+      description: Door that caused the notification
+      example: "Main Door"
+    timestamp:
+      description: Timestamp when the door was first opened.
+      example: '2021-04-25T17:56:06.448826+00:00'
+    notify:
+      description: What device to notify
+      example: notify.ios_petro
+  sequence:
+  - wait_template: "{{ is_state(door, 'off') }}"
+    timeout: "{{ duration }}"
+  - condition: template
+    value_template: >
+      {{ as_timestamp(now()) - as_timestamp(timestamp) >= duration }}
+  - service: script.notify
+    data:
+      title: "{{ door_name }} Door Ajar!"
+      message: >
+        {%- set up_time = duration %}
+
+        {%- macro phrase(name, divisor, mod=None) %}
+          {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
+          {%- set end = 's' if value > 1 else '' %}
+          {{- '{} {}{}'.format(value, name, end) if value | int > 0 else '' }}
+        {%- endmacro %}
+        
+        {%- set values = [ 
+                   phrase('minute', 60, 604800), 
+                   phrase('second', 1, 60) 
+               ] | select('!=','') | list %}
+                      
+        {% set span = values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first %}
+        {{ door_name }} has been open for {{ span }}!
+      notify: "{{ notify }}"
