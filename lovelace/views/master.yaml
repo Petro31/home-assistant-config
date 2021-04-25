@@ -704,6 +704,12 @@
     'type': '../templates/buttons/door.yaml',
     'cover': 'cover.garage_door',
     'door_type': 'garage',
+  },{
+    'entity': 'binary_sensor.rear_garage_door_tilt',
+    'name': 'Garage',
+    'last_opened': 'sensor.rear_garage_door_last_opened',
+    'type': '../templates/buttons/door.yaml',
+    'door_type': 'garage',
   }
 ] %}
 
@@ -880,7 +886,7 @@
 ] %}
 
 
-{%- set testing = false %}
+{%- set testing = true %}
 
 # Set up the home page.
 - !include

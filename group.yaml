@@ -8,6 +8,11 @@
 
 inside_area:
   entities:
+    - light.bonus_room_bedroom_fixture
+    - light.bonus_room_bedroom_recessed
+    - light.bonus_room_entrance
+    - light.bonus_room_office_fixture
+    - light.bonus_room_office_recessed
     - light.dining_room_chandelier
     - light.hallway
     - light.game_room_bulb
@@ -303,10 +308,11 @@ family_network:
 
 doors:
   entities:
-    - sensor.sliding_door
+    - binary_sensor.sliding_door
     - binary_sensor.garage_door_tilt
-    - sensor.entry_door_hindge
-    - sensor.main_door_hindge
+    - binary_sensor.rear_garage_door_tilt
+    - binary_sensor.garage_entry_door
+    - binary_sensor.main_door
 
 #######################
 # ENTERTAINMENT ZONES #

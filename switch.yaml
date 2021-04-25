@@ -1,7 +1,3 @@
-# Test Switches
-
-- platform: demo
-
 # Template Switches
 
 - platform: template

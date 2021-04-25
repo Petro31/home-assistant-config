@@ -1,5 +1,3 @@
-- platform: demo
-
 - platform: group
   name: Main Door Bulbs
   entities:
