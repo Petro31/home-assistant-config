@@ -682,32 +682,32 @@
   {
     'entity': 'binary_sensor.main_door',
     'name': 'Main',
-    'last_opened': 'sensor.main_entrance_last_opened',
+    'last_opened': 'sensor.main_door_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
   },{
     'entity': 'binary_sensor.garage_entry_door',
     'name': 'Entry',
-    'last_opened': 'sensor.garage_entrance_last_opened',
+    'last_opened': 'sensor.garage_entry_door_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
   },{
     'entity': 'binary_sensor.sliding_door',
     'name': 'Patio',
-    'last_opened': 'sensor.patio_entrance_last_opened',
+    'last_opened': 'sensor.sliding_door_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
   },{
     'entity': 'binary_sensor.garage_door_tilt',
     'name': 'Garage',
-    'last_opened': 'sensor.garage_door_last_opened',
+    'last_opened': 'sensor.garage_door_tilt_last_opened',
     'type': '../templates/buttons/door.yaml',
     'cover': 'cover.garage_door',
     'door_type': 'garage',
   },{
     'entity': 'binary_sensor.rear_garage_door_tilt',
     'name': 'Garage',
-    'last_opened': 'sensor.rear_garage_door_last_opened',
+    'last_opened': 'sensor.rear_garage_door_tilt_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'garage',
   }

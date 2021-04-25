@@ -11,7 +11,7 @@
     - sliding_door_last_opened
     - garage_door_tilt_last_opened
     - garage_entry_door_last_opened
-    - back_garage_door_tilt_last_opened
+    - rear_garage_door_tilt_last_opened
   action:
   - repeat:
       count: "{{ doors | length }}"
@@ -33,7 +33,7 @@
     - binary_sensor.garage_entry_door
     - binary_sensor.sliding_door
     - binary_sensor.garage_door_tilt
-    - binary_sensor.back_garage_door_tilt
+    - binary_sensor.rear_garage_door_tilt
     from: 'off'
     to: 'on'
   variables:
@@ -57,9 +57,7 @@
     sensor: > 
       sensor.{{ unique_id }}
     last_opened: >
-      {{ states(sensor) }}
-    delta: >
-      {{ as_timestamp(timestamp) - as_timestamp(last_opened) }}
+      {{ states(sensor) | default('') }}
     quiet_window: >
       {%- set times = {
         'binary_sensor.main_door': 120,
@@ -71,6 +69,13 @@
         {{ times[source] }}
       {%- else %}
         0
+      {%- endif %}
+    delta: >
+      {%- set last = as_timestamp(last_opened) %}
+      {%- if last is not none %}
+        {{ as_timestamp(timestamp) - as_timestamp(last_opened) }}
+      {%- else %}
+        {{ quiet_window + 1}}
       {%- endif %}
     in_quiet_window: >
       {{ delta < quiet_window }}
