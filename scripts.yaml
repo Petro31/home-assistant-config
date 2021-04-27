@@ -1537,3 +1537,28 @@ notify_if_ajar:
         {% set span = values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first %}
         {{ door_name }} has been open for {{ span }}!
       notify: "{{ notify }}"
+
+# These automations are for the ability to restart the script & duration over again.
+
+resume_input_boolean_test_switch: &resume_scene_after_duration
+  mode: restart
+  fields:
+    duration:
+      description: Duration that we have to wait before sending the notification
+      example: 60
+    scene_id:
+      description: Id of the scene
+      example: scene_a_or_b
+  sequence:
+
+  - delay: "{{ duration }}"
+
+  - service: scene.turn_on
+    target:
+      entity_id: scene.{{ scene_id }}
+
+resume_input_boolean_test_switch_2: *resume_scene_after_duration
+resume_switch_foyer: *resume_scene_after_duration
+resume_switch_garage_entry: *resume_scene_after_duration
+resume_switch_garage_cans: *resume_scene_after_duration
+resume_light_dining_room_chandelier: *resume_scene_after_duration

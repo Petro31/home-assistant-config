@@ -126,3 +126,22 @@
       - light.garage_sconce_right_bulb
       - switch.flood_light
       - switch.sliding_door_sconce
+
+- alias: Timed Event - Clear persistent_notifications around bedtime.
+  id: clear_persistent_notifications_around_bedtime
+  trigger:
+  - platform: time
+    at: "22:00:00"
+  variables:
+    notification_ids: >
+      {{ states.persistent_notification | map(attribute='object_id') | list }}
+  condition:
+  - condition: template
+    value_template: "{{ notification_ids | length > 0 }}"
+  action:
+  - repeat:
+      count: "{{ notification_ids | length }}"
+      sequence:
+      - service: persistent_notification.dismiss
+        data:
+          notification_id: "{{ notification_ids[repeat.index - 1] }}"

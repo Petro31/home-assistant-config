@@ -31,39 +31,6 @@ anchors:
 # CURRENT APPS #
 ################
 
-# https://github.com/Petro31/IlluminateDoor
-
-main_door_illumination:
-  module: illuminate_door
-  class: IlluminateDoor
-  sensor: binary_sensor.main_door
-  turn_on:
-  - switch.foyer
-  duration: 120
-  sundown: true
-
-garage_entry_door_illumination:
-  module: illuminate_door
-  class: IlluminateDoor
-  sensor: binary_sensor.garage_entry_door
-  turn_on:
-  - switch.garage_entry
-  - switch.garage_cans
-  duration: 120
-  sundown: true
-  log_level: INFO
-
-sliding_door_illumination:
-  module: illuminate_door
-  class: IlluminateDoor
-  sensor: binary_sensor.sliding_door
-  turn_on:
-  - entity: light.dining_room_chandelier
-    data:
-      brightness: 255
-  duration: 120
-  sundown: true
-
 # https://github.com/Petro31/ad_multizone_media_control
 
 multizone_controller:

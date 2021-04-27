@@ -6,7 +6,7 @@
     event: start
   variables:
     doors:
-    - test_door_last_opened
+    # - test_door_last_opened
     - main_door_last_opened
     - sliding_door_last_opened
     - garage_door_tilt_last_opened
@@ -28,7 +28,7 @@
   trigger: &door_trigger
   - platform: state
     entity_id:
-    - input_boolean.test_door
+    # - input_boolean.test_door
     - binary_sensor.main_door
     - binary_sensor.garage_entry_door
     - binary_sensor.sliding_door
@@ -214,3 +214,183 @@
       door_name: "{{ door_name }}"
       timestamp: "{{ timestamp }}"
       notify: "{{ notify }}"
+
+- alias: Doors - Illuminate Door
+  id: illuminate_doors_when_open
+  mode: parallel
+  trigger: 
+  - platform: state
+    entity_id:
+    # - input_boolean.test_door
+    - binary_sensor.main_door
+    - binary_sensor.garage_entry_door
+    - binary_sensor.sliding_door
+    from: 'off'
+    to: 'on'
+  variables:
+
+    # This is the metadata used to set all params for Illuminate door.
+    # When you add an entity to the entities list for each door, you need to create
+    # an accompanying script with the name `resume_{domain}_{object_id}: *resume_scene_after_duration`.
+    # This script handles each 'timer' for each entity that is turned on.  Doing this gives
+    # us the ability to cancel each 'resume' with a trigger of some sort (like double tap).
+    # You also need to add the entity to the trigger in cancel_scheduled_resume_state.
+    metadata: 
+      binary_sensor.main_door:
+        entities:
+        - switch.foyer
+        duration: 120
+      binary_sensor.garage_entry_door:
+        entities:
+        - switch.garage_entry
+        - switch.garage_cans
+        duration: 120
+      binary_sensor.sliding_door:
+        entities:
+        - light.dining_room_chandelier
+        duration: 30
+      input_boolean.test_door:
+        entities:
+        - input_boolean.test_switch
+        - input_boolean.test_switch_2
+        duration: 10
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    source: >
+      {%- if valid %}
+        {{ trigger.to_state.entity_id }}
+      {%- endif %}
+    timestamp: >
+      {%- set datetime = datetime | default(now()) %}
+      {{ as_timestamp(datetime) | timestamp_custom("%Y-%m-%dT%H:%M:%S.%f+00:00", datetime.tzinfo == 'UTC') }}
+    object_id: >
+      {{ source.split('.')[-1] }}
+    sensor: > 
+      sensor.{{ object_id }}_last_opened
+    script: > 
+      script.resume_{{ object_id }}
+    last_opened: >
+      {{ states(sensor) | default('') }}
+
+    # Make entities object for scene
+    current: >
+      {%- if valid and source in metadata %}
+        {{ metadata[source] }}
+      {%- endif %}
+    snapshot_entities: >
+      {{ current.entities | default([]) }}
+    action_data: >
+      {%- macro kvp(k, v) %}{{ '"{}"'.format(k) }}: {{ '"{}"'.format(v) if v is string and not (v.startswith('{') or v.startswith('['))else v }}{% endmacro %}
+      {%- macro coll(item, t='curly') %}{{ '{}{}{}'.format('{' if t == 'curly' else '[',item | join(', ') if item is iterable and item is not string else item, '}' if t == 'curly' else ']') }}{% endmacro %}
+      {%- set ns = namespace(entities=[], scene_ids=[], scripts=[]) %}
+      {%- set brightness = current.brightness | default(255) %}
+      {%- for entity in snapshot_entities %}
+        {%- set ns.scripts = ns.scripts + [ '"script.resume_{}"'.format(entity.replace('.','_'))] %}
+        {%- set ns.scene_ids = ns.scene_ids + [ '"{}"'.format(entity.replace('.','_'))] %}
+        {%- if entity.startswith('light.') %}
+          {%- set ret = [kvp('state', 'on'), kvp('brightness', brightness)] %}
+        {%- else %}
+          {%- set ret = kvp('state', 'on') %}
+        {%- endif %}
+        {%- set ns.entities = ns.entities + [ kvp(entity, coll(ret)) ] %}
+      {%- endfor %}
+      {%- set ret = [ kvp('entities', coll(ns.entities | join(','))), kvp('scripts', coll(ns.scripts | join(','), 'list')), kvp('scene_ids', coll(ns.scene_ids | join(','), 'list'))] %}
+      {{ coll(ret) }}
+    duration: >
+      {{ current.duration | default(0)}}
+    delta: >
+      {%- set last = as_timestamp(last_opened) %}
+      {%- if last is not none %}
+        {{ as_timestamp(timestamp) - as_timestamp(last_opened) }}
+      {%- else %}
+        {{ duration + 1 }}
+      {%- endif %}
+    in_duration: >
+      {{ delta < duration }}
+
+  condition: &sun_door_condition
+  - condition: template
+    value_template: "{{ valid }}"
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ not in_duration }}"
+      sequence:
+      - repeat:
+          count: "{{ action_data.scene_ids | length }}"
+          sequence:
+          - service: scene.create
+            data:
+              scene_id: "{{ action_data.scene_ids[repeat.index - 1] }}"
+              snapshot_entities: "{{ snapshot_entities[repeat.index - 1] }}"
+
+      - service: scene.apply
+        data:
+          entities: "{{ action_data.entities }}"
+  
+  - wait_template: "{{ is_state(source, 'off') }}"
+
+  - repeat:
+      count: "{{ action_data.scripts | length }}"
+      sequence:
+      - event: illuminate_door
+        event_data:
+          service: "{{ action_data.scripts[repeat.index - 1] }}"
+          duration: "{{ duration }}"
+          scene_id: "{{ action_data.scene_ids[repeat.index - 1] }}"
+
+- alias: Doors - Illuminate Event Handler
+  id: illuminate_door_event_handler
+  mode: parallel
+  trigger:
+  - platform: event
+    event_type: illuminate_door
+  variables:
+    data: >
+      {{ trigger.event.data | default({}) }}
+    service: >
+      {{ data.service | default }}
+    duration: >
+      {{ data.duration | default }}
+    scene_id: >
+      {{ data.scene_id | default }}
+    valid: >
+      {{ true if service and duration and scene_id else false }}
+  condition: *sun_door_condition
+  action:
+  - service: "{{ service }}"
+    data:
+      duration: "{{ duration }}"
+      scene_id: "{{ scene_id }}"
+
+- alias: Doors - Cancel Scheduled Resume State
+  id: cancel_scheduled_resume_state
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.foyer
+    - switch.garage_entry
+    - switch.garage_cans
+    - light.dining_room_chandelier
+    # - input_boolean.test_switch
+    # - input_boolean.test_switch_2
+  variables:
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    source: >
+      {%- if valid %}
+        {{ trigger.to_state.entity_id }}
+      {%- endif %}
+    script: >
+      {{ 'script.resume_{}'.format(source.replace('.','_')) }}
+  condition: *sun_door_condition
+  action:
+  - service: script.turn_off
+    target:
+      entity_id: "{{ script }}"
