@@ -1,0 +1,33 @@
+# lovelace_gen
+
+{%- set effects = [ 
+
+]%}
+
+title: Hyperion
+path: hyperion
+visible: {{ visible | default(false) }}
+cards:
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - !include
+      - ../templates/headers/navigator.yaml
+      - name: Hyperion
+        entities:
+        - light.gpio_18_tv
+    - !include '../templates/buttons/edge.yaml'
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - type: entities
+      title: Effects
+      style: |
+        ha-card {
+          border-radius: 15px;
+          }
+      entities:
+      - entity: input_number.hyperion_brightness
+        name: Brightness
+      - input_select.hyperion_effects
+    - !include '../templates/buttons/edge.yaml'

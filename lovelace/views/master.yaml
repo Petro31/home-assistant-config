@@ -955,6 +955,9 @@
 # Create the reciever view
 - !include receiver.yaml
 
+# Create the hyperion view
+- !include hyperion.yaml
+
 # Testing
 
 {%- if testing %}

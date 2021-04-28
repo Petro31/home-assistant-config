@@ -1,0 +1,38 @@
+- alias: Hyperion - Execute Effects
+  id: hyperion_execute_effects
+  mode: restart
+  trigger:
+  - platform: state
+    entity_id:
+    - input_number.hyperion_brightness
+    - input_select.hyperion_effects
+  variables:
+    valid: >
+      {{ trigger.from_state is defined and trigger.from_state is not none 
+         and trigger.to_state is defined and trigger.to_state is not none 
+         and trigger.from_state.state != trigger.to_state.state }}
+    source: >
+      {{ trigger.to_state.entity_id }}
+    target: light.gpio_18_tv
+    brightness: >
+      {%- if source == 'input_number.hyperion_brightness' %}
+        {{ trigger.to_state.state }}
+      {%- else %}
+        {{ states('input_number.hyperion_brightness') }}
+      {%- endif %}
+    effect: >
+      {%- if source == 'input_select.hyperion_effects' %}
+        {{ trigger.to_state.state }}
+      {%- else %}
+        {{ states('input_select.hyperion_effects') }}
+      {%- endif %}
+  condition:
+  - condition: template
+    value_template: "{{ valid }}"
+  action:
+  - service: light.turn_on
+    target:
+      entity_id: "{{ target }}"
+    data:
+      brightness: "{{ brightness }}"
+      effect: "{{ effect }}"

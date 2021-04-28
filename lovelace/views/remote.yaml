@@ -3,6 +3,7 @@
 {%- set activity_cols = 6 %}
 {%- set activity_rows = 2 %}
 {%- set activities = [
+  {'icon': 'mdi:television-ambient-light', 'template': '../templates/remote/harmony/navigate.yaml', 'path': 'hyperion'},
   {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)'},
   {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)'},
   {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)'},
@@ -75,17 +76,21 @@ cards:
       {%- else %}
       - '../templates/remote/harmony/toggle.yaml'
       {%- endif %}
+      {%- if activity.entity is defined %}
       - entity: {{ activity.entity }}
         color: {{ activity.color }}
-        {%- if activity.icon is defined %}
+      {%- elif activity.path is defined %}
+      - path: {{ activity.path }}
+      {%- endif %}
+      {%- if activity.icon is defined %}
         icon: {{ activity.icon }}
-        {%- endif %}
-        {%- if activity.image is defined %}
+      {%- endif %}
+      {%- if activity.image is defined %}
         image: {{ activity.image }}
-        {%- endif %}
-    {% else %}
+      {%- endif %}
+    {%- else %}
     - !include '../templates/buttons/spacer.yaml'
-    {% endif %}
+    {%- endif %}
     {%- if i % activity_cols == activity_cols - 1 %}
     - !include '../templates/spacer_edge.yaml'
     {%- endif %}
