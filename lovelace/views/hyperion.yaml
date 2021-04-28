@@ -14,6 +14,7 @@ cards:
     - !include
       - ../templates/headers/navigator.yaml
       - name: Hyperion
+        back_path: remote
         entities:
         - light.gpio_18_tv
     - !include '../templates/buttons/edge.yaml'
