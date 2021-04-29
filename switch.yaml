@@ -570,3 +570,18 @@
           data: 
             entity_id: media_player.yamaha_receiver
             sound_mode: 'Standard'
+
+      hyperion_usb_capture:
+        unique_id: hyperion_usb_capture
+        value_template: "{{ is_state('light.gpio_18_tv', 'on') }}"
+        turn_on:
+        - service: light.turn_on
+          target:
+            entity_id: light.gpio_18_tv
+          data:
+            brightness: 255
+            effect: USB Capture
+        turn_off:
+        - service: light.turn_off
+          target:
+            entity_id: light.gpio_18_tv

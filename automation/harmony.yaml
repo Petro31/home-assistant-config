@@ -14,6 +14,8 @@
     entity_id: sun.sun
     state: below_horizon
   action:
-  - service: light.turn_on
+  - service: homeassistant.turn_on
     target:
-      entity_id: light.living_room
+      entity_id:
+      - light.living_room
+      - switch.hyperion_usb_capture

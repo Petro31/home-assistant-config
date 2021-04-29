@@ -16,7 +16,7 @@ cards:
       - name: Hyperion
         back_path: remote
         entities:
-        - light.gpio_18_tv
+        - switch.hyperion_usb_capture
     - !include '../templates/buttons/edge.yaml'
 - type: horizontal-stack
   cards:
