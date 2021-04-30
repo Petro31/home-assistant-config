@@ -1506,7 +1506,7 @@ notify_if_ajar:
       example: '2021-04-25T17:56:06.448826+00:00'
   sequence:
   - wait_template: "{{ is_state(door, 'off') }}"
-    timeout: "{{ duration }}"
+    timeout: "{{ duration | timestamp_custom('%H:%M:%S', false) }}"
   - condition: template
     value_template: >
       {{ as_timestamp(now()) - as_timestamp(timestamp) >= duration }}
