@@ -37,8 +37,6 @@
     from: 'off'
     to: 'on'
   variables:
-    # notify: notify.mobile_app_petro
-    notify: notify.homeowners
     valid: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
     source: >
@@ -132,14 +130,12 @@
           duration: "{{ quiet_window }}"
           count: "{{ count + 1 }}"
           count_timestamp: "{{ count_timestamp }}"
-          notify: "{{ notify }}"
     default:
     - service: script.notify
       data:
         title: "{{ what }} Opened!"
         message: >
           {{ who }} used the {{ what }}.
-        notify: "{{ notify }}"
 
   # Handle an unknown person.
 
@@ -164,22 +160,18 @@
               title: "{{ what }} user is still unknown!"
               message: >
                 The person who used the {{ what | lower }} is still unknown!
-              notify: "{{ notify }}"
         default:
         - service: script.notify
           data:
             title: "Found {{ what }} user!"
             message: >
               The person who used the {{ what | lower }} is {{ states('sensor.people_at_home', 'or') }}!
-            notify: "{{ notify }}"
 
 - alias: Doors - Notify when Open too long.
   id: notify_on_door_ajar
   mode: parallel
   trigger: *door_trigger
   variables:
-    # notify: notify.mobile_app_petro
-    notify: notify.homeowners
     valid: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
     source: >
@@ -213,7 +205,6 @@
       door: "{{ source }}"
       door_name: "{{ door_name }}"
       timestamp: "{{ timestamp }}"
-      notify: "{{ notify }}"
 
 - alias: Doors - Illuminate Door
   id: illuminate_doors_when_open

@@ -24,7 +24,6 @@
     data:
       title: "Door Bell!"
       message: "Door Bell!"
-      notify: notify.homeowners
 
 - alias: Doorbell - Suppress Chime
   id: suppress_doorbell_chime

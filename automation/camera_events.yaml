@@ -14,13 +14,13 @@
       camera: >
         camera.{{ trigger.webhook_id.split('_')[-1] }}
   - service: camera.snapshot
-    data_template:
+    data:
       entity_id: >
         camera.{{ trigger.webhook_id.split('_')[-1] }}
       filename: >
         /config/www/motion/{{ trigger.webhook_id.split('_')[-1] }}_motion.jpg
   - service: image_processing.scan
-    data_template:
+    data:
       entity_id: >
         image_processing.tensorflow_{{ trigger.webhook_id.split('_')[-1] }}
 
@@ -32,8 +32,8 @@
     from: 'off'
     to: 'on'
   action:
-  - service: notify.homeowners
-    data_template:
+  - service: script.notify
+    data:
       message: >
         [{{ now().strftime('%-I:%M:%S %p') }}] Temperature is moving below 16°F, turning off the driveway and backyard camera.
   - service: switch.turn_off
@@ -50,8 +50,8 @@
     from: 'off'
     to: 'on'
   action:
-  - service: notify.homeowners
-    data_template:
+  - service: script.notify
+    data:
       message: >
         [{{ now().strftime('%-I:%M:%S %p') }}] Temperature is moving above 20°F, turning on the driveway and backyard camera.
   - service: switch.turn_on

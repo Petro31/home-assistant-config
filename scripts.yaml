@@ -1370,7 +1370,11 @@ notify:
     debug: >
       {{ debug | default(false) }}
     out_notify: >
-      {{ notify | default('') }}
+      {%- if debug %}
+        notify.mobile_app_petro
+      {%- else %}
+        {{ notify | default('notify.homeowners') }}
+      {%- endif %}
     out_title: >
       {{ title | default('') }}
     out_message: >
@@ -1393,7 +1397,8 @@ notify:
       sequence:
       - service: persistent_notification.create
         data:
-          title: "{{ out_title }}"
+          # Remove the title for now, the notifications are too fat.
+          # title: "{{ out_title }}"
           message: "{{ out_message }}"
   - condition: template
     value_template: "{{ out_notify.startswith('notify.') }}"
@@ -1412,9 +1417,6 @@ notify_count_base:
     count_timestamp:
       description: Timestamp when the door was first opened.
       example: '2021-04-25T17:56:06.448826+00:00'
-    notify:
-      description: What device to notify
-      example: notify.ios_petro
   variables:
     debug: >
       {{ debug | default(false) }}
@@ -1446,13 +1448,11 @@ notify_count_base:
             door_name: "{{ door_name }}"
             count: "{{ count }}"
             count_timestamp: "{{ count_timestamp }}"
-            notify: "{{ notify }}"
 
   - service: script.notify
     data:
       title: "{{ door_name }} Open Tally"
       message: "{{ message }}"
-      notify: "{{ notify }}"
 
 # These automations are for the ability to restart the script & duration over again.
 
@@ -1471,9 +1471,6 @@ notify_count_test_door: &door_count_script
     count_timestamp:
       description: Timestamp when the door was first opened.
       example: '2021-04-25T17:56:06.448826+00:00'
-    notify:
-      description: What device to notify
-      example: notify.ios_petro
   sequence:
 
   - delay: "{{ duration }}"
@@ -1485,7 +1482,6 @@ notify_count_test_door: &door_count_script
       door_name: "{{ door_name }}"
       count: "{{ count }}"
       count_timestamp: "{{ count_timestamp }}"
-      notify: "{{ notify }}"
 
 notify_count_main_door: *door_count_script
 notify_count_garage_entry_door: *door_count_script
@@ -1508,9 +1504,6 @@ notify_if_ajar:
     timestamp:
       description: Timestamp when the door was first opened.
       example: '2021-04-25T17:56:06.448826+00:00'
-    notify:
-      description: What device to notify
-      example: notify.ios_petro
   sequence:
   - wait_template: "{{ is_state(door, 'off') }}"
     timeout: "{{ duration }}"
@@ -1536,7 +1529,6 @@ notify_if_ajar:
                       
         {% set span = values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first %}
         {{ door_name }} has been open for {{ span }}!
-      notify: "{{ notify }}"
 
 # These automations are for the ability to restart the script & duration over again.
 
