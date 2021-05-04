@@ -575,3 +575,12 @@ switch.game_room_bookcase_outlet:
   icon: mdi:bookshelf
 switch.lzw45_mood_lighting:
   icon: mdi:glass-wine
+switch.hyperion_rainbow_swirl_fast:
+  friendly_name: Aurora
+  icon: mdi:looks
+switch.hyperion_cinema:
+  friendly_name: Cinema Lights
+  icon: mdi:theater
+switch.hyperion_usb_capture:
+  friendly_name: Mimic Screen
+  icon: mdi:television-ambient-light

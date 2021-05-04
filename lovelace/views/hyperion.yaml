@@ -16,7 +16,20 @@ cards:
       - name: Hyperion
         back_path: remote
         entities:
-        - switch.hyperion_usb_capture
+        - switch.hyperion
+    - !include '../templates/buttons/edge.yaml'
+- type: horizontal-stack
+  cards:
+    - !include '../templates/buttons/edge.yaml'
+    - !include
+      - ../templates/buttons/toggle.yaml
+      - entity: switch.hyperion_usb_capture
+    - !include
+      - ../templates/buttons/toggle.yaml
+      - entity: switch.hyperion_cinema
+    - !include
+      - ../templates/buttons/toggle.yaml
+      - entity: switch.hyperion_rainbow_swirl_fast
     - !include '../templates/buttons/edge.yaml'
 - type: horizontal-stack
   cards:

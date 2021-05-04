@@ -19,3 +19,17 @@
       entity_id:
       - light.living_room
       - switch.hyperion_usb_capture
+
+- alias: Harmony - Turn Off Hyperion with Harmony Activities
+  id: turn_off_hyperion_lights_with_harmony_activities
+  trigger:
+  - platform: template
+    value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PowerOff') }}"
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.hyperion

@@ -379,8 +379,8 @@
             sound_mode: 7ch Stereo
         turn_off: *surround_standard
 
-      hyperion_usb_capture:
-        unique_id: hyperion_usb_capture
+      hyperion:
+        unique_id: hyperion
         value_template: "{{ is_state('light.gpio_18_tv', 'on') }}"
         turn_on:
         - service: light.turn_on
@@ -388,7 +388,57 @@
             entity_id: light.gpio_18_tv
           data:
             brightness: 255
+        turn_off:
+        - service: light.turn_off
+          target:
+            entity_id: light.gpio_18_tv
+
+      hyperion_usb_capture:
+        unique_id: hyperion_usb_capture
+        value_template: >
+          {%- set entity = 'light.gpio_18_tv' %}
+          {{ is_state(entity, 'on') and is_state_attr(entity, 'effect', 'USB Capture') }}
+        turn_on:
+        - service: light.turn_on
+          target:
+            entity_id: light.gpio_18_tv
+          data:
+            brightness: 255
             effect: USB Capture
+        turn_off:
+        - service: light.turn_off
+          target:
+            entity_id: light.gpio_18_tv
+
+      hyperion_cinema:
+        unique_id: hyperion_cinema
+        value_template: >
+          {%- set entity = 'light.gpio_18_tv' %}
+          {{ is_state(entity, 'on') and is_state_attr(entity, 'effect', 'Cinema dim lights') }}
+        turn_on:
+        - service: light.turn_on
+          target:
+            entity_id: light.gpio_18_tv
+          data:
+            brightness: 255
+            effect: Cinema dim lights
+        turn_off:
+        - service: light.turn_off
+          target:
+            entity_id: light.gpio_18_tv
+
+      hyperion_rainbow_swirl_fast:
+        unique_id: hyperion_rainbow_swirl_fast
+        value_template: >
+          {%- set entity = 'light.gpio_18_tv' %}
+          {{ is_state(entity, 'on') and is_state_attr(entity, 'effect', 'Rainbow swirl fast') }}
+        turn_on:
+        - service: light.turn_on
+          target:
+            entity_id: light.gpio_18_tv
+          data:
+            brightness: 255
+            effect: Rainbow swirl fast
         turn_off:
         - service: light.turn_off
           target:
