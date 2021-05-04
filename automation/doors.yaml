@@ -139,33 +139,29 @@
 
   # Handle an unknown person.
 
-  - choose:
+  - condition: template
+    value_template: "{{ who in ['unknown'] }}"
+
+  - wait_for_trigger:
+    - platform: template
+      value_template: "{{ states('sensor.people_at_home') | int > 0 }}"
+    timeout:
+      seconds: 30
+
+  - choose: 
     - conditions:
       - condition: template
-        value_template: "{{ who in ['unknown'] }}"
+        value_template: "{{ as_timestamp(now()) - as_timestamp(timestamp) >= 30 }}"
       sequence:
-      - wait_for_trigger:
-        - platform: template
-          value_template: "{{ states('sensor.people_at_home') | int > 0 }}"
-        timeout:
-          seconds: 30
-      - choose: 
-          conditions:
-          - condition: template
-            value_template: >
-              {{ as_timestamp(now()) - as_timestamp(timestamp) >= 30 }}
-          sequence:
-          - service: script.notify
-            data:
-              title: "{{ what }} user is still unknown!"
-              message: >
-                The person who used the {{ what | lower }} is still unknown!
-        default:
-        - service: script.notify
-          data:
-            title: "Found {{ what }} user!"
-            message: >
-              The person who used the {{ what | lower }} is {{ states('sensor.people_at_home', 'or') }}!
+      - service: script.notify
+        data:
+          title: "{{ what }} user is still unknown!"
+          message: The person who used the {{ what | lower }} is still unknown!
+    default:
+    - service: script.notify
+      data:
+        title: Found {{ what }} user!
+        message: The person who used the {{ what | lower }} is {{ states('sensor.people_at_home', 'or') }}!
 
 - alias: Doors - Notify when Open too long.
   id: notify_on_door_ajar
