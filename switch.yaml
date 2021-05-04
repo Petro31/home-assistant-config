@@ -86,106 +86,54 @@
       xbox_one:
         value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Xbox One') }}"
         turn_on:
-          - service: remote.turn_on
-            data:
-              entity_id: remote.living_room
-              activity: 'Xbox One'
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Xbox One') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          service: remote.turn_on
+        - service: script.harmony_activity_on
           data:
-            entity_id: remote.living_room
-            activity: 'PowerOff'
+            activity: Xbox One
+        turn_off: &harmony_activity_off
+        - service: script.harmony_activity_off
       
       # PLAYSTATION HARMONY ACTIVITY
       ps4:
         value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PS4') }}"
         turn_on:
-          - service: remote.turn_on
-            data:
-              entity_id: remote.living_room
-              activity: 'PS4'
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PS4') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          service: remote.turn_on
+        - service: script.harmony_activity_on
           data:
-            entity_id: remote.living_room
-            activity: 'PowerOff'
+            activity: PS4
+        turn_off: *harmony_activity_off
       
       # SWITCH HARMONY ACTIVITY
       switch:
         value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Switch') }}"
         turn_on:
-          - service: remote.turn_on
-            data:
-              entity_id: remote.living_room
-              activity: 'Switch'
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Switch') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          service: remote.turn_on
+        - service: script.harmony_activity_on
           data:
-            entity_id: remote.living_room
-            activity: 'PowerOff'
+            activity: Switch
+        turn_off: *harmony_activity_off
       
       # TV HARMONY ACTIVITY
       tv:
         value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'TV') }}"
         turn_on:
-          - service: remote.turn_on
-            data:
-              entity_id: remote.living_room
-              activity: 'TV'
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'TV') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          service: remote.turn_on
+        - service: script.harmony_activity_on
           data:
-            entity_id: remote.living_room
-            activity: 'PowerOff'
-      
+            activity: TV
+        turn_off: *harmony_activity_off
+
       # OFF ACTIVITY
       poweroff:
         value_template: "{{ not is_state_attr('remote.living_room', 'current_activity', 'PowerOff') }}"
-        turn_on:
-          - service: remote.turn_on
-            data:
-              entity_id: remote.living_room
-              activity: 'PowerOff'
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PowerOff') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          - service: remote.turn_on
-            data:
-              entity_id: remote.living_room
-              activity: 'PowerOff'
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PowerOff') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
+        turn_on: &harmony_all_off
+          - service: script.harmony_all_off
+        turn_off: *harmony_all_off
         
       # ROKU HARMONY ACTIVITY
       roku:
         value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
         turn_on:
-          - service: remote.turn_on
-            data:
-              entity_id: remote.living_room
-              activity: 'Roku'
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          service: remote.turn_on
+        - service: script.harmony_activity_on
           data:
-            entity_id: remote.living_room
-            activity: 'PowerOff'
+            activity: Roku
+        turn_off: *harmony_activity_off
             
       # NETFLIX
       netflix:
@@ -193,18 +141,12 @@
           {{ is_state('switch.roku', 'on') and 
              is_state_attr('media_player.roku_living_room', 'source', 'Netflix') }}
         turn_on:
-          - service: script.roku
-          - wait_template: "{{ is_state('switch.roku', 'on') }}"
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.roku_living_room
-              source: Netflix
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          - service: switch.turn_off
-            entity_id: switch.roku
+        - service: script.roku_source_on
+          data:
+            source: Netflix
+        turn_off: &turn_off_roku
+        - service: switch.turn_off
+          entity_id: switch.roku
             
       # HBO
       hbo:
@@ -212,18 +154,10 @@
           {{ is_state('switch.roku', 'on') and 
              is_state_attr('media_player.roku_living_room', 'source', 'HBO Max') }}
         turn_on:
-          - service: script.roku
-          - wait_template: "{{ is_state('switch.roku', 'on') }}"
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.roku_living_room
-              source: HBO Max
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          - service: switch.turn_off
-            entity_id: switch.roku
+        - service: script.roku_source_on
+          data:
+            source: HBO Max
+        turn_off: *turn_off_roku
             
       # Hulu
       hulu:
@@ -231,18 +165,10 @@
           {{ is_state('switch.roku', 'on') and 
              is_state_attr('media_player.roku_living_room', 'source', 'Hulu') }}
         turn_on:
-          - service: script.roku
-          - wait_template: "{{ is_state('switch.roku', 'on') }}"
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.roku_living_room
-              source: Hulu
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          - service: switch.turn_off
-            entity_id: switch.roku
+        - service: script.roku_source_on
+          data:
+            source: Hulu
+        turn_off: *turn_off_roku
             
       # Prime Video
       prime_video:
@@ -250,18 +176,11 @@
           {{ is_state('switch.roku', 'on') and 
              is_state_attr('media_player.roku_living_room', 'source', 'Prime Video') }}
         turn_on:
-          - service: script.roku
-          - wait_template: "{{ is_state('switch.roku', 'on') }}"
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.roku_living_room
-              source: Prime Video
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          - service: switch.turn_off
-            entity_id: switch.roku
+        - service: script.roku_source_on
+          data:
+            source: Prime Video
+        turn_off: *turn_off_roku
+
             
       # Disney Plus
       disney_plus:
@@ -269,18 +188,10 @@
           {{ is_state('switch.roku', 'on') and 
              is_state_attr('media_player.roku_living_room', 'source', 'Disney Plus') }}
         turn_on:
-          - service: script.roku
-          - wait_template: "{{ is_state('switch.roku', 'on') }}"
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.roku_living_room
-              source: Disney Plus
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          - service: switch.turn_off
-            entity_id: switch.roku
+        - service: script.roku_source_on
+          data:
+            source: Disney Plus
+        turn_off: *turn_off_roku
             
       # Plex
       plex:
@@ -288,18 +199,10 @@
           {{ is_state('switch.roku', 'on') and 
              is_state_attr('media_player.roku_living_room', 'source', 'Plex - Stream for Free') }}
         turn_on:
-          - service: script.roku
-          - wait_template: "{{ is_state('switch.roku', 'on') }}"
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.roku_living_room
-              source: Plex - Stream for Free
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          - service: switch.turn_off
-            entity_id: switch.roku
+        - service: script.roku_source_on
+          data:
+            source: Plex - Stream for Free
+        turn_off: *turn_off_roku
 
       # Peacock
       peacock:
@@ -307,18 +210,10 @@
           {{ is_state('switch.roku', 'on') and 
              is_state_attr('media_player.roku_living_room', 'source', 'Peacock TV') }}
         turn_on:
-          - service: script.roku
-          - wait_template: "{{ is_state('switch.roku', 'on') }}"
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.roku_living_room
-              source: Peacock TV
-          - wait_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
-          - service: switch.turn_off
-            entity_id: switch.echo_through_receiver
-        turn_off:
-          - service: switch.turn_off
-            entity_id: switch.roku
+        - service: script.roku_source_on
+          data:
+            source: Peacock TV
+        turn_off: *turn_off_roku
 
       echo_through_receiver:
         value_template: >
@@ -326,138 +221,87 @@
              and is_state_attr('media_player.yamaha_receiver', 'source', 'Echo')
              and is_state('switch.floating_outlet_switch', 'on') }}
         turn_on:
-          - service: script.echo_outlet_power
-            data:
-              power: 'on'
-          - service: script.yamaha_power
-            data:
-              media_player: media_player.yamaha_receiver
-              power: 'on'
-          - service: script.yamaha_set_volume
-            data:
-              media_player: media_player.yamaha_receiver
-              volume: 0.7
-          - service: script.yamaha_select_source
-            data:
-              media_player: media_player.yamaha_receiver
-              source: Echo
-          - service: script.yamaha_power
-            data:
-              media_player: media_player.yamaha_receiver_zone_2
-              power: 'on'
-          - service: script.yamaha_set_volume
-            data:
-              media_player: media_player.yamaha_receiver_zone_2
-              volume: 0.7
-          - service: script.yamaha_select_source
-            data:
-              media_player: media_player.yamaha_receiver_zone_2
-              source: Echo
+        - service: script.echo_through_receiver_on
         turn_off:
-          - service: script.turn_off_audio_1
-          - service: script.yamaha_power
-            data:
-              media_player: media_player.yamaha_receiver_zone_2
-              power: 'off'
-          - service: script.echo_outlet_power
-            data:
-              power: 'off'
+        - service: script.echo_through_receiver_off
+
       ### SOURCES FOR RECEIVER ###
       
       # Xbox Source
       xbox_source:
         value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Xbox One') }}"
-        turn_on:
+        turn_on: &xbox_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_receiver
               source: Xbox One
-        turn_off:
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.yamaha_receiver
-              source: Xbox One
+        turn_off: *xbox_source
+
       # Playstation Source
       playstation_source:
         value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Playstation 4') }}"
-        turn_on:
+        turn_on: &playstation_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_receiver
               source: Playstation 4
-        turn_off:
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.yamaha_receiver
-              source: Playstation 4
-      # Playstation Source
+        turn_off: *playstation_source
+
+      # Switch Source
       nintendo_switch_source:
         value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Switch') }}"
-        turn_on:
+        turn_on: &nintendo_switch_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_receiver
               source: Switch
-        turn_off:
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.yamaha_receiver
-              source: Switch
+        turn_off: *nintendo_switch_source
+
       # Roku Source
       roku_source:
         value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Roku') }}"
-        turn_on:
+        turn_on: &roku_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_receiver
               source: Roku
-        turn_off:
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.yamaha_receiver
-              source: Roku
+        turn_off: *roku_source
+
       # Phone Source
       phone_source:
         value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Phone') }}"
-        turn_on:
+        turn_on: &phone_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_receiver
               source: Phone
-        turn_off:
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.yamaha_receiver
-              source: Phone
+        turn_off: *phone_source
+
       # Alexa Source
       alexa_source:
         value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Echo') }}"
-        turn_on:
+        turn_on: &alexa_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_receiver
               source: Echo
-        turn_off:
-          - service: media_player.select_source
-            data:
-              entity_id: media_player.yamaha_receiver
-              source: Echo
+        turn_off: *alexa_source
 
       # Surround Sound Modes
 
-# Sports Surround Mode
+      # Sports Surround Mode
       surround_mode_sports:
         value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Sports') }}"
         turn_on:
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: 'Sports'
-        turn_off:
+            sound_mode: Sports
+        turn_off: &surround_standard
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+            sound_mode: Standard
 
       # Action Game Surround Mode
       surround_mode_action_game:
@@ -466,12 +310,8 @@
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: 'Action Game'
-        turn_off:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+            sound_mode: Action Game
+        turn_off: *surround_standard
 
       # Roleplaying Game Surround Mode
       surround_mode_roleplaying_game:
@@ -480,26 +320,14 @@
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: 'Roleplaying Game'
-        turn_off:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+            sound_mode: Roleplaying Game
+        turn_off: *surround_standard
 
       # Standard Surround Mode
       surround_mode_standard:
         value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Standard') }}"
-        turn_on:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
-        turn_off:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+        turn_on: *surround_standard
+        turn_off: *surround_standard
 
       # Sci-Fi Surround Mode
       surround_mode_sci_fi:
@@ -508,12 +336,8 @@
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: 'Sci-Fi'
-        turn_off:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+            sound_mode: Sci-Fi
+        turn_off: *surround_standard
 
       # Adventure Surround Mode
       surround_mode_adventure:
@@ -522,12 +346,8 @@
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: 'Adventure'
-        turn_off:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+            sound_mode: Adventure
+        turn_off: *surround_standard
 
       # Drama Surround Mode
       surround_mode_drama:
@@ -536,12 +356,8 @@
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: 'Drama'
-        turn_off:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+            sound_mode: Drama
+        turn_off: *surround_standard
 
       # Surround Decoder Surround Mode
       surround_mode_surround_decoder:
@@ -550,12 +366,8 @@
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: 'Surround Decoder'
-        turn_off:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+            sound_mode: Surround Decoder
+        turn_off: *surround_standard
 
       # 7ch Stereo Surround Mode
       surround_mode_7ch_stereo:
@@ -564,12 +376,8 @@
         - service: media_player.select_sound_mode
           data: 
             entity_id: media_player.yamaha_receiver
-            sound_mode: '7ch Stereo'
-        turn_off:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 'Standard'
+            sound_mode: 7ch Stereo
+        turn_off: *surround_standard
 
       hyperion_usb_capture:
         unique_id: hyperion_usb_capture
