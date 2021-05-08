@@ -183,11 +183,14 @@
         'binary_sensor.garage_entry_door': 90,
         'binary_sensor.sliding_door': 240,
         'binary_sensor.garage_door_tilt': 300,
-        'binary_sensor.back_garage_door_tilt': 300,
+        'binary_sensor.rear_garage_door_tilt': 300,
         'input_boolean.test_door': 5,
       } %}
       {%- if valid and trigger.to_state.entity_id in times %}
         {{ times[trigger.to_state.entity_id] }}
+      {%- else %}
+      {# default to 5 minutes for other doors #}
+        300
       {%- endif %}
     door_name: >
       {{ state_attr(trigger.entity_id, 'friendly_name') }}
