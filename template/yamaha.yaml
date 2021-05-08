@@ -1,0 +1,9 @@
+- binary_sensor:
+  - unique_id: yamaha_receiver
+    name: Yamaha Receiver
+    device_class: power
+    state: >
+      {{ expand('media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2') 
+                | selectattr('state','eq','on') | list | length >= 1 }}
+    attributes:
+      template: yamaha

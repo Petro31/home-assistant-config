@@ -1,0 +1,34 @@
+- sensor:
+  - unique_id: dst
+    name: Daylight Savings Times
+    device_class: timestamp
+    state: >
+      {%- set ns = namespace(previous = 2, spring=none, fall=none) %}
+      {%- set today = strptime(states('sensor.date'), '%Y-%m-%d').astimezone().replace(hour=ns.previous) %}
+      {%- for i in range(365) %}
+      {%- set day = (today + timedelta(days=i)).astimezone() %}
+      {%- if ns.previous - day.hour == -1 %}
+      {%- set ns.spring = today + timedelta(days=i) | timestamp_local %}
+      {%- elif ns.previous - day.hour == 1 %}
+      {%- set ns.fall = today + timedelta(days=i) | timestamp_local %}
+      {%- endif %}
+      {%- set ns.previous = day.hour %}
+      {%- endfor %}
+      {{ [ns.spring, ns.fall] | min }}
+    attributes:
+      template: dst
+      next: >
+        {%- set ns = namespace(previous = 2, spring=none, fall=none) %}
+        {%- set today = strptime(states('sensor.date'), '%Y-%m-%d').astimezone().replace(hour=ns.previous) %}
+        {%- for i in range(365) %}
+        {%- set day = (today + timedelta(days=i)).astimezone() %}
+        {%- if ns.previous - day.hour == -1 %}
+        {%- set ns.spring = today + timedelta(days=i) %}
+        {%- elif ns.previous - day.hour == 1 %}
+        {%- set ns.fall = today + timedelta(days=i) %}
+        {%- endif %}
+        {%- set ns.previous = day.hour %}
+        {%- endfor %}
+        {%- set next = [ns.spring, ns.fall] | min %}
+        {%- set phrase = 'lose an hour' if next == ns.spring else 'gain an hour' %}
+        {"spring": "{{ns.spring}}", "fall": "{{ns.fall}}", "event": "{{next}}", "days_to_event":{{(next-today).days}}, "phrase": "{{phrase}}"}

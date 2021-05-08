@@ -1,0 +1,25 @@
+- sensor:
+  - unique_id: ups_uptime
+    name: UPS Uptime
+    device_class: timestamp
+    state: >
+      {%- set dt = strptime(states('sensor.ups_startup_time'), '%Y-%m-%d %H:%M:%S %z') %}
+      {{ dt.timestamp() | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
+    attributes:
+      template: system
+
+  - unique_id: disk_use_total
+    name: Disk Use Total
+    state: >
+      {{ (states('sensor.disk_free_home') | float + states('sensor.disk_use_home') | float) | round(1) }}
+    unit_of_measurement: "GiB"
+    attributes:
+      template: system
+      
+  - unique_id: memory_use_total
+    name: Memory Use Total
+    state: >
+      {{ (states('sensor.memory_free') | float + states('sensor.memory_use') | float) | round(1) }}
+    unit_of_measurement: "MiB"
+    attributes:
+      template: system

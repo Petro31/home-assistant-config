@@ -1,0 +1,8 @@
+- sensor:
+  - unique_id: outside_temperature
+    name: Outside Temperature
+    state: > 
+      {{ state_attr('weather.dark_sky', 'temperature') }}
+    unit_of_measurement: '°F'
+    attributes:
+      template: temperature

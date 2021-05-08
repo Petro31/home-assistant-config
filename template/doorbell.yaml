@@ -1,0 +1,12 @@
+- binary_sensor:
+  - unique_id: doorbell_chime
+    name: Doorbell Chime
+    device_class: sound
+    state: >
+      {{ is_state('switch.doorbell_chime', 'on') }}
+    availability: >
+      {{ expand('switch.doorbell_chime') 
+                | selectattr('state', 'in', ['unknown', 'unavailable']) 
+                | list | length == 0 }}
+    attributes:
+      template: doorbell

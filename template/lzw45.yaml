@@ -1,0 +1,25 @@
+- binary_sensor:
+  - unique_id: custom_effects_use_color_1
+    name: Color 1
+    state: > 
+      {{ states('input_number.custom_effects_count') | int >= 1 }}
+    attributes:
+      template: lzw45
+  - unique_id: custom_effects_use_color_2
+    name: Color 2
+    state: > 
+      {{ states('input_number.custom_effects_count') | int >= 2 }}
+    attributes:
+      template: lzw45
+  - unique_id: custom_effects_use_color_3
+    name: Color 3
+    state: > 
+      {{ states('input_number.custom_effects_count') | int >= 3 }}
+    attributes:
+      template: lzw45
+  - unique_id: custom_effects_use_color_4
+    name: Color 4
+    state: > 
+      {{ states('input_number.custom_effects_count') | int >= 4 }}
+    attributes:
+      template: lzw45
