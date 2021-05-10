@@ -27,4 +27,4 @@ This is a work in progress.  I'm just getting my config out in the open for now 
   <img src="https://raw.githubusercontent.com/Petro31/home-assistant-config/master/www/images/github_images/network.png", width="800" />
 </p>
 
-<a href="https://www.buymeacoffee.com/OJfxe78" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-blue.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+<a href="https://www.buymeacoffee.com/Petro31" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-blue.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
