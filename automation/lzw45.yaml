@@ -63,6 +63,7 @@
     - input_select.quick_strip_effect
     - script.lzw45_ui_pixel_effect
     - script.lzw45_ui_custom_effect
+    - script.lzw45_party_effect
   variables:
     valid_trigger: >
       {{ trigger.from_state is defined and trigger.from_state is not none 
@@ -70,7 +71,7 @@
          and trigger.from_state.state != trigger.to_state.state }}
     last_effect: >
       {%- if valid_trigger %}
-        {%- if trigger.to_state.object_id == 'lzw45_ui_pixel_effect' %}
+        {%- if trigger.to_state.object_id in ('lzw45_ui_pixel_effect', 'lzw45_party_effect') %}
           {{ states('input_select.pixel_effect') }}
         {%- elif trigger.to_state.object_id == 'lzw45_ui_custom_effect' %}
           custom

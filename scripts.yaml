@@ -1256,6 +1256,21 @@ lzw45_ui_pixel_effect:
   - delay:
       seconds: 1
 
+lzw45_party_effect:
+  variables:
+    nodes: [ 91, 92 ]
+  sequence:
+  - repeat:
+      count: "{{ nodes | length }}"
+      sequence:
+      - service: script.lzw45_pixel_effect
+        data:
+          node: "{{ nodes[repeat.index - 1] | int }}"
+          effect: aurora
+          brightness_pct: 99
+  - delay:
+      seconds: 1
+
 lzw45_ui_quick_effect:
   variables:
     nodes: [ 91, 92 ]
@@ -1715,3 +1730,31 @@ echo_through_receiver_off:
   - service: script.power_off
     data:
       entity: switch.floating_outlet_switch
+
+party_on:
+  mode: single
+  variables:
+    nodes: [ 91, 92 ]
+  sequence:
+  - service: switch.turn_on
+    target:
+      entity_id:
+      - switch.echo_through_receiver
+      - switch.hyperion_rainbow_swirl_fast
+  - service: input_select.select_option
+    target:
+      entity_id:
+      - input_select.quick_strip_effect
+    data:
+      option: aurora
+  - service: script.lzw45_party_effect
+
+party_off:
+  mode: single
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id:
+      - switch.echo_through_receiver
+      - switch.hyperion_rainbow_swirl_fast
+      - switch.lzw45_mood_lighting

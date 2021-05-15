@@ -51,6 +51,10 @@ smart_home:
       - switch.garage_workbench
       - switch.hbo
       - switch.hulu
+      - switch.hyperion
+      - switch.hyperion_cinema
+      - switch.hyperion_rainbow_swirl_fast
+      - switch.hyperion_usb_capture
       - switch.inside
       - switch.kitchen_cabinet
       - switch.kitchen_outlet_above_fridge
@@ -58,12 +62,14 @@ smart_home:
       - switch.kitchen_pantry
       - switch.laundry
       - switch.living_room_window
+      - switch.lzw45_mood_lighting
       - switch.master_bathroom_fan
       - switch.master_nightstand_left
       - switch.master_nightstand_right
       - switch.netflix
       - switch.outside
       - switch.outside_porch
+      - switch.party_mode
       - switch.passenger_sconce
       - switch.prime_video
       - switch.ps4
@@ -170,6 +176,14 @@ smart_home:
       name: HBO
     switch.hulu:
       name: Hulu
+    switch.hyperion:
+      name: Hyperion
+    switch.hyperion_cinema:
+      name: Hyperion Cinema
+    switch.hyperion_rainbow_swirl_fast:
+      name: Hyperion Rainbow
+    switch.hyperion_usb_capture:
+      name: Hyperion Capture
     switch.inside:
       name: Inside
     switch.kitchen_cabinet:
@@ -186,6 +200,8 @@ smart_home:
       name: Laundry
     switch.living_room_window:
       name: Living Room Outlet
+    switch.lzw45_mood_lighting:
+      name: Mood Lighting
     switch.master_bathroom_fan:
       name: Master Bath Fan
     switch.master_nightstand_left:
@@ -204,6 +220,8 @@ smart_home:
       name: Outside
     switch.outside_porch:
       name: Outside Outlet
+    switch.party_mode:
+      name: Party
     switch.passenger_sconce:
       name: Passenger Sconce
     switch.petro_awake_sleep_automation:

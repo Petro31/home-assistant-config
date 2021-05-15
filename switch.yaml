@@ -3,6 +3,18 @@
 - platform: template
   switches:
             
+      # Party mode
+      party_mode:
+        unique_id: party_mode
+        friendly_name: Party Mode
+        value_template: >
+          {% set switches = expand('switch.echo_through_receiver', 'switch.hyperion_rainbow_swirl_fast', 'switch.lzw45_mood_lighting') | list %}
+          {{ switches | selectattr('state', 'eq', 'on') | list | count == switches | count }}
+        turn_on:
+        - service: script.party_on
+        turn_off:
+        - service: script.party_off
+
       # LZW MOOD LIGHTING
       lzw45_mood_lighting:
         unique_id: lzw45_mood_lighting
