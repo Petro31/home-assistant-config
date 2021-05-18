@@ -1748,6 +1748,15 @@ party_on:
     data:
       option: aurora
   - service: script.lzw45_party_effect
+  - delay:
+      seconds: 2
+  - service: media_player.play_media
+    target:
+      entity_id:
+      - media_player.living_room_dot
+    data:
+      media_content_id: Empire of the sun station
+      media_content_type: AMAZON_MUSIC
 
 party_off:
   mode: single
@@ -1758,3 +1767,8 @@ party_off:
       - switch.echo_through_receiver
       - switch.hyperion_rainbow_swirl_fast
       - switch.lzw45_mood_lighting
+
+  - service: media_player.media_stop
+    target:
+      entity_id:
+      - media_player.living_room_dot
