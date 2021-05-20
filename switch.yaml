@@ -208,12 +208,19 @@
       # Plex
       plex:
         value_template: >
-          {{ is_state('switch.roku', 'on') and 
-             is_state_attr('media_player.roku_living_room', 'source', 'Plex - Stream for Free') }}
+          {{ is_state('switch.roku', 'on') and 'plex' in state_attr('media_player.roku_living_room', 'source') | string | lower }}
         turn_on:
         - service: script.roku_source_on
           data:
-            source: Plex - Stream for Free
+            source: >
+              {%- set player = expand('media_player.roku_living_room') | first %}
+              {%- set ns = namespace(ret=[]) %}
+              {%- for source in player.attributes.source_list %}
+                {%- if 'plex' in source.lower() %}
+                  {%- set ns.ret = ns.ret + [ source ] %}
+                {%- endif %}
+              {%- endfor %}
+              {{ ns.ret | first | default('Plex - Free Movies & TV') }}
         turn_off: *turn_off_roku
 
       # Peacock

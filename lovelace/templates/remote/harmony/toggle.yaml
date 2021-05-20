@@ -62,7 +62,7 @@ custom_fields:
       var on = '{{ color }}';
       var off = '{{ off_color }}';
       var color = '{{ unavailable_color }}';
-      if (entity.state === 'on')
+      if (['on', 'idle', 'playing'].includes(entity.state))
         color = on;
       else if (entity.state === 'off')
         color = off;
@@ -74,7 +74,11 @@ custom_fields:
     ]]]
 {%- endif %}
 state:
-- value: "on"
+- operator: template
+  value: |
+    [[[
+      return ['on', 'idle', 'playing'].includes(entity.state);
+    ]]]
   styles:
     card:
       - opacity: 1.0
