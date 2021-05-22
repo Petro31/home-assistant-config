@@ -4,8 +4,6 @@ homeassistant:
 alexa: !include alexa.yaml
 alexa_media: !include alexa_media.yaml
 analytics:
-apcupsd:
-  host: a722577e-apcupsd
 automation: !include_dir_merge_list automation
 binary_sensor: !include binary_sensor.yaml
 camera: !include cameras.yaml

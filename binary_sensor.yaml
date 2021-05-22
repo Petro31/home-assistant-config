@@ -1,10 +1,6 @@
-
-  - platform: apcupsd
-
   - platform: trend
     sensors:
       outside_temperature_rising:
-
         entity_id: sensor.outside_temperature
         sample_duration: 7200
         min_gradient: 0.00027

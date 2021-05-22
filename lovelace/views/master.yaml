@@ -566,11 +566,12 @@
     'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
       'sensor.ups_uptime',
+      'sensor.ups_status',
       'sensor.ups_load',
-      'sensor.ups_time_left',
-      'sensor.ups_battery',
       'sensor.ups_input_voltage',
-      'binary_sensor.ups_online_status',
+      'sensor.ups_battery_charge',
+      'sensor.ups_battery_runtime',
+      'sensor.ups_battery_voltage',
     ],
   },{
     'name': 'Synology',

@@ -219,9 +219,14 @@ custom_fields:
               const expr = /[^-.0-9]+/;
               var has_units = expr.test(statestr);
 
-              // console.log(`${entity_id}: "${statestr}" ${matches}`);
+              // console.log(`${entity_id}: "${statestr}"`);
               if (value && has_units)
                 units = statestr.replace(/[.0-9]+/, '');
+
+              if (units !== null && (units.includes('hr') || units.includes('min'))) {
+                value = statestr;
+                units = null;
+              }
             }
           }
 

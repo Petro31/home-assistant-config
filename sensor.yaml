@@ -14,16 +14,7 @@
       - type: processor_use
       - type: last_boot
       
-  # APC
-  
-  - platform: apcupsd
-    resources:
-      - bcharge
-      - model
-      - linev
-      - loadpct
-      - timeleft
-      - starttime
+  # Time and Date / Unused
       
   - platform: time_date
     display_options:

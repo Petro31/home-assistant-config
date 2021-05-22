@@ -125,9 +125,24 @@ custom_fields:
           //   at you synology.
           const expr = /[^-.0-9]+/;
           var has_units = expr.test(statestr.trim());
-          // console.log(`${entity_id}: "${statestr}" ${matches}`);
+          // console.log(`${entity_id}: "${statestr}"`);
           if (value && has_units)
-            units = statestr.replace(/[.0-9]+/, ''); 
+            units = statestr.replace(/[.0-9]+/, '');
+
+          // check for x hr n min. 
+          if (units !== null && (units.includes('hr') || units.includes('min'))) {
+            var stateitems = statestr.split(' ');
+            if (stateitems.length == 4)
+            {
+              value = stateitems.slice(0, 2).join(' ');
+              units = stateitems.slice(2, 4).join(' ');
+            }
+            else if (stateitems == 2)
+            {
+              value = stateitems[0];
+              units = stateitems[1];
+            }
+          }
         }
       }
       // console.log(`${entity_id}: ${statestr}, ${units}, ${date}, ${value}`);
