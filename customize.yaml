@@ -584,3 +584,7 @@ switch.hyperion_cinema:
 switch.hyperion_usb_capture:
   friendly_name: Mimic Screen
   icon: mdi:television-ambient-light
+switch.chromecast:
+  icon: mdi:cast
+switch.chromecast_source:
+  icon: mdi:cast

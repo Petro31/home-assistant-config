@@ -33,3 +33,61 @@
   - service: switch.turn_off
     target:
       entity_id: switch.hyperion
+
+- alias: Harmony - Give ChromeCast control to remote using emulated roku.
+  id: harmony_give_chromecast_control_to_remote_using_emulated_roku
+  mode: restart
+  trigger:
+  - platform: event
+    event_type: roku_command
+    event_data:
+      source_name: Home Assistant
+  variables:
+    target: media_player.chromecast
+    jump_in_seconds: 10
+    key: >
+      {{ trigger.event.data.key | default("NoPress") }}
+    keys:
+    # Mainly for my notes for the future, but unused.
+    - Play
+    - Rev
+    - Fwd
+    play_pause: "{{ key == 'Play' }}"
+    rev: "{{ key == 'Rev' }}"
+    fwd: "{{ key == 'Fwd' }}"
+    rev_fwd: "{{ fwd or rev }}"
+  condition:
+  - condition: template
+    value_template: >
+      {{ states(target) in ['playing', 'paused'] and key != 'NoPress' }}
+  action:
+  - choose:
+    # Play / Pause
+    - conditions:
+      - condition: template
+        value_template: "{{ play_pause }}"
+      sequence:
+      - service: media_player.media_play_pause
+        target:
+          entity_id: "{{ target }}"
+
+    # Reverse / Forward
+    - conditions:
+      - condition: template
+        value_template: "{{ rev_fwd }}"
+      sequence:
+      - service: media_player.media_seek
+        target:
+          entity_id: "{{ target }}"
+        data:
+          seek_position: >
+            {%- set current = state_attr(target, 'media_position') | default(0) %}
+            {%- set total = state_attr(target, 'media_duration') | default(0) %}
+            {%- set dir = 1 if fwd else -1 %}
+            {%- set next = current + jump_in_seconds * dir %}
+            {%- if fwd %}
+              {{ total if next >= total else next }}
+            {%- else %}
+              {{ 0 if next <= 0 else next }}
+            {%- endif %}
+              

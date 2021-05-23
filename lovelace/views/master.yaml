@@ -953,11 +953,8 @@
   {%- endfor %}
 {%- endfor %}
 
-# Create the reciever view
-- !include receiver.yaml
-
-# Create the hyperion view
-- !include hyperion.yaml
+# Create the remote settings view
+- !include remote_settings.yaml
 
 # Testing
 

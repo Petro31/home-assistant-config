@@ -1,11 +1,12 @@
 # lovelace_gen
 {%- set sources_cols = 5 %}
-{%- set sources_rows = 1 %}
+{%- set sources_rows = 2 %}
 {% set sources = [
   {'entity':'switch.xbox_source', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote_icon_button.yaml'},
   {'entity':'switch.playstation_source', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote_icon_button.yaml'},
   {'entity':'switch.roku_source', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote_image_button.yaml', 'image': '/local/images/roku.png'},
   {'entity':'switch.nintendo_switch_source', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote_icon_button.yaml'},
+  {'entity':'switch.chromecast_source', 'color': 'rgba(66,133,244)', 'template': '../templates/remote_icon_button.yaml'},
   {'entity':'switch.alexa_source', 'color': 'rgba(49, 196, 243)', 'template': '../templates/remote_icon_button.yaml'},
 ] %}
 
@@ -23,19 +24,58 @@
   {'entity': 'switch.surround_mode_sports', 'name': 'Sports', 'sound_mode':'Sports', 'icon': 'mdi:basketball',},
 ] %}
 
-title: Yamaha Receiver
-path: yamaha receiver
-icon: mdi:audio-video
+title: Remote Settings
+path: remote settings
+icon: mdi:cog
 visible: {{ visible | default(false) }}
 cards:
+
 - type: horizontal-stack
   cards:
     - !include '../templates/buttons/edge.yaml'
     - !include
       - ../templates/headers/navigator.yaml
-      - name: Yamaha Receiver
+      - name: Remote Settings
         back_path: remote
     - !include '../templates/buttons/edge.yaml'
+
+# HYPERION 
+
+- type: vertical-stack
+  cards:
+  - !include
+    - ../templates/headers/label.yaml
+    - content: 'Hyperion'
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include
+        - ../templates/buttons/toggle.yaml
+        - entity: switch.hyperion_usb_capture
+      - !include
+        - ../templates/buttons/toggle.yaml
+        - entity: switch.hyperion_cinema
+      - !include
+        - ../templates/buttons/toggle.yaml
+        - entity: switch.hyperion_rainbow_swirl_fast
+      - !include '../templates/buttons/edge.yaml'
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - type: entities
+        title: Effects
+        style: |
+          ha-card {
+            border-radius: 15px;
+            }
+        entities:
+        - entity: input_number.hyperion_brightness
+          name: Brightness
+        - input_select.hyperion_effects
+      - !include '../templates/buttons/edge.yaml'
+
+# SOURCE
+
 - type: vertical-stack
   cards:
   - !include
@@ -70,6 +110,9 @@ cards:
     - !include '../templates/spacer_edge.yaml'
     {%- endif %}
   {%- endfor %}
+
+# SURROUND MODE
+
 - type: vertical-stack
   cards:
   - !include

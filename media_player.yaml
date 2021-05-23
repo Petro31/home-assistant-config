@@ -17,7 +17,7 @@
     source_names:
       HDMI1: "Xbox One"
       HDMI2: "Playstation 4"
-      HDMI3: "Empty"
+      HDMI3: "Chromecast"
       HDMI4: "Roku"
       HDMI5: "Switch"
       AUDIO1: "Phone"

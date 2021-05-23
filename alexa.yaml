@@ -29,6 +29,11 @@ smart_home:
       - light.passenger_door_bulb
       - media_player.yamaha_receiver
       - media_player.yamaha_receiver_zone_2
+      - script.cast_workout_core
+      - script.cast_workout_cardio_kickboxing
+      - script.cast_workout_lower_body
+      - script.cast_workout_total_body
+      - script.cast_workout_upper_body
       - sensor.garage_temperature
       - sensor.kitchen_temperature
       - sensor.master_bathroom_temperature
@@ -134,6 +139,16 @@ smart_home:
       name: Living Room Speakers
     media_player.yamaha_receiver_zone_2:
       name: Dining Room Speakers
+    script.cast_workout_core:
+      name: Core Workout
+    script.cast_workout_cardio_kickboxing:
+      name: Cardio Kickboxing Workout
+    script.cast_workout_lower_body:
+      name: Lower Body Workout
+    script.cast_workout_total_body:
+      name: Total Body Workout
+    script.cast_workout_upper_body:
+      name: Upper Body Workout
     sensor.garage_temperature:
       name: Garage Temperature
     sensor.kitchen_temperature:

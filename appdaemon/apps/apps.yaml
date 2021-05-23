@@ -27,6 +27,10 @@ anchors:
     activity: TV
     device: Sony TV
 
+  chromecast: &chromecast
+    activity: Chromecast
+    device: Chromecast
+
 ################
 # CURRENT APPS #
 ################
@@ -55,6 +59,7 @@ hac_living_room:
   - <<: *xbox
   - <<: *ps4
   - <<: *tv
+  - <<: *chromecast
   commands:
   - Rewind
   - Play

@@ -130,6 +130,15 @@
           data:
             activity: TV
         turn_off: *harmony_activity_off
+      
+      # CHROMECAST HARMONY ACTIVITY
+      chromecast:
+        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Chromecast') }}"
+        turn_on:
+        - service: script.harmony_activity_on
+          data:
+            activity: Chromecast
+        turn_off: *harmony_activity_off
 
       # OFF ACTIVITY
       poweroff:
@@ -295,6 +304,16 @@
               entity_id: media_player.yamaha_receiver
               source: Phone
         turn_off: *phone_source
+
+      # Phone Source
+      chromecast_source:
+        value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Chromecast') }}"
+        turn_on: &chromecast_source
+          - service: media_player.select_source
+            data:
+              entity_id: media_player.yamaha_receiver
+              source: Chromecast
+        turn_off: *chromecast_source
 
       # Alexa Source
       alexa_source:
