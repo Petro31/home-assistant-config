@@ -1808,37 +1808,9 @@ cast_workout_video:
       media_content_id: "{{ content_id }}"
       media_content_type: movie
 
-cast_workout_core:
+stop_casting:
   mode: single
   sequence:
-  - service: script.cast_workout_video
-    data:
-      workout: Core
-
-cast_workout_cardio_kickboxing:
-  mode: single
-  sequence:
-  - service: script.cast_workout_video
-    data:
-      workout: Cardio Kickboxing
-
-cast_workout_lower_body:
-  mode: single
-  sequence:
-  - service: script.cast_workout_video
-    data:
-      workout: Lower Body
-
-cast_workout_total_body:
-  mode: single
-  sequence:
-  - service: script.cast_workout_video
-    data:
-      workout: Total Body
-
-cast_workout_upper_body:
-  mode: single
-  sequence:
-  - service: script.cast_workout_video
-    data:
-      workout: Upper Body
+  - service: media_player.turn_off
+    target:
+      entity_id: media_player.chromecast
