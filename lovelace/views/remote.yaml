@@ -148,22 +148,25 @@ cards:
               - !include
                 - '../templates/remote/harmony/control.yaml'
                 - entity: sensor.active_media_player
-                  service: script.multizone_cycle_zone
-                  icon: '!include /config/lovelace/partials/active_media_player_icon.yaml'
+                  service: multizone_controller.next_zone
+                  use_entity: true
               - !include
                 - '../templates/remote/harmony/control.yaml'
-                - entity: script.multizone_volume_up
+                - entity: multizone_controller.volume_up
                   icon: mdi:volume-plus
+                  use_entity: true
                   repeat: 250
               - !include
                 - '../templates/remote/harmony/control.yaml'
-                - entity: script.multizone_volume_down
+                - entity: multizone_controller.volume_down
                   icon: mdi:volume-minus
+                  use_entity: true
                   repeat: 250
               - !include
                 - '../templates/remote/harmony/control.yaml'
-                - entity: script.multizone_volume_mute
+                - entity: multizone_controller.toggle_volume_mute
                   icon: mdi:volume-mute
+                  use_entity: true
             - type: vertical-stack
               view_layout:
                 grid-area: directionpad
@@ -312,23 +315,26 @@ cards:
       - !include
         - '../templates/remote/harmony/control.yaml'
         - entity: sensor.active_media_player
-          service: script.multizone_cycle_zone
-          icon: '!include /config/lovelace/partials/active_media_player_icon.yaml'
+          service: multizone_controller.next_zone
+          use_entity: true
       - !include '../templates/buttons/spacer.yaml'
       - !include
         - '../templates/remote/harmony/control.yaml'
-        - entity: script.multizone_volume_up
+        - entity: multizone_controller.volume_up
           icon: mdi:volume-plus
+          use_entity: true
           repeat: 250
       - !include
         - '../templates/remote/harmony/control.yaml'
-        - entity: script.multizone_volume_down
+        - entity: multizone_controller.volume_down
           icon: mdi:volume-minus
+          use_entity: true
           repeat: 250
       - !include
         - '../templates/remote/harmony/control.yaml'
-        - entity: script.multizone_volume_mute
+        - entity: multizone_controller.toggle_volume_mute
           icon: mdi:volume-mute
+          use_entity: true
       - !include '../templates/buttons/edge.yaml'
   - type: conditional
     conditions:

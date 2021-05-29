@@ -35,19 +35,6 @@ anchors:
 # CURRENT APPS #
 ################
 
-# https://github.com/Petro31/ad_multizone_media_control
-
-multizone_controller:
-  module: multizone_media_control
-  class: MultiZoneController
-  media_players:
-  - media_player.yamaha_receiver
-  - media_player.yamaha_receiver_zone_2
-  snap_volume: true
-  volume_increment: 0.05
-  volume_max: 1.0
-  volume_min: 0.2
-
 # https://github.com/Petro31/ad_harmony_activity_controls
 
 hac_living_room:

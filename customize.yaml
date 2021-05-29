@@ -235,7 +235,6 @@ fan.master_fixture:
   icon: mdi:fan
 sensor.active_media_player:
   friendly_name: Active Media Player
-  icon: mdi:surround-sound
 sensor.bonus_room_switch_uptime:
   friendly_name: Bonus Room Switch Uptime
   device_class: timestamp

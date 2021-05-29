@@ -65,11 +65,19 @@ custom_fields:
 tap_action:
   action: call-service
   service: {{ service | default('\"[[[ return entity.entity_id; ]]]\"') }}
+{%- if use_entity is defined %}
+  service_data:
+    entity_id: {{ entity }}
+{%- endif %}
   haptic: light
 {%- if repeat is defined %}
 hold_action:
   action: call-service
   service: {{ service | default('\"[[[ return entity.entity_id; ]]]\"') }}
+{%- if use_entity is defined %}
+  service_data:
+    entity_id: {{ entity }}
+{%- endif %}
   haptic: light
   repeat: {{ repeat }}
 {%- endif %}
