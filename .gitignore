@@ -203,3 +203,5 @@ home-assistant-rollback.log
 www/images/wine.png
 
 blueprints/script/homeassistant/confirmable_notification.yaml
+
+frigate.yml

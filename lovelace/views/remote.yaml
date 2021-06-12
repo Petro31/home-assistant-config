@@ -152,19 +152,22 @@ cards:
                   use_entity: true
               - !include
                 - '../templates/remote/harmony/control.yaml'
-                - entity: multizone_controller.volume_up
+                - entity: sensor.active_media_player
+                  service: multizone_controller.volume_up
                   icon: mdi:volume-plus
                   use_entity: true
                   repeat: 250
               - !include
                 - '../templates/remote/harmony/control.yaml'
-                - entity: multizone_controller.volume_down
+                - entity: sensor.active_media_player
+                  service: multizone_controller.volume_down
                   icon: mdi:volume-minus
                   use_entity: true
                   repeat: 250
               - !include
                 - '../templates/remote/harmony/control.yaml'
-                - entity: multizone_controller.toggle_volume_mute
+                - entity: sensor.active_media_player
+                  service: multizone_controller.toggle_volume_mute
                   icon: mdi:volume-mute
                   use_entity: true
             - type: vertical-stack
@@ -320,19 +323,22 @@ cards:
       - !include '../templates/buttons/spacer.yaml'
       - !include
         - '../templates/remote/harmony/control.yaml'
-        - entity: multizone_controller.volume_up
+        - entity: sensor.active_media_player
+          service: multizone_controller.volume_up
           icon: mdi:volume-plus
           use_entity: true
           repeat: 250
       - !include
         - '../templates/remote/harmony/control.yaml'
-        - entity: multizone_controller.volume_down
+        - entity: sensor.active_media_player
+          service: multizone_controller.volume_down
           icon: mdi:volume-minus
           use_entity: true
           repeat: 250
       - !include
         - '../templates/remote/harmony/control.yaml'
-        - entity: multizone_controller.toggle_volume_mute
+        - entity: sensor.active_media_player
+          service: multizone_controller.toggle_volume_mute
           icon: mdi:volume-mute
           use_entity: true
       - !include '../templates/buttons/edge.yaml'

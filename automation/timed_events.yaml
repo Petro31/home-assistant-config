@@ -1,17 +1,24 @@
-- alias: Timed Event - Daily Snapshot
-  id: daily_snapshot
+- alias: Timed Event - Snapshot status
+  id: snapshot_status
   trigger:
-    - platform: time
-      at: '04:00:00'
+  - platform: state
+    entity_id: sensor.samba_backup
+  variables:
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}"
+    status: >
+      {{ trigger.to_state.state | default | lower }}
+    not_idle: >
+      {{ status != 'idle' }}
+  condition:
+  - condition: template
+    value_template: "{{ valid and not_idle }}"
   action:
-    - service: hassio.addon_start
-      data:
-        addon: 954f2f4e_remote_backup
-    - service: script.notify
-      data:
-        title: Daily Snapshot
-        message: "Successfully created daily snapshot."
-    
+  - service: script.notify
+    data:
+      title: Snapshot Status
+      message: "Samba backup {{ status }}."
+
 - alias: Timed Event - Garbage Day Message
   id: garbage_day_message
   trigger:

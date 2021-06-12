@@ -18,8 +18,7 @@ frontend:
   themes: !include_dir_merge_named themes/
 group: !include group.yaml
 history: !include history.yaml
-http: 
-image_processing: !include image_processing.yaml
+http:
 input_boolean:
 input_select:
 input_text:
@@ -33,6 +32,7 @@ logger: !include logger.yaml
 lovelace: !include lovelace.yaml
 lovelace_gen:
 media_player: !include media_player.yaml
+media_source:
 mobile_app:
 mqtt: !include mqtt.yaml
 my:
