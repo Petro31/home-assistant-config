@@ -1,0 +1,136 @@
+living_room:
+  source: remote.living_room
+  activity_device_links:
+    roku:
+      activity: Roku
+      device: Roku Ultra
+    xbox_one:
+      activity: Xbox One
+      device: Microsoft Xbox One
+    ps4:
+      activity: PS4
+      device: Sony PS4
+    tv:
+      activity: TV
+      device: Sony TV
+    chromecast:
+      activity: Chromecast
+      device: Chromecast
+  commands:
+  - Rewind
+  - Play
+  - Pause
+  - command: FastForward
+    name: Forward
+  - command: DirectionUp
+    name: Up
+  - command: DirectionLeft
+    name: Left
+  - command: OK
+    name: Confirm
+  - command: DirectionRight
+    name: Right
+  - command: DirectionDown
+    name: Down
+  - Back
+  - command: ChannelUp
+    name: Up
+  - command: ChannelDown
+    name: Down
+  - ChannelPrev
+  - "0"
+  - "1"
+  - "2"
+  - "3"
+  - "4"
+  - "5"
+  - "6"
+  - "7"
+  - "8"
+  - "9"
+  
+  - command: Period
+    device_command: "."
+    links:
+    - tv
+    
+  - command: Home
+    icon: mdi:home
+    links:
+    - roku
+    - tv
+    - link: ps4
+      device_command: PS
+    - link: xbox_one
+      device_command: Xbox
+      
+  - command: Menu
+    icon: mdi:menu
+    links:
+    - link: roku
+      device_command: Options*
+      icon: mdi:asterisk
+    - tv
+    - link: ps4
+      device_command: Options
+    - link: xbox_one
+      icon: mdi:xbox-controller-menu
+      
+  - command: LowerLeft
+    links:
+    - link: roku
+      device_command: Search
+    - link: tv
+      device_command: Options
+      icon: mdi:asterisk
+    - link: ps4
+      device_command: Info
+    - link: xbox_one
+      device_command: View
+      
+  - command: LowerRight
+    links:
+    - link: roku
+      device_command: Exit
+    - link: tv
+      name: Info
+      device_command: TrackId
+    - link: ps4
+      device_command: Share
+    - link: xbox_one
+      name: One Guide
+      device_command: OneGuide
+    
+  - command: BottomButton
+    name: Confirm
+    links:
+    - link: ps4
+      device_command: Cross
+    - link: xbox_one
+      device_command: A
+      
+  - command: RightButton
+    name: Back
+    links:
+    - link: ps4
+      device_command: Circle
+    - link: xbox_one
+      device_command: B
+      
+  - command: TopButton
+    name: Search
+    activities:
+    links:
+    - link: ps4
+      device_command: Triangle
+    - link: xbox_one
+      device_command: Y
+      
+  - command: LeftButton
+    name: Backspace
+    links:
+    - link: ps4
+      device_command: Square
+    - link: xbox_one
+      device_command: X
+ 

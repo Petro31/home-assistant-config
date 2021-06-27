@@ -1,0 +1,39 @@
+- binary_sensor:
+  - unique_id: remote_living_room_control
+    name: remote_living_room_control
+    state: >
+      {% set entities = expand(
+          "binary_sensor.remote_living_room_0",
+          "binary_sensor.remote_living_room_1",
+          "binary_sensor.remote_living_room_2",
+          "binary_sensor.remote_living_room_3",
+          "binary_sensor.remote_living_room_4",
+          "binary_sensor.remote_living_room_5",
+          "binary_sensor.remote_living_room_6",
+          "binary_sensor.remote_living_room_7",
+          "binary_sensor.remote_living_room_8",
+          "binary_sensor.remote_living_room_9",
+          "binary_sensor.remote_living_room_back",
+          "binary_sensor.remote_living_room_bottombutton",
+          "binary_sensor.remote_living_room_channeldown",
+          "binary_sensor.remote_living_room_channelprev",
+          "binary_sensor.remote_living_room_channelup",
+          "binary_sensor.remote_living_room_directiondown",
+          "binary_sensor.remote_living_room_directionleft",
+          "binary_sensor.remote_living_room_directionright",
+          "binary_sensor.remote_living_room_directionup",
+          "binary_sensor.remote_living_room_fastforward",
+          "binary_sensor.remote_living_room_home",
+          "binary_sensor.remote_living_room_leftbutton",
+          "binary_sensor.remote_living_room_lowerleft",
+          "binary_sensor.remote_living_room_lowerright",
+          "binary_sensor.remote_living_room_menu",
+          "binary_sensor.remote_living_room_ok",
+          "binary_sensor.remote_living_room_pause",
+          "binary_sensor.remote_living_room_period",
+          "binary_sensor.remote_living_room_play",
+          "binary_sensor.remote_living_room_rewind",
+          "binary_sensor.remote_living_room_rightbutton",
+          "binary_sensor.remote_living_room_topbutton"
+      ) %}
+      {{ entities | selectattr('state','eq','on') | list | count > 0 }}
