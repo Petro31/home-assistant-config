@@ -6,7 +6,6 @@ alexa_media: !include alexa_media.yaml
 analytics:
 automation: !include_dir_merge_list automation
 binary_sensor: !include binary_sensor.yaml
-camera: !include cameras.yaml
 cloud:
 counter:
 compensation: !include compensation.yaml

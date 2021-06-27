@@ -703,34 +703,6 @@
   {'entity': 'camera.floating'},
 ] %}
 
-{%- set image_processing = [
-  {
-    'entity': 'camera.driveway_post_process', 
-    'name': 'Driveway', 
-    'image_processing': 'image_processing.tensorflow_driveway'
-  },{
-    'entity': 'camera.backyard_post_process', 
-    'name': 'Backyard', 
-    'image_processing': 'image_processing.tensorflow_backyard'
-  },{
-    'entity': 'camera.foyer_post_process', 
-    'name': 'Foyer', 'image_processing': 
-    'image_processing.tensorflow_foyer'
-  },{
-    'entity': 'camera.garage_post_process', 
-    'name': 'Garage', 
-    'image_processing': 'image_processing.tensorflow_garage'
-  },{
-    'entity': 'camera.kitchen_post_process', 
-    'name': 'Kitchen', 
-    'image_processing': 'image_processing.tensorflow_kitchen'
-  },{
-    'entity': 'camera.floating_post_process', 
-    'name': 'Floating', 
-    'image_processing': 'image_processing.tensorflow_floating'
-  },
-] %}
-
 {%- set echos = [
   {
     'entity': 'script.alexa_say_living_room', 
@@ -809,26 +781,6 @@
       {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
     ],
     'type': '../templates/summary/overview.yaml',
-  },{
-    'name': 'Cameras',
-    'icon': 'mdi:cctv',
-    'entities': cameras,
-    'image': '/local/images/camera.png',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'triggers_update': wan | selectattr('name','eq','Camera Devices') | sum(attribute='entities', start=[]) | sort,
-    'display': [
-      {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
-    ],
-    'type': '../templates/summary/overview.yaml',
-    'view': '../views/cameras.yaml',
-  },{
-    'name': 'Detection',
-    'icon': 'mdi:image-search',
-    'entities': image_processing,
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'image': '/local/images/camera_2.png',
-    'type': '../templates/summary/overview.yaml',
-    'view': '../views/image_processing.yaml',
   },{
     'name': 'Echos',
     'icon': 'mdi:amazon-alexa',
