@@ -659,26 +659,6 @@
   }
 ] %}
 
-{%- set corona = [
-  {
-    'entity': 'sensor.corona_virus_usa',
-    'image': '/local/images/usa.png',
-    'type': '../templates/buttons/corona.yaml',
-  },{
-    'entity': 'sensor.corona_virus_ny',
-    'image': '/local/images/new york.png',
-    'type': '../templates/buttons/corona.yaml',
-  },{
-    'entity': 'sensor.corona_virus_florida',
-    'image': '/local/images/florida.png',
-    'type': '../templates/buttons/corona.yaml',
-  },{
-    'entity': 'sensor.corona_virus_county',
-    'image': '/local/images/county.png',
-    'type': '../templates/buttons/corona.yaml',
-  }
-] %}
-
 {%- set doors = [
   {
     'entity': 'binary_sensor.main_door',
@@ -861,13 +841,6 @@
       },
     ],
     'image': '/local/images/echo_2.png',
-    'type': '../templates/summary/overview.yaml',
-  },{
-    'name': 'CoronaVirus',
-    'icon': 'mdi:biohazard',
-    'entities': corona,
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'image': '/local/images/corona_3.png',
     'type': '../templates/summary/overview.yaml',
   },{
     'name': 'Plants',
