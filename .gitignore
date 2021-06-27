@@ -205,3 +205,5 @@ www/images/wine.png
 blueprints/script/homeassistant/confirmable_notification.yaml
 
 frigate.yml
+
+blueprints/automation/hunterjm/frigate_notification.yaml
