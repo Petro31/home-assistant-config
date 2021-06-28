@@ -1,0 +1,98 @@
+
+# notify.mobile_app_petro
+
+- alias: Frigate Notifications - Petro - Backyard & Driveway
+  id: frigate_notifications_petro_backyard_and_driveway
+  mode: single
+  trigger:
+  - platform: mqtt
+    topic: frigate/events
+    payload: driveway
+    value_template: >
+      {{ value_json.after.camera }}
+  - platform: mqtt
+    topic: frigate/events
+    payload: backyard
+    value_template: >
+      {{ value_json.after.camera }}
+  variables:
+    id: '{{ trigger.payload_json.after.id }}'
+    camera: '{{ trigger.payload_json.after.camera }}'
+    camera_name: '{{ camera | replace("_", " ") }}'
+    label: '{{ trigger.payload_json.after.label }}'
+    is_valid: '{{ trigger.payload_json.type != "end" }}'
+    notify: notify.mobile_app_petro
+
+    silence: silence-{{ notify | replace(".", "-") | replace("_","-") }}-{{ camera }}
+  condition:
+  - condition: template
+    value_template: "{{ is_valid }}"
+  action:
+  - service: script.notify_frigate
+    data:
+      id: '{{ id }}'
+      camera: '{{ camera }}'
+      message: A {{ label }} was detected on the {{ camera_name }} camera.
+      notify: '{{ notify }}'
+      silence: "{{ silence }}"
+
+  - wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "{{ silence }}"
+    timeout:
+      seconds: 30
+    continue_on_timeout: false
+
+  - delay:
+      minutes: 30
+
+# notify.mobile_app_lindsays_iphone
+
+- alias: Frigate Notifications - Lambo - Backyard & Driveway
+  id: frigate_notifications_lambo_backyard_and_driveway
+  mode: single
+  trigger:
+  - platform: mqtt
+    topic: frigate/events
+    payload: driveway
+    value_template: >
+      {{ value_json.after.camera }}
+  - platform: mqtt
+    topic: frigate/events
+    payload: backyard
+    value_template: >
+      {{ value_json.after.camera }}
+  variables:
+    id: '{{ trigger.payload_json.after.id }}'
+    camera: '{{ trigger.payload_json.after.camera }}'
+    camera_name: '{{ camera | replace("_", " ") }}'
+    label: '{{ trigger.payload_json.after.label }}'
+    is_valid: '{{ trigger.payload_json.type != "end" }}'
+    notify: notify.mobile_app_lindsays_iphone
+    silence: silence-{{ notify | replace(".", "-") | replace("_","-") }}-{{ camera }}
+  condition:
+  - condition: template
+    value_template: "{{ is_valid }}"
+  action:
+  - service: script.notify_frigate
+    data:
+      id: '{{ id }}'
+      camera: '{{ camera }}'
+      message: A {{ label }} was detected on the {{ camera_name }} camera.
+      notify: '{{ notify }}'
+      silence: "{{ silence }}"
+      persistent_notification: false
+
+  - wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "{{ silence }}"
+    timeout:
+      seconds: 30
+    continue_on_timeout: false
+
+  - delay:
+      minutes: 30

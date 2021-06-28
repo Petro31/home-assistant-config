@@ -1,29 +1,3 @@
-- alias: Camera Event - Webhook Motion From Cameras
-  id: webhook_motion_from_cameras
-  trigger:
-  - platform: webhook
-    webhook_id: motion_driveway
-  condition:
-  - condition: template
-    value_template: >
-      {% set entity_id = 'switch.'~ trigger.webhook_id.split('_')[-1] ~ '_camera' %}
-      {{ is_state(entity_id, 'on') }}
-  action:
-  - event: camera_motion
-    event_data_template:
-      camera: >
-        camera.{{ trigger.webhook_id.split('_')[-1] }}
-  - service: camera.snapshot
-    data:
-      entity_id: >
-        camera.{{ trigger.webhook_id.split('_')[-1] }}
-      filename: >
-        /config/www/motion/{{ trigger.webhook_id.split('_')[-1] }}_motion.jpg
-  - service: image_processing.scan
-    data:
-      entity_id: >
-        image_processing.tensorflow_{{ trigger.webhook_id.split('_')[-1] }}
-
 - alias: Camera Event - Turn off Outside Cameras based on temperature
   id: turn_off_outside_cameras_based_on_temperature
   trigger:
