@@ -8,13 +8,13 @@
   {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)'},
   {'entity':'switch.tv', 'color': 'var(--button-card-light-color)'},
   {'entity':'switch.chromecast', 'color': 'rgba(66,133,244)'},
-  {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'icon': 'ptr:plex'},
+  {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'icon': 'fapro:plex'},
   {'entity':'switch.peacock', 'color': 'rgba(81, 105, 170)', 'image': '/local/images/peacock.png', 'template': '../templates/remote_image_button.yaml'},
-  {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'icon': 'ptr:netflix'},
-  {'entity':'switch.hbo', 'color': 'rgba(255, 255, 255)', 'icon': 'ptr:hbo'},
-  {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'icon': 'ptr:hulu'},
-  {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'icon': 'ptr:prime-video'},
-  {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'icon': 'ptr:disney-plus'},
+  {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'icon': 'fapro:netflix'},
+  {'entity':'switch.hbo', 'color': 'rgba(255, 255, 255)', 'icon': 'fapro:hbo'},
+  {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'icon': 'fapro:hulu'},
+  {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'icon': 'fapro:prime-video'},
+  {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'icon': 'fapro:disney-plus'},
 ] %}
 
 {%- set controls = [
@@ -45,17 +45,17 @@ cards:
     - !include
       - '../templates/remote/harmony/toggle.yaml'
       - entity: switch.echo_through_receiver
-        icon: ptr:speaker-bluetooth-alexa
+        icon: fapro:speaker-bluetooth-alexa
         color: rgba(49, 196, 243)
     - !include
       - '../templates/remote/harmony/toggle.yaml'
       - entity: media_player.yamaha_receiver
-        icon: ptr:power-zone-1
+        icon: fapro:power-zone-1
         color: rgba(228, 94, 101)
     - !include
       - '../templates/remote/harmony/toggle.yaml'
       - entity: media_player.yamaha_receiver_zone_2
-        icon: ptr:power-zone-2
+        icon: fapro:power-zone-2
         color: rgba(228, 94, 101)
     - !include
       - '../templates/remote/harmony/navigate.yaml'

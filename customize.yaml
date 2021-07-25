@@ -17,7 +17,7 @@ switch.dining_room_hutch:
   icon: mdi:lightbulb
 switch.disney_plus:
   friendly_name: Disney Plus
-  icon: mdi:amazon
+  icon: fapro:disney-plus
 switch.doorbell_chime:
   friendly_name: Doorbell Chime
   icon: mdi:doorbell
@@ -35,7 +35,7 @@ switch.driveway_camera:
   icon: mdi:lan-connect
 switch.echo_through_receiver:
   friendly_name: Echo Through Receiver
-  icon: mdi:amazon-alexa
+  icon: fapro:speaker-bluetooth-alexa
 switch.floating_outlet_switch:
   friendly_name: Echo Outlet
   icon: mdi:amazon-alexa
@@ -71,7 +71,7 @@ switch.hbo_now:
   icon: mdi:alpha-h
 switch.hulu:
   friendly_name: Hulu
-  icon: mdi:hulu
+  icon: fapro:hulu
 switch.inside:
   friendly_name: Inside
   icon: mdi:home-lightbulb
@@ -110,7 +110,7 @@ switch.master_nightstand_right:
   icon: mdi:lamp
 switch.netflix:
   friendly_name: Netflix
-  icon: mdi:netflix
+  icon: fapro:netflix
 switch.nintendo_switch_source:
   friendly_name: Switch Source
   icon: mdi:nintendo-switch
@@ -134,7 +134,7 @@ switch.poweroff:
   icon: mdi:power
 switch.prime_video:
   friendly_name: Prime Video
-  icon: mdi:amazon
+  icon: fapro:prime-video
 switch.ps4:
   friendly_name: Playstation
   icon: mdi:sony-playstation
@@ -545,10 +545,10 @@ light.test_2:
   icon: mdi:stairs
 media_player.yamaha_receiver:
   friendly_name: Yamaha Zone One
-  icon: mdi:numeric-1-box
+  icon: fapro:power-zone-1
 media_player.yamaha_receiver_zone_2:
   friendly_name: Yamaha Zone Two
-  icon: mdi:numeric-2-box
+  icon: fapro:power-zone-2
 sensor.server_room_ac_lite_uptime:
   device_class: timestamp
   friendly_name: Server Room AC Lite Uptime
@@ -587,3 +587,7 @@ switch.chromecast:
   icon: mdi:cast
 switch.chromecast_source:
   icon: mdi:cast
+switch.plex:
+  icon: fapro:plex
+switch.hbo:
+  icon: fapro:hbo
