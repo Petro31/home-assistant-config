@@ -1,0 +1,63 @@
+- alias: Laser - Garage position indicator automation
+  id: laser_position_indicator_automation
+  mode: parallel
+  trigger: 
+  - platform: state
+    entity_id:
+    - binary_sensor.garage_door_tilt
+  variables:
+    laser: switch.garage_ceiling_outlet
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    is_on: >
+      {{ trigger.to_state.state == 'on' and trigger.from_state.state == 'off' }}
+    is_off: >
+      {{ trigger.to_state.state == 'off' and trigger.from_state.state == 'on' }}
+    continue: >
+      {{ valid and (is_on or is_off) }}
+    is_laser_on: >
+      {{ is_state(laser, 'on') }}
+  
+  condition: 
+  - condition: template
+    value_template: "{{ continue }}"
+
+  action:
+
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ is_on }}"
+      sequence:
+
+      - service: script.turn_off
+        target:
+          entity_id: script.laser_position_timer
+
+      - choose:
+        - conditions: 
+          - condition: template
+            value_template: "{{ not is_laser_on }}"
+          sequence:
+          - service: switch.turn_on
+            target:
+              entity_id: "{{ laser }}"
+
+      - service: script.laser_position_timer
+
+    - conditions:
+      - condition: template
+        value_template: "{{ is_off }}"
+      sequence:
+      - choose:
+        - conditions: 
+          - condition: template
+            value_template: "{{ is_laser_on }}"
+          sequence:
+          - service: script.turn_off
+            target:
+              entity_id: script.laser_position_timer
+  
+          - service: switch.turn_off
+            target:
+              entity_id: "{{ laser }}"

@@ -591,3 +591,5 @@ switch.plex:
   icon: fapro:plex
 switch.hbo:
   icon: fapro:hbo
+switch.garage_ceiling_outlet:
+  icon: fapro:laser

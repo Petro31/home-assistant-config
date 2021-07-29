@@ -216,6 +216,7 @@
     'entities': [
       'switch.garage_cans',
       'switch.garage_workbench',
+      'switch.garage_ceiling_outlet',
       'sensor.garage_temperature',
       'sensor.garage_humidity',
     ],
