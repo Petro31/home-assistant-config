@@ -44,7 +44,6 @@ roku: !include roku.yaml
 scene: !include scenes.yaml
 script: !include scripts.yaml
 sensor: !include sensor.yaml
-speedtestdotnet: !include speedtestdotnet.yaml
 sun:
 switch: !include switch.yaml
 system_health:

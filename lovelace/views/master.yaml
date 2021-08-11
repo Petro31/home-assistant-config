@@ -691,6 +691,7 @@
     'name': 'Garage',
     'last_opened': 'sensor.rear_garage_door_tilt_last_opened',
     'type': '../templates/buttons/door.yaml',
+    'cover': 'cover.rear_garage_door',
     'door_type': 'garage',
   }
 ] %}
