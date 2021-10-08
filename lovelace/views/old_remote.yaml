@@ -2,7 +2,7 @@
 
 {% set activities = [
   {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)', 'template': '../templates/remote_icon_button.yaml'},
-  {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote_icon_button.yaml'},
+  {'entity':'switch.playstation', 'color': 'rgba(102, 92, 190)', 'template': '../templates/remote_icon_button.yaml'},
   {'entity':'switch.roku', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote_image_button.yaml', 'image': '/local/images/roku.png'},
   {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote_icon_button.yaml'},
   {'entity':'switch.tv', 'color': 'var(--button-card-light-color)', 'template': '../templates/remote_icon_button.yaml'},

@@ -4,7 +4,7 @@
 {%- set activity_rows = 2 %}
 {%- set activities = [
   {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)'},
-  {'entity':'switch.ps4', 'color': 'rgba(102, 92, 190)'},
+  {'entity':'switch.playstation', 'color': 'rgba(102, 92, 190)'},
   {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)'},
   {'entity':'switch.tv', 'color': 'var(--button-card-light-color)'},
   {'entity':'switch.chromecast', 'color': 'rgba(66,133,244)'},

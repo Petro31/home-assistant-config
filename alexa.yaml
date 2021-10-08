@@ -77,7 +77,7 @@ smart_home:
       - switch.party_mode
       - switch.passenger_sconce
       - switch.prime_video
-      - switch.ps4
+      - switch.playstation
       - switch.roku
       - switch.sconces_garage
       - switch.sconces_main_entrance

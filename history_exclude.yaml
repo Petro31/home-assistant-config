@@ -26,7 +26,7 @@ entities:
   - switch.inside
   - switch.intel_nuc
   - switch.kitchen_camera
-  - switch.living_room_ps4
+  - switch.living_room_playstation
   - switch.living_room_roku
   - switch.living_room_switch
   - switch.living_room_tv
@@ -43,7 +43,7 @@ entities:
   - switch.plex
   - switch.poweroff
   - switch.prime_video
-  - switch.ps4
+  - switch.playstation
   - switch.roku
   - switch.roku_source
   - switch.surround_mode_7ch_stereo

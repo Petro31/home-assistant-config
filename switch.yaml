@@ -105,12 +105,12 @@
         - service: script.harmony_activity_off
       
       # PLAYSTATION HARMONY ACTIVITY
-      ps4:
-        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PS4') }}"
+      playstation:
+        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Playstation') }}"
         turn_on:
         - service: script.harmony_activity_on
           data:
-            activity: PS4
+            activity: Playstation
         turn_off: *harmony_activity_off
       
       # SWITCH HARMONY ACTIVITY

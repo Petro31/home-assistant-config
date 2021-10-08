@@ -1467,7 +1467,7 @@ notify_frigate:
           minutes: 2
         continue_on_timeout: false
       - condition: template
-        value_template: '{{ wait.trigger.payload_json.type == "end" }}'
+        value_template: '{{ wait.trigger and wait.trigger.payload_json.type == "end" }}'
       - choose:
         - conditions: "{{ persistent_notification }}"
           sequence:
@@ -1501,7 +1501,7 @@ notify_frigate:
             - action: "{{ silence }}"
               title: Silence Notifications
               destructive: true
-      until: '{{ wait.trigger.payload_json.type == "end" }}'
+      until: '{{ wait.trigger and wait.trigger.payload_json.type == "end" }}'
 
 notify_count_base:
   fields:

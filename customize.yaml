@@ -135,7 +135,7 @@ switch.poweroff:
 switch.prime_video:
   friendly_name: Prime Video
   icon: fapro:prime-video
-switch.ps4:
+switch.playstation:
   friendly_name: Playstation
   icon: mdi:sony-playstation
 switch.roku:

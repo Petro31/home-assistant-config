@@ -4,7 +4,7 @@
   - platform: state
     entity_id:
     - switch.xbox_one
-    - switch.ps4
+    - switch.playstation
     - switch.roku
     - switch.switch
     - switch.tv

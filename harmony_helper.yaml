@@ -7,9 +7,9 @@ living_room:
     xbox_one:
       activity: Xbox One
       device: Microsoft Xbox One
-    ps4:
-      activity: PS4
-      device: Sony PS4
+    playstation:
+      activity: Playstation
+      device: Sony Playstation
     tv:
       activity: TV
       device: Sony TV
@@ -59,7 +59,7 @@ living_room:
     links:
     - roku
     - tv
-    - link: ps4
+    - link: playstation
       device_command: PS
     - link: xbox_one
       device_command: Xbox
@@ -71,7 +71,7 @@ living_room:
       device_command: Options*
       icon: mdi:asterisk
     - tv
-    - link: ps4
+    - link: playstation
       device_command: Options
     - link: xbox_one
       icon: mdi:xbox-controller-menu
@@ -83,7 +83,7 @@ living_room:
     - link: tv
       device_command: Options
       icon: mdi:asterisk
-    - link: ps4
+    - link: playstation
       device_command: Info
     - link: xbox_one
       device_command: View
@@ -95,7 +95,7 @@ living_room:
     - link: tv
       name: Info
       device_command: TrackId
-    - link: ps4
+    - link: playstation
       device_command: Share
     - link: xbox_one
       name: One Guide
@@ -104,7 +104,7 @@ living_room:
   - command: BottomButton
     name: Confirm
     links:
-    - link: ps4
+    - link: playstation
       device_command: Cross
     - link: xbox_one
       device_command: A
@@ -112,7 +112,7 @@ living_room:
   - command: RightButton
     name: Back
     links:
-    - link: ps4
+    - link: playstation
       device_command: Circle
     - link: xbox_one
       device_command: B
@@ -121,7 +121,7 @@ living_room:
     name: Search
     activities:
     links:
-    - link: ps4
+    - link: playstation
       device_command: Triangle
     - link: xbox_one
       device_command: Y
@@ -129,7 +129,7 @@ living_room:
   - command: LeftButton
     name: Backspace
     links:
-    - link: ps4
+    - link: playstation
       device_command: Square
     - link: xbox_one
       device_command: X
