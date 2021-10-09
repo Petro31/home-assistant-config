@@ -3,10 +3,12 @@
     name: Camera Shutoff
     device_class: cold
     state: >
-      {% set below = states('sensor.outside_temperature') | float < 16 %}
-      {% set falling = is_state('binary_sensor.outside_temperature_falling', 'on') %}
-      {% set are_on = expand('switch.driveway_camera', 'switch.backyard_camera') | selectattr('state','eq','on') | list | length > 0 %}
-      {{ are_on and below and falling }}
+      {% set temperature = states('sensor.outside_temperature') | float(none) %}
+      {% if temperature is not none %}
+        {% set falling = is_state('binary_sensor.outside_temperature_falling', 'on') %}
+        {% set are_on = expand('switch.driveway_camera', 'switch.backyard_camera') | selectattr('state','eq','on') | list | length > 0 %}
+        {{ are_on and temperature < 16 and falling }}
+      {% endif %}
     availability: >
       {{ expand('sensor.outside_temperature', 'binary_sensor.outside_temperature_falling', 
                 'switch.driveway_camera', 'switch.backyard_camera') 
@@ -19,10 +21,12 @@
     name: Camera Resume
     device_class: heat
     state: >
-      {% set above = states('sensor.outside_temperature') | float > 20 %}
-      {% set rising = is_state('binary_sensor.outside_temperature_rising', 'on') %}
-      {% set are_off = expand('switch.driveway_camera', 'switch.backyard_camera') | selectattr('state','eq','off') | list | length > 0 %}
-      {{ are_off and above and rising }}
+      {% set temperature = states('sensor.outside_temperature') | float(none) %}
+      {% if temperature is not none %}
+        {% set rising = is_state('binary_sensor.outside_temperature_rising', 'on') %}
+        {% set are_off = expand('switch.driveway_camera', 'switch.backyard_camera') | selectattr('state','eq','off') | list | length > 0 %}
+        {{ are_off and temperature > 20 and rising }}
+      {% endif %}
     availability: >
       {{ expand('sensor.outside_temperature', 'binary_sensor.outside_temperature_rising', 
                 'switch.driveway_camera', 'switch.backyard_camera') 

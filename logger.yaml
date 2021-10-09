@@ -1,4 +1,4 @@
-default: error
+default: warning
 logs:
   requests.packages.urllib3.connectionpool: critical
   frontend.js.latest: critical

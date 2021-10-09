@@ -8,9 +8,9 @@
       {%- for i in range(365) %}
       {%- set day = (today + timedelta(days=i)).astimezone() %}
       {%- if ns.previous - day.hour == -1 %}
-      {%- set ns.spring = today + timedelta(days=i) | timestamp_local %}
+      {%- set ns.spring = today + timedelta(days=i) %}
       {%- elif ns.previous - day.hour == 1 %}
-      {%- set ns.fall = today + timedelta(days=i) | timestamp_local %}
+      {%- set ns.fall = today + timedelta(days=i) %}
       {%- endif %}
       {%- set ns.previous = day.hour %}
       {%- endfor %}
