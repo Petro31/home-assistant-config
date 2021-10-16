@@ -12,3 +12,80 @@
       {{ today <= jan15th or today > thanksgiving }}
     attributes:
       template: seasons
+
+- sensor:
+  - unique_id: seasonal_lights
+    name: Seasonal Lights
+    state: >
+      {%- macro mwd(month, week, day) -%}
+      {%- set month, week, day = 11, 4, 3 %}
+      {%- set today = now().replace(hour=0, minute=0, second=0, microsecond=0) %}
+      {%- set temp = today.replace(month=month, day=1) %}
+      {%- set adjust = (day - temp.weekday()) % 7 %}
+      {%- set temp = temp + timedelta(days=adjust) -%}
+      {{ (temp + timedelta(weeks = week - 1)).isoformat() }}
+      {%- endmacro %}
+      
+      {%- macro md(month, day) -%}
+      {{ now().replace(month=month, day=day, hour=0, minute=0, second=0, microsecond=0).isoformat() }}
+      {%- endmacro %}
+      
+      {%- macro easter() %}
+      {%- set year = now().year %}
+      {%- set special_years = ['1954', '1981', '2049', '2076'] %}
+      {%- set special_year_sub = 7 %}
+      {%- set a = year % 19 %}
+      {%- set b = year % 4 %}
+      {%- set c = year % 7 %}
+      {%- set d = (19 * a + 24) % 30 %}
+      {%- set e = ((2 * b) + (4 * c) + (6 * d) + 5) % 7 %}
+      {%- set day = (22 + d + e) - special_year_sub if year in special_years else 22 + d + e %}
+      {%- set month = 4 if day > 31 else 3 %}
+      {%- set day = day - 31 if day > 31 else day -%}
+      {{ now().replace(month=month, day=day, hour=0, minute=0, second=0, microsecond=0).isoformat() }}
+      {%- endmacro %}
+      
+      {% set holidays = {
+        'christmas': {
+          'start': md(12,1),
+          'end': md(1,7),
+        },
+        'thanksgiving': {
+          'end': mwd(11, 4, 3),
+        },
+        'easter': {
+          'start': (easter() | as_datetime - timedelta(days=7)).isoformat(),
+          'end': easter(),
+        },
+        'valentines_day': {
+          'end': md(2,14),
+        },
+        'st_patricks_day': {
+          'end': md(3,17),
+        },
+        '4th_of_july': {
+          'end': md(7,4),
+        },
+        'veterans_day': {
+          'start': md(11,11),
+          'end': md(11,11),
+        },
+        'halloween': {
+          'start': md(10,8),
+          'end': md(10,31),
+        },
+      }%}
+      
+      {%- set ns = namespace(dates=[]) %}
+      {%- set c = now().replace(hour=0, minute=0, second=0, microsecond=0) %}
+      {%- for holiday, times in holidays.items() %}
+      {%- set end = times.end | as_datetime + timedelta(days=1) %}
+      {%- set start = times.start | as_datetime if times.start is defined else end - timedelta(days=7) %}
+      {%- set ns.dates = ns.dates + [ (start.isoformat(), holiday), (end.isoformat(), 'none') ] %}
+      {%- endfor %}
+      {%- set next = ns.dates | sort | selectattr('0','>', c.isoformat()) | first | default(none) %}
+      {%- if next %}
+      {{ next | join(', ') }}
+      {%- else %}
+      {{ next }}
+      {%- endif %}

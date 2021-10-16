@@ -162,23 +162,23 @@
     light.main_door_left_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [247,  95, 28]
+      rgb_color: [235,97,35]
     light.main_door_right_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [255, 154,  0]
+      rgb_color: [133, 226, 31]
     light.passenger_door_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [  0,   0,  0]
+      rgb_color: [235,97,35]
     light.garage_sconce_left_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [136, 30, 228]
+      rgb_color: [133, 226, 31]
     light.garage_sconce_right_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [133, 226, 31]
+      rgb_color: [235,97,35]
       
 - name: Holiday Bulbs Soft White
   icon: mdi:weather-sunset
