@@ -83,7 +83,7 @@
         {%- if current is none %}
           1
         {%- else %}
-          {{ current | int + 1 }}
+          {{ current + 1 }}
         {%- endif %}
       {%- else %}
         0
@@ -144,7 +144,7 @@
 
   - wait_for_trigger:
     - platform: template
-      value_template: "{{ states('sensor.people_at_home') | int > 0 }}"
+      value_template: "{{ states('sensor.people_at_home') | int(default=0) > 0 }}"
     timeout:
       seconds: 30
 

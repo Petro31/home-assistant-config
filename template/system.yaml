@@ -8,11 +8,11 @@
   - unique_id: ups_battery_runtime
     name: UPS Battery Runtime
     state: >
-      {%- set up_time = states('sensor.ups_battery_runtime_seconds') | int %}
+      {%- set up_time = states('sensor.ups_battery_runtime_seconds') | int(default=0) %}
       {%- macro phrase(name, divisor, mod=None) %}
-        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
+        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int(default=0) %}
         {%- set end = 's' if value > 1 else '' %}
-        {{- '{} {}{}'.format(value, name, end) if value | int > 0 else '' }}
+        {{- '{} {}{}'.format(value, name, end) if value | int(default=0) > 0 else '' }}
       {%- endmacro %}
       
       {%- set values = [ 
@@ -29,7 +29,8 @@
     state: >
       {{ expand('sensor.disk_free_home', 'sensor.disk_use_home') | map(attribute='state') | map('float', 0) | sum | round(1) }}
     availability: >
-      {{ expand('sensor.disk_free_home', 'sensor.disk_use_home') | rejectattr('state','in',['unknown','unavailable']) | list | count == 2 }}
+      {%- set items = 'sensor.disk_free_home', 'sensor.disk_use_home' -%}
+      {{ expand(items) | rejectattr('state','in',['unknown','unavailable']) | list | count == items | count }}
     unit_of_measurement: "GiB"
     attributes:
       template: system
@@ -39,7 +40,8 @@
     state: >
       {{ expand('sensor.memory_free', 'sensor.memory_use') | map(attribute='state') | map('float', 0) | sum | round(1) }}
     availability: >
-      {{ expand('sensor.memory_free', 'sensor.memory_use') | rejectattr('state','in',['unknown','unavailable']) | list | count == 2 }}
+      {%- set items = 'sensor.memory_free', 'sensor.memory_use' -%}
+      {{ expand(items) | rejectattr('state','in',['unknown','unavailable']) | list | count == items | count }}
     unit_of_measurement: "MiB"
     attributes:
       template: system

@@ -402,18 +402,18 @@ lzw45_quick_strip_effect:
       {%- endif %}
     byte1: >
       {%- if color_type == 0 %}
-        {%- set hue = hue | int %}
+        {%- set hue = hue | int(default=360) %}
         {%- set hue = hue if hue >= 0 else 0 %}
         {%- set hue = hue if hue <= 360 else 360 %}
-        {{ (hue | default(360) / 360 * 255) | int }}
+        {{ (hue / 360 * 255) | int(default=255) }}
       {%- else %}
-        {%- set color_temp = color_temp | int %}
+        {%- set color_temp = color_temp | int(2700) %}
         {%- set color_temp = color_temp if color_temp >= 2700 else 2700 %}
         {%- set color_temp = color_temp if color_temp <= 6500 else 6500 %}
-        {{ ((color_temp | default(2700) - 2700) / (6500 - 2700) * 255) | int }}
+        {{ ((color_temp - 2700) / (6500 - 2700) * 255) | int(default=0) }}
       {%- endif %}
     byte2: >
-      {%- set pct = (brightness_pct | default(100)) | int %}
+      {%- set pct = brightness_pct | int(default=100) %}
       {%- if 0 <= pct <= 100 %}
         {%- if pct == 100 %}
           10
@@ -424,9 +424,9 @@ lzw45_quick_strip_effect:
         0
       {%- endif %}
     byte3: >
-      {%- set seconds = (seconds | default(0)) | int %}
-      {%- set minutes = (minutes | default(0)) | int %}
-      {%- set hours = (hours | default(0)) | int %}
+      {%- set seconds = seconds | int(default=0) %}
+      {%- set minutes = minutes | int(default=0) %}
+      {%- set hours = hours | int(default=0) %}
       {%- set forever = endless | default(false) %}
       {%- if forever %}
         255
@@ -546,18 +546,18 @@ lzw45_quick_strip_effect_zwave_js:
       {{ 64 if color == 'color_temp' else 0 }}
     byte1: >
       {%- if color_type == 0 %}
-        {%- set hue = hue | int %}
+        {%- set hue = hue | int(default=360) %}
         {%- set hue = hue if hue >= 0 else 0 %}
         {%- set hue = hue if hue <= 360 else 360 %}
-        {{ (hue | default(360) / 360 * 255) | int }}
+        {{ (hue / 360 * 255) | int(default=255) }}
       {%- else %}
-        {%- set color_temp = color_temp | int %}
+        {%- set color_temp = color_temp | int(2700) %}
         {%- set color_temp = color_temp if color_temp >= 2700 else 2700 %}
         {%- set color_temp = color_temp if color_temp <= 6500 else 6500 %}
-        {{ ((color_temp | default(2700) - 2700) / (6500 - 2700) * 255) | int }}
+        {{ ((color_temp - 2700) / (6500 - 2700) * 255) | int(default=0) }}
       {%- endif %}
     byte2: >
-      {%- set pct = (brightness_pct | default(100)) | int %}
+      {%- set pct = brightness_pct | int(default=100) %}
       {%- if 0 <= pct <= 100 %}
         {%- if pct == 100 %}
           10
@@ -568,9 +568,9 @@ lzw45_quick_strip_effect_zwave_js:
         0
       {%- endif %}
     byte3: >
-      {%- set seconds = (seconds | default(0)) | int %}
-      {%- set minutes = (minutes | default(0)) | int %}
-      {%- set hours = (hours | default(0)) | int %}
+      {%- set seconds = seconds | int(default=0) %}
+      {%- set minutes = minutes | int(default=0) %}
+      {%- set hours = hours | int(default=0) %}
       {%- set forever = endless | default(false) %}
       {%- if forever %}
         255
@@ -691,7 +691,7 @@ lzw45_pixel_effect:
       ] %}
       {{ effects.index(effect) + 1 if effect in effects else 1 }}
     byte2: >
-      {%- set pct = (brightness_pct | default(99)) | int %}
+      {%- set pct = brightness_pct | int(default=99) %}
       {%- if 0 <= pct <= 99 %}
         {{ pct }}
       {%- else %}
@@ -782,7 +782,7 @@ lzw45_pixel_effect_zwave_js:
       ] %}
       {{ effects.index(effect) + 1 if effect in effects else 1 }}
     byte2: >
-      {%- set pct = (brightness_pct | default(99)) | int %}
+      {%- set pct = brightness_pct | int(default=99) %}
       {%- if 0 <= pct <= 99 %}
         {{ pct }}
       {%- else %}
@@ -867,7 +867,7 @@ lzw45_custom_effect:
       {%- else %}
         {%- set ns = namespace(levels = []) %}
         {%- for i in range(transitions) %}
-          {%- set pct = levels[i] | int %}
+          {%- set pct = levels[i] | int(default=99) %}
           {%- set pct = pct if pct >= 0 else 0 %}
           {%- set pct = pct if pct <= 99 else 99 %}
           {%- set ns.levels = ns.levels + [ pct ] %}
@@ -911,33 +911,33 @@ lzw45_custom_effect:
       {%- endmacro %}
       {%- set ns = namespace(bytes=[]) %}
       {%- for i in range(transitions) %}
-        {%- set ns.bytes = ns.bytes + [ byte(colors[i], effects[i]) | int('', 2) * 2**(i * 8) ] %}
+        {%- set ns.bytes = ns.bytes + [ byte(colors[i], effects[i]) | int(base=2, default=0) * 2**(i * 8) ] %}
       {%- endfor %}
       {{ ns.bytes | sum }}
     parameter23: >
       {%- set ns = namespace(bytes=[]) %}
       {%- for i in range(transitions) %}
-        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(levels[i]) | int('', 2) * 2**(i * 8) ] %}
+        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(levels[i]) | int(base=2, default=0) * 2**(i * 8) ] %}
       {%- endfor %}
       {{ ns.bytes | sum }}
     parameter24: >
       {%- set ns = namespace(bytes=[]) %}
       {%- for i in range(transitions) %}
-        {%- set duration = durations[i] | int %}
+        {%- set duration = durations[i] | int(default=1) %}
         {%- set duration = duration if duration >= 1 else 1 %}
         {%- set duration = duration if duration <= 60 else 60 %}
-        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(duration) | int('', 2) * 2**(i * 8) ] %}
+        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(duration) | int(base=2, default=0) * 2**(i * 8) ] %}
       {%- endfor %}
       {{ ns.bytes | sum }}
     parameter30: >
-      {%- set iterations = iterations | default(255) | int %}
+      {%- set iterations = iterations | int(default=255) %}
       {%- set iterations = iterations if iterations >= 0 else 0 %}
       {%- set byte1 = iterations if iterations <= 255 else 255 %}
       {%- set behaviors = [ 'off', 'previous-color', 'last-color-in-program' ] %}
       {%- set units = ['100ms', 'seconds', 'minutes', 'hours'] %}
       {%- set byte2 = behaviors.index(behavior) if behavior in behaviors else 1 %}
       {%- set byte3 = units.index(duration_units) if duration_units in units else 0 %}
-      {{ '{0:08b}{1:08b}{2:08b}'.format(byte3, byte2, byte1) | int('', 2) }}
+      {{ '{0:08b}{1:08b}{2:08b}'.format(byte3, byte2, byte1) | int(base=2, default=0) }}
   sequence:
 
 #  - service: persistent_notification.create
@@ -1090,7 +1090,7 @@ lzw45_custom_effect_zwave_js:
       {%- else %}
         {%- set ns = namespace(levels = []) %}
         {%- for i in range(transitions) %}
-          {%- set pct = levels[i] | int %}
+          {%- set pct = levels[i] | int(default=99) %}
           {%- set pct = pct if pct >= 0 else 0 %}
           {%- set pct = pct if pct <= 99 else 99 %}
           {%- set ns.levels = ns.levels + [ pct ] %}
@@ -1134,33 +1134,33 @@ lzw45_custom_effect_zwave_js:
       {%- endmacro %}
       {%- set ns = namespace(bytes=[]) %}
       {%- for i in range(transitions) %}
-        {%- set ns.bytes = ns.bytes + [ byte(colors[i], effects[i]) | int('', 2) * 2**(i * 8) ] %}
+        {%- set ns.bytes = ns.bytes + [ byte(colors[i], effects[i]) | int(base=2, default=0) * 2**(i * 8) ] %}
       {%- endfor %}
       {{ ns.bytes | sum }}
     parameter23: >
       {%- set ns = namespace(bytes=[]) %}
       {%- for i in range(transitions) %}
-        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(levels[i]) | int('', 2) * 2**(i * 8) ] %}
+        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(levels[i]) | int(base=2, default=0) * 2**(i * 8) ] %}
       {%- endfor %}
       {{ ns.bytes | sum }}
     parameter24: >
       {%- set ns = namespace(bytes=[]) %}
       {%- for i in range(transitions) %}
-        {%- set duration = durations[i] | int %}
+        {%- set duration = durations[i] | int(default=1) %}
         {%- set duration = duration if duration >= 1 else 1 %}
         {%- set duration = duration if duration <= 60 else 60 %}
-        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(duration) | int('', 2) * 2**(i * 8) ] %}
+        {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(duration) | int(base=2, default=0) * 2**(i * 8) ] %}
       {%- endfor %}
       {{ ns.bytes | sum }}
     parameter30: >
-      {%- set iterations = iterations | default(255) | int %}
+      {%- set iterations = iterations | int(default=255) %}
       {%- set iterations = iterations if iterations >= 0 else 0 %}
       {%- set byte1 = iterations if iterations <= 255 else 255 %}
       {%- set behaviors = [ 'off', 'previous-color', 'last-color-in-program' ] %}
       {%- set units = ['100ms', 'seconds', 'minutes', 'hours'] %}
       {%- set byte2 = behaviors.index(behavior) if behavior in behaviors else 1 %}
       {%- set byte3 = units.index(duration_units) if duration_units in units else 0 %}
-      {{ '{0:08b}{1:08b}{2:08b}'.format(byte3, byte2, byte1) | int('', 2) }}
+      {{ '{0:08b}{1:08b}{2:08b}'.format(byte3, byte2, byte1) | int(base=2, default=0) }}
   sequence:
 
   - condition: template
@@ -1198,7 +1198,7 @@ lzw45_ui_custom_effect:
   variables:
     nodes: [ 91, 92 ]
     count: >
-      {{ states('input_number.custom_effects_count') | default(2) }}
+      {{ states('input_number.custom_effects_count') | int(default=2) }}
     info: >
       {%- set name = 'custom_effects' %}
       {%- set items = {
@@ -1209,13 +1209,13 @@ lzw45_ui_custom_effect:
       {%- for domain, ids in items.items() %}
         {%- for id in ids %}
           {%- set inner = namespace(ret=[]) %}
-          {%- for i in range(1, count | int + 1) %}
+          {%- for i in range(1, count + 1) %}
             {%- if id == 'color' %}
               {%- set value = states('{0}.{1}_{2}_{3}'.format(domain, name, id, i)) %}
             {%- else %}
               {%- set value = states('{0}.{1}_{2}'.format(domain, name, id)) %}
             {%- endif %}
-            {%- set inner.ret = inner.ret + [ value | int if domain == 'input_number' else '"{0}"'.format(value) ] %}
+            {%- set inner.ret = inner.ret + [ value | int(default=0) if domain == 'input_number' else '"{0}"'.format(value) ] %}
           {%- endfor %}
           {%- set ns.ret = ns.ret + [ '"{0}":['.format(id) ~ inner.ret | join(',') ~ ']' ] %}
         {%- endfor %}
@@ -1227,13 +1227,13 @@ lzw45_ui_custom_effect:
       sequence:
       - service: script.lzw45_custom_effect
         data:
-          node: "{{ nodes[repeat.index - 1] | int }}"
+          node: "{{ nodes[repeat.index - 1] }}"
           colors: "{{ info.color }}"
           effects: "{{ info.effect }}"
           brightness_pcts: "{{ info.brightness }}"
           durations: "{{ info.duration }}"
           iterations: >
-            {{ states('input_number.custom_effects_iterations') | int | default(255) }}
+            {{ states('input_number.custom_effects_iterations') | int(default=255) }}
           behavior: >
             {{ states('input_select.custom_effects_behavior') | default('off') }}
           duration_units: >
@@ -1250,9 +1250,9 @@ lzw45_ui_pixel_effect:
       sequence:
       - service: script.lzw45_pixel_effect
         data:
-          node: "{{ nodes[repeat.index - 1] | int }}"
+          node: "{{ nodes[repeat.index - 1] }}"
           effect: "{{ states('input_select.pixel_effect') | default('static') }}"
-          brightness_pct: "{{ states('input_number.pixel_effect_brightness') | int | default(99) }}"
+          brightness_pct: "{{ states('input_number.pixel_effect_brightness') | int(default=99) }}"
   - delay:
       seconds: 1
 
@@ -1265,7 +1265,7 @@ lzw45_party_effect:
       sequence:
       - service: script.lzw45_pixel_effect
         data:
-          node: "{{ nodes[repeat.index - 1] | int }}"
+          node: "{{ nodes[repeat.index - 1] }}"
           effect: aurora
           brightness_pct: 99
   - delay:
@@ -1280,13 +1280,13 @@ lzw45_ui_quick_effect:
       sequence:
       - service: script.lzw45_quick_strip_effect
         data:
-          node: "{{ nodes[repeat.index - 1] | int }}"
+          node: "{{ nodes[repeat.index - 1] }}"
           endless: true
           color: "{{ 'color_temp' if is_state('input_boolean.hue_color_temp', 'on') else 'hue' }}"
           effect: "{{ states('input_select.quick_strip_effect') | default('slow-fade') }}"
-          brightness_pct: "{{ states('input_number.quick_strip_brightness') | int | default(99) }}"
-          hue: "{{ states('input_number.quick_strip_hue') | int | default(360) }}"
-          color_temp: "{{ states('input_number.quick_strip_color_temp') | int | default(2700) }}"
+          brightness_pct: "{{ states('input_number.quick_strip_brightness') | int(default=99) }}"
+          hue: "{{ states('input_number.quick_strip_hue') | int(default=360) }}"
+          color_temp: "{{ states('input_number.quick_strip_color_temp') | int(default=2700) }}"
 
 debug_script_variables:
   fields:
@@ -1524,9 +1524,9 @@ notify_count_base:
       {%- set up_time = (now()-count_datetime).seconds %}
 
       {%- macro phrase(name, divisor, mod=None) %}
-        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
+        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int(default=0) %}
         {%- set end = 's' if value > 1 else '' %}
-        {{- '{} {}{}'.format(value, name, end) if value | int > 0 else '' }}
+        {{- '{} {}{}'.format(value, name, end) if value | int(default=0) > 0 else '' }}
       {%- endmacro %}
       
       {%- set values = [ 
@@ -1618,9 +1618,9 @@ notify_if_ajar:
         {%- set up_time = duration %}
 
         {%- macro phrase(name, divisor, mod=None) %}
-          {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
+          {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int(default=0) %}
           {%- set end = 's' if value > 1 else '' %}
-          {{- '{} {}{}'.format(value, name, end) if value | int > 0 else '' }}
+          {{- '{} {}{}'.format(value, name, end) if value | int(default=0) > 0 else '' }}
         {%- endmacro %}
         
         {%- set values = [ 
