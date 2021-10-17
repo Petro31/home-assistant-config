@@ -27,7 +27,9 @@
   - unique_id: disk_use_total
     name: Disk Use Total
     state: >
-      {{ (states('sensor.disk_free_home') | float + states('sensor.disk_use_home') | float) | round(1) }}
+      {{ expand('sensor.disk_free_home', 'sensor.disk_use_home') | map(attribute='state') | map('float', 0) | sum | round(1) }}
+    availability: >
+      {{ expand('sensor.disk_free_home', 'sensor.disk_use_home') | rejectattr('state','in',['unknown','unavailable']) | list | count == 2 }}
     unit_of_measurement: "GiB"
     attributes:
       template: system
@@ -35,7 +37,9 @@
   - unique_id: memory_use_total
     name: Memory Use Total
     state: >
-      {{ (states('sensor.memory_free') | float + states('sensor.memory_use') | float) | round(1) }}
+      {{ expand('sensor.memory_free', 'sensor.memory_use') | map(attribute='state') | map('float', 0) | sum | round(1) }}
+    availability: >
+      {{ expand('sensor.memory_free', 'sensor.memory_use') | rejectattr('state','in',['unknown','unavailable']) | list | count == 2 }}
     unit_of_measurement: "MiB"
     attributes:
       template: system

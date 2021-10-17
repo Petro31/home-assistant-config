@@ -12,7 +12,7 @@
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
     timeout: >
       {%- if valid %}
-        {{ as_timestamp(trigger.to_state.last_changed) - as_timestamp(trigger.from_state.last_changed) }}
+        {{ as_timestamp(trigger.to_state.last_changed, 0) - as_timestamp(trigger.from_state.last_changed, 0) }}
       {% endif %}
     continue: >
       {{ timeout and timeout > 15 }}

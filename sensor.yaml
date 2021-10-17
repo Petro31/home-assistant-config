@@ -45,7 +45,7 @@
     name: Bonus Room Switch Uptime
     baseoid: 1.3.6.1.2.1.1.3.0
     value_template: >
-      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
+      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False, now().isoformat()) }}
       
   - platform: snmp
     host: !secret unifi_server_switch
@@ -58,35 +58,35 @@
     name: Server Room Switch Uptime
     baseoid: 1.3.6.1.2.1.1.3.0
     value_template: >
-      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
+      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False, now().isoformat()) }}
       
   - platform: snmp
     host: !secret unifi_server_gateway
     name: Server Room Gateway Uptime
     baseoid: 1.3.6.1.2.1.1.3.0
     value_template: >
-      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
+      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False, now().isoformat()) }}
       
   - platform: snmp
     host: !secret unifi_garage_ac_lite
     name: Garage AC Lite Uptime
     baseoid: 1.3.6.1.2.1.1.3.0
     value_template: >
-      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
+      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False, now().isoformat()) }}
      
   - platform: snmp
     host: !secret unifi_closet_ac_lite
     name: Hall Closet AC Lite Uptime
     baseoid: 1.3.6.1.2.1.1.3.0
     value_template: >
-      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
+      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False, now().isoformat()) }}
      
   - platform: snmp
     host: !secret unifi_server_ac_lite
     name: Server Room AC Lite Uptime
     baseoid: 1.3.6.1.2.1.1.3.0
     value_template: >
-      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
+      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False, now().isoformat()) }}
      
 
   - platform: snmp
@@ -94,7 +94,7 @@
     name: Synology Uptime
     baseoid: 1.3.6.1.2.1.25.1.1.0
     value_template: >
-      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False) }}
+      {{ (now().timestamp() - (value | int / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False, now().isoformat()) }}
 
   - platform: uptime
 

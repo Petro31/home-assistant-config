@@ -1332,7 +1332,7 @@ notify:
   variables:
     timestamp: >
       {%- set format = format | default("%-I:%M:%S %p") %}
-      {{ as_timestamp(now()) | timestamp_custom(format) }}
+      {{ as_timestamp(now(), none) | timestamp_custom(format, default="???") }}
     persistent_notification: >
       {{ persistent_notification | default(true) }}
     debug: >
@@ -1419,9 +1419,11 @@ notify_frigate:
       {{ base_url }}/api/frigate/notifications/{{ id }}/snapshot.jpg
     timestamp: >
       {%- set format = format | default("%-I:%M:%S %p") %}
-      {{ as_timestamp(now()) | timestamp_custom(format) }}
+      {{ as_timestamp(now(), none) | timestamp_custom(format, default="???") }}
     persistent_notification: >
       {{ persistent_notification | default(true) }}
+    debug: >
+      {{ debug | default(false) }}
     out_notify: >
       {%- if debug %}
         notify.mobile_app_petro
@@ -1518,7 +1520,8 @@ notify_count_base:
     debug: >
       {{ debug | default(false) }}
     duration: >
-      {%- set up_time = as_timestamp(now())-as_timestamp(count_timestamp) %}
+      {%- set count_datetime = count_timestamp | default | as_datetime or now() %}
+      {%- set up_time = (now()-count_datetime).seconds %}
 
       {%- macro phrase(name, divisor, mod=None) %}
         {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
@@ -1603,10 +1606,11 @@ notify_if_ajar:
       example: '2021-04-25T17:56:06.448826+00:00'
   sequence:
   - wait_template: "{{ is_state(door, 'off') }}"
-    timeout: "{{ duration | timestamp_custom('%H:%M:%S', false) }}"
+    timeout: "{{ duration | timestamp_custom('%H:%M:%S', false, '00:01:00') }}"
   - condition: template
     value_template: >
-      {{ as_timestamp(now()) - as_timestamp(timestamp) >= duration }}
+      {%- set ts = timestamp | default | as_datetime or now() %}
+      {{ (now() - ts).seconds >= duration }}
   - service: script.notify
     data:
       title: "{{ door_name }} Door Ajar!"

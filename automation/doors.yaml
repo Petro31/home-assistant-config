@@ -44,8 +44,7 @@
         {{ trigger.to_state.entity_id }}
       {%- endif %}
     timestamp: >
-      {%- set datetime = datetime | default(now()) %}
-      {{ as_timestamp(datetime) | timestamp_custom("%Y-%m-%dT%H:%M:%S.%f+00:00", datetime.tzinfo == 'UTC') }}
+      {{ (datetime | default(now())).isoformat() }}
     object_id: >
       {{ source.split('.')[-1] }}
     unique_id: >
@@ -69,11 +68,12 @@
         0
       {%- endif %}
     delta: >
-      {%- set last = as_timestamp(last_opened) %}
-      {%- if last is not none %}
-        {{ as_timestamp(timestamp) - as_timestamp(last_opened) }}
+      {%- set last = last_opened | as_datetime %}
+      {%- set current = timestamp | as_datetime %}
+      {%- if last and current %}
+        {{ (current - last).seconds }}
       {%- else %}
-        {{ quiet_window + 1}}
+        {{ quiet_window + 1 }}
       {%- endif %}
     in_quiet_window: >
       {{ delta < quiet_window }}
@@ -151,7 +151,9 @@
   - choose: 
     - conditions:
       - condition: template
-        value_template: "{{ as_timestamp(now()) - as_timestamp(timestamp) >= 30 }}"
+        value_template: >
+          {%- set current = timestamp | as_datetime %}
+          {{ (now() - current).seconds >= 30 if current else False }}
       sequence:
       - service: script.notify
         data:
@@ -175,8 +177,7 @@
         {{ trigger.to_state.entity_id }}
       {%- endif %}
     timestamp: >
-      {%- set datetime = datetime | default(now()) %}
-      {{ as_timestamp(datetime) | timestamp_custom("%Y-%m-%dT%H:%M:%S.%f+00:00", datetime.tzinfo == 'UTC') }}
+      {{ (datetime | default(now())).isoformat() }}
     duration: >
       {%- set times = {
         'binary_sensor.main_door': 90,
@@ -251,8 +252,7 @@
         {{ trigger.to_state.entity_id }}
       {%- endif %}
     timestamp: >
-      {%- set datetime = datetime | default(now()) %}
-      {{ as_timestamp(datetime) | timestamp_custom("%Y-%m-%dT%H:%M:%S.%f+00:00", datetime.tzinfo == 'UTC') }}
+      {{ (datetime | default(now())).isoformat() }}
     object_id: >
       {{ source.split('.')[-1] }}
     sensor: > 
@@ -289,9 +289,10 @@
     duration: >
       {{ current.duration | default(0)}}
     delta: >
-      {%- set last = as_timestamp(last_opened) %}
-      {%- if last is not none %}
-        {{ as_timestamp(timestamp) - as_timestamp(last_opened) }}
+      {%- set last = last_opened | as_datetime %}
+      {%- set current = timestamp | as_datetime %}
+      {%- if last and current %}
+        {{ (current - last).seconds }}
       {%- else %}
         {{ duration + 1 }}
       {%- endif %}
