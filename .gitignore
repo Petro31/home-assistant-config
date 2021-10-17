@@ -213,3 +213,7 @@ blueprints/automation/hunterjm/frigate_notification.yaml
 .zwjs/d9f660ea.metadata.jsonl
 
 .zwjs/d9f660ea.values.jsonl
+
+home-assistant.log.1
+
+home-assistant.log.fault
