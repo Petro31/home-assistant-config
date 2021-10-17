@@ -402,18 +402,18 @@ lzw45_quick_strip_effect:
       {%- endif %}
     byte1: >
       {%- if color_type == 0 %}
-        {%- set hue = hue | int(default=360) %}
+        {%- set hue = hue | default(360) | int %}
         {%- set hue = hue if hue >= 0 else 0 %}
         {%- set hue = hue if hue <= 360 else 360 %}
-        {{ (hue / 360 * 255) | int(default=255) }}
+        {{ (hue / 360 * 255) | int }}
       {%- else %}
-        {%- set color_temp = color_temp | int(2700) %}
+        {%- set color_temp = color_temp | default(2700) | int %}
         {%- set color_temp = color_temp if color_temp >= 2700 else 2700 %}
         {%- set color_temp = color_temp if color_temp <= 6500 else 6500 %}
-        {{ ((color_temp - 2700) / (6500 - 2700) * 255) | int(default=0) }}
+        {{ ((color_temp - 2700) / (6500 - 2700) * 255) | int }}
       {%- endif %}
     byte2: >
-      {%- set pct = brightness_pct | int(default=100) %}
+      {%- set pct = brightness_pct | default(100) | int %}
       {%- if 0 <= pct <= 100 %}
         {%- if pct == 100 %}
           10
@@ -424,9 +424,9 @@ lzw45_quick_strip_effect:
         0
       {%- endif %}
     byte3: >
-      {%- set seconds = seconds | int(default=0) %}
-      {%- set minutes = minutes | int(default=0) %}
-      {%- set hours = hours | int(default=0) %}
+      {%- set seconds = seconds | default(0) | int %}
+      {%- set minutes = minutes | default(0) | int %}
+      {%- set hours = hours | default(0) | int %}
       {%- set forever = endless | default(false) %}
       {%- if forever %}
         255
@@ -546,18 +546,18 @@ lzw45_quick_strip_effect_zwave_js:
       {{ 64 if color == 'color_temp' else 0 }}
     byte1: >
       {%- if color_type == 0 %}
-        {%- set hue = hue | int(default=360) %}
+        {%- set hue = hue | default(360) | int %}
         {%- set hue = hue if hue >= 0 else 0 %}
         {%- set hue = hue if hue <= 360 else 360 %}
-        {{ (hue / 360 * 255) | int(default=255) }}
+        {{ (hue / 360 * 255) | int }}
       {%- else %}
-        {%- set color_temp = color_temp | int(2700) %}
+        {%- set color_temp = color_temp | default(2700) | int %}
         {%- set color_temp = color_temp if color_temp >= 2700 else 2700 %}
         {%- set color_temp = color_temp if color_temp <= 6500 else 6500 %}
-        {{ ((color_temp - 2700) / (6500 - 2700) * 255) | int(default=0) }}
+        {{ ((color_temp - 2700) / (6500 - 2700) * 255) | int }}
       {%- endif %}
     byte2: >
-      {%- set pct = brightness_pct | int(default=100) %}
+      {%- set pct = brightness_pct | default(100) | int %}
       {%- if 0 <= pct <= 100 %}
         {%- if pct == 100 %}
           10
@@ -568,9 +568,9 @@ lzw45_quick_strip_effect_zwave_js:
         0
       {%- endif %}
     byte3: >
-      {%- set seconds = seconds | int(default=0) %}
-      {%- set minutes = minutes | int(default=0) %}
-      {%- set hours = hours | int(default=0) %}
+      {%- set seconds = seconds | default(0) | int %}
+      {%- set minutes = minutes | default(0) | int %}
+      {%- set hours = hours | default(0) | int %}
       {%- set forever = endless | default(false) %}
       {%- if forever %}
         255
@@ -691,7 +691,7 @@ lzw45_pixel_effect:
       ] %}
       {{ effects.index(effect) + 1 if effect in effects else 1 }}
     byte2: >
-      {%- set pct = brightness_pct | int(default=99) %}
+      {%- set pct = brightness_pct | default(99) | int %}
       {%- if 0 <= pct <= 99 %}
         {{ pct }}
       {%- else %}
@@ -782,7 +782,7 @@ lzw45_pixel_effect_zwave_js:
       ] %}
       {{ effects.index(effect) + 1 if effect in effects else 1 }}
     byte2: >
-      {%- set pct = brightness_pct | int(default=99) %}
+      {%- set pct = brightness_pct | default(99) | int %}
       {%- if 0 <= pct <= 99 %}
         {{ pct }}
       {%- else %}
@@ -867,7 +867,7 @@ lzw45_custom_effect:
       {%- else %}
         {%- set ns = namespace(levels = []) %}
         {%- for i in range(transitions) %}
-          {%- set pct = levels[i] | int(default=99) %}
+          {%- set pct = levels[i] | int %}
           {%- set pct = pct if pct >= 0 else 0 %}
           {%- set pct = pct if pct <= 99 else 99 %}
           {%- set ns.levels = ns.levels + [ pct ] %}
@@ -923,14 +923,14 @@ lzw45_custom_effect:
     parameter24: >
       {%- set ns = namespace(bytes=[]) %}
       {%- for i in range(transitions) %}
-        {%- set duration = durations[i] | int(default=1) %}
+        {%- set duration = durations[i] | int %}
         {%- set duration = duration if duration >= 1 else 1 %}
         {%- set duration = duration if duration <= 60 else 60 %}
         {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(duration) | int(base=2, default=0) * 2**(i * 8) ] %}
       {%- endfor %}
       {{ ns.bytes | sum }}
     parameter30: >
-      {%- set iterations = iterations | int(default=255) %}
+      {%- set iterations = iterations | default(255) | int %}
       {%- set iterations = iterations if iterations >= 0 else 0 %}
       {%- set byte1 = iterations if iterations <= 255 else 255 %}
       {%- set behaviors = [ 'off', 'previous-color', 'last-color-in-program' ] %}
@@ -1090,7 +1090,7 @@ lzw45_custom_effect_zwave_js:
       {%- else %}
         {%- set ns = namespace(levels = []) %}
         {%- for i in range(transitions) %}
-          {%- set pct = levels[i] | int(default=99) %}
+          {%- set pct = levels[i] | int %}
           {%- set pct = pct if pct >= 0 else 0 %}
           {%- set pct = pct if pct <= 99 else 99 %}
           {%- set ns.levels = ns.levels + [ pct ] %}
@@ -1146,14 +1146,14 @@ lzw45_custom_effect_zwave_js:
     parameter24: >
       {%- set ns = namespace(bytes=[]) %}
       {%- for i in range(transitions) %}
-        {%- set duration = durations[i] | int(default=1) %}
+        {%- set duration = durations[i] | int %}
         {%- set duration = duration if duration >= 1 else 1 %}
         {%- set duration = duration if duration <= 60 else 60 %}
         {%- set ns.bytes = ns.bytes + [ '{0:08b}'.format(duration) | int(base=2, default=0) * 2**(i * 8) ] %}
       {%- endfor %}
       {{ ns.bytes | sum }}
     parameter30: >
-      {%- set iterations = iterations | int(default=255) %}
+      {%- set iterations = iterations | default(255) | int %}
       {%- set iterations = iterations if iterations >= 0 else 0 %}
       {%- set byte1 = iterations if iterations <= 255 else 255 %}
       {%- set behaviors = [ 'off', 'previous-color', 'last-color-in-program' ] %}
@@ -1524,9 +1524,9 @@ notify_count_base:
       {%- set up_time = (now()-count_datetime).seconds %}
 
       {%- macro phrase(name, divisor, mod=None) %}
-        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int(default=0) %}
+        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
         {%- set end = 's' if value > 1 else '' %}
-        {{- '{} {}{}'.format(value, name, end) if value | int(default=0) > 0 else '' }}
+        {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
       {%- endmacro %}
       
       {%- set values = [ 
@@ -1618,9 +1618,9 @@ notify_if_ajar:
         {%- set up_time = duration %}
 
         {%- macro phrase(name, divisor, mod=None) %}
-          {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int(default=0) %}
+          {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
           {%- set end = 's' if value > 1 else '' %}
-          {{- '{} {}{}'.format(value, name, end) if value | int(default=0) > 0 else '' }}
+          {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
         {%- endmacro %}
         
         {%- set values = [ 

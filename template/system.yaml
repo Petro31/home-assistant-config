@@ -10,9 +10,9 @@
     state: >
       {%- set up_time = states('sensor.ups_battery_runtime_seconds') | int(default=0) %}
       {%- macro phrase(name, divisor, mod=None) %}
-        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int(default=0) %}
+        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
         {%- set end = 's' if value > 1 else '' %}
-        {{- '{} {}{}'.format(value, name, end) if value | int(default=0) > 0 else '' }}
+        {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
       {%- endmacro %}
       
       {%- set values = [ 

@@ -59,11 +59,11 @@ cards:
               {%- set hue = states('input_number.quick_strip_hue') | int(default=0) / 360 %}
               {%- set s = 1 %}
               {%- set v = 1 %}
-              {%- set i = (hue * 6.0) | int(default=0) %}
+              {%- set i = (hue * 6.0) | int %}
               {%- set f = hue * 6.0 - i %}
-              {%- set p = (255 * (1 * (1.0 - s))) | int(default=0) %}
-              {%- set q = (255 * (v * (1.0 - s * f))) | int(default=0) %}
-              {%- set t = (255 * (v * (1.0 - s * (1.0 - f)))) | int(default=0) %}
+              {%- set p = (255 * (1 * (1.0 - s))) | int %}
+              {%- set q = (255 * (v * (1.0 - s * f))) | int %}
+              {%- set t = (255 * (v * (1.0 - s * (1.0 - f)))) | int %}
               {%- set v = 255 %}
               {%- set i = i % 6 %}
               {%- set ret = [
