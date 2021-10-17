@@ -15,8 +15,6 @@ inside_area:
     - light.bonus_room_office_recessed
     - light.dining_room_chandelier
     - light.hallway
-    - light.game_room_bulb
-    - light.game_room_bulb_2
     - light.kitchen_cans
     - light.kitchen_island
     - light.living_room
@@ -28,7 +26,7 @@ inside_area:
     - switch.basement_stairs
     - switch.dining_room_hutch
     - switch.foyer
-    - switch.game_room_outlet
+    - switch.game_room_buffet_outlet
     - switch.game_room_switch
     - switch.game_room_window
     - switch.garage_cans
@@ -80,9 +78,6 @@ downstairs_area:
     - switch.kitchen_pantry
     - switch.laundry
     - switch.living_room_window
-    - switch.office_outlet
-    - switch.office_switch
-    - switch.office_window
     
 #########
 # AREAS #
@@ -156,9 +151,7 @@ living_room_area:
    
 game_room_area:
   entities:
-    - light.game_room_bulb
-    - light.game_room_bulb_2
-    - switch.game_room_outlet
+    - switch.game_room_buffet_outlet
     - switch.game_room_switch
     - switch.game_room_window
 

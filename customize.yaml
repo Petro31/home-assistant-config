@@ -203,12 +203,6 @@ light.dining_room_chandelier:
 light.hallway:
   friendly_name: Hallway
   icon: mdi:ceiling-light
-light.game_room_bulb:
-  friendly_name: Bulb 1
-  supported_features: 179
-light.game_room_bulb_2:
-  friendly_name: Bulb 2
-  supported_features: 179
 light.kitchen_cans:
   friendly_name: Recessed
   icon: mdi:wall-sconce-flat
@@ -593,3 +587,12 @@ switch.hbo:
   icon: fapro:hbo
 switch.garage_ceiling_outlet:
   icon: fapro:laser
+sensor.cpu_temperature:
+  device_class: temperature
+  state_class: measurement
+sensor.bonus_room_switch_temperature:
+  device_class: temperature
+  state_class: measurement
+sensor.server_room_switch_temperature:
+  device_class: temperature
+  state_class: measurement
