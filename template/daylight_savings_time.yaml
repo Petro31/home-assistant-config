@@ -1,40 +1,66 @@
-# For anyone copying this code:  
-# You have to update previous = 2 to whatever hour your timezone changes DST. 
-# In my timezone, the time changes at 2am.  Therefore I used `previous = 2`. 
-# If your timezone changes at 2:05 pm or 14:05, then you should use `previous = 15.  
-# Also keep in mind that you need to update it in 2 places, `state` and `next`.
-
 - sensor:
   - unique_id: dst
     name: Daylight Savings Times
     device_class: timestamp
     state: >
-      {%- set ns = namespace(previous = 2, spring=none, fall=none) %}
-      {%- set today = strptime(states('sensor.date'), '%Y-%m-%d').astimezone().replace(hour=ns.previous) %}
+      {%- set today = strptime(states('sensor.date'), '%Y-%m-%d').astimezone() %}
+      {%- set ns = namespace(tz = today.strftime('%z') | int, next=[], tz2=none, return=none) %}
       {%- for i in range(365) %}
       {%- set day = (today + timedelta(days=i)).astimezone() %}
-      {%- if ns.previous - day.hour == -1 %}
-      {%- set ns.spring = today + timedelta(days=i) %}
-      {%- elif ns.previous - day.hour == 1 %}
-      {%- set ns.fall = today + timedelta(days=i) %}
-      {%- endif %}
-      {%- set ns.previous = day.hour %}
+      {%- set tz = day.strftime('%z') | int %}
+      {%- if ns.tz - tz != 0 %}
+      {%- set day = (today + timedelta(days=i-1)).astimezone() %}
+      {%- set ns.tz2 = day.strftime('%z') | int  %}
+      {%- set ns.return = none %}
+      {%- for i in range(0, 60*24) %}
+        {%- set t = (day + timedelta(minutes=i)).astimezone() %}
+        {%- set change = t.strftime('%z') | int %}
+        {%- if change - ns.tz2 and ns.return is none %}
+          {%- set ns.return = t %}
+          {%- set ns.next = ns.next + [ns.return.isoformat()] %}
+        {%- endif %}
       {%- endfor %}
-      {{ [ns.spring, ns.fall] | min }}
+      {%- endif %}
+      {%- set ns.tz = tz %}
+      {%- endfor %}
+      {{ ns.next | min }}
     attributes:
       template: dst
-      next: >
-        {%- set ns = namespace(previous = 2, spring=none, fall=none) %}
-        {%- set today = strptime(states('sensor.date'), '%Y-%m-%d').astimezone().replace(hour=ns.previous) %}
+      events: >
+        {%- macro phrase(seconds, name, divisor, mod=None) %}
+          {%- set value = ((seconds | abs // divisor) % (mod if mod else divisor)) | int %}
+          {%- set end = 's' if value > 1 else '' %}
+          {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
+        {%- endmacro %}
+
+        {%- set today = strptime(states('sensor.date'), '%Y-%m-%d').astimezone() %}
+        {%- set ns = namespace(tz = today.strftime('%z') | int, events=[], tz2=none, return=none) %}
         {%- for i in range(365) %}
         {%- set day = (today + timedelta(days=i)).astimezone() %}
-        {%- if ns.previous - day.hour == -1 %}
-        {%- set ns.spring = today + timedelta(days=i) %}
-        {%- elif ns.previous - day.hour == 1 %}
-        {%- set ns.fall = today + timedelta(days=i) %}
-        {%- endif %}
-        {%- set ns.previous = day.hour %}
+        {%- set tz = day.strftime('%z') | int %}
+        {%- if ns.tz - tz != 0 %}
+        {%- set day = (today + timedelta(days=i-1)).astimezone() %}
+        {%- set ns.tz2 = day.strftime('%z')  %}
+        {%- set ns.return = none %}
+        {%- for i in range(0, 60*24) %}
+          {%- set t = (day + timedelta(minutes=i)).astimezone() %}
+          {%- set change = t.strftime('%z') %}
+          {%- set seconds = (change[:3] | int - ns.tz2[:3] | int) * 60 * 60 + change[3:] | int - ns.tz2[3:] | int  %}
+          {%- set values = [ 
+               phrase(seconds, 'hour', 60*60, 60*60*24),
+               phrase(seconds, 'minute', 60, 60),
+           ] | select('!=','') | list %}
+          {%- set change = change | int %}
+          {%- if change - ns.tz2 | int and ns.return is none %}
+            {%- set ns.return = t %}
+            {%- set dir = 'gain ' if seconds < 0 else 'lose ' %}
+            {%- set p = values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first %}
+            {%- set ns.events = ns.events + [{'timestamp': ns.return.isoformat(), 'phrase': dir ~ p, 'days': (ns.return-today_at()).days}] %}
+          {%- endif %}
         {%- endfor %}
-        {%- set next = [ns.spring, ns.fall] | min %}
-        {%- set phrase = 'lose an hour' if next == ns.spring else 'gain an hour' %}
-        {"spring": "{{ns.spring}}", "fall": "{{ns.fall}}", "event": "{{next}}", "days_to_event":{{(next-today).days}}, "phrase": "{{phrase}}"}
+        {%- endif %}
+        {%- set ns.tz = tz %}
+        {%- endfor %}
+        {%- set next = ns.events | map(attribute='timestamp') | min %}
+        {%- set after = ns.events | map(attribute='timestamp') | max %}
+        {"next": {{ ns.events | selectattr('timestamp','eq', next) | list | first }}, "after": {{ ns.events | selectattr('timestamp','eq', after) | list | first }} }
