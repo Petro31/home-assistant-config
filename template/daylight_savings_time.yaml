@@ -1,3 +1,9 @@
+# For anyone copying this code:  
+# You have to update previous = 2 to whatever hour your timezone changes DST. 
+# In my timezone, the time changes at 2am.  Therefore I used `previous = 2`. 
+# If your timezone changes at 2:05 pm or 14:05, then you should use `previous = 15.  
+# Also keep in mind that you need to update it in 2 places, `state` and `next`.
+
 - sensor:
   - unique_id: dst
     name: Daylight Savings Times
