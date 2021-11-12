@@ -19,7 +19,7 @@
     state: >
       {%- macro mwd(month, week, day) -%}
       {%- set month, week, day = 11, 4, 3 %}
-      {%- set today = now().replace(hour=0, minute=0, second=0, microsecond=0) %}
+      {%- set today = today_at() %}
       {%- set temp = today.replace(month=month, day=1) %}
       {%- set adjust = (day - temp.weekday()) % 7 %}
       {%- set temp = temp + timedelta(days=adjust) -%}
@@ -27,7 +27,7 @@
       {%- endmacro %}
       
       {%- macro md(month, day) -%}
-      {{ now().replace(month=month, day=day, hour=0, minute=0, second=0, microsecond=0).isoformat() }}
+      {{ today_at().replace(month=month, day=day).isoformat() }}
       {%- endmacro %}
       
       {%- macro easter() %}
@@ -42,7 +42,7 @@
       {%- set day = (22 + d + e) - special_year_sub if year in special_years else 22 + d + e %}
       {%- set month = 4 if day > 31 else 3 %}
       {%- set day = day - 31 if day > 31 else day -%}
-      {{ now().replace(month=month, day=day, hour=0, minute=0, second=0, microsecond=0).isoformat() }}
+      {{ today_at().replace(month=month, day=day).isoformat() }}
       {%- endmacro %}
       
       {% set holidays = {
@@ -77,13 +77,13 @@
       }%}
       
       {%- set ns = namespace(dates=[]) %}
-      {%- set c = now().replace(hour=0, minute=0, second=0, microsecond=0) %}
+      {%- set c = today_at() %}
       {%- for holiday, times in holidays.items() %}
       {%- set end = times.end | as_datetime + timedelta(days=1) %}
       {%- set start = times.start | as_datetime if times.start is defined else end - timedelta(days=7) %}
       {%- set ns.dates = ns.dates + [ (start.isoformat(), holiday), (end.isoformat(), 'none') ] %}
       {%- endfor %}
-      {%- set next = ns.dates | sort | selectattr('0','>', c.isoformat()) | first | default(none) %}
+      {%- set next = ns.dates | sort | selectattr('0','>=', c.isoformat()) | first | default(none) %}
       {%- if next %}
       {{ next | join(', ') }}
       {%- else %}

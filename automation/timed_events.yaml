@@ -77,14 +77,14 @@
   condition:
     - condition: template
       value_template: >
-        {{ state_attr('sensor.dst', 'events').next.days in [7,1] }}
+        {{ states('sensor.daylight_savings_days_until') | int(0) in [7,1] }}
   action:
     - service: script.notify
       data:
         message: >
-          {%- set events = state_attr('sensor.dst', 'events') %}
-          {%- set plural = 's' if events.next.days > 1 else '' %}
-          Daylight savings in {{ events.next.days }} day{{plural}}, you will {{ events.next.phrase }}!
+          {%- set days = states('sensor.daylight_savings_days_until') | int(0) %}
+          {%- set plural = 's' if days | int(0) > 1 else '' %}
+          Daylight savings in {{ days }} day{{plural}}, you will {{ states('sensor.daylight_savings_phrase') }}!
 
 - alias: Timed Event - Indoor Christmas Lights
   id: indoor_christmas_lights
@@ -136,11 +136,13 @@
       veterans_day: scene.holiday_bulbs_patriotic
       halloween: scene.holiday_bulbs_halloween
     start_scene: >
-      {%- if next_season %}
-        {% if today_at().isoformat() == next_season.date %}
-          {{ seasons.get(next_season.scene, 'scene.holiday_bulbs_soft_white') }}
-        {%- endif %}
+      {%- if next_season is not none and today_at().isoformat() == next_season.date %}
+        {{ seasons.get(next_season.scene, 'scene.holiday_bulbs_soft_white') }}
+      {%- else %}
+        none
       {%- endif %}
+    execute_scene: >
+      {{ event == 'sunset' and start_scene is not none }}
   condition:
   - condition: template
     value_template: "{{ event in ['sunset','sunrise'] }}"
@@ -148,7 +150,7 @@
   - choose:
     - conditions:
       - condition: template
-        value_template: "{{ event == 'sunset' and start_scene }}"
+        value_template: "{{ execute_scene }}"
       sequence:
       - service: scene.turn_on
         target:
