@@ -38,14 +38,14 @@ inside_area:
     - switch.living_room_window
     - switch.master_nightstand_left
     - switch.master_nightstand_right
-    
+
 outside_area:
   entities:
     - switch.outside_porch
     - switch.passenger_sconce
     - switch.sconces_garage
     - switch.sconces_main_entrance
-    
+
 upstairs_area:
   entities:
     - fan.bonus_room_bedroom
@@ -78,7 +78,10 @@ downstairs_area:
     - switch.kitchen_pantry
     - switch.laundry
     - switch.living_room_window
-    
+    - switch.game_room_buffet_outlet
+    - switch.game_room_switch
+    - switch.game_room_window
+
 #########
 # AREAS #
 #########
@@ -143,17 +146,22 @@ downstairs_areas:
 #########
 # ROOMS #
 #########
-    
+
 living_room_area:
   entities:
     - light.living_room
     - switch.living_room_window
-   
+
 game_room_area:
   entities:
     - switch.game_room_buffet_outlet
     - switch.game_room_switch
     - switch.game_room_window
+
+game_room_target_area:
+  entities:
+    - switch.game_room_buffet_outlet
+    - switch.game_room_switch
 
 office_area:
   entities:
@@ -174,7 +182,14 @@ kitchen_area:
     - switch.kitchen_pantry
     - switch.kitchen_outlet_above_fridge
     - switch.kitchen_outlet_above_microwave
-    
+
+kitchen_target_area:
+  entities:
+    - light.kitchen_island
+    - light.kitchen_cans
+    - switch.kitchen_cabinet
+    - switch.kitchen_pantry
+
 foyer_area:
   entities:
     - switch.foyer
@@ -195,7 +210,7 @@ basement_area:
 hall_area:
   entities:
     - light.hallway
-    
+
 master_bedroom_area:
   entities:
     - fan.master_fixture
@@ -203,18 +218,31 @@ master_bedroom_area:
     - light.master_fixture
     - switch.master_nightstand_left
     - switch.master_nightstand_right
-    
+
 master_bathroom_area:
   entities:
     - light.master_bathroom_sink
     - light.master_bathroom_cans
     - switch.master_bathroom_fan
-    
+
+master_bathroom_target_area:
+    - light.master_bathroom_sink
+    - light.master_bathroom_cans
+
+master_suite_target_area:
+  entities:
+    - light.master_closet
+    - light.master_fixture
+    - switch.master_nightstand_left
+    - switch.master_nightstand_right
+    - light.master_bathroom_sink
+    - light.master_bathroom_cans
+
 garage_area:
   entities:
     - switch.garage_cans
     - switch.garage_workbench
-    
+
 bonus_room_area:
   entities:
     - light.bonus_room_entrance
@@ -328,15 +356,6 @@ cameras:
     - camera.foyer
     - camera.garage
     - camera.kitchen
-
-post_processing:
-  entities:
-    - camera.backyard_post_process
-    - camera.driveway_post_process
-    - camera.floating_post_process
-    - camera.foyer_post_process
-    - camera.garage_post_process
-    - camera.kitchen_post_process
 
 camera_network_switches:
   entities:

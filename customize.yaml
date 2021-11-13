@@ -463,26 +463,50 @@ device_tracker.alexs_iphone:
 group.all_areas:
   friendly_name: All Areas
   icon: mdi:home
+group.all_networks:
+  friendly_name: All Networks
+  icon: 
 group.basement_area:
   friendly_name: Basement
   icon: mdi:home-floor-b
 group.bonus_room_area:
   friendly_name: Bonus Room
   icon: mdi:bed-king
+group.camera_network:
+  friendly_name: Camera Network
+  icon: 
+group.camera_network_switches:
+  friendly_name: Camera Network Switches
+  icon: 
+group.cameras:
+  friendly_name: Cameras
+  icon: 
+group.devices_network:
+  friendly_name: Devices Network
+  icon: 
 group.dining_room_area:
   friendly_name: Dining Room
   icon: mdi:silverware-fork-knife
+group.doors:
+  friendly_name: Doors
+  icon: 
 group.downstairs_area:
   friendly_name: Downstairs
   icon: mdi:home-floor-1
 group.downstairs_areas:
   friendly_name: Downstairs
   icon: mdi:home-floor-1
+group.family_network:
+  friendly_name: Family Network
+  icon: mdi:account-network
 group.foyer_area:
   friendly_name: Foyer
   icon: mdi:door
 group.game_room_area:
   friendly_name: Game Room
+  icon: mdi:gamepad-square
+group.game_room_target_area:
+  friendly_name: Game Room Target
   icon: mdi:gamepad-square
 group.garage_area:
   friendly_name: Garage
@@ -502,8 +526,11 @@ group.inside_areas:
 group.kitchen_area:
   friendly_name: Kitchen
   icon: mdi:pasta
+group.kitchen_target_area:
+  friendly_name: Kitchen Target
+  icon: mdi:pasta
 group.lambo_network:
-  friendly_name: Lindsay's Devices
+  friendly_name: Lindsay'S Devices
   icon: mdi:account-network
 group.laundry_area:
   friendly_name: Laundry Room
@@ -511,12 +538,21 @@ group.laundry_area:
 group.living_room_area:
   friendly_name: Living Room
   icon: mdi:sofa
-group.master_bedroom_area:
-  friendly_name: Master Bedroom
-  icon: mdi:bed-king
 group.master_bathroom_area:
   friendly_name: Master Bathroom
   icon: mdi:paper-roll
+group.master_bathroom_target_area:
+  friendly_name: Master Bathroom Target
+  icon: mdi:paper-roll
+group.master_bedroom_area:
+  friendly_name: Master Bedroom
+  icon: mdi:bed-king
+group.master_suite_target_area:
+  friendly_name: Master Suite Target
+  icon: mdi:bed-king
+group.network_network:
+  friendly_name: Network
+  icon: mdi:wan
 group.office_area:
   friendly_name: Office
   icon: mdi:desk
@@ -526,9 +562,15 @@ group.outside_area:
 group.outside_areas:
   friendly_name: Outside
   icon: mdi:tree
+group.people:
+  friendly_name: People
+  icon: mdi:account-multiple
 group.petro_network:
-  friendly_name: Mike's Devices
+  friendly_name: Mike'S Devices
   icon: mdi:account-network
+group.receivers:
+  friendly_name: Receivers
+  icon: mdi:speaker-multiple
 group.upstairs_area:
   friendly_name: Upstairs
   icon: mdi:home-floor-2

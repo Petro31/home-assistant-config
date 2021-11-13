@@ -8,25 +8,40 @@ smart_home:
       - fan.bonus_room_bedroom
       - fan.bonus_room_office
       - fan.master_fixture
+      - light.basement_area
+      - light.bonus_room_area
       - light.bonus_room_bedroom_fixture
       - light.bonus_room_bedroom_recessed
       - light.bonus_room_entrance
       - light.bonus_room_office_fixture
       - light.bonus_room_office_recessed
+      - light.dining_room_area
       - light.dining_room_chandelier
+      - light.downstairs_area
+      - light.game_room_target_area
+      - light.garage_area
       - light.garage_sconce_left_bulb
       - light.garage_sconce_right_bulb
       - light.hallway
+      - light.inside_area
       - light.kitchen_cans
       - light.kitchen_island
+      - light.kitchen_target_area
       - light.living_room
       - light.main_door_left_bulb
       - light.main_door_right_bulb
+      - light.master_bathroom_area
       - light.master_bathroom_cans
       - light.master_bathroom_sink
+      - light.master_bathroom_target_area
+      - light.master_bedroom_area
       - light.master_closet
       - light.master_fixture
+      - light.master_suite_target_area
+      - light.office_area
+      - light.outside_area
       - light.passenger_door_bulb
+      - light.upstairs_area
       - media_player.yamaha_receiver
       - media_player.yamaha_receiver_zone_2
       - sensor.garage_temperature
@@ -43,7 +58,6 @@ smart_home:
       - switch.cast_workout_upper_body
       - switch.dining_room_hutch
       - switch.disney_plus
-      - switch.downstairs
       - switch.echo_through_receiver
       - switch.flood_light
       - switch.floating_outlet_switch
@@ -60,7 +74,6 @@ smart_home:
       - switch.hyperion_cinema
       - switch.hyperion_rainbow_swirl_fast
       - switch.hyperion_usb_capture
-      - switch.inside
       - switch.kitchen_cabinet
       - switch.kitchen_outlet_above_fridge
       - switch.kitchen_outlet_above_microwave
@@ -72,7 +85,6 @@ smart_home:
       - switch.master_nightstand_left
       - switch.master_nightstand_right
       - switch.netflix
-      - switch.outside
       - switch.outside_porch
       - switch.party_mode
       - switch.passenger_sconce
@@ -84,7 +96,6 @@ smart_home:
       - switch.sliding_door_sconce
       - switch.switch
       - switch.tv
-      - switch.upstairs
       - switch.xbox_one
   entity_config:
     binary_sensor.doorbell_chime:
@@ -97,6 +108,10 @@ smart_home:
       name: Office Fan
     fan.master_fixture:
       name: Master Fan
+    light.basement_area:
+      name: Target Basement 
+    light.bonus_room_area:
+      name: Target Bonus Room
     light.bonus_room_bedroom_fixture:
       name: Bonusroom Fixture
     light.bonus_room_bedroom_recessed:
@@ -107,34 +122,60 @@ smart_home:
       name: Office Fixture
     light.bonus_room_office_recessed:
       name: Office Cans
+    light.dining_room_area:
+      name: Target Dining Room
     light.dining_room_chandelier:
       name: Chandelier
+    light.downstairs_area:
+      name: Downstairs
+    light.game_room_target_area:
+      name: Target Game Room
+    light.garage_area:
+      name: Target Garage
     light.garage_sconce_left_bulb:
       name: Garage Left Bulb
     light.garage_sconce_right_bulb:
       name: Garage Right Bulb
     light.hallway:
       name: Hallway
+    light.inside_area:
+      name: Inside
     light.kitchen_cans:
       name: Can Lights
     light.kitchen_island:
       name: Island Lights
+    light.kitchen_area:
+      name: Target Kitchen
     light.living_room:
       name: Living Room Light
     light.main_door_left_bulb:
       name: Main Door Left Bulb
     light.main_door_right_bulb:
       name: Main Door Right Bulb
+    light.master_bathroom_area:
+      name: Target Master Bathroom Shower
     light.master_bathroom_cans:
       name: Master Can
     light.master_bathroom_sink:
       name: Master Sink
+    light.master_bathroom_target_area:
+      name: Target Master Bathroom
+    light.master_bedroom_area:
+      name: Target Master Bedroom
     light.master_closet:
       name: Master Closet
     light.master_fixture:
       name: Master Light
+    light.master_suite_target_area:
+      name: Target Master Suite
+    light.office_area:
+      name: Target Office
+    light.outside_area:
+      name: Outside
     light.passenger_door_bulb:
       name: Passenger Door Bulb
+    light.upstairs_area:
+      name: Upstairs
     media_player.yamaha_receiver:
       name: Living Room Speakers
     media_player.yamaha_receiver_zone_2:
@@ -173,8 +214,6 @@ smart_home:
       name: Flood Light
     switch.disney_plus:
       name: Disney Plus
-    switch.downstairs:
-      name: Downstairs
     switch.echo_through_receiver:
       name: Echo
     switch.floating_outlet_switch:
@@ -199,8 +238,6 @@ smart_home:
       name: Hyperion Rainbow
     switch.hyperion_usb_capture:
       name: Hyperion Capture
-    switch.inside:
-      name: Inside
     switch.kitchen_cabinet:
       name: Cabinet Lights
     switch.kitchen_outlet_above_fridge:
@@ -231,8 +268,6 @@ smart_home:
       name: Game Room Light
     switch.game_room_window:
       name: Game Room Outlet
-    switch.outside:
-      name: Outside
     switch.outside_porch:
       name: Outside Outlet
     switch.party_mode:
@@ -257,7 +292,5 @@ smart_home:
       name: Switch
     switch.tv:
       name: Cable
-    switch.upstairs:
-      name: Upstairs
     switch.xbox_one:
       name: Xbox One

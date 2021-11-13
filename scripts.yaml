@@ -1957,3 +1957,53 @@ laser_position_timer:
   - service: switch.turn_off
     target:
       entity_id: "{{ laser }}"
+
+zwave_multicast_group:
+  mode: restart
+  fields:
+    group:
+      description: (Required) The group of lights & switches
+      example: group.bonus_room_area
+    level:
+      description: (Optional) The brightness level, switches will be on if the level is greater than 0.
+      example: 99
+  variables:
+    brightness_pct: >
+      {%- set brightness_pct = (level | int(0) / 255 * 100) | int %}
+      {%- set brightness_pct = [ 0, brightness_pct ] | max %}
+      {%- set brightness_pct = [ 99, brightness_pct] | min %}
+      {{- brightness_pct }}
+    value: >
+      {%- set value = brightness_pct > 0 %}
+      {{- value }}
+    lights: >
+      {%- set lights = expand(group) | selectattr('domain', 'eq', 'light')  %}
+      {%- set lights = lights if value else lights | selectattr('state','eq','on') %}
+      {%- set lights = lights | map(attribute='entity_id') | list %}
+      {{- lights or none }}
+    switches: >
+      {%- set switches = expand(group) | selectattr('domain', 'eq', 'switch') %}
+      {%- set switches = switches if value else switches | selectattr('state','eq','on') %}
+      {%- set switches = switches | map(attribute='entity_id') | list %}
+      {{- switches or none }}
+  sequence:
+  - choose:
+    - conditions: "{{ lights is not none }}"
+      sequence:
+      - service: zwave_js.multicast_set_value
+        target:
+          entity_id: "{{ lights }}"
+        data:
+          command_class: '38'
+          property: targetValue
+          value: "{{ brightness_pct }}"
+  - choose:
+    - conditions: "{{ switches is not none }}"
+      sequence:
+      - service: zwave_js.multicast_set_value
+        target:
+          entity_id: "{{ switches }}"
+        data:
+          command_class: '37'
+          property: targetValue
+          value: "{{ value }}"
