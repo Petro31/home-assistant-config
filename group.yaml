@@ -41,10 +41,14 @@ inside_area:
 
 outside_area:
   entities:
-    - switch.outside_porch
-    - switch.passenger_sconce
-    - switch.sconces_garage
-    - switch.sconces_main_entrance
+    - light.main_door_left_bulb
+    - light.main_door_right_bulb
+    - light.passenger_door_bulb
+    - light.garage_sconce_left_bulb
+    - light.garage_sconce_right_bulb
+    - switch.flood_light
+    - switch.sliding_door_sconce
+
 
 upstairs_area:
   entities:
@@ -142,6 +146,16 @@ downstairs_areas:
   - group.kitchen_area
   - group.laundry_area
   - group.living_room_area
+
+outside_sunset:
+  entities:
+  - light.main_door_left_bulb
+  - light.main_door_right_bulb
+  - light.passenger_door_bulb
+  - light.garage_sconce_left_bulb
+  - light.garage_sconce_right_bulb
+  - switch.flood_light
+  - switch.sliding_door_sconce
 
 #########
 # ROOMS #

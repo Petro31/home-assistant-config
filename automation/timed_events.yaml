@@ -139,10 +139,10 @@
       {%- if next_season is not none and today_at().isoformat() == next_season.date %}
         {{ seasons.get(next_season.scene, 'scene.holiday_bulbs_soft_white') }}
       {%- else %}
-        none
+        False
       {%- endif %}
     execute_scene: >
-      {{ event == 'sunset' and start_scene is not none }}
+      {{ event == 'sunset' and start_scene }}
   condition:
   - condition: template
     value_template: "{{ event in ['sunset','sunrise'] }}"
@@ -161,16 +161,10 @@
           - switch.flood_light
           - switch.sliding_door_sconce
     default:
-    - service: homeassistant.turn_o{{ 'n' if event == 'sunset' else 'ff' }}
+    - service: light.turn_o{{ 'n' if event == 'sunset' else 'ff' }}
       target:
         entity_id:
-        - light.main_door_left_bulb
-        - light.main_door_right_bulb
-        - light.passenger_door_bulb
-        - light.garage_sconce_left_bulb
-        - light.garage_sconce_right_bulb
-        - switch.flood_light
-        - switch.sliding_door_sconce
+        - light.outside_sunset
 
 - alias: Timed Event - Clear persistent_notifications around bedtime.
   id: clear_persistent_notifications_around_bedtime

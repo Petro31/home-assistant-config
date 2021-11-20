@@ -59,7 +59,7 @@
 #       - service: script.zwave_multicast_group
 #         data:
 #           group: group.{0}
-#           level: 99
+#           level: 255
 #       turn_off:
 #       - service: script.zwave_multicast_group
 #         data:
@@ -101,7 +101,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.all_areas
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -135,7 +135,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.basement_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -169,7 +169,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.bonus_room_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -203,7 +203,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.dining_room_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -237,7 +237,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.downstairs_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -271,7 +271,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.downstairs_areas
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -305,7 +305,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.foyer_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -339,7 +339,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.game_room_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -373,7 +373,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.game_room_target_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -407,7 +407,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.garage_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -441,7 +441,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.garage_entrance_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -475,7 +475,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.hall_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -509,7 +509,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.inside_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -543,7 +543,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.inside_areas
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -577,7 +577,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.kitchen_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -611,7 +611,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.kitchen_target_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -645,7 +645,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.laundry_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -679,7 +679,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.living_room_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -713,7 +713,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.master_bathroom_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -747,7 +747,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.master_bathroom_target_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -781,7 +781,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.master_bedroom_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -815,7 +815,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.master_suite_target_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -849,7 +849,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.office_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -883,7 +883,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.outside_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -917,7 +917,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.outside_areas
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -951,7 +951,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.upstairs_area
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -985,7 +985,7 @@
       - service: script.zwave_multicast_group
         data:
           group: group.upstairs_areas
-          level: 99
+          level: 255
       turn_off:
       - service: script.zwave_multicast_group
         data:
@@ -995,5 +995,38 @@
       - service: script.zwave_multicast_group
         data:
           group: group.upstairs_areas
+          level: >
+            {{- brightness }}
+
+    #################################
+    ###      Outside Sunset       ###
+    #################################
+
+    outside_sunset:
+      unique_id: outside_sunset
+      friendly_name: Outside Sunset
+      value_template: >
+        {{ is_state('group.outside_sunset', 'on') }}
+      level_template: >
+        {%- set entities = expand('group.outside_sunset') %}
+        {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
+        {%- set levels = lights | map(attribute='attributes.brightness') | map('int') | list %}
+        {{- levels | average if levels else 0 }}
+      availability_template: >
+        {{- expand('group.outside_sunset') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+      turn_on:
+      - service: script.zwave_multicast_group
+        data:
+          group: group.outside_sunset
+          level: 255
+      turn_off:
+      - service: script.zwave_multicast_group
+        data:
+          group: group.outside_sunset
+          level: 0
+      set_level:
+      - service: script.zwave_multicast_group
+        data:
+          group: group.outside_sunset
           level: >
             {{- brightness }}

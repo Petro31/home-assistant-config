@@ -1959,7 +1959,7 @@ laser_position_timer:
       entity_id: "{{ laser }}"
 
 zwave_multicast_group:
-  mode: restart
+  mode: parallel
   fields:
     group:
       description: (Required) The group of lights & switches
@@ -1976,34 +1976,71 @@ zwave_multicast_group:
     value: >
       {%- set value = brightness_pct > 0 %}
       {{- value }}
+    settings:
+      light:
+        command_class: 38
+        property: targetValue
+        endpoint: 0
+        value: "{{ brightness_pct }}"
+      switch:
+        command_class: 37
+        property: targetValue
+        endpoint: 0
+        value: "{{ value }}"
+      switch.flood_light:
+        endpoint: 1
+      switch.sliding_door_sconce:
+        endpoint: 2
     lights: >
       {%- set lights = expand(group) | selectattr('domain', 'eq', 'light')  %}
-      {%- set lights = lights if value else lights | selectattr('state','eq','on') %}
+      {%- set lights = lights | selectattr('state','eq', 'off' if value else 'on') %}
       {%- set lights = lights | map(attribute='entity_id') | list %}
       {{- lights or none }}
     switches: >
       {%- set switches = expand(group) | selectattr('domain', 'eq', 'switch') %}
-      {%- set switches = switches if value else switches | selectattr('state','eq','on') %}
+      {%- set switches = switches | selectattr('state','eq', 'off' if value else 'on') %}
       {%- set switches = switches | map(attribute='entity_id') | list %}
       {{- switches or none }}
+    items: >
+      {%- set ns = namespace(items={}, spool={}) %}
+      {%- set fmat = "('{0}': {1})" %}
+      {%- set items = (switches or []) + (lights or []) %}
+      {%- for item in items %}
+        {%- set state_obj = expand(item) | first | default(none) %}
+        {%- if state_obj and state_obj.domain in ['light','switch'] %}
+          {%- set domain = state_obj.domain %}
+          {%- set entity_id = state_obj.entity_id %}
+          {%- set entity_ids = lights if domain == 'light' else switches %}
+          {%- set current = settings[domain] %}
+          {%- set current = dict(current, **settings[entity_id]) if entity_id in settings else current %}
+          {%- set key = domain ~ '_' ~ current.items() | list | string | lower | regex_findall('[a-z0-9_]+') | join('_') %}
+          {%- if key in ns.spool %}
+            {%- set ns.spool = dict(ns.spool, **{key:ns.spool[key] + [entity_id]}) %}
+          {%- else %}
+            {%- set ns.spool = dict(ns.spool, **{key:[entity_id]}) %}
+          {%- endif %}
+          {%- set entity_ids = ns.spool[key] %}
+          {%- set current = dict(domain=domain, **current) %}
+          {%- set current = dict(current, entity_id=entity_ids) %}
+          {%- set ns.items = dict(ns.items, **{key:current | string}) %}
+        {%- endif %}
+      {%- endfor %}
+      [{{ ns.items.values() | unique | sort | list | join(', ') }}]
+    execute: >
+      {{ items is not none or items != [] }}
+    total: >
+      {{ items | length if execute else 0 }}
   sequence:
-  - choose:
-    - conditions: "{{ lights is not none }}"
+  - condition: template
+    value_template: "{{ execute }}"
+  - repeat:
+      count: "{{ total }}"
       sequence:
       - service: zwave_js.multicast_set_value
         target:
-          entity_id: "{{ lights }}"
+          entity_id: "{{ items[repeat.index - 1].entity_id }}"
         data:
-          command_class: '38'
-          property: targetValue
-          value: "{{ brightness_pct }}"
-  - choose:
-    - conditions: "{{ switches is not none }}"
-      sequence:
-      - service: zwave_js.multicast_set_value
-        target:
-          entity_id: "{{ switches }}"
-        data:
-          command_class: '37'
-          property: targetValue
-          value: "{{ value }}"
+          command_class: "{{ items[repeat.index - 1].command_class }}"
+          property: "{{ items[repeat.index - 1].property }}"
+          endpoint: "{{ items[repeat.index - 1].endpoint }}"
+          value: "{{ items[repeat.index - 1].value }}"
