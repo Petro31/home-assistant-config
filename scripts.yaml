@@ -1991,6 +1991,12 @@ zwave_multicast_group:
         endpoint: 1
       switch.sliding_door_sconce:
         endpoint: 2
+      switch.double_plug_left:
+        endpoint: 1
+      switch.floating_double_plug_left:
+        endpoint: 1
+      switch.floating_double_plug_right:
+        endpoint: 2
     lights: >
       {%- set lights = expand(group) | selectattr('domain', 'eq', 'light')  %}
       {%- set lights = lights | selectattr('state','eq', 'off' if value else 'on') %}

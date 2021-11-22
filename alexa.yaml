@@ -15,6 +15,7 @@ smart_home:
       - light.bonus_room_entrance
       - light.bonus_room_office_fixture
       - light.bonus_room_office_recessed
+      - light.christmas_tree
       - light.dining_room_area
       - light.dining_room_chandelier
       - light.downstairs_area

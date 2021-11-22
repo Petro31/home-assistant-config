@@ -1,0 +1,109 @@
+# lovelace_gen
+
+{%- set color = color|default('var(--paper-item-icon-active-color)') %}
+{%- set name = name | default("Home") | title %}
+{%- set back_path = back_path | default("/home") %}
+{%- set icon = icon | default("mdi:home") %}
+
+{%- set template_areas = '"back allon alloff label"' %}
+{%- set template_cols = '16.66% 16.66% 16.66% 50%' %}
+{%- set gap = '4px' %}
+{%- set cols = '1fr 4px 1fr 4px 1fr 3fr' %}
+{%- set total = 6 %}
+{%- set ratio = 4 %}
+
+anchors:
+  base: &base
+    type: custom:button-card
+    color: var(--paper-item-icon-active-color)
+    aspect_ratio: 1/1
+    show_name: false
+    show_label: false
+    show_icon: true
+    styles:
+      icon:
+      - width: 80%
+      card:
+      - padding: 0px
+      - border-radius: 18%
+
+type: custom:mod-card
+style: 
+  layout-card:
+    $:
+      grid-layout:
+        $: |
+          div {
+              margin: 0px !important;
+              --masonry-view-card-margin: 0px;
+            }
+
+card:
+  type: custom:layout-card
+  layout_type: custom:grid-layout
+  layout:
+    grid-template-columns: {{ template_cols }}
+    grid-template-rows: auto
+    grid-template-areas: |
+      {{ template_areas }}
+    grid-gap: {{ gap }}
+  gridcols: {{ cols }}
+  cards:
+  - <<: *base
+    view_layout:
+      grid-area: back
+    icon: mdi:arrow-left
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace/{{ back_path }}
+      haptic: light
+  - <<: *base
+    view_layout:
+      grid-area: allon
+    icon: mdi:lightbulb-multiple
+    tap_action:
+      action: call-service
+      service: light.turn_on
+      service_data:
+        entity_id: {{ entity }}
+      haptic: light
+  - <<: *base
+    view_layout:
+      grid-area: alloff
+    icon: mdi:lightbulb-multiple-off
+    tap_action:
+      action: call-service
+      service: light.turn_off
+      service_data:
+        entity_id: {{ entity }}
+      haptic: light
+  - type: custom:button-card
+    color: var(--paper-item-icon-color)
+    view_layout:
+      grid-area: label
+    icon: {{ icon }}
+    label: {{ name }}
+    aspect_ratio: {{ 6 - ratio + 1 }}/1
+    show_name: false
+    show_label: true
+    show_icon: false
+    styles:
+      grid:
+      - grid-template-areas: '"l"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr
+      card:
+      - padding: 0px
+      - margin: 0px
+      - --ha-card-background: rgba(0,0,0,0)
+      - box-shadow: none
+      - pointer-events: none
+      label:
+      - align-self: start
+      - justify-self: end
+      - font-family: Helvetica
+      - font-size: 20px
+      - padding-right: 10px
+      icon:
+      - width: 100%%
+      - color: var(--paper-item-icon-color)

@@ -3,11 +3,15 @@
 {% set color = color|default('var(--paper-item-icon-active-color)') %}
 {% set ratio = ratio|default('1/1') %}
 {% set imgratio = 'transparent_' ~ 'to'.join(ratio.split('/')) ~ '.png' %}
+{% set name = name | default(none) %}
 
 type: custom:button-card
 aspect_ratio: {{ ratio }}
 entity: {{ entity }}
 icon: {{ icon }}
+{%- if name is not none %}
+name: {{ name }}
+{%- endif %}
 color: var(--paper-item-icon-color)
 show_name: true
 show_label: true

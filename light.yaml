@@ -1030,3 +1030,25 @@
           group: group.outside_sunset
           level: >
             {{- brightness }}
+
+    #################################
+    ###      Christmas Tree       ###
+    #################################
+
+    christmas_tree:
+      unique_id: christmas_tree
+      friendly_name: Christmas Tree
+      value_template: >
+        {{ is_state('group.holiday', 'on') }}
+      availability_template: >
+        {{- expand('group.holiday') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+      turn_on:
+      - service: script.zwave_multicast_group
+        data:
+          group: group.holiday
+          level: 255
+      turn_off:
+      - service: script.zwave_multicast_group
+        data:
+          group: group.holiday
+          level: 0

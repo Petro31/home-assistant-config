@@ -157,6 +157,14 @@ outside_sunset:
   - switch.flood_light
   - switch.sliding_door_sconce
 
+holiday:
+  entities:
+  - switch.kitchen_outlet_above_microwave
+  - switch.living_room_window
+  - switch.game_room_window
+  - switch.double_plug_left
+  - switch.floating_double_plug_right
+
 #########
 # ROOMS #
 #########

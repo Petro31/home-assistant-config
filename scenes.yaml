@@ -131,18 +131,18 @@
       state: 'on'
       brightness: 255
       rgb_color: [  9, 148,  65]
-       
+
 - name: Holiday Bulbs Patriotic
   icon: mdi:flag-variant
   entities:
     light.main_door_left_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [ 30,  45,  96]
+      rgb_color: [ 255,  0,  0]
     light.main_door_right_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [196,  31,  64] 
+      rgb_color: [0,  0,  255] 
     light.passenger_door_bulb:
       state: 'on'
       brightness: 255
@@ -150,11 +150,11 @@
     light.garage_sconce_left_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [ 30,  45,  96]
+      rgb_color: [ 255,  0,  0]
     light.garage_sconce_right_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [196,  31,  64] 
+      rgb_color: [0,  0,  255] 
       
 - name: Holiday Bulbs Halloween
   icon: mdi:halloween

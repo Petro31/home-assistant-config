@@ -729,6 +729,30 @@
   },
 ] %}
 
+{%- set holidays = [
+  {
+    'entity': 'switch.kitchen_outlet_above_microwave',
+    'icon': 'mdi:home-group', 
+    'name': 'Holiday Houses'
+  },{
+    'entity': 'switch.living_room_window',
+    'icon': 'mdi:pine-tree', 
+    'name': 'Christmas Tree'
+  },{
+    'entity': 'switch.game_room_window',
+    'icon': 'mdi:pine-tree', 
+    'name': 'Large Window Tree'
+  },{
+    'entity': 'switch.double_plug_left',
+    'icon': 'fas:holly-berry', 
+    'name': 'Hutch Lights'
+  },{
+    'entity': 'switch.floating_double_plug_right',
+    'icon': 'mdi:pine-tree', 
+    'name': 'Small Window Tree'
+  },
+]%}
+
 {%- set main_buttons = [
   {
     'name': 'Areas',
@@ -810,7 +834,25 @@
     'type': '../templates/summary/overview.yaml',
     'image': '/local/images/wine.png',
     'view': '../views/mood_lighting.yaml',
-  }
+  },{
+    'name': 'Holiday',
+    'icon': 'mdi:string-lights',
+    'image': '/local/images/tree.png',
+    'header': [ 
+      { 
+        'type': '../templates/headers/multicast.yaml',
+        'entity': 'light.christmas_tree',
+      },
+    ],
+    'entities': holidays,
+    'triggers_update': holidays | map(attribute='entity') | list | sort,
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+  },
 ] %}
 
 
@@ -823,8 +865,7 @@
     icon: mdi:home
     visible: true
     header:
-    - type: '../templates/headers/weather.yaml'
-      path: 'home'
+    - type: '../templates/headers/main.yaml'
     -
       - type: '../templates/headers/person.yaml'
         entity: person.petro
