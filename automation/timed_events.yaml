@@ -101,12 +101,9 @@
   - condition: template
     value_template: "{{ is_state('binary_sensor.christmas_season', 'on') }}"
   action:
-  - service: switch.turn_o{{ 'n' if time == '16:00:00' else 'ff' }}
+  - service: light.turn_o{{ 'n' if time == '16:00:00' else 'ff' }}
     target:
-      entity_id:
-      - switch.living_room_window
-      - switch.kitchen_outlet_above_microwave
-      - switch.kitchen_outlet_above_fridge
+      entity_id: light.christmas_tree
   
 - alias: Timed Event - Outdoor Lights On at Sunset, Off at Sunrise
   id: outdoor_lights_on_off
