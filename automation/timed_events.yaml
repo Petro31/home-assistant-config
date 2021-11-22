@@ -89,19 +89,17 @@
 - alias: Timed Event - Indoor Christmas Lights
   id: indoor_christmas_lights
   trigger:
-  - platform: time
+  - id: 'on'
+    platform: time
     at: '16:00:00'
-  - platform: time
+  - id: 'off'
+    platform: time
     at: '23:00:00'
-  variables:
-    time: >
-      {%- set dt = trigger.now | default(now()) %}
-      {{ dt.time().replace(second=0, microsecond=0) | string }}
   condition:
   - condition: template
     value_template: "{{ is_state('binary_sensor.christmas_season', 'on') }}"
   action:
-  - service: light.turn_o{{ 'n' if time == '16:00:00' else 'ff' }}
+  - service: light.turn_{{ trigger.id }}
     target:
       entity_id: light.christmas_tree
   
