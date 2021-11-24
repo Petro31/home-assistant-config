@@ -1,0 +1,73 @@
+party_on:
+  mode: single
+  fields:
+    artist:
+      description: (Required) Name of the artist.
+      example: Empire of the sun station
+    stream_service:
+      description: (Optional) Name of the streaming service.
+      example: AMAZON_MUSIC
+    entities:
+      description: Entitys that will be turning on.
+      example: switch.hyperion_rainbow_swirl_fast
+    pixel_effect: 
+      description: The desired pixel effect
+      example: aurora
+    quick_color:
+      description: The desired color
+      example: 120
+      
+  variables:
+    nodes: [ 91, 92 ]
+    media_content_id: >
+      {{ artist | default("Empire of the sun station") }}
+    media_content_type: >
+      {{ stream_service | default("I_HEART_RADIO") }}
+    entity_id: >
+      {{ ['switch.echo_through_receiver'] + entities | default([]) }}
+    effect: >
+      {{ pixel_effect | default('aurora') }}
+    color: >
+      {{ quick_color | default(none) }}
+    use_color: >
+      {{ quick_color is not none }}
+
+  sequence:
+  - service: switch.turn_on
+    target:
+      entity_id: "{{ entity_id }}"
+  - choose:
+    - conditions: "{{ use_color }}"
+      sequence:
+      - service: script.lzw45_basic_quick_effect
+        data:
+          hue: "{{ color }}"
+    default:
+    - service: script.lzw45_basic_pixel_effect
+      data:
+        effect: "{{ effect }}"
+
+  - delay:
+      seconds: 3
+  - service: media_player.play_media
+    target:
+      entity_id:
+      - media_player.living_room_dot
+    data:
+      media_content_id: "{{ media_content_id }}"
+      media_content_type: "{{ media_content_type }}"
+
+party_off:
+  mode: single
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id:
+      - switch.echo_through_receiver
+      - switch.hyperion_rainbow_swirl_fast
+      - switch.lzw45_mood_lighting
+
+  - service: media_player.media_stop
+    target:
+      entity_id:
+      - media_player.living_room_dot

@@ -1,0 +1,44 @@
+mqtt_automated_states:
+  sequence:
+  - variables: &mqtt-variables
+      root: "homeassistant"
+      topic_root: >
+        {%- if domain is not defined or unique_id is not defined %}
+          {{- [ root, 'error'] | join('/') }}
+        {%- else %}
+          {{- [ root, domain, unique_id ] | join('/') }}
+        {%- endif %}
+  - service: mqtt.publish
+    data:
+      topic: "{{ topic_root ~ '/state' }}"
+      payload: >
+        {{ { 'state': state, 'attributes': attributes | default({}) } | tojson }}
+      retain: "{{ retain | default('true') }}"
+
+mqtt_automated_config:
+  sequence:
+  - variables:
+      name: >
+        {{ unique_id | replace('_', ' ') | title }}
+      <<: *mqtt-variables
+      payload: >
+        {%- set items = [
+          ( "name", name),
+          ( "unique_id", unique_id),
+          ( "state_topic", topic_root ~ "/state"),
+          ( "value_template", "{{ value_json.state }}"),
+          ( "json_attributes_topic", topic_root ~ "/state"),
+          ( "json_attributes_template", "{{ value_json.attributes | tojson }}"),
+          ( "device_class", device_class ),
+        ] %}
+        {% set ns = namespace(items=[]) %}
+        {%- for k, v in items %}
+          {%- if v is defined %}
+            {%- set ns.items = ns.items + [ '"{}": "{}"'.format(k, v) ] %}
+          {%- endif %}
+        {%- endfor %}
+        {{ ("{" ~ ns.items | join(', ') ~ "}") }}
+  - service: mqtt.publish
+    data:
+      topic: "{{ topic_root ~ '/config' }}"
+      payload: "{{ payload | tojson }}"

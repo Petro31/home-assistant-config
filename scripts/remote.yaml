@@ -1,0 +1,187 @@
+# All remote scripts for the lovelace remote.
+
+remote_living_room_rewind:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Rewind'}
+
+remote_living_room_play:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Play'}
+
+remote_living_room_pause:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Pause'}
+
+remote_living_room_fastforward:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'FastForward'}
+
+remote_living_room_directionup:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'DirectionUp'}
+
+remote_living_room_directionleft:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'DirectionLeft'}
+
+remote_living_room_ok:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'OK'}
+
+remote_living_room_directionright:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'DirectionRight'}
+
+remote_living_room_directiondown:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'DirectionDown'}
+
+remote_living_room_back:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Back'}
+
+remote_living_room_channelup:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'ChannelUp'}
+
+remote_living_room_channeldown:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'ChannelDown'}
+
+remote_living_room_channelprev:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'ChannelPrev'}
+
+remote_living_room_0:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '0'}
+
+remote_living_room_1:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '1'}
+
+remote_living_room_2:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '2'}
+
+remote_living_room_3:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '3'}
+
+remote_living_room_4:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '4'}
+
+remote_living_room_5:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '5'}
+
+remote_living_room_6:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '6'}
+
+remote_living_room_7:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '7'}
+
+remote_living_room_8:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '8'}
+
+remote_living_room_9:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': '9'}
+
+remote_living_room_period:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'Period'}
+
+remote_living_room_homebutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'HomeButton'}
+
+remote_living_room_menubutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'MenuButton'}
+
+remote_living_room_lowerleft:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'LowerLeft'}
+
+remote_living_room_lowerright:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'LowerRight'}
+
+remote_living_room_bottombutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'BottomButton'}
+
+remote_living_room_rightbutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'RightButton'}
+
+remote_living_room_topbutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'TopButton'}
+
+remote_living_room_leftbutton:
+  sequence:
+  - event: remote_living_room
+    event_data: {'command': 'LeftButton'}
+
+# Multizone scripts for remote
+
+multizone_volume_up:
+  sequence:
+  - event: mz_volume_up
+    event_data:
+      event_id: multizone
+      
+multizone_volume_down:
+  sequence:
+  - event: mz_volume_down
+    event_data:
+      event_id: multizone
+      
+multizone_volume_mute:
+  sequence:
+  - event: mz_volume_mute
+    event_data:
+      event_id: multizone
+      
+multizone_cycle_zone:
+  sequence:
+  - event: mz_cycle_zone
+    event_data:
+      event_id: multizone

@@ -1,0 +1,20 @@
+debug_script_variables:
+  fields:
+    script_variables:
+      description: Dictionary of variables
+      example: Make a dictionary of variables under info.
+  variables:
+    table: >
+      {%- macro tableline(c, items) %}
+      <tr>{%- for item in items -%}<t{{c}}>{{item}}</t{{c}}>{%- endfor -%}</tr>
+      {%- endmacro %}
+      {%- set ns = namespace(ret=[ tableline('h', ['Variable', 'Value']) ]) %}
+      {%- for k, v in script_variables.items() %}
+      {%- set ns.ret = ns.ret + [ tableline('d', [k, v]) ] %}
+      {%- endfor %}
+      {{ '<table>{}</table>'.format(ns.ret | join('')) }}
+  sequence:
+  - service: persistent_notification.create
+    data:
+      title: Debug Variables
+      message: "{{ table if table else 'No Information Provided' }}"

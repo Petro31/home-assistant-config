@@ -1,0 +1,207 @@
+harmony_activity_on:
+  mode: single
+  fields:
+    activity:
+      description: (Required) The harmony activity name.
+      example: Xbox One
+    remote:
+      description: (Optional) The remote for the harmony activity
+      example: remote.living_room
+    echo_through_reciever:
+      description: (Optional) Switch that turns on/off bluetooth adapter for echo
+      example: switch.echo_through_receiver
+  variables:
+    harmony: "{{ remote | default('remote.living_room') }}"
+    echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+  sequence:
+  - service: remote.turn_on
+    target:
+      entity_id: "{{ harmony }}"
+    data:
+      activity: "{{ activity }}"
+  - wait_template: "{{ is_state_attr(harmony, 'current_activity', activity) }}"
+  - service: switch.turn_off
+    target:
+      entity_id: "{{ echo }}"
+
+harmony_activity_off:
+  mode: single
+  fields:
+    remote:
+      description: (Optional) The remote for the harmony activity
+      example: remote.living_room
+  variables:
+    harmony: "{{ remote | default('remote.living_room') }}"
+  sequence:
+  - service: remote.turn_on
+    target:
+      entity_id: "{{ harmony }}"
+    data:
+      activity: PowerOff
+
+harmony_all_off:
+  mode: single
+  fields:
+    remote:
+      description: (Optional) The remote for the harmony activity
+      example: remote.living_room
+    echo_through_reciever:
+      description: (Optional) Switch that turns on/off bluetooth adapter for echo
+      example: switch.echo_through_receiver
+  variables:
+    poweroff: PowerOff
+    harmony: "{{ remote | default('remote.living_room') }}"
+    echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+  sequence:
+  - service: remote.turn_on
+    target:
+      entity_id: "{{ harmony }}"
+    data:
+      activity: "{{ poweroff }}"
+  - wait_template: "{{ is_state_attr(harmony, 'current_activity', poweroff) }}"
+  - service: switch.turn_off
+    target:
+      entity_id: "{{ echo }}"
+
+roku_source_on:
+  mode: single
+  fields:
+    source:
+      description: (Required) The source to select on the roku
+      example: Netflix
+    roku:
+      description: (Optional) The Roku media_player.
+      example: media_player.roku_living_room
+    echo_through_reciever:
+      description: (Optional) Switch that turns on/off bluetooth adapter for echo
+      example: switch.echo_through_receiver
+  variables:
+    switch: switch.roku
+    media_player: "{{ roku | default('media_player.roku_living_room') }}"
+    echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ is_state(switch, 'off') }}"
+      sequence:
+      - service: switch.turn_on
+        target:
+          entity_id: "{{ switch }}"
+    default:
+    - service: switch.turn_off
+      target:
+        entity_id: "{{ echo }}"
+  - wait_template: "{{ is_state(switch, 'on') }}"
+  - service: media_player.select_source
+    target:
+      entity_id: "{{ media_player }}"
+    data:
+      source: "{{ source }}"
+
+power_on:
+  mode: parallel
+  fields: &power_fields
+    entity:
+      description: (Required) The entity in question
+      example: media_player.yamaha_receiver
+  variables:
+    state: 'off'
+    service: "{{ entity.split('.')[0] }}.turn_on"
+  sequence: &power_sequence
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ is_state(entity, state) }}"
+      sequence:
+      - service: "{{ service }}"
+        target:
+          entity_id: "{{ entity }}"
+
+power_off:
+  mode: parallel
+  fields: *power_fields
+  variables:
+    state: 'on'
+    service: "{{ entity.split('.')[0] }}.turn_off"
+  sequence: *power_sequence
+
+media_player_on:
+  mode: single
+  fields:
+    media_player:
+      description: (Required) The media_player.
+      example: media_player.yamaha_receiver
+    source:
+      description: (Required) The source to select
+      example: Echo
+    volume:
+      description: (Required) The volume level
+      example: 0.7
+      
+  sequence:
+  - service: script.power_on
+    data:
+      entity: "{{ media_player }}"
+
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ not is_state_attr(media_player, 'volume_level', volume) }}"
+      sequence:
+      - service: media_player.volume_set
+        target:
+          entity_id: "{{ media_player }}"
+        data:
+          volume_level: "{{ volume }}"
+
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ not is_state_attr(media_player, 'source', source) }}"
+      sequence:
+      - service: media_player.select_source
+        target:
+          entity_id: "{{ media_player }}"
+        data:
+          source: "{{ source }}"
+
+echo_through_receiver_on:
+  mode: single
+  sequence:
+  - service: script.power_on
+    data:
+      entity: switch.floating_outlet_switch
+  
+  - service: script.media_player_on
+    data:
+      media_player: media_player.yamaha_receiver
+      volume: 0.7
+      source: Echo
+  
+  - service: script.media_player_on
+    data:
+      media_player: media_player.yamaha_receiver_zone_2
+      volume: 0.7
+      source: Echo
+
+echo_through_receiver_off:
+  mode: single
+  sequence:
+
+  # Turns off audio one but does not turn off the reciever.
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ is_state('media_player.yamaha_receiver', 'on') and is_state('switch.poweroff', 'off') }}"
+      sequence:
+      - service: media_player.turn_off
+        entity_id: media_player.yamaha_receiver
+      
+  - service: script.power_off
+    data:
+      entity: media_player.yamaha_receiver_zone_2
+      
+  - service: script.power_off
+    data:
+      entity: switch.floating_outlet_switch

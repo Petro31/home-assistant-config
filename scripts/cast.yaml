@@ -1,0 +1,41 @@
+cast_workout_video:
+  mode: single
+  fields:
+    workout:
+      description: (Required) Name of the workout.
+      example: Core
+    chromecast:
+      description: (Optional) The Roku media_player.
+      example: media_player.chromecast
+  variables:
+    media_player: "{{ chromecast | default('media_player.chromecast') }}"
+    title: >
+      {%- set titles = [
+        'Core', 'Cardio Kickboxing', 'Lower Body', 'Total Body', 'Upper Body'
+      ] %}
+      {{ workout if workout in titles else 'NoTitle' }}
+    content_id: >
+      plex://{"library_name": "Workout Videos", "title": "{{ title }}"}
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ is_state('switch.chromecast', 'off') }}"
+      sequence:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.chromecast
+
+  - service: media_player.play_media
+    target:
+      entity_id: "{{ media_player }}"
+    data:
+      media_content_id: "{{ content_id }}"
+      media_content_type: movie
+
+stop_casting:
+  mode: single
+  sequence:
+  - service: media_player.turn_off
+    target:
+      entity_id: media_player.chromecast

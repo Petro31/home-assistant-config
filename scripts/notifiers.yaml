@@ -1,0 +1,199 @@
+# General notification engine that adds timestamps
+
+notify:
+  fields:
+    format: 
+      description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
+      example: "%-I:%M:%S %p"
+    persistent_notification:
+      description: On/Off for Persistent Notifications
+      example: on
+    title:
+      description: Title of the persistent notification.
+      example: "Title"
+    message:
+      description: Message to be sent/annouced.
+      example: "Hello"
+    notify:
+      description: Devices to notify.
+      example: notify.mobile_app_petro
+    debug:
+      description: Create a persistent notification with the variables.
+      example: on
+  variables:
+    timestamp: >
+      {%- set format = format | default("%-I:%M:%S %p") %}
+      {{ as_timestamp(now(), none) | timestamp_custom(format, default="???") }}
+    persistent_notification: >
+      {{ persistent_notification | default(true) }}
+    debug: >
+      {{ debug | default(false) }}
+    out_notify: >
+      {%- if debug %}
+        notify.mobile_app_petro
+      {%- else %}
+        {{ notify | default('notify.homeowners') }}
+      {%- endif %}
+    out_title: >
+      {{ title | default('') }}
+    out_message: >
+      {%- set message = message | default('No Message Provided') %}
+      {{ '[{}] {}'.format(timestamp, message) }}
+  sequence:
+  - choose:
+    - conditions: "{{ debug }}"
+      sequence:
+      - service: script.debug_script_variables
+        data:
+          script_variables:
+            timestamp: "{{ timestamp }}"
+            persistent_notification: "{{ persistent_notification }}"
+            out_notify: "{{ out_notify }}"
+            out_title: "{{ out_title }}"
+            out_message: "{{ out_message }}"
+  - choose:
+    - conditions: "{{ persistent_notification }}"
+      sequence:
+      - service: persistent_notification.create
+        data:
+          # Remove the title for now, the notifications are too fat.
+          # title: "{{ out_title }}"
+          message: "{{ out_message }}"
+  - condition: template
+    value_template: "{{ out_notify.startswith('notify.') }}"
+  - service: "{{ out_notify }}"
+    data:
+      message: "{{ out_message }}"
+
+# General notification engine for frigate
+
+notify_frigate:
+  fields:
+    id:
+      description: The frigate payload id
+      example: 1234567891.123456-abcdef
+    camera:
+      description: The name of the camera in frigate's configuration.
+      example: kitchen
+    silence:
+      description: The action that will silence the notification.
+      example: silence-notify-mobile-app-petro-kitchen
+    format: 
+      description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
+      example: "%-I:%M:%S %p"
+    persistent_notification:
+      description: On/Off for Persistent Notifications
+      example: on
+    title:
+      description: Title of the persistent notification.
+      example: "Title"
+    message:
+      description: Message to be sent/annouced.
+      example: "Hello"
+    notify:
+      description: Devices to notify.
+      example: notify.mobile_app_petro
+    debug:
+      description: Create a persistent notification with the variables.
+      example: on
+  variables:
+    tag: >
+      {{ id }}
+    group: >
+      frigate-notification-{{ camera }}
+    image: >
+      /api/frigate/notifications/{{ id }}/thumbnail.jpg?format=android
+    thumbnail: >
+      /api/frigate/notifications/{{ id }}/thumbnail.jpg
+    base_url: !secret external_url
+    video: >
+      {{ base_url }}/api/frigate/notifications/{{ id }}/{{ camera }}/clip.mp4
+    snapshot: >
+      {{ base_url }}/api/frigate/notifications/{{ id }}/snapshot.jpg
+    timestamp: >
+      {%- set format = format | default("%-I:%M:%S %p") %}
+      {{ as_timestamp(now(), none) | timestamp_custom(format, default="???") }}
+    persistent_notification: >
+      {{ persistent_notification | default(true) }}
+    debug: >
+      {{ debug | default(false) }}
+    out_notify: >
+      {%- if debug %}
+        notify.mobile_app_petro
+      {%- else %}
+        {{ notify | default('notify.homeowners') }}
+      {%- endif %}
+    out_title: >
+      {{ title | default('') }}
+    out_message: >
+      {%- set message = message | default('No Message Provided') %}
+      {{ '[{}] {}'.format(timestamp, message) }}
+  sequence:
+  # Initial Message
+  - choose:
+    - conditions: "{{ persistent_notification }}"
+      sequence:
+      - service: persistent_notification.create
+        data:
+          message: >
+            {{ out_message }}
+            ![image]({{ image }})
+  - condition: template
+    value_template: "{{ out_notify.startswith('notify.') }}"
+  - service: "{{ out_notify }}"
+    data:
+      message: "{{ out_message }}"
+      data:
+        tag: '{{ tag }}'
+        group: '{{ group }}'
+        image: '{{ image }}'
+        attachment:
+          url: "{{ thumbnail }}"
+
+    # Each clip
+  - repeat:
+      sequence:
+      - wait_for_trigger:
+        - platform: mqtt
+          topic: frigate/events
+          payload: '{{ id }}'
+          value_template: '{{ value_json.after.id }}'
+        timeout:
+          minutes: 2
+        continue_on_timeout: false
+      - condition: template
+        value_template: '{{ wait.trigger and wait.trigger.payload_json.type == "end" }}'
+      - choose:
+        - conditions: "{{ persistent_notification }}"
+          sequence:
+          - service: persistent_notification.create
+            data:
+              message: >
+                {{ out_message }}
+                
+                ![image]({{ image }})
+
+                [Click here to view clip]({{ video }})
+      - service: "{{ out_notify }}"
+        data:
+          message: "{{ out_message }}"
+          data:
+            tag: "{{ tag }}"
+            group: "{{ group }}"
+            url: "{{ video }}"
+            clickAction: "{{ video }}"
+            image: "{{ image }}"
+            sound: none
+            attachment:
+              url: "{{ thumbnail }}"
+            actions:
+            - action: URI
+              title: View Clip
+              uri: "{{ video }}"
+            - action: URI
+              title: View Snapshot
+              uri: "{{ snapshot }}"
+            - action: "{{ silence }}"
+              title: Silence Notifications
+              destructive: true
+      until: '{{ wait.trigger and wait.trigger.payload_json.type == "end" }}'

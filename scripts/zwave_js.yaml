@@ -1,314 +1,3 @@
-# A Toggle for the UI.  Helps create global on/off buttons that don't error 
-# when the button is pressed and everything is off.  e.g.  all lights are off and press off does not
-# result in a lovelace call-service error.
-lovelace_toggle:
-  variables:
-    entities: >
-      {{ expand(entities) | selectattr('state', '!=', state) | map(attribute='entity_id') | list }}
-  sequence:
-  - condition: template
-    value_template: "{{ entities | length > 0 }}"
-  - service: homeassistant.turn_{{ state }}
-    data:
-      entity_id: "{{ entities }}"
-
-# Living Room Dot
-alexa_say_living_room:
-  sequence:
-    - condition: template
-      value_template: "{{ states('input_text.alexa_say') != '' }}"
-    - service: notify.alexa_media
-      data_template:
-        message: "{{ states('input_text.alexa_say') }}"
-        data:
-          type: tts
-        target: media_player.living_room_dot
-    - delay:
-        seconds: 1
-
-# Master Dot
-alexa_say_master:
-  sequence:
-    - condition: template
-      value_template: "{{ states('input_text.alexa_say') != '' }}"
-    - service: notify.alexa_media
-      data_template:
-        message: "{{ states('input_text.alexa_say') }}"
-        data:
-          type: tts
-        target: media_player.master_dot
-    - delay:
-        seconds: 1
-
-# Bonus Room Dot
-alexa_say_bonus_room:
-  sequence:
-    - condition: template
-      value_template: "{{ states('input_text.alexa_say') != '' }}"
-    - service: notify.alexa_media
-      data_template:
-        message: "{{ states('input_text.alexa_say') }}"
-        data:
-          type: tts
-        target: media_player.bonus_room_dot
-    - delay:
-        seconds: 1
-
-# AlL Echos
-alexa_say_all:
-  sequence:
-    - condition: template
-      value_template: "{{ states('input_text.alexa_say') != '' }}"
-    - service: notify.alexa_media
-      data_template:
-        message: "{{ states('input_text.alexa_say') }}"
-        data:
-          type: tts
-        target:  
-          - media_player.living_room_dot
-          - media_player.master_dot
-          - media_player.bonus_room_dot
-    - delay:
-        seconds: 1
-
-clear_alexa_text:
-  sequence:
-    - service: input_text.set_value
-      data:
-        entity_id: input_text.alexa_say
-        value: ""
-    - delay:
-        seconds: 1
-        
-multizone_volume_up:
-  sequence:
-  - event: mz_volume_up
-    event_data:
-      event_id: multizone
-      
-multizone_volume_down:
-  sequence:
-  - event: mz_volume_down
-    event_data:
-      event_id: multizone
-      
-multizone_volume_mute:
-  sequence:
-  - event: mz_volume_mute
-    event_data:
-      event_id: multizone
-      
-multizone_cycle_zone:
-  sequence:
-  - event: mz_cycle_zone
-    event_data:
-      event_id: multizone
-
-remote_living_room_rewind:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'Rewind'}
-
-remote_living_room_play:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'Play'}
-
-remote_living_room_pause:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'Pause'}
-
-remote_living_room_fastforward:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'FastForward'}
-
-remote_living_room_directionup:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'DirectionUp'}
-
-remote_living_room_directionleft:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'DirectionLeft'}
-
-remote_living_room_ok:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'OK'}
-
-remote_living_room_directionright:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'DirectionRight'}
-
-remote_living_room_directiondown:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'DirectionDown'}
-
-remote_living_room_back:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'Back'}
-
-remote_living_room_channelup:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'ChannelUp'}
-
-remote_living_room_channeldown:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'ChannelDown'}
-
-remote_living_room_channelprev:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'ChannelPrev'}
-
-remote_living_room_0:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '0'}
-
-remote_living_room_1:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '1'}
-
-remote_living_room_2:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '2'}
-
-remote_living_room_3:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '3'}
-
-remote_living_room_4:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '4'}
-
-remote_living_room_5:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '5'}
-
-remote_living_room_6:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '6'}
-
-remote_living_room_7:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '7'}
-
-remote_living_room_8:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '8'}
-
-remote_living_room_9:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': '9'}
-
-remote_living_room_period:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'Period'}
-
-remote_living_room_homebutton:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'HomeButton'}
-
-remote_living_room_menubutton:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'MenuButton'}
-
-remote_living_room_lowerleft:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'LowerLeft'}
-
-remote_living_room_lowerright:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'LowerRight'}
-
-remote_living_room_bottombutton:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'BottomButton'}
-
-remote_living_room_rightbutton:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'RightButton'}
-
-remote_living_room_topbutton:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'TopButton'}
-
-remote_living_room_leftbutton:
-  sequence:
-  - event: remote_living_room
-    event_data: {'command': 'LeftButton'}
-
-mqtt_automated_states:
-  sequence:
-  - variables: &mqtt-variables
-      root: "homeassistant"
-      topic_root: >
-        {%- if domain is not defined or unique_id is not defined %}
-          {{- [ root, 'error'] | join('/') }}
-        {%- else %}
-          {{- [ root, domain, unique_id ] | join('/') }}
-        {%- endif %}
-  - service: mqtt.publish
-    data:
-      topic: "{{ topic_root ~ '/state' }}"
-      payload: >
-        {{ { 'state': state, 'attributes': attributes | default({}) } | tojson }}
-      retain: "{{ retain | default('true') }}"
-
-mqtt_automated_config:
-  sequence:
-  - variables:
-      name: >
-        {{ unique_id | replace('_', ' ') | title }}
-      <<: *mqtt-variables
-      payload: >
-        {%- set items = [
-          ( "name", name),
-          ( "unique_id", unique_id),
-          ( "state_topic", topic_root ~ "/state"),
-          ( "value_template", "{{ value_json.state }}"),
-          ( "json_attributes_topic", topic_root ~ "/state"),
-          ( "json_attributes_template", "{{ value_json.attributes | tojson }}"),
-          ( "device_class", device_class ),
-        ] %}
-        {% set ns = namespace(items=[]) %}
-        {%- for k, v in items %}
-          {%- if v is defined %}
-            {%- set ns.items = ns.items + [ '"{}": "{}"'.format(k, v) ] %}
-          {%- endif %}
-        {%- endfor %}
-        {{ ("{" ~ ns.items | join(', ') ~ "}") }}
-  - service: mqtt.publish
-    data:
-      topic: "{{ topic_root ~ '/config' }}"
-      payload: "{{ payload | tojson }}"
-
 zwavejs2mqtt_mqtt_set_config_parameter:
   alias: Set Config Parameter to ZwaveJS2MQTT via MQTT
   description: Publishes to ZwaveJS2MQTT
@@ -464,47 +153,6 @@ lzw45_quick_strip_effect:
       parameter: 21
       value: "{{ bytes }}"
       bytes: 4
-
-#  - service: persistent_notification.create
-#    data:
-#      message: >
-#        {%- set inputs = {
-#          'effect': effect,
-#          'hue': hue,
-#          'color_temp': color_temp,
-#          'brightness_pct': brightness_pct,
-#          'seconds': seconds,
-#          'minutes': minutes,
-#          'hours': hours,
-#          'endless': endless
-#        } %}
-#        {%- set ns = namespace(ret=[]) %}
-#        {%- for k, v in inputs.items() %}
-#          {%- if v %}
-#          {%- set ns.ret = ns.ret + [ '<tr><th align="right">{0}: </th><td align="left">{1}</td>'.format(k, v) ] %}
-#          {%- endif %}
-#        {%- endfor %}
-#        {{ '<table>' ~ ns.ret | join('') ~ '</table>\n'  }}
-#        {%- set params = { 
-#          '1': (byte1, byte1),
-#          '2': (byte2, byte2 * 2**8),
-#          '3': (byte3, byte3 * 2**16),
-#          '4': (byte4, byte4 * 2**24),
-#          'Total': (0, bytes),
-#        } %}
-#        {%- set ns = namespace(ret=[]) %}
-#        {%- set ns.ret = ns.ret + [ '<tr><th>Byte</th><th>Int</th><th>Bin</th><th>Total</th></tr>' ] %}
-#        {%- for k, v in params.items() %}
-#          {%- set ns.ret = ns.ret + [ '<tr><td align="center">{0}</td><td align="center">{1}</td><td align="center">{1:08b}</td><td align="center">{2}</td></tr>'.format(k, v[0], v[1]) ] %}
-#        {%- endfor %}
-#        {{ '<table>' ~ ns.ret | join('') ~ '</table>'  }}
-#        {{ payload }}
-
-#  - service: "{{ service }}"
-#    data:
-#      node_id: "{{ node_id }}"
-#      parameter: 21
-#      value: "{{ bytes }}"
 
 lzw45_quick_strip_effect_zwave_js:
   alias: LZW45 Quick Strip Effect
@@ -709,12 +357,6 @@ lzw45_pixel_effect:
       parameter: 31
       value: "{{ bytes }}"
       bytes: 2
-
-#  - service: zwave_js.set_config_parameter
-#    data:
-#      entity_id: "{{ lzw45 }}"
-#      parameter: 31
-#      value: "{{ bytes }}"
 
 lzw45_pixel_effect_zwave_js:
   alias: LZW45 Pixel Effect
@@ -940,38 +582,6 @@ lzw45_custom_effect:
       {{ '{0:08b}{1:08b}{2:08b}'.format(byte3, byte2, byte1) | int(base=2, default=0) }}
   sequence:
 
-#  - service: persistent_notification.create
-#    data:
-#      message: >
-#        {%- set inputs = {
-#          'colors': colors,
-#          'effects': effects,
-#          'brightness_pcts': brightness_pcts,
-#          'durations': durations,
-#          'duration_units': duration_units,
-#          'finish_behavior': finish_behavior,
-#          'iterations': iterations
-#        } %}
-#        {%- set ns = namespace(ret=[]) %}
-#        {%- for k, v in inputs.items() %}
-#          {%- if v %}
-#          {%- set ns.ret = ns.ret + [ '<tr><th align="right">{0}: </th><td align="left">{1}</td>'.format(k, v) ] %}
-#          {%- endif %}
-#        {%- endfor %}
-#        {{ '<table>' ~ ns.ret | join('') ~ '</table>\n'  }}
-#        {%- set params = { 
-#          '1': (parameter30byte1, parameter30byte1),
-#          '2': (parameter30byte2, parameter30byte2 * 2**8),
-#          '3': (parameter30byte3, parameter30byte3 * 2**16),
-#          'Total': (0, parameter30),
-#        } %}
-#        {%- set ns = namespace(ret=[]) %}
-#        {%- set ns.ret = ns.ret + [ '<tr><th>Byte</th><th>Int</th><th>Bin</th><th>Total</th></tr>' ] %}
-#        {%- for k, v in params.items() %}
-#          {%- set ns.ret = ns.ret + [ '<tr><td align="center">{0}</td><td align="center">{1}</td><td align="center">{1:08b}</td><td align="center">{2}</td></tr>'.format(k, v[0], v[1]) ] %}
-#        {%- endfor %}
-#        {{ '<table>' ~ ns.ret | join('') ~ '</table>'  }}
-
   - condition: template
     value_template: "{{ node_id != 0 and transitions > 0 }}"
 
@@ -1002,37 +612,6 @@ lzw45_custom_effect:
       parameter: 30
       value: "{{ parameter30 }}"
       bytes: 4
-
-#  - condition: template
-#    value_template: "{{ lzw45 is defined and transitions > 0 }}"
-#
-#  - service: zwave_js.bulk_set_partial_config_parameters
-#    target:
-#      entity_id: "{{ lzw45 }}"
-#    data:
-#      parameter: 22
-#      value: "{{ parameter22 }}"
-#
-#  - service: zwave_js.bulk_set_partial_config_parameters
-#    target:
-#      entity_id: "{{ lzw45 }}"
-#    data:
-#      parameter: 23
-#      value: "{{ parameter23 }}"
-#
-#  - service: zwave_js.bulk_set_partial_config_parameters
-#    target:
-#      entity_id: "{{ lzw45 }}"
-#    data:
-#      parameter: 24
-#      value: "{{ parameter24 }}"
-#
-#  - service: zwave_js.bulk_set_partial_config_parameters
-#    target:
-#      entity_id: "{{ lzw45 }}"
-#    data:
-#      parameter: 30
-#      value: "{{ parameter30 }}"
 
 lzw45_custom_effect_zwave_js:
   alias: LZW45 Custom Effect
@@ -1256,20 +835,35 @@ lzw45_ui_pixel_effect:
   - delay:
       seconds: 1
 
-lzw45_party_effect:
+lzw45_basic_pixel_effect:
+  fields:
+    effect:
+      description: (Optional) Quick strip effect.
+      example: aurora
+    brightness_pct:
+      description: (Optional) brightness
+      example: 99
   variables:
-    nodes: [ 91, 92 ]
+    option: >
+      {{ effect | default("aurora") }}
+    brightness: >
+      {{ brightness_pct | default(99) }}
   sequence:
-  - repeat:
-      count: "{{ nodes | length }}"
-      sequence:
-      - service: script.lzw45_pixel_effect
-        data:
-          node: "{{ nodes[repeat.index - 1] }}"
-          effect: aurora
-          brightness_pct: 99
-  - delay:
-      seconds: 1
+
+  - service: input_select.select_option
+    target:
+      entity_id:
+      - input_select.quick_strip_effect
+    data:
+      option: "{{ option }}"
+
+  - service: input_number.set_value
+    target:
+      entity_id: input_number.pixel_effect_brightness
+    data:
+      value: "{{ brightness_pct }}"
+
+  - service: script.lzw45_ui_pixel_effect
 
 lzw45_ui_quick_effect:
   variables:
@@ -1288,675 +882,60 @@ lzw45_ui_quick_effect:
           hue: "{{ states('input_number.quick_strip_hue') | int(default=360) }}"
           color_temp: "{{ states('input_number.quick_strip_color_temp') | int(default=2700) }}"
 
-debug_script_variables:
+lzw45_basic_quick_effect:
   fields:
-    script_variables:
-      description: Dictionary of variables
-      example: Make a dictionary of variables under info.
-  variables:
-    table: >
-      {%- macro tableline(c, items) %}
-      <tr>{%- for item in items -%}<t{{c}}>{{item}}</t{{c}}>{%- endfor -%}</tr>
-      {%- endmacro %}
-      {%- set ns = namespace(ret=[ tableline('h', ['Variable', 'Value']) ]) %}
-      {%- for k, v in script_variables.items() %}
-      {%- set ns.ret = ns.ret + [ tableline('d', [k, v]) ] %}
-      {%- endfor %}
-      {{ '<table>{}</table>'.format(ns.ret | join('')) }}
-  sequence:
-  - service: persistent_notification.create
-    data:
-      title: Debug Variables
-      message: "{{ table if table else 'No Information Provided' }}"
-
-notify:
-  fields:
-    format: 
-      description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
-      example: "%-I:%M:%S %p"
-    persistent_notification:
-      description: On/Off for Persistent Notifications
-      example: on
-    title:
-      description: Title of the persistent notification.
-      example: "Title"
-    message:
-      description: Message to be sent/annouced.
-      example: "Hello"
-    notify:
-      description: Devices to notify.
-      example: notify.mobile_app_petro
-    debug:
-      description: Create a persistent notification with the variables.
-      example: on
-  variables:
-    timestamp: >
-      {%- set format = format | default("%-I:%M:%S %p") %}
-      {{ as_timestamp(now(), none) | timestamp_custom(format, default="???") }}
-    persistent_notification: >
-      {{ persistent_notification | default(true) }}
-    debug: >
-      {{ debug | default(false) }}
-    out_notify: >
-      {%- if debug %}
-        notify.mobile_app_petro
-      {%- else %}
-        {{ notify | default('notify.homeowners') }}
-      {%- endif %}
-    out_title: >
-      {{ title | default('') }}
-    out_message: >
-      {%- set message = message | default('No Message Provided') %}
-      {{ '[{}] {}'.format(timestamp, message) }}
-  sequence:
-  - choose:
-    - conditions: "{{ debug }}"
-      sequence:
-      - service: script.debug_script_variables
-        data:
-          script_variables:
-            timestamp: "{{ timestamp }}"
-            persistent_notification: "{{ persistent_notification }}"
-            out_notify: "{{ out_notify }}"
-            out_title: "{{ out_title }}"
-            out_message: "{{ out_message }}"
-  - choose:
-    - conditions: "{{ persistent_notification }}"
-      sequence:
-      - service: persistent_notification.create
-        data:
-          # Remove the title for now, the notifications are too fat.
-          # title: "{{ out_title }}"
-          message: "{{ out_message }}"
-  - condition: template
-    value_template: "{{ out_notify.startswith('notify.') }}"
-  - service: "{{ out_notify }}"
-    data:
-      message: "{{ out_message }}"
-
-notify_frigate:
-  fields:
-    id:
-      description: The frigate payload id
-      example: 1234567891.123456-abcdef
-    camera:
-      description: The name of the camera in frigate's configuration.
-      example: kitchen
-    silence:
-      description: The action that will silence the notification.
-      example: silence-notify-mobile-app-petro-kitchen
-    format: 
-      description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
-      example: "%-I:%M:%S %p"
-    persistent_notification:
-      description: On/Off for Persistent Notifications
-      example: on
-    title:
-      description: Title of the persistent notification.
-      example: "Title"
-    message:
-      description: Message to be sent/annouced.
-      example: "Hello"
-    notify:
-      description: Devices to notify.
-      example: notify.mobile_app_petro
-    debug:
-      description: Create a persistent notification with the variables.
-      example: on
-  variables:
-    tag: >
-      {{ id }}
-    group: >
-      frigate-notification-{{ camera }}
-    image: >
-      /api/frigate/notifications/{{ id }}/thumbnail.jpg?format=android
-    thumbnail: >
-      /api/frigate/notifications/{{ id }}/thumbnail.jpg
-    base_url: !secret external_url
-    video: >
-      {{ base_url }}/api/frigate/notifications/{{ id }}/{{ camera }}/clip.mp4
-    snapshot: >
-      {{ base_url }}/api/frigate/notifications/{{ id }}/snapshot.jpg
-    timestamp: >
-      {%- set format = format | default("%-I:%M:%S %p") %}
-      {{ as_timestamp(now(), none) | timestamp_custom(format, default="???") }}
-    persistent_notification: >
-      {{ persistent_notification | default(true) }}
-    debug: >
-      {{ debug | default(false) }}
-    out_notify: >
-      {%- if debug %}
-        notify.mobile_app_petro
-      {%- else %}
-        {{ notify | default('notify.homeowners') }}
-      {%- endif %}
-    out_title: >
-      {{ title | default('') }}
-    out_message: >
-      {%- set message = message | default('No Message Provided') %}
-      {{ '[{}] {}'.format(timestamp, message) }}
-  sequence:
-  # Initial Message
-  - choose:
-    - conditions: "{{ persistent_notification }}"
-      sequence:
-      - service: persistent_notification.create
-        data:
-          message: >
-            {{ out_message }}
-            ![image]({{ image }})
-  - condition: template
-    value_template: "{{ out_notify.startswith('notify.') }}"
-  - service: "{{ out_notify }}"
-    data:
-      message: "{{ out_message }}"
-      data:
-        tag: '{{ tag }}'
-        group: '{{ group }}'
-        image: '{{ image }}'
-        attachment:
-          url: "{{ thumbnail }}"
-
-    # Each clip
-  - repeat:
-      sequence:
-      - wait_for_trigger:
-        - platform: mqtt
-          topic: frigate/events
-          payload: '{{ id }}'
-          value_template: '{{ value_json.after.id }}'
-        timeout:
-          minutes: 2
-        continue_on_timeout: false
-      - condition: template
-        value_template: '{{ wait.trigger and wait.trigger.payload_json.type == "end" }}'
-      - choose:
-        - conditions: "{{ persistent_notification }}"
-          sequence:
-          - service: persistent_notification.create
-            data:
-              message: >
-                {{ out_message }}
-                
-                ![image]({{ image }})
-
-                [Click here to view clip]({{ video }})
-      - service: "{{ out_notify }}"
-        data:
-          message: "{{ out_message }}"
-          data:
-            tag: "{{ tag }}"
-            group: "{{ group }}"
-            url: "{{ video }}"
-            clickAction: "{{ video }}"
-            image: "{{ image }}"
-            sound: none
-            attachment:
-              url: "{{ thumbnail }}"
-            actions:
-            - action: URI
-              title: View Clip
-              uri: "{{ video }}"
-            - action: URI
-              title: View Snapshot
-              uri: "{{ snapshot }}"
-            - action: "{{ silence }}"
-              title: Silence Notifications
-              destructive: true
-      until: '{{ wait.trigger and wait.trigger.payload_json.type == "end" }}'
-
-notify_count_base:
-  fields:
-    door_name:
-      description: Door that caused the notification
-      example: "Main Door"
-    count: 
-      description: Door open count.
-      example: 1
-    count_timestamp:
-      description: Timestamp when the door was first opened.
-      example: '2021-04-25T17:56:06.448826+00:00'
-  variables:
-    debug: >
-      {{ debug | default(false) }}
-    duration: >
-      {%- set count_datetime = count_timestamp | default | as_datetime or now() %}
-      {%- set up_time = (now()-count_datetime).seconds %}
-
-      {%- macro phrase(name, divisor, mod=None) %}
-        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
-        {%- set end = 's' if value > 1 else '' %}
-        {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
-      {%- endmacro %}
-      
-      {%- set values = [ 
-                 phrase('minute', 60, 604800), 
-                 phrase('second', 1, 60) 
-             ] | select('!=','') | list %}
-                    
-      {{ values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first }}
-    message: >
-      The {{ door_name }} was opened {{ count }} time{{'s' if count > 1 else ''}} over the past {{ duration }}.
-  sequence:
-
-  - choose:
-    - conditions: "{{ debug }}"
-      sequence:
-      - service: script.debug_script_variables
-        data:
-          script_variables:
-            door_name: "{{ door_name }}"
-            count: "{{ count }}"
-            count_timestamp: "{{ count_timestamp }}"
-
-  - service: script.notify
-    data:
-      title: "{{ door_name }} Open Tally"
-      message: "{{ message }}"
-
-# These automations are for the ability to restart the script & duration over again.
-
-notify_count_test_door: &door_count_script
-  mode: restart
-  fields:
-    duration:
-      description: Duration that we have to wait before sending the notification
-      example: 60
-    door_name:
-      description: Door that caused the notification
-      example: "Main Door"
-    count: 
-      description: Door open count.
-      example: 1
-    count_timestamp:
-      description: Timestamp when the door was first opened.
-      example: '2021-04-25T17:56:06.448826+00:00'
-  sequence:
-
-  - delay: "{{ duration }}"
-
-  # passes door_name, count, count_timestamp, and notify to the base door notification.
-
-  - service: script.notify_count_base
-    data:
-      door_name: "{{ door_name }}"
-      count: "{{ count }}"
-      count_timestamp: "{{ count_timestamp }}"
-
-notify_count_main_door: *door_count_script
-notify_count_garage_entry_door: *door_count_script
-notify_count_sliding_door: *door_count_script
-notify_count_garage_door_tilt: *door_count_script
-notify_count_back_garage_door_tilt: *door_count_script
-
-notify_if_ajar:
-  mode: parallel
-  fields:
-    door:
-      description: Entity Id for the door
-      example: binary_sensor.main_door
-    duration:
-      description: Duration that we have to wait before sending the notification
-      example: 60
-    door_name:
-      description: Door that caused the notification
-      example: "Main Door"
-    timestamp:
-      description: Timestamp when the door was first opened.
-      example: '2021-04-25T17:56:06.448826+00:00'
-  sequence:
-  - wait_template: "{{ is_state(door, 'off') }}"
-    timeout: "{{ duration | timestamp_custom('%H:%M:%S', false, '00:01:00') }}"
-  - condition: template
-    value_template: >
-      {%- set ts = timestamp | default | as_datetime or now() %}
-      {{ (now() - ts).seconds >= duration }}
-  - service: script.notify
-    data:
-      title: "{{ door_name }} Door Ajar!"
-      message: >
-        {%- set up_time = duration %}
-
-        {%- macro phrase(name, divisor, mod=None) %}
-          {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
-          {%- set end = 's' if value > 1 else '' %}
-          {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
-        {%- endmacro %}
-        
-        {%- set values = [ 
-                   phrase('minute', 60, 604800), 
-                   phrase('second', 1, 60) 
-               ] | select('!=','') | list %}
-                      
-        {% set span = values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first %}
-        {{ door_name }} has been open for {{ span }}!
-
-# These automations are for the ability to restart the script & duration over again.
-
-resume_input_boolean_test_switch: &resume_scene_after_duration
-  mode: restart
-  fields:
-    duration:
-      description: Duration that we have to wait before sending the notification
-      example: 60
-    scene_id:
-      description: Id of the scene
-      example: scene_a_or_b
-  sequence:
-
-  - delay: "{{ duration }}"
-
-  - service: scene.turn_on
-    target:
-      entity_id: scene.{{ scene_id }}
-
-resume_input_boolean_test_switch_2: *resume_scene_after_duration
-resume_switch_foyer: *resume_scene_after_duration
-resume_switch_garage_entry: *resume_scene_after_duration
-resume_switch_garage_cans: *resume_scene_after_duration
-resume_light_dining_room_chandelier: *resume_scene_after_duration
-
-harmony_activity_on:
-  mode: single
-  fields:
-    activity:
-      description: (Required) The harmony activity name.
-      example: Xbox One
-    remote:
-      description: (Optional) The remote for the harmony activity
-      example: remote.living_room
-    echo_through_reciever:
-      description: (Optional) Switch that turns on/off bluetooth adapter for echo
-      example: switch.echo_through_receiver
-  variables:
-    harmony: "{{ remote | default('remote.living_room') }}"
-    echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
-  sequence:
-  - service: remote.turn_on
-    target:
-      entity_id: "{{ harmony }}"
-    data:
-      activity: "{{ activity }}"
-  - wait_template: "{{ is_state_attr(harmony, 'current_activity', activity) }}"
-  - service: switch.turn_off
-    target:
-      entity_id: "{{ echo }}"
-
-harmony_activity_off:
-  mode: single
-  fields:
-    remote:
-      description: (Optional) The remote for the harmony activity
-      example: remote.living_room
-  variables:
-    harmony: "{{ remote | default('remote.living_room') }}"
-  sequence:
-  - service: remote.turn_on
-    target:
-      entity_id: "{{ harmony }}"
-    data:
-      activity: PowerOff
-
-harmony_all_off:
-  mode: single
-  fields:
-    remote:
-      description: (Optional) The remote for the harmony activity
-      example: remote.living_room
-    echo_through_reciever:
-      description: (Optional) Switch that turns on/off bluetooth adapter for echo
-      example: switch.echo_through_receiver
-  variables:
-    poweroff: PowerOff
-    harmony: "{{ remote | default('remote.living_room') }}"
-    echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
-  sequence:
-  - service: remote.turn_on
-    target:
-      entity_id: "{{ harmony }}"
-    data:
-      activity: "{{ poweroff }}"
-  - wait_template: "{{ is_state_attr(harmony, 'current_activity', poweroff) }}"
-  - service: switch.turn_off
-    target:
-      entity_id: "{{ echo }}"
-
-roku_source_on:
-  mode: single
-  fields:
-    source:
-      description: (Required) The source to select on the roku
-      example: Netflix
-    roku:
-      description: (Optional) The Roku media_player.
-      example: media_player.roku_living_room
-    echo_through_reciever:
-      description: (Optional) Switch that turns on/off bluetooth adapter for echo
-      example: switch.echo_through_receiver
-  variables:
-    switch: switch.roku
-    media_player: "{{ roku | default('media_player.roku_living_room') }}"
-    echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
-  sequence:
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: "{{ is_state(switch, 'off') }}"
-      sequence:
-      - service: switch.turn_on
-        target:
-          entity_id: "{{ switch }}"
-    default:
-    - service: switch.turn_off
-      target:
-        entity_id: "{{ echo }}"
-  - wait_template: "{{ is_state(switch, 'on') }}"
-  - service: media_player.select_source
-    target:
-      entity_id: "{{ media_player }}"
-    data:
-      source: "{{ source }}"
-
-power_on:
-  mode: parallel
-  fields: &power_fields
-    entity:
-      description: (Required) The entity in question
-      example: media_player.yamaha_receiver
-  variables:
-    state: 'off'
-    service: "{{ entity.split('.')[0] }}.turn_on"
-  sequence: &power_sequence
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: "{{ is_state(entity, state) }}"
-      sequence:
-      - service: "{{ service }}"
-        target:
-          entity_id: "{{ entity }}"
-
-power_off:
-  mode: parallel
-  fields: *power_fields
-  variables:
-    state: 'on'
-    service: "{{ entity.split('.')[0] }}.turn_off"
-  sequence: *power_sequence
-
-media_player_on:
-  mode: single
-  fields:
-    media_player:
-      description: (Required) The media_player.
-      example: media_player.yamaha_receiver
-    source:
-      description: (Required) The source to select
-      example: Echo
-    volume:
-      description: (Required) The volume level
-      example: 0.7
-      
-  sequence:
-  - service: script.power_on
-    data:
-      entity: "{{ media_player }}"
-
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: "{{ not is_state_attr(media_player, 'volume_level', volume) }}"
-      sequence:
-      - service: media_player.volume_set
-        target:
-          entity_id: "{{ media_player }}"
-        data:
-          volume_level: "{{ volume }}"
-
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: "{{ not is_state_attr(media_player, 'source', source) }}"
-      sequence:
-      - service: media_player.select_source
-        target:
-          entity_id: "{{ media_player }}"
-        data:
-          source: "{{ source }}"
-
-echo_through_receiver_on:
-  mode: single
-  sequence:
-  - service: script.power_on
-    data:
-      entity: switch.floating_outlet_switch
-  
-  - service: script.media_player_on
-    data:
-      media_player: media_player.yamaha_receiver
-      volume: 0.7
-      source: Echo
-  
-  - service: script.media_player_on
-    data:
-      media_player: media_player.yamaha_receiver_zone_2
-      volume: 0.7
-      source: Echo
-
-echo_through_receiver_off:
-  mode: single
-  sequence:
-
-  # Turns off audio one but does not turn off the reciever.
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: "{{ is_state('media_player.yamaha_receiver', 'on') and is_state('switch.poweroff', 'off') }}"
-      sequence:
-      - service: media_player.turn_off
-        entity_id: media_player.yamaha_receiver
-      
-  - service: script.power_off
-    data:
-      entity: media_player.yamaha_receiver_zone_2
-      
-  - service: script.power_off
-    data:
-      entity: switch.floating_outlet_switch
-
-party_on:
-  mode: single
+    brightness_pct:
+      description: (Optional) brightness
+      example: 99
+    hue:
+      description: (Optional) The hue
+      example: 110
+    temp:
+      description: (Optional) The color temp
+      example: 2700
+    effect:
+      description: (Optional) The type
+      example: solid
   variables:
     nodes: [ 91, 92 ]
+    brightness: >
+      {{ brightness_pct | default(99) }}
+    option: >
+      {{ effect | default('solid') }}
+    use_color: >
+      {{ hue | default(none) is not none }}
+    color_temp: >
+      {{ temp | default(2700) }}
+    color: >
+      {{ hue | default(185) }}
   sequence:
-  - service: switch.turn_on
+  - service: input_boolean.turn_{{ 'on' if use_color else 'off' }}
     target:
-      entity_id:
-      - switch.echo_through_receiver
-      - switch.hyperion_rainbow_swirl_fast
+      entity_id: input_boolean.hue_color_temp
+
+  - service: input_number.set_value
+    target:
+      entity_id: input_number.quick_strip_brightness
+    data:
+      value: "{{ brightness_pct }}"
+
+  - service: input_number.set_value
+    target:
+      entity_id: input_number.quick_strip_color_temp
+    data:
+      value: "{{ temp }}"
+
+  - service: input_number.set_value
+    target:
+      entity_id: input_number.quick_strip_hue
+    data:
+      value: "{{ color }}"
+
   - service: input_select.select_option
     target:
-      entity_id:
-      - input_select.quick_strip_effect
+      entity_id: input_select.quick_strip_effect
     data:
-      option: aurora
-  - service: script.lzw45_party_effect
-  - delay:
-      seconds: 2
-  - service: media_player.play_media
-    target:
-      entity_id:
-      - media_player.living_room_dot
-    data:
-      media_content_id: Empire of the sun station
-      media_content_type: AMAZON_MUSIC
-
-party_off:
-  mode: single
-  sequence:
-  - service: switch.turn_off
-    target:
-      entity_id:
-      - switch.echo_through_receiver
-      - switch.hyperion_rainbow_swirl_fast
-      - switch.lzw45_mood_lighting
-
-  - service: media_player.media_stop
-    target:
-      entity_id:
-      - media_player.living_room_dot
-
-cast_workout_video:
-  mode: single
-  fields:
-    workout:
-      description: (Required) Name of the workout.
-      example: Core
-    chromecast:
-      description: (Optional) The Roku media_player.
-      example: media_player.chromecast
-  variables:
-    media_player: "{{ chromecast | default('media_player.chromecast') }}"
-    title: >
-      {%- set titles = [
-        'Core', 'Cardio Kickboxing', 'Lower Body', 'Total Body', 'Upper Body'
-      ] %}
-      {{ workout if workout in titles else 'NoTitle' }}
-    content_id: >
-      plex://{"library_name": "Workout Videos", "title": "{{ title }}"}
-  sequence:
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: "{{ is_state('switch.chromecast', 'off') }}"
-      sequence:
-      - service: switch.turn_on
-        target:
-          entity_id: switch.chromecast
-
-  - service: media_player.play_media
-    target:
-      entity_id: "{{ media_player }}"
-    data:
-      media_content_id: "{{ content_id }}"
-      media_content_type: movie
-
-stop_casting:
-  mode: single
-  sequence:
-  - service: media_player.turn_off
-    target:
-      entity_id: media_player.chromecast
-
-laser_position_timer:
-  mode: single
-  variables:
-    laser: switch.garage_ceiling_outlet
-  sequence:
-  - delay: "00:02:00"
-  - service: switch.turn_off
-    target:
-      entity_id: "{{ laser }}"
+      option: "{{ option }}"
 
 zwave_multicast_group:
   mode: parallel

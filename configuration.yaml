@@ -41,7 +41,7 @@ person:
 plant: !include plants.yaml
 recorder: !include recorder.yaml
 scene: !include scenes.yaml
-script: !include scripts.yaml
+script: !include_dir_merge_named scripts/
 sensor: !include sensor.yaml
 sun:
 switch: !include switch.yaml

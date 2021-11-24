@@ -1,0 +1,67 @@
+# Living Room Dot
+alexa_say_living_room:
+  sequence:
+    - condition: template
+      value_template: "{{ states('input_text.alexa_say') != '' }}"
+    - service: notify.alexa_media
+      data_template:
+        message: "{{ states('input_text.alexa_say') }}"
+        data:
+          type: tts
+        target: media_player.living_room_dot
+    - delay:
+        seconds: 1
+
+# Master Dot
+alexa_say_master:
+  sequence:
+    - condition: template
+      value_template: "{{ states('input_text.alexa_say') != '' }}"
+    - service: notify.alexa_media
+      data_template:
+        message: "{{ states('input_text.alexa_say') }}"
+        data:
+          type: tts
+        target: media_player.master_dot
+    - delay:
+        seconds: 1
+
+# Bonus Room Dot
+alexa_say_bonus_room:
+  sequence:
+    - condition: template
+      value_template: "{{ states('input_text.alexa_say') != '' }}"
+    - service: notify.alexa_media
+      data_template:
+        message: "{{ states('input_text.alexa_say') }}"
+        data:
+          type: tts
+        target: media_player.bonus_room_dot
+    - delay:
+        seconds: 1
+
+# AlL Echos
+alexa_say_all:
+  sequence:
+    - condition: template
+      value_template: "{{ states('input_text.alexa_say') != '' }}"
+    - service: notify.alexa_media
+      data_template:
+        message: "{{ states('input_text.alexa_say') }}"
+        data:
+          type: tts
+        target:  
+          - media_player.living_room_dot
+          - media_player.master_dot
+          - media_player.bonus_room_dot
+    - delay:
+        seconds: 1
+
+clear_alexa_text:
+  sequence:
+    - service: input_text.set_value
+      data:
+        entity_id: input_text.alexa_say
+        value: ""
+    - delay:
+        seconds: 1
