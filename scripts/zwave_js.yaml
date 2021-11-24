@@ -178,7 +178,7 @@ lzw45_change_ui_quick_effect:
     color: >
       {{ hue | default(185) }}
   sequence:
-  - service: input_boolean.turn_{{ 'on' if use_color else 'off' }}
+  - service: input_boolean.turn_{{ 'off' if use_color else 'on' }}
     target:
       entity_id: input_boolean.hue_color_temp
 
