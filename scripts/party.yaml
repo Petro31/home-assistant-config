@@ -1,6 +1,10 @@
 party_on:
+  alias: Turn on the party
   mode: single
   fields:
+    party: 
+      description: (Required) Name of the party.
+      example: Game Night
     artist:
       description: (Required) Name of the artist.
       example: Empire of the sun station
@@ -18,7 +22,6 @@ party_on:
       example: 120
       
   variables:
-    nodes: [ 91, 92 ]
     media_content_id: >
       {{ artist | default("Empire of the sun station") }}
     media_content_type: >
@@ -30,20 +33,28 @@ party_on:
     color: >
       {{ quick_color | default(none) }}
     use_color: >
-      {{ quick_color is not none }}
+      {{ color is not none }}
+    object_id: >
+      {{ party.replace(" ", "_") | lower }}
 
   sequence:
-  - service: switch.turn_on
+  - service: group.set
+    data:
+      object_id: party_script_{{ object_id }}
+      entities: "{{ entity_id }}"
+
+  - service: homeassistant.turn_on
     target:
       entity_id: "{{ entity_id }}"
+
   - choose:
     - conditions: "{{ use_color }}"
       sequence:
-      - service: script.lzw45_basic_quick_effect
+      - service: script.lzw45_change_ui_quick_effect
         data:
           hue: "{{ color }}"
     default:
-    - service: script.lzw45_basic_pixel_effect
+    - service: script.lzw45_change_ui_pixel_effect
       data:
         effect: "{{ effect }}"
 
@@ -58,14 +69,21 @@ party_on:
       media_content_type: "{{ media_content_type }}"
 
 party_off:
+  alias: Turn off the party
   mode: single
+  fields:
+    party: 
+      description: (Required) Name of the party.
+      example: Game Night
+  variables:
+    object_id: >
+      {{ party.replace(" ", "_") | lower }}
+    entity_id: >
+      {{ ['switch.lzw45_mood_lighting'] + expand('group.' ~ 'party_script_' ~ object_id) | map(attribute='entity_id') | list }}
   sequence:
-  - service: switch.turn_off
+  - service: homeassistant.turn_off
     target:
-      entity_id:
-      - switch.echo_through_receiver
-      - switch.hyperion_rainbow_swirl_fast
-      - switch.lzw45_mood_lighting
+      entity_id: "{{ entity_id }}"
 
   - service: media_player.media_stop
     target:

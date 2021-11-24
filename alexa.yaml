@@ -52,11 +52,13 @@ smart_home:
       - sensor.ms_temperature
       - switch.basement_cans
       - switch.basement_stairs
+      - switch.board_games_party
       - switch.cast_workout_core
       - switch.cast_workout_cardio_kickboxing
       - switch.cast_workout_lower_body
       - switch.cast_workout_total_body
       - switch.cast_workout_upper_body
+      - switch.christmas_party
       - switch.dining_room_hutch
       - switch.disney_plus
       - switch.echo_through_receiver
@@ -87,7 +89,6 @@ smart_home:
       - switch.master_nightstand_right
       - switch.netflix
       - switch.outside_porch
-      - switch.party_mode
       - switch.passenger_sconce
       - switch.prime_video
       - switch.playstation
@@ -96,6 +97,7 @@ smart_home:
       - switch.sconces_main_entrance
       - switch.sliding_door_sconce
       - switch.switch
+      - switch.the_80s_party
       - switch.tv
       - switch.xbox_one
   entity_config:

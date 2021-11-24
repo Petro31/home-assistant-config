@@ -186,19 +186,23 @@ lzw45_change_ui_quick_effect:
     target:
       entity_id: input_number.quick_strip_brightness
     data:
-      value: "{{ brightness_pct }}"
+      value: "{{ brightness }}"
 
-  - service: input_number.set_value
-    target:
-      entity_id: input_number.quick_strip_color_temp
-    data:
-      value: "{{ temp }}"
+  - choose:
+    - conditions: "{{ use_color }}"
+      sequence:
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.quick_strip_hue
+        data:
+          value: "{{ color }}"
 
-  - service: input_number.set_value
-    target:
-      entity_id: input_number.quick_strip_hue
-    data:
-      value: "{{ color }}"
+    default:
+    - service: input_number.set_value
+      target:
+        entity_id: input_number.quick_strip_color_temp
+      data:
+        value: "{{ color_temp }}"
 
   - service: input_select.select_option
     target:
@@ -331,8 +335,7 @@ lzw45_change_ui_pixel_effect:
 
   - service: input_select.select_option
     target:
-      entity_id:
-      - input_select.quick_strip_effect
+      entity_id: input_select.pixel_effect
     data:
       option: "{{ option }}"
 
@@ -340,7 +343,7 @@ lzw45_change_ui_pixel_effect:
     target:
       entity_id: input_number.pixel_effect_brightness
     data:
-      value: "{{ brightness_pct }}"
+      value: "{{ brightness }}"
 
   - service: script.lzw45_ui_pixel_effect
 
@@ -626,7 +629,7 @@ zwave_multicast_group:
       {%- endfor %}
       [{{ ns.items.values() | unique | sort | list | join(', ') }}]
     execute: >
-      {{ items is not none or items != [] }}
+      {{ items is not none and items != [] }}
     total: >
       {{ items | length if execute else 0 }}
   sequence:

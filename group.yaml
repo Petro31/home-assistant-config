@@ -163,7 +163,7 @@ holiday:
   - switch.living_room_window
   - switch.game_room_window
   - switch.double_plug_left
-  - switch.floating_double_plug_right
+  - switch.floating_double_plug_left
 
 #########
 # ROOMS #

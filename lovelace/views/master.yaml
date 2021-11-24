@@ -747,7 +747,7 @@
     'icon': 'fas:holly-berry', 
     'name': 'Hutch Lights'
   },{
-    'entity': 'switch.floating_double_plug_right',
+    'entity': 'switch.floating_double_plug_left',
     'icon': 'mdi:pine-tree', 
     'name': 'Small Window Tree'
   },

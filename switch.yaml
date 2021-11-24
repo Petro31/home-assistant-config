@@ -2,18 +2,64 @@
 
 - platform: template
   switches:
-            
-      # Party mode
-      party_mode:
-        unique_id: party_mode
-        friendly_name: Party Mode
+
+      # drinking board games
+      board_games_party:
+        unique_id: board_games_party
+        friendly_name: Board Games Party
         value_template: >
-          {% set switches = expand('switch.echo_through_receiver', 'switch.hyperion_rainbow_swirl_fast', 'switch.lzw45_mood_lighting') | list %}
-          {{ switches | selectattr('state', 'eq', 'on') | list | count == switches | count }}
+          {{ is_state('group.party_script_board_games_party', 'on') and is_state('switch.lzw45_mood_lighting', 'on') }}
         turn_on:
         - service: script.party_on
+          data:
+            party: board_games_party
+            artist: Empire of the Sun
+            pixel_effect: aurora
+            entities:
+            - switch.hyperion_rainbow_swirl_fast
         turn_off:
         - service: script.party_off
+          data:
+            party: board_games_party
+            
+      # 80s party
+      the_80s_party:
+        unique_id: the_80s_party
+        friendly_name: 80s Party
+        value_template: >
+          {{ is_state('group.party_script_the_80s_party', 'on') and is_state('switch.lzw45_mood_lighting', 'on') }}
+        turn_on:
+        - service: script.party_on
+          data:
+            party: the_80s_party
+            artist: I Heart 80s
+            pixel_effect: aurora
+            entities:
+            - switch.hyperion_rainbow_swirl_fast
+        turn_off:
+        - service: script.party_off
+          data:
+            party: the_80s_party
+            
+      # christmas party
+      christmas_party:
+        unique_id: christmas_party
+        friendly_name: Christmas Party
+        value_template: >
+          {{ is_state('group.party_script_christmas_party', 'on') and is_state('switch.lzw45_mood_lighting', 'on') }}
+        turn_on:
+        - service: script.party_on
+          data:
+            party: christmas_party
+            artist: I Heart Christmas
+            quick_color: 120
+            entities:
+            - switch.hyperion_solid_green
+            - light.christmas_tree
+        turn_off:
+        - service: script.party_off
+          data:
+            party: christmas_party
 
       # LZW MOOD LIGHTING
       lzw45_mood_lighting:
@@ -479,6 +525,25 @@
           data:
             brightness: 255
             effect: Rainbow swirl fast
+        turn_off:
+        - service: light.turn_off
+          target:
+            entity_id: light.gpio_18_tv
+
+      hyperion_solid_green:
+        unique_id: hyperion_solid_green
+        value_template: >
+          {%- set entity = 'light.gpio_18_tv' %}
+          {%- set is_solid = is_state_attr(entity, 'effect', 'Solid') %}
+          {%- set is_green = is_state_attr(entity, 'rgb_color', (0, 255, 0)) %}
+          {{ is_state(entity, 'on') and is_solid and is_green }}
+        turn_on:
+        - service: light.turn_on
+          target:
+            entity_id: light.gpio_18_tv
+          data:
+            brightness: 255
+            rgb_color: [0, 255, 0]
         turn_off:
         - service: light.turn_off
           target:
