@@ -11,7 +11,7 @@ aspect_ratio: {{ aspect_ratio | default('1/1') }}
 entity: {{ entity }}
 icon: {{ icon }}
 show_icon: true
-size: 100%
+size: 75%
 show_state: false
 show_name: false
 show_label: false
