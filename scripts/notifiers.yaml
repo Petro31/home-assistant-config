@@ -65,6 +65,60 @@ notify:
     data:
       message: "{{ out_message }}"
 
+# call frigate notification.
+# a small wrapper so that I can just call a script with a different notificaiton
+# id.  This is required so that I can use anchors in the automation that calls it
+# otherwise home assistant stupidly bitches about recieving the same key making
+# anchors useless.  
+
+frigate_notification_petro:
+  mode: single
+  alias: Notify Lambo of Camera Detection
+  fields: &frigate_notification_fields
+    id:
+      description: The frigate payload id
+      example: 1234567891.123456-abcdef
+    camera:
+      description: The name of the camera in frigate's configuration.
+      example: kitchen
+    message:
+      description: Message to be sent/annouced.
+      example: "Hello"
+  variables:
+    notify: notify.mobile_app_petro
+  sequence: &frigate_notification_sequence
+
+  - variables:
+      silence: silence-{{ notify | replace(".", "-") | replace("_","-") }}-{{ camera }}
+
+  - service: script.notify_frigate
+    data:
+      id: '{{ id }}'
+      camera: '{{ camera }}'
+      message: "{{ message }}"
+      notify: '{{ notify }}'
+      silence: "{{ silence }}"
+
+  - wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: "{{ silence }}"
+    timeout:
+      seconds: 30
+    continue_on_timeout: false
+
+  - delay:
+      minutes: 30
+
+frigate_notification_lambo:
+  mode: single
+  alias: Notify Lambo of Camera Detection
+  fields: *frigate_notification_fields
+  variables:
+    notify: notify.mobile_app_lindsays_iphone
+  sequence: *frigate_notification_sequence
+
 # General notification engine for frigate
 
 notify_frigate:
