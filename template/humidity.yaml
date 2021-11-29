@@ -1,0 +1,55 @@
+- sensor:
+  - unique_id: master_bathroom_average_humidity
+    name: Master Bathroom Average Humidity
+    state: > 
+      {{ state_attr('sensor.master_bathroom_filtered_humidity_statistics', 'mean') }}
+    unit_of_measurement: '%'
+    attributes:
+      template: humidity
+
+- binary_sensor:
+  - unique_id: master_bathroom_humidity_high
+    name: Master Bathroom Humidity High
+    state: >
+      {%- set humidity = states('sensor.master_bathroom_filtered_humidity') | float(none) %}
+      {%- set average = states('sensor.master_bathroom_average_humidity') | float(none) %}
+      {% if humidity is not none and average is not none %}
+        {{ humidity >= average + 3.5 }}
+      {% endif %}
+    device_class: moisture
+
+- trigger:
+  - id: rising
+    platform: template
+    value_template: >
+      {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
+      {{ change is not none and change > 200 }}
+  - id: falling
+    platform: template
+    value_template: >
+      {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
+      {{ change is not none and change < -150 }}
+  - id: constant
+    platform: template
+    value_template: >
+      {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
+      {{ change is not none and -100 <= change <= 125 }}
+  binary_sensor:
+  - unique_id: master_bathroom_humidity_status
+    name: Master Bathroom Humidity Status
+    state: >
+      {%- if trigger.id == 'rising' %}
+        True
+      {%- elif trigger.id == 'falling' %}
+        False
+      {%- else %}
+        {%- set entity_id = 'binary_sensor.master_bathroom_humidity_status' %}
+        {%- if states(entity_id) in ['on', 'off'] %}
+          {{ is_state(entity_id, 'on') }}
+        {%- else %}
+          False
+        {%- endif %}
+      {%- endif %}
+    auto_off:
+      minutes: 40
+    device_class: moisture

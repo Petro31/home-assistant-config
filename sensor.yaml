@@ -107,3 +107,23 @@
     volume_increment: 0.05
     volume_max: 1.0
     volume_min: 0.2
+
+  - platform: filter
+    name: Master Bathroom Filtered Humidity
+    entity_id: sensor.master_bathroom_humidity
+    filters:
+      - filter: lowpass
+        time_constant: 10
+        precision: 2
+
+  - platform: statistics
+    name: Master Bathroom Filtered Humidity Statistics
+    entity_id: sensor.master_bathroom_filtered_humidity
+    sampling_size: 172800
+    max_age:
+      days: 1
+
+  - platform: derivative
+    name: Master Bathroom Humidity Change
+    source: sensor.master_bathroom_filtered_humidity
+    unit: '%'

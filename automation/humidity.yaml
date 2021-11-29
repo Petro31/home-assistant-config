@@ -1,0 +1,32 @@
+- alias: Bathroom - Turn on fan when humidity is high.
+  id: bathroom_turn_on_fan_when_humidity_is_high
+  mode: restart
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.master_bathroom_humidity_status
+  variables:
+    check: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    continue: >
+      {%- set valid = ['on', 'off'] %}
+      {{ check and trigger.to_state.state in valid and trigger.from_state.state in valid }}
+    service: >
+      switch.turn_{{ trigger.to_state.state if continue else none }}
+    add_delay: >
+      {{ trigger.to_state.state == 'off' if continue else False }}
+  condition:
+  - condition: template
+    value_template: "{{ continue }}"
+  action:
+  
+  - choose:
+    - conditions: "{{ add_delay }}"
+      sequence:
+      - delay: "00:20:00"
+
+  - service: "{{ service }}"
+    target:
+      entity_id: switch.master_bathroom_fan
+
+  - delay:
+      seconds: 1
