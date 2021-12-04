@@ -25,6 +25,7 @@
     - the_driveway
     - patio
     zone_names:
+      the_driveway_shadow: the driveway
       the_driveway: the driveway
       front_left_yard: the front yard
       front_right_yard: the front yard

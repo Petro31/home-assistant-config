@@ -51,6 +51,9 @@
   {%- endfor %}
   {%- set display = ns.display %}
   {%- set sensors = triggers_update | reject('in', ns.display | sum(attribute='entities', start=[])) | list %}
+  {%- if override_sensors is defined %}
+    {%- set sensors = override_sensors %}
+  {%- endif %}
 {%- endif %}
 
 {%- set updating_card = triggers_update and triggers_update is iterable and (display or sensors) %}
@@ -91,10 +94,17 @@ styles:
   entity_picture:
   - filter: grayscale(100%)
   grid:
+{%- if sensors %}
+  - grid-template-areas: '"info temperature_humidity" "n n"'
+  - grid-template-columns: 50% 50%
+  - grid-template-rows: 1fr min-content
+  - position: relative
+{%- else %}
   - grid-template-areas: '"info" "n"'
   - grid-template-columns: 100%
   - grid-template-rows: 1fr min-content
   - position: relative
+{%- endif %}
   card:
   - padding: {{ '10px 10px 0px 10px' if image else '10px' }}
   - border-radius: 15px
@@ -137,6 +147,24 @@ styles:
     - align-content: start
     - text-align: start
     - text-overflow: unset
+{%- if sensors %}
+    temperature_humidity:
+    - z-index: 2
+    - justify-self: start
+    - align-self: start
+    - font-family: Helvetica 
+    - font-size: 12px
+    - text-align: start
+    - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 100%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - position: relative
+    - display: inline-block
+    - width: 100%
+    - align-content: end
+    - text-align: end
+    - text-overflow: unset
+{%- endif %}
 custom_fields:
   info: |
 {%- if updating_card %}
@@ -272,79 +300,6 @@ custom_fields:
           max_display = 6;
       }
         
-  {%- if sensors %}
-      var items = {{ sensors }};
-      var limit = max_display - {{ display | length if display else 0 }};
-      items.forEach(item => {
-        var entity = states[item];
-        if (entity && entity.state){
-          var entity_id = entity.entity_id;
-          var statestr = entity.state.trim();
-          var units = (entity.attributes.unit_of_measurement) ? entity.attributes.unit_of_measurement : null;
-          var date = (statestr && entity.attributes.device_class === 'timestamp') ? new Date(statestr) : null;
-          var icon = (entity.attributes.icon) ? entity.attributes.icon : '';
-          var value;
-
-          if (statestr && date === null) {
-            if (statestr.split('.').length - 1 <= 1){
-              var test = parseFloat(parseFloat(statestr).toFixed(2));
-              value = (isNaN(test)) ? null : test;
-
-              // test if units are in the state because some sensors are stupid.  Looking
-              //   at you synology.
-
-              const expr = /[^-.0-9]+/;
-              var has_units = expr.test(statestr);
-
-              // console.log(`${entity_id}: "${statestr}" ${matches}`);
-              if (value && has_units)
-                units = statestr.replace(/[.0-9]+/, '');
-            }
-          }
-
-          if (date){
-            let now = new Date();
-            var tdelta = Math.floor((now - date)/1000);
-
-            // console.log(`${entity_id}: ${tdelta}`);
-
-            function plural(descriptor, divisor){
-              var ret = Math.floor(tdelta/divisor);
-              return (ret == 1) ? [ret, descriptor] : [ret, `${descriptor}s`];
-            }
-
-            var values;
-            if (tdelta < 60)
-              values = plural('second', 1);
-            else if (tdelta < 60 * 60)
-              values = plural('minute', 60);
-            else if (tdelta < 60 * 60 * 24)
-              values = plural('hour', 60 * 60);
-            else if (tdelta < 7 * 60 * 60 * 24)
-              values = plural('day', 60 * 60 * 24);
-            else
-              values = plural('week', 7 * 60 * 60 * 24);
-            statestr = values[0];
-            units = values[1];
-          }
-          if (value && units){
-            statestr = value;
-            if (units.includes('°') && !icon)
-              icon = 'mdi:thermometer'
-          }
-          
-          if(entity_id.includes('device_tracker.') || ['on', 'off'].includes(statestr)) {
-            const on = ['home','on'];
-            icon = (on.includes(statestr)) ? 'mdi:check-network' : 'mdi:close-network';
-            statestr = (on.includes(statestr)) ? 'Online' : 'Offline';
-            units = '';
-          }
-          if (ret.length < limit)
-            ret.push(getEntityIcon(statestr, units, icon))
-        }
-      });
-  {%- endif %}
-
   {%- if display %}
       var items = [
       {%- for item in display %}
@@ -374,7 +329,7 @@ custom_fields:
         });
         if (count > 0){
           var units = (count == 1) ? item.units.plural(true) : item.units;
-          ret.push(getEntityIcon(count, units, item.icon, item.color));
+          ret.push(getEntityIcon(count, {{ 'units' if not sensors else 'null' }}, item.icon, item.color));
         }
       });
 
@@ -385,4 +340,76 @@ custom_fields:
     [[[
       return '&nbsp;';
     ]]]
+{%- endif %}
+{%- if sensors %}
+  temperature_humidity: |
+{%- if updating_card %}
+    [[[
+      var ret = [];
+
+      function getEntityIcon(state, units, icon, color){
+        units = (units !== null) ? `<span style="font-size: 75%;">${units}</span>` : '';
+        icon = (icon) ? icon : 'mdi:eye';
+        return `<span style="font-weight: bold;"> ${state}</span><ha-icon
+          icon="${icon}"
+          style="width: 1.4em; height: 1.4em; color: var(--paper-item-icon-active-color);">
+          </ha-icon>`;
+        };
+
+      var max_display = 2;
+
+  {%- if sensors %}
+      var items = {{ sensors }};
+      items.forEach(item => {
+        var entity = states[item];
+        if (entity && entity.state){
+          var entity_id = entity.entity_id;
+          var statestr = entity.state.trim();
+          var units = (entity.attributes.unit_of_measurement) ? entity.attributes.unit_of_measurement : null;
+          var date = (statestr && entity.attributes.device_class === 'timestamp') ? new Date(statestr) : null;
+          var icon = (entity.attributes.icon) ? entity.attributes.icon : '';
+          var value;
+
+          if (statestr && date === null) {
+            if (statestr.split('.').length - 1 <= 1){
+              var test = parseFloat(parseFloat(statestr).toFixed(2));
+              value = (isNaN(test)) ? null : test;
+
+              // test if units are in the state because some sensors are stupid.  Looking
+              //   at you synology.
+
+              const expr = /[^-.0-9]+/;
+              var has_units = expr.test(statestr);
+
+              // console.log(`${entity_id}: "${statestr}" ${matches}`);
+              if (value && has_units)
+                units = statestr.replace(/[.0-9]+/, '');
+            }
+          }
+
+          if (value && units){
+            statestr = value;
+            if (units.includes('°') && !icon)
+              icon = 'mdi:thermometer'
+            else if (units.includes('%') && !icon)
+              icon = 'mdi:water-percent'
+          }
+          
+          if(entity_id.includes('device_tracker.') || ['on', 'off'].includes(statestr)) {
+            const on = ['home','on'];
+            icon = (on.includes(statestr)) ? 'mdi:check-network' : 'mdi:close-network';
+            statestr = (on.includes(statestr)) ? 'Online' : 'Offline';
+            units = '';
+          }
+          ret.push(getEntityIcon(statestr, units, icon))
+        }
+      });
+  {%- endif %}
+      return ret.slice(0, max_display).join("<br>");
+    ]]]
+{%- else %}
+    [[[
+      return '&nbsp;';
+    ]]]
+{%- endif %}
 {%- endif %}

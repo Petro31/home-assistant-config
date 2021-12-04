@@ -38,7 +38,7 @@
       {%- set d = finddst(t, 'days', 366) | int - 1 %}
       {%- set h = finddst(t + timedelta(days=d), 'hours', 25) | int - 1 %}
       {%- set m = finddst(t + timedelta(days=d, hours=h), 'minutes', 61) | int %}
-      {{ (t + timedelta(days=d, hours=h, minutes=m)).isoformat() }}
+      {{ (t + timedelta(days=d, hours=h, minutes=m)) }}
 
   - unique_id: dst_phrase
     name: "Daylight Savings: Phrase"

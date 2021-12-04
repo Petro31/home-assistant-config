@@ -315,7 +315,7 @@ binary_sensor.garage_door_tilt:
   device_class: garage_door
 binary_sensor.main_door_t_sensor:
   friendly_name: main_door_t Sensor
-binary_sensor.ms_motion:
+binary_sensor.office_motion:
   friendly_name: Motion Detected
   device_class: motion
 binary_sensor.outside_temperature_falling:
@@ -600,7 +600,7 @@ sensor.entity_counter_light:
   icon: mdi:lightbulb-multiple
 sensor.bonus_server_room_humidity:
   icon: mdi:water-percent
-sensor.ms_humidity:
+sensor.office_humidity:
   icon: mdi:water-percent
 switch.garage_workbench:
   icon: mdi:hammer

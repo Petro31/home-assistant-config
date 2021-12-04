@@ -7,6 +7,31 @@
     attributes:
       template: humidity
 
+  - unique_id: house_humidity
+    name: House Humidity
+    state: > 
+      {%- set temps = expand(
+        'sensor.kitchen_humidity',
+        'sensor.bonus_room_humidity',
+        'sensor.master_bathroom_humidity',
+        'sensor.master_bedroom_humidity',
+        'sensor.office_humidity',
+      ) %}
+      {%- set temps = temps | map(attribute='state') | map('float', none) | reject('eq', none) | list %}
+      {{ temps | average | round(1) if temps else none }}
+    availability: >
+      {%- set temps = expand(
+        'sensor.kitchen_humidity',
+        'sensor.bonus_room_humidity',
+        'sensor.master_bathroom_humidity',
+        'sensor.master_bedroom_humidity',
+        'sensor.office_humidity',
+      ) %}
+      {{ temps | map(attribute='state') | map('is_number') | reject('eq', true) | list | length == 0 }}
+    unit_of_measurement: '%'
+    attributes:
+      template: humidity
+
 - binary_sensor:
   - unique_id: master_bathroom_humidity_high
     name: Master Bathroom Humidity High

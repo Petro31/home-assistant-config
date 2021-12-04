@@ -2,15 +2,18 @@ entities:
   - binary_sensor.garage_door_tilt
   - binary_sensor.garage_entry_door
   - binary_sensor.main_door
-  - binary_sensor.ms_burglar
-  - binary_sensor.ms_motion
+  - binary_sensor.office_burglar
+  - binary_sensor.office_motion
   - binary_sensor.sliding_door
   - binary_sensor.master_bathroom_humidity_status
   - device_tracker.lambo
   - device_tracker.petro
+  - sensor.basement_temperature
+  - sensor.basement_humidity
   - sensor.bonus_room_switch_temperature
   - sensor.bonus_server_room_humidity
   - sensor.bonus_server_room_temperature
+  - sensor.bonus_room_temperature
   - sensor.cpu_temperature
   - sensor.disk_free_home
   - sensor.disk_use_home
@@ -18,6 +21,8 @@ entities:
   - sensor.disk_use_total
   - sensor.garage_humidity
   - sensor.garage_temperature
+  - sensor.house_humidity
+  - sensor.house_temperature
   - sensor.kitchen_humidity
   - sensor.kitchen_temperature
   - sensor.kitty_temperature
@@ -33,13 +38,15 @@ entities:
   - sensor.memory_use
   - sensor.memory_use_percent
   - sensor.memory_use_total
-  - sensor.ms_humidity
-  - sensor.ms_luminance
-  - sensor.ms_temperature
-  - sensor.ms_ultraviolet
+  - sensor.office_humidity
+  - sensor.office_luminance
+  - sensor.office_temperature
+  - sensor.office_ultraviolet
   - sensor.orion_temperature
   - sensor.outside_temperature
   - sensor.processor_use
+  - sensor.server_room_temperature
+  - sensor.server_room_humidity
   - sensor.server_room_switch_temperature
   - sensor.sliding_door_temperature
   - sensor.speedtest_download

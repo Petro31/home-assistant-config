@@ -47,9 +47,11 @@ smart_home:
       - media_player.yamaha_receiver_zone_2
       - sensor.garage_temperature
       - sensor.kitchen_temperature
+      - sensor.basement_temperature
+      - sensor.bonus_room_temperature
       - sensor.master_bathroom_temperature
       - sensor.master_bedroom_temperature
-      - sensor.ms_temperature
+      - sensor.office_temperature
       - switch.basement_cans
       - switch.basement_stairs
       - switch.board_games_party
@@ -183,6 +185,10 @@ smart_home:
       name: Living Room Speakers
     media_player.yamaha_receiver_zone_2:
       name: Dining Room Speakers
+    sensor.basement_temperature:
+      name: Basement Temperature
+    sensor.bonus_room_temperature:
+      name: Bonus Room Temperature
     sensor.garage_temperature:
       name: Garage Temperature
     sensor.kitchen_temperature:
@@ -191,8 +197,8 @@ smart_home:
       name: Master Bathroom Temperature
     sensor.master_bedroom_temperature:
       name: Master Bedroom Temperature
-    sensor.ms_temperature:
-      name: Bonus Room Temperature
+    sensor.office_temperature:
+      name: Office Temperature
     switch.audio_1:
       name: Audio One
     switch.audio_2:

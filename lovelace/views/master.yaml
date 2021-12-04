@@ -125,6 +125,8 @@
     'entities': [
       'switch.basement_stairs',
       'switch.basement_cans',
+      'sensor.basement_temperature',
+      'sensor.basement_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -144,8 +146,8 @@
       'light.bonus_room_bedroom_fixture',
       'fan.bonus_room_bedroom',
       'light.bonus_room_bedroom_recessed',
-      'sensor.ms_temperature',
-      'sensor.ms_humidity',
+      'sensor.bonus_room_temperature',
+      'sensor.bonus_room_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -368,8 +370,8 @@
       'light.bonus_room_office_fixture',
       'fan.bonus_room_office',
       'light.bonus_room_office_recessed',
-      'sensor.ms_temperature',
-      'sensor.ms_humidity',
+      'sensor.office_temperature',
+      'sensor.office_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -606,6 +608,8 @@
     'type': '../templates/summary/device.yaml',
     'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
+      'sensor.server_room_temperature',
+      'sensor.server_room_humidity',
       'sensor.server_room_switch_uptime',
       'sensor.server_room_switch_temperature',
       'device_tracker.server_room_16_port_poe_switch',
@@ -765,6 +769,10 @@
       {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+    'override_sensors': [
+      'sensor.house_temperature',
+      'sensor.house_humidity'
     ],
     'type': '../templates/summary/overview.yaml',
   },{
