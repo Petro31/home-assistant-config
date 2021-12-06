@@ -1,0 +1,131 @@
+# lovelace_gen
+
+# Generates list of current batteries to select which ones you want.
+# 
+# {%- for s in states | selectattr('attributes.device_class','eq','battery') | rejectattr('name', 'search', 'Office') | sort(attribute='name') %}
+#   {%- set integration, identifier = (device_attr(s.entity_id, 'identifiers') or [('yaml', 'none')] )| list | first %}
+#   {%- if integration in ('yaml', 'zwave_js', 'roomba') %}
+#     {%- set name = device_attr(s.entity_id, 'name_by_user') or device_attr(s.entity_id, 'name') -%}
+#   {
+#     'entity': '{{ s.entity_id }}',
+#     'name': '{{ name.replace('-', ' ').replace('_', ' ').title() }}',
+#   },
+#   {%- endif %}
+# {%- endfor %}
+
+{%- set is_binary = entity.startswith('binary_sensor.') %}
+
+type: custom:button-card
+entity: {{ entity }}
+color: var(--paper-card-background-color)
+show_icon: true
+{%- if is_binary %}
+show_state: true
+{%- else %}
+show_label: true
+{%- endif %}
+show_name: true
+icon: |
+  [[[
+    var icon = "mdi:battery";
+    var end = null;
+    var battery = entity.state;
+    if (['unavailable', 'unknown'].includes(battery))
+      end = "unknown";
+    else if (entity.entity_id.startsWith('binary_sensor.'))
+      end = (battery === 'on') ? 'alert' : null;
+    else
+    {
+        var parsed = parseFloat(battery);
+        end = (!isNaN(parsed)) ? end = Math.floor(parsed / 10) * 10 : "unknown";
+    }
+    return (end !== null) ? `${icon}-${end}` : icon;
+  ]]]
+label: |
+  [[[
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    var battery = entity.state;
+    if (['unavailable', 'unknown'].includes(battery))
+      return capitalizeFirstLetter(battery);
+    else
+      return `${battery}%`;
+  ]]]
+name: |
+  [[[
+    return states[entity.entity_id].attributes.friendly_name;
+  ]]]
+custom_fields:
+  notification: >
+    [[[
+      if (['unavailable', 'unknown', 'on', '0', '1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20'].includes(entity.state)){
+        return `<ha-icon icon="mdi:alert-circle-outline" style="width: 20px; height: 20px; color: hsl(0, 100%, 50%);"></ha-icon>`
+      }
+    ]]]
+size: 20px
+styles:
+  icon:
+  - color: var(--card-background-color)
+{%- if is_binary %}
+  state:
+{%- else %}
+  label:
+{%- endif %}
+    - justify-self: start
+    - align-self: start
+    - font-weight: bolder
+    - font-size: 12px
+    - filter: opacity(40%)
+    - margin-left: 12px
+    - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - width: 100%
+    - text-align: start
+    - text-overflow: unset
+  name:
+    - align-self: end
+    - justify-self: start
+    - font-weight: bold
+    - font-size: 14px
+    - margin-left: 12px
+    - filter: opacity(100%)
+    - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - width: 100%
+    - text-align: start
+    - text-overflow: unset
+  img_cell:
+    - background-color: 'var(--paper-item-icon-active-color)'
+    - border-radius: 50%
+    - place-self: center
+    - width: 42px
+    - height: 42px
+  grid:
+{%- if is_binary %}
+    - grid-template-areas: '"i n" "i s"'
+{%- else %}
+    - grid-template-areas: '"i n" "i l"'
+{%- endif %}
+    - grid-template-columns: min-content auto
+    - grid-template-rows: min-content min-content
+  card:
+  - border-radius: 15px
+  - box-shadow: var(--box-shadow)
+  - padding: 12px
+state:
+  - operator: template
+    value: |
+      [[[
+        return ['unavailable', 'unknown', 'on', '0', '1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20'].includes(entity.state)
+      ]]]
+    styles:
+      custom_fields:
+        notification:
+          - border-radius: 50%
+          - position: absolute
+          - left: 38px
+          - top: 8px
+          - animation: blink 2s ease infinite

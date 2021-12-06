@@ -5,11 +5,6 @@ resources:
 - url: /hacsfiles/button-card/button-card.js?
   type: module
 
-# Weather Card
-
-- url: /hacsfiles/weather-card/weather-card.js?
-  type: module
-
 # Card Tools
 
 - url: /hacsfiles/lovelace-card-tools/card-tools.js?
@@ -30,74 +25,14 @@ resources:
 - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js?
   type: module
 
-# Bar Card
-
-- url: /hacsfiles/bar-card/bar-card.js?
-  type: module
-
 # Card Mod
 
 - url: /hacsfiles/lovelace-card-mod/card-mod.js?
   type: module
 
-# Secondary Info Row
-
-- url: /hacsfiles/secondaryinfo-entity-row/secondaryinfo-entity-row.js?
-  type: module
-
-# Mini Media Player 
-
-- url: /hacsfiles/mini-media-player/mini-media-player-bundle.js?
-  type: module
-
-# Air Visual Card
-
-- url: /hacsfiles/air-visual-card/air-visual-card.js?
-  type: module
-
-# RGB Light Card
-
-- url: /hacsfiles/rgb-light-card/card.js?
-  type: module
-
-# Simple Weather Card
-
-- url: /hacsfiles/simple-weather-card/simple-weather-card-bundle.js?
-  type: module
-
-# Swipe Card
-
-- url: /hacsfiles/swipe-card/swipe-card.js?
-  type: module
-
-# Auto Entities Card
-
-- url: /hacsfiles/lovelace-auto-entities/auto-entities.js?
-  type: module
-
-# More Info Card
-
-- url: /hacsfiles/lovelace-more-info-card/more-info-card.js?
-  type: module
-
-# State Switch Card
-
-- url: /hacsfiles/lovelace-state-switch/state-switch.js?
-  type: module
-
-# State Switch Card
+# Layout Card
 
 - url: /hacsfiles/lovelace-layout-card/layout-card.js
-  type: module
-
-# PreLoader
-
-- url: /hacsfiles/lovelace-card-preloader/lovelace-card-preloader.js
-  type: module
-
-# Light popup card
-
-- url: /hacsfiles/light-popup-card/light-popup-card.js
   type: module
 
 # Plant Card

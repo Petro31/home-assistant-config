@@ -54,6 +54,9 @@
   {%- if override_sensors is defined %}
     {%- set sensors = override_sensors %}
   {%- endif %}
+  {%- if no_sensors is defined %}
+    {%- set sensors = override_sensors %}
+  {%- endif %}
 {%- endif %}
 
 {%- set updating_card = triggers_update and triggers_update is iterable and (display or sensors) %}
@@ -356,7 +359,7 @@ custom_fields:
           </ha-icon>`;
         };
 
-      var max_display = 2;
+      var max_display = {{max_display}};
 
   {%- if sensors %}
       var items = {{ sensors }};
