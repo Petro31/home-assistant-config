@@ -163,7 +163,7 @@
     - service: script.notify
       data:
         title: Found {{ what }} user!
-        message: The person who used the {{ what | lower }} is {{ states_attr('sensor.people_at_home', 'or') }}!
+        message: The person who used the {{ what | lower }} is {{ state_attr('sensor.people_at_home', 'or') }}!
 
 - alias: Doors - Notify when Open too long.
   id: notify_on_door_ajar
