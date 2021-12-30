@@ -23,6 +23,8 @@ entities:
   - sensor.disk_use_home
   - sensor.disk_use_percent_home
   - sensor.disk_use_total
+  - sensor.dryer_energy
+  - sensor.dryer_power
   - sensor.garage_humidity
   - sensor.garage_temperature
   - sensor.garage_temperature_sensor_battery_level
@@ -73,6 +75,8 @@ entities:
   - sensor.ups_battery
   - sensor.ups_input_voltage
   - sensor.ups_load
+  - sensor.washer_energy
+  - sensor.washer_power
   - sensor.yucca_temperature
 domains:
   - light

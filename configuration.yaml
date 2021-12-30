@@ -13,6 +13,7 @@ config:
 conversation:
 cover: !include cover.yaml
 discovery:
+energy:
 frontend:
   themes: !include_dir_merge_named themes/
 group: !include group.yaml
