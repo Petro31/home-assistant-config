@@ -60,7 +60,6 @@
       id: '{{ id }}'
       camera: '{{ camera }}'
       message: "{{ message }}"
-      silence: "{{ silence }}"
 
 # notify.mobile_app_lindsays_iphone
 
