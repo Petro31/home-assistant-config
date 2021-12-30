@@ -1,4 +1,15 @@
-  - name: zwavegraph2
-    sidebar_title: Z-Wave Graph
-    sidebar_icon: mdi:access-point-network
-    url_path: zwave
+  - name: redirect-server-controls
+    url_path: redirect-server-controls
+    sidebar_title: Server Controls
+    sidebar_icon: mdi:server
+    module_url: /hacsfiles/redirect/panel-redirect.js
+    config:
+      target: /config/server_control
+
+  - name: redirect-supervisor
+    url_path: redirect-supervisor
+    sidebar_title: Supervisor
+    sidebar_icon: mdi:home-assistant
+    module_url: /hacsfiles/redirect/panel-redirect.js
+    config:
+      target: /hassio/dashboard
