@@ -878,16 +878,10 @@
   },{
     'name': 'Echos',
     'icon': 'mdi:amazon-alexa',
-    'entities': echos,
-    'header': [
-      { 'type': '../templates/headers/navigator.yaml', },
-      {
-        'type': '../templates/headers/full_text_box.yaml',
-        'entity': 'input_text.alexa_say',
-      },
-    ],
-    'image': '/local/images/echo_2.png',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'type': '../templates/summary/overview.yaml',
+    'image': '/local/images/echo_2.png',
+    'view': '../views/echos.yaml',
   },{
     'name': 'Plants',
     'icon': 'mdi:flower',

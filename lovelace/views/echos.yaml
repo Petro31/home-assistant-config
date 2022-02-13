@@ -1,0 +1,88 @@
+# lovelace_gen
+
+{%- set columns = 2 %}
+{%- set rows = 3 %}
+{%- set booleans = [
+  {'entity':'input_boolean.bonus_room'},
+  {'entity':'input_boolean.game_room'},
+  {'entity':'input_boolean.garage'},
+  {'entity':'input_boolean.kitchen'},
+  {'entity':'input_boolean.living_room'},
+  {'entity':'input_boolean.master_bedroom'},
+] %}
+
+title: Echos
+path: echos
+visible: {{ visible | default(false) }}
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/headers/navigator.yaml'
+        - name: Echos
+      - !include '../templates/buttons/edge.yaml'
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/headers/full_text_box.yaml'
+        - entity: input_text.alexa_say
+      - !include '../templates/buttons/edge.yaml'
+  {%- for i in range(columns * rows) %}
+  {%- set boolean = booleans[i] %}
+    {%- if i % columns == 0 %}
+  - type: horizontal-stack
+    cards:
+    - !include '../templates/spacer_edge.yaml'
+    {%- endif %}
+    {% if boolean %}
+    - !include
+      {%- if boolean.template %}
+      - {{ boolean.template }}
+      {%- else %}
+      - '../templates/buttons/boolean_control.yaml'
+      {%- endif %}
+      {%- if boolean.entity is defined %}
+      - entity: {{ boolean.entity }}
+        color: {{ boolean.color }}
+      {%- elif boolean.path is defined %}
+      - path: {{ boolean.path }}
+      {%- endif %}
+      {%- if boolean.icon is defined %}
+        icon: {{ boolean.icon }}
+      {%- endif %}
+      {%- if boolean.image is defined %}
+        image: {{ boolean.image }}
+      {%- endif %}
+    {%- else %}
+    - !include '../templates/buttons/spacer.yaml'
+    {%- endif %}
+    {%- if i % columns == columns - 1 %}
+    - !include '../templates/spacer_edge.yaml'
+    {%- endif %}
+  {%- endfor %}
+
+  - type: horizontal-stack
+    title: 'Start Text to Speech'
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/buttons/boolean_control.yaml'
+        - entity: script.alexa_tts
+          name: Text to Speech
+      - !include 
+        - '../templates/buttons/boolean_control.yaml'
+        - entity: script.alexa_announce
+          name: Announcement
+      - !include '../templates/buttons/edge.yaml'
+    
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/buttons/announced.yaml'
+        - entity: sensor.alexa_last_tts
+      - !include '../templates/buttons/edge.yaml'

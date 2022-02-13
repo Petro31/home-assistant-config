@@ -1,0 +1,12 @@
+- alias: Echo - MQTT Discovery on Startup
+  id: mqtt_store_echo_states_discovery
+  mode: single
+  trigger:
+  - platform: homeassistant
+    event: start
+  action:
+  - service: script.mqtt_automated_config
+    data:
+      domain: sensor
+      unique_id: alexa_last_tts
+      device_class: timestamp

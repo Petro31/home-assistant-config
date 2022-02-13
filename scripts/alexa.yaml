@@ -1,61 +1,121 @@
-# Living Room Dot
-alexa_say_living_room:
+notify_alexa_ui:
+  alias: Alexa UI - Announce or TTS
+  mode: parallel
+  fields:
+    announce:
+      description: Annouce or TTS (True for announce, False or omit for TTS)
+      example: true
+  variables:
+    config: >
+      {%- set ns = namespace(ret=[]) %}
+      {%- for entity_id in states.media_player 
+          | selectattr('attributes.last_called','defined') 
+          | rejectattr('object_id', 'search', 'echo_dots') 
+          | map(attribute='entity_id') %}
+        {%- set boolean = entity_id.replace('_echo_dot', '').replace('media_player', 'input_boolean') %}
+        {%- set ns.ret = ns.ret + [dict(boolean=boolean, player=entity_id)] %}
+      {%- endfor %}
+      {{ ns.ret }}
+    targets: >
+      {%- set ns = namespace(ret=[]) %}
+      {%- for item in config if is_state(item.boolean,'on') %}
+        {% set ns.ret = ns.ret + [ item.player ] %}
+      {%- endfor %}
+      {{ ns.ret }}
+    should_announce: >
+      {{ announce | default(false) }}
+    message: >
+      {{ states('input_text.alexa_say') }}
   sequence:
-    - condition: template
-      value_template: "{{ states('input_text.alexa_say') != '' }}"
-    - service: notify.alexa_media
-      data_template:
-        message: "{{ states('input_text.alexa_say') }}"
-        data:
-          type: tts
-        target: media_player.living_room_dot
-    - delay:
-        seconds: 1
+  - service: script.notify_alexa
+    data:
+      entities: "{{ targets }}"
+      announce: "{{ should_announce }}"
+      message: "{{ message }}"
+      user_id: "{{ user_id | default(none) }}"
 
-# Master Dot
-alexa_say_master:
+alexa_announce:
+  alias: Alexa UI - Announce
+  mode: single
   sequence:
-    - condition: template
-      value_template: "{{ states('input_text.alexa_say') != '' }}"
-    - service: notify.alexa_media
-      data_template:
-        message: "{{ states('input_text.alexa_say') }}"
-        data:
-          type: tts
-        target: media_player.master_dot
-    - delay:
-        seconds: 1
+  - service: script.turn_on
+    target:
+      entity_id: script.notify_alexa_ui
+    data:
+      variables:
+        announce: True
+        user_id: >
+          {{ this.context.user_id  }}
+  - delay: "00:00:01"
 
-# Bonus Room Dot
-alexa_say_bonus_room:
+alexa_tts:
+  alias: Alexa UI - Text to Speech
+  mode: single
   sequence:
-    - condition: template
-      value_template: "{{ states('input_text.alexa_say') != '' }}"
-    - service: notify.alexa_media
-      data_template:
-        message: "{{ states('input_text.alexa_say') }}"
-        data:
-          type: tts
-        target: media_player.bonus_room_dot
-    - delay:
-        seconds: 1
+  - service: script.turn_on
+    target:
+      entity_id: script.notify_alexa_ui
+    data:
+      variables:
+        announce: False
+        user_id: >
+          {{ this.context.user_id  }}
+  - delay: "00:00:01"
 
-# AlL Echos
-alexa_say_all:
+notify_alexa:
+  alias: Alexa - Text to Speech
+  mode: parallel
+  fields:
+    entities:
+      description: List of entities
+      example: media_player.bonus_room_echo_dot
+    message:
+      description: Message to send
+      example: "Hello"
+    announce:
+      description: Annouce or TTS (True for announce, False or omit for TTS)
+      example: true
+    user_id:
+      description: User ID
+      example: 50ff9ab2efb14c7e8e713fe8aa239043
+  variables:
+    timestamp: >
+      {{ (datetime | default(now())).isoformat() }}
+    input: >
+      {{ message | string | default('Empty') }}
+    found_person: >
+      {{ states.person | selectattr('attributes.user_id', 'eq', user_id | default) | map(attribute='entity_id') | first | default(none) }}
+    found_user: >
+      {{ state_attr(found_person, 'friendly_name') if found_user is not none else none }}
+    user: >
+      {{ found_user or 'Unknown' }}
+    should_announce: >
+      {{ announce is defined and announce }}
+    text: >
+      {%- if message is defined and message is string and message %}
+        {{ 'announcement from ' ~ user ~ ': ' if found_user is not none and should_announce else '' }}{{ message.replace('fuck',"fu'ck").replace('shit',"sh'it").replace('bitch',"b'itch").replace('cunt', "kh'unt") }}
+      {%- else %}none
+      {%- endif %}
+    method: >
+      {{ {'type':'announce', 'method': 'all'} if should_announce else {'type':'tts'} }}
+    should_continue: >
+      {{ text is not none and entities is defined }}
+    attrs: >
+      {{ { 'person': found_person, 'type': 'announce' if should_announce else 'tts','text': input } }}
   sequence:
-    - condition: template
-      value_template: "{{ states('input_text.alexa_say') != '' }}"
-    - service: notify.alexa_media
-      data_template:
-        message: "{{ states('input_text.alexa_say') }}"
-        data:
-          type: tts
-        target:  
-          - media_player.living_room_dot
-          - media_player.master_dot
-          - media_player.bonus_room_dot
-    - delay:
-        seconds: 1
+  - condition: template
+    value_template: "{{ should_continue }}"
+  - service: notify.alexa_media
+    data:
+      message: "{{ text }}"
+      data: "{{ method }}"
+      target: "{{ entities }}"
+  - service: script.mqtt_automated_states
+    data:
+      domain: sensor
+      unique_id: alexa_last_tts
+      state: "{{ timestamp }}"
+      attributes: "{{ attrs | tojson }}"
 
 clear_alexa_text:
   sequence:
