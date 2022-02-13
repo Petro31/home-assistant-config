@@ -1,6 +1,7 @@
 # lovelace_gen
 
 {%- set name = name | default('sub view') %}
+{%- set path = path | default(name.lower().replace(' ','_')) %}
 {%- set entities = entities | default([]) %}
 {%- set rows = rows | default(3) %}
 {%- set columns = columns | default(3) %}
@@ -110,7 +111,7 @@
 
 icon: {{ icon }}
 title: {{ name | title }}
-path: {{ path | default(name.lower()) }}
+path: {{ path }}
 visible: {{ visible | default(false) }}
 cards:
 {#- # Header. #}
@@ -196,7 +197,7 @@ cards:
           {%- set type = objecttype[-1] %}
           {%- set attrs = attrs | rejectattr('0', 'eq', 'type') | list %}
         {%- endif %}
-        {%- set attrs = attrs + [('path', object.name.lower())] %}
+        {%- set attrs = attrs + [('path', object.name.lower().replace(' ', '_'))] %}
         {%- set attrs = attrs + [('back_path', back_path | default('home'))] %}
       {%- elif object is string and object != 'spacer' %}
         {% set domain, object_id = object.split('.') %}

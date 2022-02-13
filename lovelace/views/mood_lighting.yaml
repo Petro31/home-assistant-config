@@ -4,7 +4,7 @@
 # linear-gradient( right, rgb(166, 209, 255) 100%, white 50%, rgb(255, 160, 0) 0%);
 
 title: Mood Lighting
-path: mood lighting
+path: mood_lighting
 visible: {{ visible | default(false) }}
 cards:
 - type: horizontal-stack

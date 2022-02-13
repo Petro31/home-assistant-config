@@ -60,7 +60,7 @@ cards:
     - !include
       - '../templates/remote/harmony/navigate.yaml'
       - icon: mdi:cog
-        path: remote settings
+        path: remote_settings
     - !include '../templates/buttons/edge.yaml'
   {%- for i in range(activity_cols * activity_rows) %}
   {%- set activity = activities[i] %}

@@ -13,7 +13,7 @@
 
 icon: {{ icon | default('mdi:image-search') }}
 title: {{ name | title }}
-path: {{ path | default(name.lower()) }}
+path: {{ path | default(name.lower().replace(' ','_')) }}
 visible: {{ visible | default(false) }}
 cards:
 - type: horizontal-stack

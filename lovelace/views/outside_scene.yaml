@@ -15,7 +15,7 @@
 ] %}
 
 title: Outside Scenes
-path: outside scenes
+path: outside_scenes
 icon: mdi:audio-video
 visible: {{ visible | default(false) }}
 cards:

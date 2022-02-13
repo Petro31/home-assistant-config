@@ -21,8 +21,6 @@
       - time
       - date_time
       - date
-      
-  - platform: version
 
   # CLI
   

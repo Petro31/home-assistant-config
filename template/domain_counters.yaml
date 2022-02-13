@@ -3,11 +3,9 @@
     at: '00:00:00'
   - platform: homeassistant
     event: start
-  - platform: event
-    event_type: call_service
-    event_data:
-      domain: template
-      service: reload
+  - platform: state
+    entity_id: binary_sensor.templates_reloaded
+    to: 'off'
   sensor:
   - name: Automations
     unique_id: entity_counter_automation

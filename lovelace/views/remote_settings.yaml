@@ -25,7 +25,7 @@
 ] %}
 
 title: Remote Settings
-path: remote settings
+path: remote_settings
 icon: mdi:cog
 visible: {{ visible | default(false) }}
 cards:

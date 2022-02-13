@@ -997,7 +997,7 @@
   - dynamic_view_builder.yaml
     {%- set attrs = subview.items() | list %}
     {%- set attrs = attrs | rejectattr('0', 'in', ['view', 'type']) | list %}
-    {%- set attrs = attrs + [('back_path', main_view.name.lower())] %}
+    {%- set attrs = attrs + [('back_path', main_view.name.lower().replace(' ', '_'))] %}
     {%- for attr, value in attrs %}
 {{ toyaml('    ', attr, value, loop.first) }}
     {%- endfor %}

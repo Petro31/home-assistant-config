@@ -59,6 +59,12 @@
     value_template: >
       {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
       {{ change is not none and -100 <= change <= 125 }}
+  - id: start
+    platform: homeassistant
+    event: start
+  - platform: state
+    entity_id: binary_sensor.templates_reloaded
+    to: 'off'
   binary_sensor:
   - unique_id: master_bathroom_humidity_status
     name: Master Bathroom Humidity Status

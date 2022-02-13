@@ -1,23 +1,39 @@
-  - platform: trend
-    sensors:
-      outside_temperature_rising:
-        entity_id: sensor.outside_temperature
-        sample_duration: 7200
-        min_gradient: 0.00027
-        device_class: heat
+- platform: trend
+  sensors:
+    outside_temperature_rising:
+      entity_id: sensor.outside_temperature
+      sample_duration: 7200
+      min_gradient: 0.00027
+      device_class: heat
 
-      outside_temperature_falling:
-        entity_id: sensor.outside_temperature
-        sample_duration: 7200
-        min_gradient: -0.00027
-        device_class: cold
+    outside_temperature_falling:
+      entity_id: sensor.outside_temperature
+      sample_duration: 7200
+      min_gradient: -0.00027
+      device_class: cold
 
-      master_bathroom_humidity_rising:
-        entity_id: sensor.master_bathroom_filtered_humidity
-        sample_duration: 120
-        min_gradient: 0.016666
+    master_bathroom_humidity_rising:
+      entity_id: sensor.master_bathroom_filtered_humidity
+      sample_duration: 120
+      min_gradient: 0.016666
 
-      master_bathroom_humidity_falling:
-        entity_id: sensor.master_bathroom_filtered_humidity
-        sample_duration: 120
-        min_gradient: -0.01666
+    master_bathroom_humidity_falling:
+      entity_id: sensor.master_bathroom_filtered_humidity
+      sample_duration: 120
+      min_gradient: -0.01666
+
+- platform: mqtt
+  unique_id: washer_power_mqtt
+  name: Washer Power MQTT
+  state_topic: shellies/shellyem-E45D78/emeter/0/power
+  qos: 0
+  device_class: power
+  value_template: "{{ 'ON' if is_number(value) and value | int > 80 else 'OFF' }}"
+
+- platform: mqtt
+  unique_id: dryer_power_mqtt
+  name: Dryer Power MQTT
+  state_topic: shellies/shellyem-E45D78/emeter/1/power
+  qos: 0
+  device_class: power
+  value_template: "{{ 'ON' if is_number(value) and value | int > 150 else 'OFF' }}"

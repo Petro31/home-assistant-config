@@ -5,6 +5,8 @@ smart_home:
   filter:
     include_entities:
       - binary_sensor.doorbell_chime
+      - binary_sensor.announce_dryer
+      - binary_sensor.announce_washer
       - fan.bonus_room_bedroom
       - fan.bonus_room_office
       - fan.master_fixture
@@ -107,6 +109,12 @@ smart_home:
       name: Front Door
       description: "Doorbell Binary Sensor"
       display_categories: DOORBELL
+    binary_sensor.dryer_status:
+      name: Dryer Status
+      description: "Dryer Binary Sensor"
+    binary_sensor.washer_status:
+      name: Washer Status
+      description: "Washer Binary Sensor"
     fan.bonus_room_bedroom:
       name: Bonusroom Fan
     fan.bonus_room_office:

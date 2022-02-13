@@ -1,4 +1,8 @@
 entities:
+  - binary_sensor.dryer_power_coiot
+  - binary_sensor.dryer_power_mqtt
+  - binary_sensor.dryer_status
+  - binary_sensor.dryer_status_raw
   - binary_sensor.garage_door_tilt
   - binary_sensor.garage_entry_door
   - binary_sensor.main_door
@@ -6,6 +10,10 @@ entities:
   - binary_sensor.office_burglar
   - binary_sensor.office_motion
   - binary_sensor.sliding_door
+  - binary_sensor.washer_power_coiot
+  - binary_sensor.washer_power_mqtt
+  - binary_sensor.washer_status
+  - binary_sensor.washer_status_raw
   - device_tracker.lambo
   - device_tracker.petro
   - sensor.basement_battery_level
