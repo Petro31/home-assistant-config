@@ -35,7 +35,6 @@ lovelace_gen:
 media_player: !include media_player.yaml
 media_source:
 mobile_app:
-mqtt: !include mqtt.yaml
 my:
 notify: !include notify.yaml
 panel_custom: !include panel_custom.yaml
@@ -51,4 +50,3 @@ system_health:
 template: !include_dir_merge_list template
 timer:
 weather: !include weather.yaml
-updater:

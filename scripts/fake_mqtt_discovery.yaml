@@ -1,4 +1,5 @@
 mqtt_automated_states:
+  mode: parallel
   sequence:
   - variables: &mqtt-variables
       root: "homeassistant"
@@ -16,6 +17,7 @@ mqtt_automated_states:
       retain: "{{ retain | default('true') }}"
 
 mqtt_automated_config:
+  mode: parallel
   sequence:
   - variables:
       name: >
