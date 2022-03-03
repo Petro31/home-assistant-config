@@ -16,7 +16,7 @@ show_name: true
 name: |
   [[[
     var person = states[entity.attributes.person];
-    var via = (person.attributes.type === 'announce') ? 'Announced' : 'via Text to Speech';
+    var via = (entity.attributes.type == 'announce') ? 'Announced' : 'via Text to Speech';
     return `${person.attributes.friendly_name} ${via}`;
   ]]]
 size: 20px
@@ -54,6 +54,10 @@ custom_fields:
       return `<div class="talktext">
                 <p>"${entity.attributes.text}"</p>
               </div>`;
+    ]]]
+  which: | 
+    [[[
+      return entity.attributes.targets;
     ]]]
 styles:
   icon:
@@ -94,10 +98,24 @@ styles:
     - width: 42px
     - height: 42px
   grid:
-    - grid-template-areas: '"i n" "i s" "tts tts"'
-    - grid-template-columns: min-content auto
-    - grid-template-rows: min-content min-content
+    - grid-template-areas: '"i n" "i s" "i which" "tts tts"'
+    - grid-template-columns: 42px auto
+    - grid-template-rows: min-content min-content min-content min-content
   card:
   - border-radius: 15px
   - box-shadow: var(--box-shadow)
   - padding: 12px
+  custom_fields:
+    which:
+    - justify-self: start
+    - align-self: start
+    - font-weight: bolder
+    - font-size: 12px
+    - filter: opacity(40%)
+    - margin-left: 12px
+    - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - width: 100%
+    - text-align: start
+    - text-overflow: unset

@@ -45,7 +45,7 @@ alexa_announce:
       variables:
         announce: True
         user_id: >
-          {{ this.context.user_id  }}
+          {{ context.user_id  }}
   - delay: "00:00:01"
 
 alexa_tts:
@@ -59,7 +59,7 @@ alexa_tts:
       variables:
         announce: False
         user_id: >
-          {{ this.context.user_id  }}
+          {{ context.user_id  }}
   - delay: "00:00:01"
 
 notify_alexa:
@@ -101,7 +101,8 @@ notify_alexa:
     should_continue: >
       {{ text is not none and entities is defined }}
     attrs: >
-      {{ { 'person': found_person, 'type': 'announce' if should_announce else 'tts','text': input } }}
+      {%- set names = expand(entities or []) | map(attribute='name') | list | join(', ') | replace(' Echo Dot','') %}
+      {{ { 'person': found_person, 'type': 'announce' if should_announce else 'tts','text': input, 'targets': names} }}
   sequence:
   - condition: template
     value_template: "{{ should_continue }}"
