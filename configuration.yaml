@@ -37,7 +37,6 @@ media_source:
 mobile_app:
 my:
 notify: !include notify.yaml
-panel_custom: !include panel_custom.yaml
 person: 
 plant: !include plants.yaml
 recorder: !include recorder.yaml
