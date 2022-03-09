@@ -411,104 +411,6 @@
     ],
 }] %}
 
-{%- set wan = [
-  {
-    'name': "Mike's Devices",
-    'icon': 'mdi:account-network',
-    'image': '',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'entities': [
-      'device_tracker.garmin_forerunner_935',
-      'device_tracker.mike_s_computer',
-      'device_tracker.mike_s_ipad',
-      'device_tracker.petros_iphone',
-      'device_tracker.virtual_box_development',
-    ],
-    'type': '../templates/summary/overview.yaml',
-    'display': [
-      {'domain': ['device_tracker'], 'state': ['home'], 'icon': 'mdi:lan-connect', 'units': 'online' },
-      {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
-    ],
-  },{
-    'name': "Lindsay's Devices",
-    'icon': 'mdi:account-network',
-    'image': '',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'entities': [
-      'device_tracker.lindsay_s_imac',
-      'device_tracker.lindsay_s_ipad',
-      'device_tracker.lindsay_s_iphone',
-      'device_tracker.lindsay_s_work_computer',
-    ],
-    'type': '../templates/summary/overview.yaml',
-    'display': [
-      {'domain': ['device_tracker'], 'state': ['home'], 'icon': 'mdi:lan-connect', 'units': 'online' },
-      {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
-    ],
-  },{
-    'name': 'Camera Devices',
-    'icon': '',
-    'image': '',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'entities': [
-      'device_tracker.backyard_camera',
-      'device_tracker.driveway_camera',
-      'device_tracker.floating_camera',
-      'device_tracker.foyer_camera',
-      'device_tracker.garage_camera',
-      'device_tracker.kitchen_camera',
-    ],
-    'type': '../templates/summary/overview.yaml',
-    'display': [
-      {'domain': ['device_tracker'], 'state': ['home'], 'icon': 'mdi:lan-connect', 'units': 'online' },
-      {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
-    ],
-  },{
-    'name': 'Devices',
-    'icon': '',
-    'image': '',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'entities': [
-      'device_tracker.doorbell_sensor',
-      'device_tracker.echo_living_room',
-      'device_tracker.echo_master_bedroom',
-      'device_tracker.harmony_hub',
-      'device_tracker.hp6796cc',
-      'device_tracker.intel_nuc',
-      'device_tracker.living_room_roku',
-      'device_tracker.nintendo_wii_u',
-      'device_tracker.synology_ds216j',
-      'device_tracker.xbox_one',
-      'device_tracker.yamaha_rx_v677',
-    ],
-    'type': '../templates/summary/overview.yaml',
-    'display': [
-      {'domain': ['device_tracker'], 'state': ['home'], 'icon': 'mdi:lan-connect', 'units': 'online' },
-      {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
-    ],
-  },{
-    'name': 'Family Devices',
-    'icon': '',
-    'image': '',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'entities': [
-      'device_tracker.james_air',
-      'device_tracker.james_iphone_10',
-      'device_tracker.james_ipad',
-      'device_tracker.owens_iphone',
-      'device_tracker.andreas_pc',
-      'device_tracker.hannas_iphone',
-      'device_tracker.katies_iphone',
-      'device_tracker.alexs_nintendo_switch',
-      'device_tracker.alexs_phone',
-    ],
-    'type': '../templates/summary/overview.yaml',
-    'display': [
-      {'domain': ['device_tracker'], 'state': ['home'], 'icon': 'mdi:lan-connect', 'units': 'online' },
-      {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
-    ],
-}] %}
-
 {%- set systems = [
   {
     'name': 'Speed Test',
@@ -568,7 +470,6 @@
     'type': '../templates/summary/device.yaml',
     'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'entities': [
-      'sensor.ups_uptime',
       'sensor.ups_status',
       'sensor.ups_load',
       'sensor.ups_input_voltage',
@@ -862,18 +763,6 @@
     'entities': systems,
     'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'image': '/local/images/gears_3.png',
-    'type': '../templates/summary/overview.yaml',
-  },{
-    'name': 'Network',
-    'icon': 'mdi:wan',
-    'entities': wan,
-    'image': '/local/images/network.png',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'triggers_update': wan | sum(attribute='entities', start=[]) | list | sort,
-    'display': [
-      {'domain': ['device_tracker'], 'state': ['home'], 'icon': 'mdi:lan-connect', 'units': 'online' },
-      {'domain': ['device_tracker'], 'state': ['not_home'], 'icon': 'mdi:lan-disconnect', 'color': 'rgba(228, 94, 101)', 'units': 'offline' },
-    ],
     'type': '../templates/summary/overview.yaml',
   },{
     'name': 'Echos',

@@ -61,6 +61,15 @@
     attributes:
       template: counter
     
+  - name: Groups
+    unique_id: entity_counter_group
+    icon: mdi:group
+    state: >
+      {{ states.group | default([]) | count }}
+    unit_of_measurement: entities
+    attributes:
+      template: counter
+    
   - name: Lights
     unique_id: entity_counter_light
     icon: mdi:lightbulb-multiple
@@ -141,4 +150,12 @@
     unit_of_measurement: entities
     attributes:
       template: counter
-    
+
+  - name: Zwaves
+    unique_id: entity_counter_zwave
+    icon: mdi:z-wave
+    state: >
+      {{ integration_entities('zwave_js') | count }}
+    unit_of_measurement: entities
+    attributes:
+      template: counter
