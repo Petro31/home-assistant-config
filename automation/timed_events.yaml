@@ -113,53 +113,13 @@
   variables:
     event: >
       {{ trigger.event | default('invalid') }}
-    next_season: >
-      {%- set next = states('sensor.seasonal_lights') %}
-      {%- if next not in ['unknown', 'unavailable'] %}
-        {%- set d, s = next.split(', ') -%}
-        {{ '{{"date": "{0}", "scene": "{1}" }}'.format(d, s) }}
-      {%- else %}
-        none
-      {%- endif %}
-    seasons:
-      christmas: scene.holiday_bulbs_christmas
-      thanksgiving: scene.holiday_bulbs_thanksgiving
-      easter: scene.holiday_bulbs_easter
-      valentines_day: scene.holiday_bulbs_valentines_day
-      st_patricks_day: scene.holiday_bulbs_st_patricks_day
-      4th_of_july: scene.holiday_bulbs_patriotic
-      veterans_day: scene.holiday_bulbs_patriotic
-      halloween: scene.holiday_bulbs_halloween
-    start_scene: >
-      {%- if next_season is not none and today_at().isoformat() == next_season.date %}
-        {{ seasons.get(next_season.scene, 'scene.holiday_bulbs_soft_white') }}
-      {%- else %}
-        False
-      {%- endif %}
-    execute_scene: >
-      {{ event == 'sunset' and start_scene }}
-  condition:
-  - condition: template
-    value_template: "{{ event in ['sunset','sunrise'] }}"
+    scene: >
+      {{ states('sensor.seasonal_lights') }}
   action:
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: "{{ execute_scene }}"
-      sequence:
-      - service: scene.turn_on
-        target:
-          entity_id: "{{ start_scene }}"
-      - service: switch.turn_on
-        target:
-          entity_id:
-          - switch.flood_light
-          - switch.sliding_door_sconce
-    default:
-    - service: light.turn_o{{ 'n' if event == 'sunset' else 'ff' }}
-      target:
-        entity_id:
-        - light.outside_sunset
+  - service: script.sunrise_sunset
+    data:
+      event: "{{ event }}"
+      scene: "{{ scene }}"
 
 - alias: Timed Event - Clear persistent_notifications around bedtime.
   id: clear_persistent_notifications_around_bedtime

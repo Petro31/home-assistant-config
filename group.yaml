@@ -149,13 +149,19 @@ downstairs_areas:
 
 outside_sunset:
   entities:
+  - switch.passenger_sconce
+  - switch.sconces_garage
+  - switch.sconces_main_entrance
+  - switch.flood_light
+  - switch.sliding_door_sconce
+
+outside_bulbs:
+  entities:
   - light.main_door_left_bulb
   - light.main_door_right_bulb
   - light.passenger_door_bulb
   - light.garage_sconce_left_bulb
   - light.garage_sconce_right_bulb
-  - switch.flood_light
-  - switch.sliding_door_sconce
 
 holiday:
   entities:

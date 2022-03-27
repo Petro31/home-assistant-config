@@ -1,0 +1,33 @@
+sunrise_sunset:
+  alias: Sunrise Sunset Actions
+  mode: single
+  fields:
+    event: 
+      description: Sunrise or sunset event
+      example: sunrise
+    scene:
+      description: What Scene to run, if sunset
+      example: scene.holiday_bulbs_soft_white
+      
+  variables:
+    evt: >
+      {{ event | default('invalid') }}
+    start_scene: >
+      {{ scene | default('unknown') }}
+    execute_scene: >
+      {{ event == 'sunset' and start_scene not in ['unknown', 'unavailable'] }}
+  sequence:
+  - condition: template
+    value_template: "{{ evt in ['sunset','sunrise'] }}"
+  - service: light.turn_o{{ 'n' if evt == 'sunset' else 'ff' }}
+    target:
+      entity_id: light.outside_sunset
+  - condition: template
+    value_template: "{{ execute_scene }}"
+  - service: zwave_js.ping
+    target:
+      entity_id: >
+        {{ state_attr('group.outside_bulbs', 'entity_id') }}
+  - service: scene.turn_on
+    target:
+      entity_id: "{{ start_scene }}"

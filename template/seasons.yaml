@@ -44,48 +44,49 @@
       {%- set day = day - 31 if day > 31 else day -%}
       {{ today_at().replace(month=month, day=day).isoformat() }}
       {%- endmacro %}
-      
-      {% set holidays = {
-        'christmas': {
-          'start': md(12,1),
-          'end': md(1,7),
-        },
-        'thanksgiving': {
-          'end': mwd(11, 4, 3),
-        },
-        'easter': {
-          'start': (easter() | as_datetime - timedelta(days=7)).isoformat(),
-          'end': easter(),
-        },
-        'valentines_day': {
-          'end': md(2,14),
-        },
-        'st_patricks_day': {
-          'end': md(3,17),
-        },
-        '4th_of_july': {
-          'end': md(7,4),
-        },
-        'veterans_day': {
-          'start': md(11,11),
-          'end': md(11,11),
-        },
-        'halloween': {
-          'start': md(10,8),
-          'end': md(10,31),
-        },
-      }%}
-      
-      {%- set ns = namespace(dates=[]) %}
-      {%- set c = today_at() %}
-      {%- for holiday, times in holidays.items() %}
-      {%- set end = times.end | as_datetime + timedelta(days=1) %}
-      {%- set start = times.start | as_datetime if times.start is defined else end - timedelta(days=7) %}
-      {%- set ns.dates = ns.dates + [ (start.isoformat(), holiday), (end.isoformat(), 'none') ] %}
-      {%- endfor %}
-      {%- set next = ns.dates | sort | selectattr('0','>=', c.isoformat()) | first | default(none) %}
-      {%- if next %}
-      {{ next | join(', ') }}
-      {%- else %}
-      {{ next }}
-      {%- endif %}
+
+      {%- set easter_day = easter() | as_datetime %}
+      {%- set thanksgiving = mwd(11, 4, 3) | as_datetime %}
+      {%- set valentines = md(2,14) | as_datetime %}
+      {%- set veterans = md(11,11) | as_datetime %}
+      {%- set july4 = md(7,4) | as_datetime %}
+      {%- set stpaddy = md(3,17) | as_datetime %}
+
+      {%- set scenes = dict(
+        christmas="scene.holiday_bulbs_christmas",
+        day="scene.holiday_bulbs_daylight",
+        easter="scene.holiday_bulbs_easter",
+        halloween="scene.holiday_bulbs_halloween",
+        patriotic="scene.holiday_bulbs_patriotic",
+        soft="scene.holiday_bulbs_soft_white",
+        stpaddy="scene.holiday_bulbs_st_patricks_day",
+        thanksgiving="scene.holiday_bulbs_thanksgiving",
+        valentines="scene.holiday_bulbs_valentines_day",
+      ) %}
+
+      {%- set events = [
+        ('easter', easter_day - timedelta(days=6)),
+        ('soft', easter_day + timedelta(days=1)),
+        ('thanksgiving', thanksgiving),
+        ('soft', thanksgiving + timedelta(days=1)),
+        ('christmas', md(12,1) | as_datetime ),
+        ('soft', md(1,7) | as_datetime ),
+        ('halloween', md(10,8) | as_datetime ),
+        ('soft', md(10,31) | as_datetime ),
+        ('patriotic', veterans - timedelta(days=1) ),
+        ('soft', veterans + timedelta(days=1) ),
+        ('patriotic', july4 - timedelta(days=6) ),
+        ('soft', july4 + timedelta(days=1) ),
+        ('stpaddy', stpaddy - timedelta(days=6) ),
+        ('soft', stpaddy + timedelta(days=1) ),
+        ('valentines', valentines - timedelta(days=6) ),
+        ('soft', valentines + timedelta(days=1) ),
+      ] %}
+
+      {%- set ns = namespace(event='unknown') %}
+      {% for name, dt in events | sort(attribute='1') %}
+        {%- if dt.date() | string == now().date() | string %}
+           {% set ns.event = scenes.get(name, 'soft') %}
+        {%- endif %}
+      {% endfor %}
+      {{ ns.event }}
