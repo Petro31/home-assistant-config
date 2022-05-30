@@ -350,6 +350,10 @@ custom_fields:
     [[[
       var ret = [];
 
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
+
       function getEntityIcon(state, units, icon, color){
         units = (units !== null) ? `<span style="font-size: 75%;">${units}</span>` : '';
         icon = (icon) ? icon : 'mdi:eye';
@@ -403,6 +407,19 @@ custom_fields:
             icon = (on.includes(statestr)) ? 'mdi:check-network' : 'mdi:close-network';
             statestr = (on.includes(statestr)) ? 'Online' : 'Offline';
             units = '';
+          }
+          if (entity_id.includes('climate.')) {
+            if (statestr === 'cool') {
+              icon = 'mdi:snowflake';
+            }
+            else if (statestr === 'heat') {
+              icon = 'mdi:fire';
+            }
+            else {
+              icon = 'mdi:thermometer-auto';
+            }
+            units = '';
+            statestr = capitalizeFirstLetter(statestr);
           }
           ret.push(getEntityIcon(statestr, units, icon))
         }
