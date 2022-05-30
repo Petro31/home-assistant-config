@@ -36,6 +36,7 @@ media_player: !include media_player.yaml
 media_source:
 mobile_app:
 my:
+mqtt: !include_dir_merge_named mqtt/
 notify: !include notify.yaml
 person: 
 plant: !include plants.yaml

@@ -1,0 +1,14 @@
+binary_sensor:
+- unique_id: washer_power_mqtt
+  name: Washer Power MQTT
+  state_topic: shellies/shellyem-E45D78/emeter/0/power
+  qos: 0
+  device_class: power
+  value_template: "{{ 'ON' if is_number(value) and value | int > 80 else 'OFF' }}"
+
+- unique_id: dryer_power_mqtt
+  name: Dryer Power MQTT
+  state_topic: shellies/shellyem-E45D78/emeter/1/power
+  qos: 0
+  device_class: power
+  value_template: "{{ 'ON' if is_number(value) and value | int > 150 else 'OFF' }}"

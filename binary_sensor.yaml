@@ -21,19 +21,3 @@
       entity_id: sensor.master_bathroom_filtered_humidity
       sample_duration: 120
       min_gradient: -0.01666
-
-- platform: mqtt
-  unique_id: washer_power_mqtt
-  name: Washer Power MQTT
-  state_topic: shellies/shellyem-E45D78/emeter/0/power
-  qos: 0
-  device_class: power
-  value_template: "{{ 'ON' if is_number(value) and value | int > 80 else 'OFF' }}"
-
-- platform: mqtt
-  unique_id: dryer_power_mqtt
-  name: Dryer Power MQTT
-  state_topic: shellies/shellyem-E45D78/emeter/1/power
-  qos: 0
-  device_class: power
-  value_template: "{{ 'ON' if is_number(value) and value | int > 150 else 'OFF' }}"
