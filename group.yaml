@@ -157,11 +157,11 @@ outside_sunset:
 
 outside_bulbs:
   entities:
-  - light.main_door_left_bulb
-  - light.main_door_right_bulb
-  - light.passenger_door_bulb
-  - light.garage_sconce_left_bulb
-  - light.garage_sconce_right_bulb
+  - button.main_door_left_bulb
+  - button.main_door_right_bulb
+  - button.passenger_door_bulb
+  - button.garage_sconce_left_bulb
+  - button.garage_sconce_right_bulb
 
 holiday:
   entities:

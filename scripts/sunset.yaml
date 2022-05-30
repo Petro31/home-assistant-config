@@ -24,7 +24,7 @@ sunrise_sunset:
       entity_id: light.outside_sunset
   - condition: template
     value_template: "{{ execute_scene }}"
-  - service: zwave_js.ping
+  - service: button.press
     target:
       entity_id: >
         {{ state_attr('group.outside_bulbs', 'entity_id') }}
