@@ -310,6 +310,9 @@
     'entities': [
       'light.living_room',
       'switch.living_room_window',
+      'climate.living_room_thermostat',
+      'sensor.living_room_temperature',
+      'sensor.living_room_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [

@@ -26,6 +26,7 @@
     'binary_sensor': '/templates/buttons/sensor.yaml',
     'camera': '/templates/buttons/empty.yaml',
     'cover': '/templates/buttons/toggle.yaml',
+    'climate': '/templates/buttons/climate.yaml',
     'device_tracker': '/templates/buttons/device_tracker.yaml',
     'fan': '/templates/buttons/toggle.yaml',
     'group': '/templates/buttons/empty.yaml',

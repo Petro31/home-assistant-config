@@ -1,0 +1,163 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+{% set aspect_ratio = aspect_ratio|default('1/1') %}
+
+type: custom:button-card
+aspect_ratio: {{ aspect_ratio }}
+entity: {{ entity }}
+icon: {{ icon }}
+color: var(--paper-item-icon-color)
+name: Thermostat
+show_name: true
+show_label: true
+show_icon: true
+show_last_changed: true
+size: 70%
+tap_action:
+  action: more-info
+  haptic: light
+styles:
+  icon:
+  - opacity: 0.3
+  - width: 100%
+  img_cell:
+  - top: 0%
+  - left: 30%
+  - position: absolute
+  - z-index: 2
+  grid:
+  - grid-template-areas: '"info info" "n n" "add add" "l l"'
+  - grid-template-columns: 40% 1fr
+  - grid-template-rows: 1fr min-content min-content min-content
+  - position: relative
+  card:
+  - padding: 10px
+  - border-radius: 15px
+  - z-index: 0
+  name:
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  - z-index: 5
+  label:
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  - z-index: 5
+  custom_fields:
+    plot:
+    - position: absolute
+    - top: 55%
+    - left: 50%
+    - width: calc(100% + 25px)
+    - transform: translate(-50%, calc(-50% + 10px))
+    - z-index: 3
+    - --paper-card-background-color: 'rgba(0, 0, 0, 0.0)'
+    - --ha-card-background: "rgba(0, 0, 0, 0.0)"
+    - --ha-card-box-shadow: 'none'
+    - pointer-events: none
+    info:
+    - align-self: start
+    - width: 40%
+    - z-index: 5
+    add:
+    - justify-self: start
+    - align-self: end
+    - font-weight: bold
+    - font-family: Helvetica 
+    - font-size: 12px
+    - text-align: start
+    - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - position: relative
+    - display: inline-block
+    - width: 100%
+    - align-content: start
+    - text-align: start
+    - text-overflow: unset
+    - z-index: 5
+custom_fields:
+  plot:
+    card:
+      type: custom:mini-graph-card
+      entities:
+        - {{ entity }}
+      group: true
+      points_per_hour: 1
+      hour24: true
+      line_color: {{ color }}
+      line_width: 10
+      hours_to_show: 24
+      update_interval: 600
+      show:
+        name: false
+        icon: false
+        state: false
+        points: false
+        legend: false
+        average: false
+        extrema: false
+        labels: false
+        fill: false
+        labels_secondary: false
+        name_adaptive_color: false
+        icon_adaptive_color: false
+  info: >
+    [[[
+      var entity_id = (entity === undefined) ? 'Invalid Entity' : entity.entity_id;
+      var temperature = (entity === undefined) ? unknown : entity.attributes.temperature;
+
+      // console.log(`${entity_id}: ${temperature}`);
+
+      // consts
+      const length = 50;
+      var radius = length / 2;
+      var units = '°F'
+      return `
+          <svg viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="${radius}" fill="{{ color }}" />
+            <text x="50%" y="54%" fill="var(--paper-card-background-color)" font-weight="bold" font-size="14" text-anchor="middle" alignment-baseline="middle">${temperature}<tspan font-size="10" font-weight="normal" >${units}</tspan>
+            </text>
+          </svg>
+          `;
+    ]]]
+  add: >
+    [[[
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
+
+      var unknown = 'unknown'
+      var entity_id = (entity === undefined) ? 'Invalid Entity' : entity.entity_id;
+      var statestr = (entity === undefined || entity.state === undefined) ? null : entity.state;
+      var hvac_action = (entity === undefined) ? unknown : entity.attributes.hvac_action;
+
+      return `${capitalizeFirstLetter(hvac_action)} (${capitalizeFirstLetter(statestr)})`;
+    ]]]
+    
