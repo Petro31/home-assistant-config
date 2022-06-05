@@ -14,6 +14,7 @@ entities:
   - binary_sensor.washer_power_mqtt
   - binary_sensor.washer_status
   - binary_sensor.washer_status_raw
+  - climate.living_room_thermostat
   - device_tracker.lambo
   - device_tracker.petro
   - sensor.basement_battery_level
@@ -27,6 +28,7 @@ entities:
   - sensor.bonus_server_room_temperature_sensor_battery_level
   - sensor.cgdk2_1_battery_level
   - sensor.cpu_temperature
+  - sensor.database_size
   - sensor.disk_free_home
   - sensor.disk_use_home
   - sensor.disk_use_percent_home
