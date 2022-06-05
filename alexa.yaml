@@ -45,8 +45,8 @@ smart_home:
       - light.outside_area
       - light.passenger_door_bulb
       - light.upstairs_area
-      - media_player.yamaha_receiver
-      - media_player.yamaha_receiver_zone_2
+      - media_player.yamaha_rx_v6a
+      - media_player.yamaha_rx_v6a_zone2
       - sensor.garage_temperature
       - sensor.kitchen_temperature
       - sensor.basement_temperature
@@ -189,9 +189,9 @@ smart_home:
       name: Passenger Door Bulb
     light.upstairs_area:
       name: Upstairs
-    media_player.yamaha_receiver:
+    media_player.yamaha_rx_v6a:
       name: Living Room Speakers
-    media_player.yamaha_receiver_zone_2:
+    media_player.yamaha_rx_v6a_zone2:
       name: Dining Room Speakers
     sensor.basement_temperature:
       name: Basement Temperature

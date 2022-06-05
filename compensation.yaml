@@ -1,6 +1,6 @@
 yamaha_receiver_volume:
   unique_id: yamaha_receiver_volume
-  source: media_player.yamaha_receiver
+  source: media_player.yamaha_rx_v6a
   attribute: volume_level
   unit_of_measurement: dB
   precision: 1
@@ -10,7 +10,7 @@ yamaha_receiver_volume:
 
 yamaha_receiver_zone_2_volume:
   unique_id: yamaha_receiver_zone_2_volume
-  source: media_player.yamaha_receiver_zone_2
+  source: media_player.yamaha_rx_v6a_zone2
   attribute: volume_level
   unit_of_measurement: dB
   precision: 1

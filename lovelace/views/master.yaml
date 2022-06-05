@@ -755,7 +755,7 @@
     'icon': 'mdi:remote-tv',
     'image': '/local/images/remote_2.png',
     'view': 'remote.yaml',
-    'triggers_update': [ 'media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2' ],
+    'triggers_update': [ 'media_player.yamaha_rx_v6a', 'media_player.yamaha_rx_v6a_zone2' ],
     'display': [
       {'domain': ['media_player'], 'state': ['on'], 'icon': 'mdi:speaker-wireless', 'units': 'zones' },
     ],

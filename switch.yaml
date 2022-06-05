@@ -301,8 +301,8 @@
 
       echo_through_receiver:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'Echo')
-             and is_state_attr('media_player.yamaha_receiver', 'source', 'Echo')
+          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'audio3')
+             and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'audio3')
              and is_state('switch.floating_outlet_switch', 'on') }}
         turn_on:
         - service: script.echo_through_receiver_on
@@ -313,164 +313,274 @@
       
       # Xbox Source
       xbox_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Xbox One') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi1') }}"
         turn_on: &xbox_source
           - service: media_player.select_source
             data:
-              entity_id: media_player.yamaha_receiver
-              source: Xbox One
+              entity_id: media_player.yamaha_rx_v6a
+              source: hdmi1
         turn_off: *xbox_source
 
       # Playstation Source
       playstation_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Playstation 4') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi2') }}"
         turn_on: &playstation_source
           - service: media_player.select_source
             data:
-              entity_id: media_player.yamaha_receiver
-              source: Playstation 4
+              entity_id: media_player.yamaha_rx_v6a
+              source: hdmi2
         turn_off: *playstation_source
 
       # Switch Source
       nintendo_switch_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Switch') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi4') }}"
         turn_on: &nintendo_switch_source
           - service: media_player.select_source
             data:
-              entity_id: media_player.yamaha_receiver
-              source: Switch
+              entity_id: media_player.yamaha_rx_v6a
+              source: hdmi4
         turn_off: *nintendo_switch_source
 
       # Roku Source
       roku_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Roku') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi3') }}"
         turn_on: &roku_source
           - service: media_player.select_source
             data:
-              entity_id: media_player.yamaha_receiver
-              source: Roku
+              entity_id: media_player.yamaha_rx_v6a
+              source: hdmi3
         turn_off: *roku_source
 
       # Phone Source
       phone_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Phone') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Phone') }}"
         turn_on: &phone_source
           - service: media_player.select_source
             data:
-              entity_id: media_player.yamaha_receiver
+              entity_id: media_player.yamaha_rx_v6a
               source: Phone
         turn_off: *phone_source
 
       # Phone Source
       chromecast_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Chromecast') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi5') }}"
         turn_on: &chromecast_source
           - service: media_player.select_source
             data:
-              entity_id: media_player.yamaha_receiver
-              source: Chromecast
+              entity_id: media_player.yamaha_rx_v6a
+              source: hdmi5
         turn_off: *chromecast_source
 
       # Alexa Source
       alexa_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver', 'source', 'Echo') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'audio3') }}"
         turn_on: &alexa_source
           - service: media_player.select_source
             data:
-              entity_id: media_player.yamaha_receiver
-              source: Echo
+              entity_id: media_player.yamaha_rx_v6a
+              source: audio3
         turn_off: *alexa_source
 
       # Surround Sound Modes
 
-      # Sports Surround Mode
-      surround_mode_sports:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Sports') }}"
-        turn_on:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: Sports
-        turn_off: &surround_standard
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: Standard
-
-      # Action Game Surround Mode
-      surround_mode_action_game:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Action Game') }}"
-        turn_on:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: Action Game
-        turn_off: *surround_standard
-
-      # Roleplaying Game Surround Mode
-      surround_mode_roleplaying_game:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Roleplaying Game') }}"
-        turn_on:
-        - service: media_player.select_sound_mode
-          data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: Roleplaying Game
-        turn_off: *surround_standard
-
       # Standard Surround Mode
       surround_mode_standard:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Standard') }}"
-        turn_on: *surround_standard
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','standard') }}"
+        turn_on: &surround_standard
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: standard
         turn_off: *surround_standard
 
-      # Sci-Fi Surround Mode
+      # Munich Sound Mode
+      surround_mode_munich:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','munich') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: munich
+        turn_off: *surround_standard
+
+      # Vienna Sound Mode
+      surround_mode_vienna:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','vienna') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: vienna
+        turn_off: *surround_standard
+
+      # Chamber Sound Mode
+      surround_mode_chamber:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','chamber') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: chamber
+        turn_off: *surround_standard
+
+      # Cellar Club Sound Mode
+      surround_mode_cellar_club:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','cellar_club') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: cellar_club
+        turn_off: *surround_standard
+
+      # Roxy Theatre Sound Mode
+      surround_mode_roxy_theatre:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','roxy_theatre') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: roxy_theatre
+        turn_off: *surround_standard
+
+      # Bottom Line Sound Mode
+      surround_mode_bottom_line:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','bottom_line') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: bottom_line
+        turn_off: *surround_standard
+
+      # Sports Sound Mode
+      surround_mode_sports:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','sports') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: sports
+        turn_off: *surround_standard
+
+      # Action Game Sound Mode
+      surround_mode_action_game:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','action_game') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: action_game
+        turn_off: *surround_standard
+
+      # Roleplaying Game Sound Mode
+      surround_mode_roleplaying_game:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','roleplaying_game') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: roleplaying_game
+        turn_off: *surround_standard
+
+      # Music Video Sound Mode
+      surround_mode_music_video:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','music_video') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: music_video
+        turn_off: *surround_standard
+
+      # Spectacle Sound Mode
+      surround_mode_spectacle:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','spectacle') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: spectacle
+        turn_off: *surround_standard
+
+      # Sci-Fi Sound Mode
       surround_mode_sci_fi:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Sci-Fi') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','sci-fi') }}"
         turn_on:
         - service: media_player.select_sound_mode
           data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: Sci-Fi
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: sci-fi
         turn_off: *surround_standard
 
-      # Adventure Surround Mode
+      # Adventure Sound Mode
       surround_mode_adventure:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Adventure') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','adventure') }}"
         turn_on:
         - service: media_player.select_sound_mode
           data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: Adventure
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: adventure
         turn_off: *surround_standard
 
-      # Drama Surround Mode
+      # Drama Sound Mode
       surround_mode_drama:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Drama') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','drama') }}"
         turn_on:
         - service: media_player.select_sound_mode
           data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: Drama
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: drama
         turn_off: *surround_standard
 
-      # Surround Decoder Surround Mode
-      surround_mode_surround_decoder:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','Surround Decoder') }}"
+      # Mono Movie Sound Mode
+      surround_mode_mono_movie:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','mono_movie') }}"
         turn_on:
         - service: media_player.select_sound_mode
           data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: Surround Decoder
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: mono_movie
         turn_off: *surround_standard
 
-      # 7ch Stereo Surround Mode
-      surround_mode_7ch_stereo:
-        value_template: "{{ is_state_attr('media_player.yamaha_receiver','sound_mode','7ch Stereo') }}"
+      # 2ch Stereo Sound Mode
+      surround_mode_2ch_stereo:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','2ch_stereo') }}"
         turn_on:
         - service: media_player.select_sound_mode
           data: 
-            entity_id: media_player.yamaha_receiver
-            sound_mode: 7ch Stereo
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: 2ch_stereo
+        turn_off: *surround_standard
+
+      # All Ch Stereo Sound Mode
+      surround_mode_all_ch_stereo:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','all_ch_stereo') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: all_ch_stereo
+        turn_off: *surround_standard
+
+      # Surr Decoder Sound Mode
+      surround_mode_surr_decoder:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','surr_decoder') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: surr_decoder
+        turn_off: *surround_standard
+
+      # Straight Sound Mode
+      surround_mode_straight:
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a','sound_mode','straight') }}"
+        turn_on:
+        - service: media_player.select_sound_mode
+          data: 
+            entity_id: media_player.yamaha_rx_v6a
+            sound_mode: straight
         turn_off: *surround_standard
 
       hyperion:

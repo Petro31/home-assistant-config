@@ -49,12 +49,12 @@ cards:
         color: rgba(49, 196, 243)
     - !include
       - '../templates/remote/harmony/toggle.yaml'
-      - entity: media_player.yamaha_receiver
+      - entity: media_player.yamaha_rx_v6a
         icon: fapro:power-zone-1
         color: rgba(228, 94, 101)
     - !include
       - '../templates/remote/harmony/toggle.yaml'
-      - entity: media_player.yamaha_receiver_zone_2
+      - entity: media_player.yamaha_rx_v6a_zone2
         icon: fapro:power-zone-2
         color: rgba(228, 94, 101)
     - !include

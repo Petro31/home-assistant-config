@@ -579,10 +579,10 @@ group.upstairs_areas:
   icon: mdi:home-floor-2
 light.test_2:
   icon: mdi:stairs
-media_player.yamaha_receiver:
+media_player.yamaha_rx_v6a:
   friendly_name: Yamaha Zone One
   icon: fapro:power-zone-1
-media_player.yamaha_receiver_zone_2:
+media_player.yamaha_rx_v6a_zone2:
   friendly_name: Yamaha Zone Two
   icon: fapro:power-zone-2
 sensor.server_room_ac_lite_uptime:

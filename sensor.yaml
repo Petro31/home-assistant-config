@@ -99,8 +99,8 @@
   - platform: multizone_controller
     unique_id: active_media_player
     zones:
-      - source: media_player.yamaha_receiver
-      - source: media_player.yamaha_receiver_zone_2
+      - source: media_player.yamaha_rx_v6a
+      - source: media_player.yamaha_rx_v6a_zone2
     snap_volume: true
     volume_increment: 0.05
     volume_max: 1.0

@@ -104,7 +104,7 @@ power_on:
   fields: &power_fields
     entity:
       description: (Required) The entity in question
-      example: media_player.yamaha_receiver
+      example: media_player.yamaha_rx_v6a
   variables:
     state: 'off'
     service: "{{ entity.split('.')[0] }}.turn_on"
@@ -131,7 +131,7 @@ media_player_on:
   fields:
     media_player:
       description: (Required) The media_player.
-      example: media_player.yamaha_receiver
+      example: media_player.yamaha_rx_v6a
     source:
       description: (Required) The source to select
       example: Echo
@@ -175,13 +175,13 @@ echo_through_receiver_on:
   
   - service: script.media_player_on
     data:
-      media_player: media_player.yamaha_receiver
+      media_player: media_player.yamaha_rx_v6a
       volume: 0.7
       source: Echo
   
   - service: script.media_player_on
     data:
-      media_player: media_player.yamaha_receiver_zone_2
+      media_player: media_player.yamaha_rx_v6a_zone2
       volume: 0.7
       source: Echo
 
@@ -193,14 +193,14 @@ echo_through_receiver_off:
   - choose:
     - conditions:
       - condition: template
-        value_template: "{{ is_state('media_player.yamaha_receiver', 'on') and is_state('switch.poweroff', 'off') }}"
+        value_template: "{{ is_state('media_player.yamaha_rx_v6a', 'on') and is_state('switch.poweroff', 'off') }}"
       sequence:
       - service: media_player.turn_off
-        entity_id: media_player.yamaha_receiver
+        entity_id: media_player.yamaha_rx_v6a
       
   - service: script.power_off
     data:
-      entity: media_player.yamaha_receiver_zone_2
+      entity: media_player.yamaha_rx_v6a_zone2
       
   - service: script.power_off
     data:

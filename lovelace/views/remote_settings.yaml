@@ -7,21 +7,32 @@
   {'entity':'switch.roku_source', 'color': 'rgba(105, 58, 147)', 'template': '../templates/remote_image_button.yaml', 'image': '/local/images/roku.png'},
   {'entity':'switch.nintendo_switch_source', 'color': 'rgba(228, 0, 15)', 'template': '../templates/remote_icon_button.yaml'},
   {'entity':'switch.chromecast_source', 'color': 'rgba(66,133,244)', 'template': '../templates/remote_icon_button.yaml'},
-  {'entity':'switch.alexa_source', 'color': 'rgba(49, 196, 243)', 'template': '../templates/remote_icon_button.yaml'},
+  {'entity':'switch.alexa_source', 'color': 'rgba(49, 196, 243)', 'template': '../templates/remote_icon_button.yaml', 'icon': 'fab:amazon'},
 ] %}
 
 {%- set surround_cols = 5 %}
-{%- set surround_rows = 2 %}
+{%- set surround_rows = 4 %}
 {% set surround_modes = [
-  {'entity': 'switch.surround_mode_sci_fi', 'name': 'Sci Fi', 'sound_mode':'Sci-Fi', 'icon': 'mdi:rocket',},
-  {'entity': 'switch.surround_mode_7ch_stereo', 'name': 'Music', 'sound_mode':'7ch Stereo', 'icon': 'mdi:music',},
-  {'entity': 'switch.surround_mode_standard', 'name': 'Standard', 'sound_mode':'Standard', 'icon': 'mdi:filmstrip',},
-  {'entity': 'switch.surround_mode_surround_decoder', 'name': 'Surround Sound', 'sound_mode':'Surround Decoder', 'icon': 'mdi:surround-sound-7-1',},
-  {'entity': 'switch.surround_mode_adventure', 'name': 'Adventure', 'sound_mode':'Adventure', 'icon': 'mdi:account-cowboy-hat',},
-  {'entity': 'switch.surround_mode_drama', 'name': 'Drama', 'sound_mode':'Drama', 'icon': 'mdi:drama-masks',},
-  {'entity': 'switch.surround_mode_action_game', 'name': 'Action', 'sound_mode':'Action Game', 'icon': 'mdi:pistol',},
-  {'entity': 'switch.surround_mode_roleplaying_game', 'name': 'Roleplaying', 'sound_mode':'Roleplaying Game', 'icon': 'mdi:auto-fix',},
-  {'entity': 'switch.surround_mode_sports', 'name': 'Sports', 'sound_mode':'Sports', 'icon': 'mdi:basketball',},
+  {'entity': 'switch.surround_mode_2ch_stereo', 'name': '2 Channel Stereo', 'sound_mode': '2ch_stereo', 'icon': 'mdi:surround-sound-2-0' },
+  {'entity': 'switch.surround_mode_action_game', 'name': 'Action Game', 'sound_mode': 'action_game', 'icon': 'mdi:pistol' },
+  {'entity': 'switch.surround_mode_adventure', 'name': 'Adventure', 'sound_mode': 'adventure', 'icon': 'mdi:account-cowboy-hat' },
+  {'entity': 'switch.surround_mode_all_ch_stereo', 'name': 'All Ch Stereo', 'sound_mode': 'all_ch_stereo', 'icon': 'mdi:surround-sound-7-1' },
+  {'entity': 'switch.surround_mode_bottom_line', 'name': 'Bottom Line', 'sound_mode': 'bottom_line', 'icon': 'mdi:saxophone' },
+  {'entity': 'switch.surround_mode_cellar_club', 'name': 'Cellar Club', 'sound_mode': 'cellar_club', 'icon': 'mdi:glass-mug-variant' },
+  {'entity': 'switch.surround_mode_chamber', 'name': 'Chamber', 'sound_mode': 'chamber', 'icon': 'mdi:church' },
+  {'entity': 'switch.surround_mode_drama', 'name': 'Drama', 'sound_mode': 'drama', 'icon': 'mdi:drama-masks' },
+  {'entity': 'switch.surround_mode_mono_movie', 'name': 'Mono Movie', 'sound_mode': 'mono_movie', 'icon': 'mdi:filmstrip' },
+  {'entity': 'switch.surround_mode_munich', 'name': 'Munich', 'sound_mode': 'munich', 'icon': 'mdi:music-clef-treble' },
+  {'entity': 'switch.surround_mode_music_video', 'name': 'Music Video', 'sound_mode': 'music_video', 'icon': 'mdi:music-box' },
+  {'entity': 'switch.surround_mode_roleplaying_game', 'name': 'Roleplaying Game', 'sound_mode': 'roleplaying_game', 'icon': 'mdi:auto-fix' },
+  {'entity': 'switch.surround_mode_roxy_theatre', 'name': 'Roxy Theatre', 'sound_mode': 'roxy_theatre', 'icon': 'mdi:theater' },
+  {'entity': 'switch.surround_mode_sci_fi', 'name': 'Sci-Fi', 'sound_mode': 'sci_fi', 'icon': 'mdi:rocket' },
+  {'entity': 'switch.surround_mode_spectacle', 'name': 'Spectacle', 'sound_mode': 'spectacle', 'icon': 'mdi:folder-star' },
+  {'entity': 'switch.surround_mode_sports', 'name': 'Sports', 'sound_mode': 'sports', 'icon': 'mdi:basketball' },
+  {'entity': 'switch.surround_mode_standard', 'name': 'Standard', 'sound_mode': 'standard', 'icon': 'mdi:standard-definition' },
+  {'entity': 'switch.surround_mode_straight', 'name': 'Straight', 'sound_mode': 'straight', 'icon': 'mdi:format-line-spacing' },
+  {'entity': 'switch.surround_mode_surr_decoder', 'name': 'Surr Decoder', 'sound_mode': 'surr_decoder', 'icon': 'mdi:surround-sound' },
+  {'entity': 'switch.surround_mode_vienna', 'name': 'Vienna', 'sound_mode': 'vienna', 'icon': 'mdi:music-clef-bass' },
 ] %}
 
 title: Remote Settings

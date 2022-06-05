@@ -94,12 +94,12 @@ cards:
         color: rgba(228, 94, 101)
     - !include
       - '../templates/remote_zone_button.yaml'
-      - entity: media_player.yamaha_receiver
+      - entity: media_player.yamaha_rx_v6a
         name: Zone 1
         color: rgba(228, 94, 101)
     - !include
       - '../templates/remote_zone_button.yaml'
-      - entity: media_player.yamaha_receiver_zone_2
+      - entity: media_player.yamaha_rx_v6a_zone2
         name: Zone 2
         color: rgba(228, 94, 101)
     - !include '../templates/spacer_edge.yaml'

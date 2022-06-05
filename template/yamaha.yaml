@@ -3,7 +3,7 @@
     name: Yamaha Receiver
     device_class: power
     state: >
-      {{ expand('media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2') 
+      {{ expand('media_player.yamaha_rx_v6a', 'media_player.yamaha_rx_v6a_zone2') 
                 | selectattr('state','eq','on') | list | length >= 1 }}
     attributes:
       template: yamaha
