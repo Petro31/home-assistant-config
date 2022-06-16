@@ -9,6 +9,8 @@ smart_home:
       - binary_sensor.announce_washer
       - fan.bonus_room_bedroom
       - fan.bonus_room_office
+      - fan.deck_fan_1
+      - fan.deck_fan_2
       - fan.master_fixture
       - light.basement_area
       - light.bonus_room_area
@@ -18,6 +20,7 @@ smart_home:
       - light.bonus_room_office_fixture
       - light.bonus_room_office_recessed
       - light.christmas_tree
+      - light.deck
       - light.dining_room_area
       - light.dining_room_chandelier
       - light.downstairs_area
@@ -63,6 +66,7 @@ smart_home:
       - switch.cast_workout_total_body
       - switch.cast_workout_upper_body
       - switch.christmas_party
+      - switch.deck_walkway
       - switch.dining_room_hutch
       - switch.disney_plus
       - switch.echo_through_receiver
@@ -119,6 +123,10 @@ smart_home:
       name: Bonusroom Fan
     fan.bonus_room_office:
       name: Office Fan
+    fan.deck_fan_1:
+      name: Deck Fan 1
+    fan.deck_fan_2:
+      name: Deck Fan 2
     fan.master_fixture:
       name: Master Fan
     light.basement_area:
@@ -137,6 +145,8 @@ smart_home:
       name: Office Cans
     light.dining_room_area:
       name: Target Dining Room
+    light.deck:
+      name: Deck
     light.dining_room_chandelier:
       name: Chandelier
     light.downstairs_area:
@@ -225,6 +235,8 @@ smart_home:
       name: Total Body Workout
     switch.cast_workout_upper_body:
       name: Upper Body Workout
+    switch.deck_walkway:
+      name: Deck Walkway
     switch.dining_room_hutch:
       name: Hutch Lights
     switch.flood_light:

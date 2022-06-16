@@ -156,6 +156,26 @@
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
     ],
   },{
+    'name': 'Deck',
+    'icon': 'fapro:tan',
+    'image': '',
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
+    'entities': [
+      "light.deck",
+      "fan.deck_fan_1",
+      "fan.deck_fan_2",
+      "switch.deck_walkway",
+      "switch.deck_mood_lighting"
+    ],
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+  },{
     'name': 'Dining Room',
     'icon': 'mdi:silverware-fork-knife',
     'image': '',
@@ -412,7 +432,39 @@
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
     ],
-}] %}
+  },{
+    'name': 'Patio',
+    'icon': 'fapro:patio',
+    'image': '',
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
+    'entities': [
+      "switch.outside_porch",
+    ],
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+  },{
+    'name': 'Porch',
+    'icon': 'fapro:porch',
+    'image': '',
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
+    'entities': [
+      "switch.outside_porch",
+    ],
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+  }] %}
 
 {%- set systems = [
   {
@@ -757,7 +809,7 @@
     'view': 'remote.yaml',
     'triggers_update': [ 'media_player.yamaha_rx_v6a', 'media_player.yamaha_rx_v6a_zone2' ],
     'display': [
-      {'domain': ['media_player'], 'state': ['on'], 'icon': 'mdi:speaker-wireless', 'units': 'zones' },
+      {'domain': ['media_player'], 'state': ['on', 'playing'], 'icon': 'mdi:speaker-wireless', 'units': 'zones' },
     ],
     'type': '../templates/summary/overview.yaml',
   },{
