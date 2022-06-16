@@ -15,6 +15,16 @@
     payload: backyard
     value_template: >
       {{ value_json.after.camera }}
+  - platform: mqtt
+    topic: frigate/events
+    payload: deck1
+    value_template: >
+      {{ value_json.after.camera }}
+  - platform: mqtt
+    topic: frigate/events
+    payload: deck2
+    value_template: >
+      {{ value_json.after.camera }}
   variables: &variables
     id: '{{ trigger.payload_json.after.id }}'
     camera: '{{ trigger.payload_json.after.camera }}'
@@ -24,6 +34,7 @@
     zones: 
     - the_driveway
     - patio
+    - deck
     zone_names:
       the_driveway_shadow: the driveway
       the_driveway: the driveway
@@ -32,6 +43,9 @@
       street: the street
       patio: the patio
       back_right_yard: the back yard
+      deck: the deck
+      lawn: the back yard
+      neighboors: the neighboors yard
     in_zone: >
       {{ zones | select('in', entered_zones) | list | length > 0 }}
     the_unknown: the unknown
@@ -49,7 +63,7 @@
     is_valid: >
       {{ trigger.payload_json.type != "end" and in_zone }}
     message: >
-      A {{ label }} was detected in {{ zone_phrase }}.
+      A {{ label }} was detected on {{ zone_phrase }}.
   condition: &condition
   - condition: template
     value_template: "{{ is_valid }}"
