@@ -1,28 +1,13 @@
 
 # notify.mobile_app_petro
 
-- alias: Frigate Notifications - Petro - Backyard & Driveway
-  id: frigate_notifications_petro_backyard_and_driveway
+- alias: Frigate Notifications - Petro - Backyard
+  id: frigate_notifications_petro_backyard
   mode: single
-  trigger: &triggers
-  - platform: mqtt
-    topic: frigate/events
-    payload: driveway
-    value_template: >
-      {{ value_json.after.camera }}
+  trigger: &backyard
   - platform: mqtt
     topic: frigate/events
     payload: backyard
-    value_template: >
-      {{ value_json.after.camera }}
-  - platform: mqtt
-    topic: frigate/events
-    payload: deck1
-    value_template: >
-      {{ value_json.after.camera }}
-  - platform: mqtt
-    topic: frigate/events
-    payload: deck2
     value_template: >
       {{ value_json.after.camera }}
   variables: &variables
@@ -67,22 +52,84 @@
   condition: &condition
   - condition: template
     value_template: "{{ is_valid }}"
-  action:
-
+  action: &petro
   - service: script.frigate_notification_petro
     data: &data
       id: '{{ id }}'
       camera: '{{ camera }}'
       message: "{{ message }}"
 
-# notify.mobile_app_lindsays_iphone
-
-- alias: Frigate Notifications - Lambo - Backyard & Driveway
-  id: frigate_notifications_lambo_backyard_and_driveway
+- alias: Frigate Notifications - Petro - Driveway
+  id: frigate_notifications_petro_driveway
   mode: single
-  trigger: *triggers
+  trigger: &driveway
+  - platform: mqtt
+    topic: frigate/events
+    payload: driveway
+    value_template: >
+      {{ value_json.after.camera }}
   variables: *variables
   condition: *condition
-  action:
+  action: *petro
+
+- alias: Frigate Notifications - Petro - Deck 1
+  id: frigate_notifications_petro_deck_1
+  mode: single
+  trigger: &deck1
+  - platform: mqtt
+    topic: frigate/events
+    payload: deck1
+    value_template: >
+      {{ value_json.after.camera }}
+  variables: *variables
+  condition: *condition
+  action: *petro
+
+- alias: Frigate Notifications - Petro - Deck 2
+  id: frigate_notifications_petro_deck_2
+  mode: single
+  trigger: &deck2
+  - platform: mqtt
+    topic: frigate/events
+    payload: deck2
+    value_template: >
+      {{ value_json.after.camera }}
+  variables: *variables
+  condition: *condition
+  action: *petro
+
+# notify.mobile_app_lindsays_iphone
+
+- alias: Frigate Notifications - Lambo - Backyard
+  id: frigate_notifications_lambo_backyard
+  mode: single
+  trigger: *backyard
+  variables: *variables
+  condition: *condition
+  action: &lambo
   - service: script.frigate_notification_lambo
     data: *data
+
+- alias: Frigate Notifications - Lambo - Driveway
+  id: frigate_notifications_lambo_driveway
+  mode: single
+  trigger: *driveway
+  variables: *variables
+  condition: *condition
+  action: *lambo
+
+- alias: Frigate Notifications - Lambo - Deck 1
+  id: frigate_notifications_lambo_deck_1
+  mode: single
+  trigger: *deck1
+  variables: *variables
+  condition: *condition
+  action: *lambo
+
+- alias: Frigate Notifications - Lambo - Deck 2
+  id: frigate_notifications_lambo_deck_2
+  mode: single
+  trigger: *deck2
+  variables: *variables
+  condition: *condition
+  action: *lambo
