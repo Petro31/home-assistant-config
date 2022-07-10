@@ -167,7 +167,9 @@
       "fan.deck_fan_1",
       "fan.deck_fan_2",
       "switch.deck_walkway",
-      "switch.deck_mood_lighting"
+      "switch.deck_mood_lighting",
+      "light.deck_wled_1",
+      "light.deck_wled_2",
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -440,7 +442,7 @@
       { 'type': '../templates/headers/navigator.yaml', }, 
     ],
     'entities': [
-      "switch.outside_porch",
+      "switch.patio_string_light",
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
