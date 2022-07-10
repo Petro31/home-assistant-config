@@ -152,8 +152,6 @@ outside_sunset:
   - switch.passenger_sconce
   - switch.sconces_garage
   - switch.sconces_main_entrance
-  - switch.flood_light
-  - switch.sliding_door_sconce
 
 outside_bulbs:
   entities:
