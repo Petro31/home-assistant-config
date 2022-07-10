@@ -72,7 +72,7 @@ notify:
 # anchors useless.  
 
 frigate_notification_petro:
-  mode: single
+  mode: parallel
   alias: Notify Lambo of Camera Detection
   fields: &frigate_notification_fields
     id:
@@ -112,7 +112,7 @@ frigate_notification_petro:
       minutes: 30
 
 frigate_notification_lambo:
-  mode: single
+  mode: parallel
   alias: Notify Lambo of Camera Detection
   fields: *frigate_notification_fields
   variables:
@@ -122,6 +122,7 @@ frigate_notification_lambo:
 # General notification engine for frigate
 
 notify_frigate:
+  mode: parallel
   fields:
     id:
       description: The frigate payload id

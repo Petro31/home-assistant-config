@@ -4,15 +4,17 @@ logs:
   frontend.js.latest: critical
   py.warnings: critical
   homeassistant.components.analytics: info
-  homeassistant.components.automation.frigate_notifications_lambo_driveway: critical
-  homeassistant.components.automation.frigate_notifications_petro_driveway: critical
-  homeassistant.components.automation.frigate_notifications_lambo_backyard: critical
-  homeassistant.components.automation.frigate_notifications_petro_backyard: critical
-  homeassistant.components.automation.frigate_notifications_lambo_deck_1: critical
-  homeassistant.components.automation.frigate_notifications_petro_deck_1: critical
-  homeassistant.components.automation.frigate_notifications_lambo_deck_2: critical
-  homeassistant.components.automation.frigate_notifications_petro_deck_2: critical
-  homeassistant.components.script.notify_frigate: critical
+  homeassistant.components.automation.frigate_notifications_lambo_driveway: error
+  homeassistant.components.automation.frigate_notifications_petro_driveway: error
+  homeassistant.components.automation.frigate_notifications_lambo_backyard: error
+  homeassistant.components.automation.frigate_notifications_petro_backyard: error
+  homeassistant.components.automation.frigate_notifications_lambo_deck_1: error
+  homeassistant.components.automation.frigate_notifications_petro_deck_1: error
+  homeassistant.components.automation.frigate_notifications_lambo_deck_2: error
+  homeassistant.components.automation.frigate_notifications_petro_deck_2: error
+  homeassistant.components.script.frigate_notification_petro: error
+  homeassistant.components.script.frigate_notification_lambo: error
+  homeassistant.components.script.notify_frigate: error
   #homeassistant.components.mqtt: debug
   #homeassistant.components.mqtt.discovery: debug
   #homeassistant.components.waze_travel_time: debug
