@@ -70,6 +70,10 @@ entities:
   - sensor.server_room_humidity
   - sensor.server_room_switch_temperature
   - sensor.server_room_temperature
+  - sensor.shelly_em3_channel_a_energy
+  - sensor.shelly_em3_channel_a_power
+  - sensor.shelly_em3_channel_b_energy
+  - sensor.shelly_em3_channel_b_power
   - sensor.sliding_door_temperature
   - sensor.speedtest_download
   - sensor.speedtest_ping
