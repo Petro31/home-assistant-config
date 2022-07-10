@@ -30,3 +30,25 @@
 
   - delay:
       seconds: 1
+
+- alias: Basement - Notify when humidity is high
+  id: basement_notify_when_humidity_is_high
+  mode: parallel
+  trigger:
+  - id: '2 hours'
+    platform: state
+    entity_id: binary_sensor.basement_humidity_high
+    to: 'on'
+    for:
+      hours: 2
+  - id: '10 hours'
+    platform: state
+    entity_id: binary_sensor.basement_humidity_high
+    to: 'on'
+    for:
+      hours: 10
+  action:
+  - service: script.notify
+    data:
+      title: "Basement humidity has been high for {{ trigger.id }}."
+      message: "Basement humidity has been high for {{ trigger.id }}."
