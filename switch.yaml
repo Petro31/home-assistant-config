@@ -11,6 +11,25 @@
 - platform: template
   switches:
 
+      # security notifications
+      security_notifications:
+        unique_id: secutiry_notifications
+        friendly_name: Arm / Disarm Notifications
+        value_template: >
+          {{ is_state('input_select.home_security', 'armed') }}
+        turn_on:
+        - service: input_select.select_option
+          target: &security_notifications_target
+            entity_id: input_select.home_security
+          data:
+            option: armed
+        turn_off:
+        - service: input_select.select_option
+          target: *security_notifications_target
+          data:
+            option: disarmed
+        icon_template: mdi:{{ 'shield-lock' if is_state('input_select.home_security', 'armed') else 'shield-off' }}
+
       # drinking board games
       board_games_party:
         unique_id: board_games_party

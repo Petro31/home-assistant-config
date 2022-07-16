@@ -30,12 +30,16 @@ card:
   type: custom:layout-card
   layout_type: custom:grid-layout
   layout:
-    grid-template-columns: 16.66% 16.66% 16.66% 50%
+    grid-template-columns: 16.66% 16.66% 16.66% 16.66% 33.34%
     grid-template-rows: auto
-    grid-template-areas: '"company allon alloff label"'
+    grid-template-areas: '"security company allon alloff label"'
     grid-gap: 4px
-  gridcols: 1fr 4px 1fr 4px 1fr 3fr
+  grid_cols: 1fr 4px 1fr 4px 1fr 4px 1fr 2fr 4px
   cards:
+  - <<: *base
+    entity: switch.security_notifications
+    view_layout:
+      grid-area: security
   - <<: *base
     entity: input_boolean.company
     icon: mdi:account-multiple
@@ -45,6 +49,10 @@ card:
     view_layout:
       grid-area: allon
     icon: mdi:lightbulb-multiple
+    lock: &lock
+      enabled: true
+      duration: 2
+      unlock: tap
     tap_action:
       action: call-service
       service: light.turn_on
@@ -55,6 +63,7 @@ card:
     view_layout:
       grid-area: alloff
     icon: mdi:lightbulb-multiple-off
+    lock: *lock
     tap_action:
       action: call-service
       service: light.turn_off
@@ -67,7 +76,7 @@ card:
       grid-area: label
     icon: mdi:home
     label: Home
-    aspect_ratio: 3/1
+    aspect_ratio: 2/1
     show_name: false
     show_label: true
     show_icon: false
@@ -87,7 +96,7 @@ card:
       - justify-self: end
       - font-family: Helvetica
       - font-size: 20px
-      - padding-right: 10px
+      - padding-right: 20px
       icon:
       - width: 100%%
       - color: var(--paper-item-icon-color)

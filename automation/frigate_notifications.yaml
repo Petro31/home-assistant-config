@@ -45,8 +45,10 @@
       {%- else %}
         {{ names[:-1] | join(', ') }}, and {{ names[-1] }}
       {%- endif %}
+    is_armed: >
+      {{ states('input_select.home_security') in ['armed'] }}
     is_valid: >
-      {{ trigger.payload_json.type != "end" and in_zone }}
+      {{ trigger.payload_json.type != "end" and in_zone and is_armed }}
     message: >
       A {{ label }} was detected on {{ zone_phrase }}.
   condition: &condition
