@@ -331,8 +331,7 @@
       airplay_through_receiver:
         value_template: >
           {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'airplay')
-             and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'airplay')
-             and is_state('switch.floating_outlet_switch', 'on') }}
+             and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'airplay') }}
         turn_on:
         - service: script.airplay_through_receiver_on
         turn_off:
@@ -362,23 +361,18 @@
 
       living_room_airplay:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'airplay')
-             and is_state('switch.floating_outlet_switch', 'on') }}
+          {{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'airplay') }}
         turn_on:
-        - service: script.echo_through_media_player
+        - service: script.media_player_on
           data:
-            switch: switch.floating_outlet_switch
             media_player: media_player.yamaha_rx_v6a
-            desired_state: "on"
+            volume: 0.7
             source: airplay
           
         turn_off:
-        - service: script.echo_through_media_player
+        - service: script.media_player_off
           data:
-            switch: switch.floating_outlet_switch
             media_player: media_player.yamaha_rx_v6a
-            desired_state: "off"
-            source: airplay
 
       # DINING ROOM MUSIC
 
@@ -404,23 +398,18 @@
 
       dining_room_airplay:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'airplay')
-             and is_state('switch.floating_outlet_switch', 'on') }}
+          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'airplay') }}
         turn_on:
-        - service: script.echo_through_media_player
+        - service: script.media_player_on
           data:
-            switch: switch.floating_outlet_switch
             media_player: media_player.yamaha_rx_v6a_zone2
-            desired_state: "on"
+            volume: 0.7
             source: airplay
           
         turn_off:
-        - service: script.echo_through_media_player
+        - service: script.media_player_off
           data:
-            switch: switch.floating_outlet_switch
             media_player: media_player.yamaha_rx_v6a_zone2
-            desired_state: "off"
-            source: airplay
 
       # DECK MUSIC
 
@@ -446,22 +435,18 @@
 
       deck_airplay:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_receiver', 'source', 'AirPlay')
-             and is_state('switch.basement_bluetooth', 'on') }}
+          {{ is_state_attr('media_player.yamaha_receiver', 'source', 'AirPlay') }}
         turn_on:
-        - service: script.echo_through_media_player
+        - service: script.media_player_on
           data:
-            switch: switch.basement_bluetooth
             media_player: media_player.yamaha_receiver
-            desired_state: "on"
+            volume: 0.7
             source: AirPlay
+          
         turn_off:
-        - service: script.echo_through_media_player
+        - service: script.media_player_off
           data:
-            switch: switch.basement_bluetooth
             media_player: media_player.yamaha_receiver
-            desired_state: "off"
-            source: AirPlay
 
       # BASEMENT MUSIC
 
@@ -487,22 +472,18 @@
 
       basement_airplay:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'AirPlay')
-             and is_state('switch.basement_bluetooth', 'on') }}
+          {{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'AirPlay') }}
         turn_on:
-        - service: script.echo_through_media_player
+        - service: script.media_player_on
           data:
-            switch: switch.basement_bluetooth
             media_player: media_player.yamaha_receiver_zone_2
-            desired_state: "on"
+            volume: 0.7
             source: AirPlay
+          
         turn_off:
-        - service: script.echo_through_media_player
+        - service: script.media_player_off
           data:
-            switch: switch.basement_bluetooth
             media_player: media_player.yamaha_receiver_zone_2
-            desired_state: "off"
-            source: AirPlay
 
       ### SOURCES FOR RECEIVER ###
       

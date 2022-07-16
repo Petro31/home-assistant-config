@@ -113,6 +113,8 @@ cards:
           - state: standby
           - state: unavailable
           - state: 'off'
+          - attributes:
+              source: audio3
 
 
   - type: horizontal-stack
@@ -209,6 +211,8 @@ cards:
           - state: standby
           - state: unavailable
           - state: 'off'
+          - attributes:
+              source: Echo
 
   - type: custom:auto-entities
     card: 

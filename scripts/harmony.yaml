@@ -196,10 +196,6 @@ echo_through_receiver_on:
 airplay_through_receiver_on:
   mode: single
   sequence:
-  - service: script.power_on
-    data:
-      entity: switch.floating_outlet_switch
-  
   - service: script.media_player_on
     data:
       media_player: media_player.yamaha_rx_v6a
