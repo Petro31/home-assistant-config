@@ -68,7 +68,7 @@ notify_alexa:
   fields:
     entities:
       description: List of entities
-      example: media_player.bonus_room_echo_dot
+      example: media_player.xyz
     message:
       description: Message to send
       example: "Hello"

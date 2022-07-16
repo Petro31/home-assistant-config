@@ -104,6 +104,16 @@
     snap_volume: true
     volume_increment: 0.05
     volume_max: 1.0
+    volume_min: 0.0
+
+  - platform: multizone_controller
+    unique_id: active_media_player_basement
+    zones:
+      - source: media_player.yamaha_receiver
+      - source: media_player.yamaha_receiver_zone_2
+    snap_volume: true
+    volume_increment: 0.05
+    volume_max: 1.0
     volume_min: 0.2
 
   - platform: filter

@@ -57,6 +57,10 @@ smart_home:
       - sensor.master_bathroom_temperature
       - sensor.master_bedroom_temperature
       - sensor.office_temperature
+      - switch.echo_through_basement
+      - switch.echo_through_deck
+      - switch.deck_airplay
+      - switch.basement_airplay
       - switch.basement_cans
       - switch.basement_stairs
       - switch.board_games_party
@@ -221,6 +225,14 @@ smart_home:
       name: Audio One
     switch.audio_2:
       name: Audio Two
+    switch.echo_through_basement:
+      name: Basement Music
+    switch.echo_through_deck:
+      name: Deck Music
+    switch.deck_airplay:
+      name: Deck Airplay
+    switch.basement_airplay:
+      name: Basement Airplay
     switch.basement_cans:
       name: Basement Cans
     switch.basement_stairs:

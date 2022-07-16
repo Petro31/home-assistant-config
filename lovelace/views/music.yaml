@@ -1,0 +1,226 @@
+# lovelace_gen
+
+{%- set activity_cols = 6 %}
+{%- set activity_rows = 2 %}
+{%- set activities = [
+] %}
+
+title: Music
+path: music
+icon: mdi:music-box
+visible: {{ visible | default(false) }}
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/headers/navigator.yaml'
+        - name: Music
+      - !include '../templates/buttons/edge.yaml'
+  - type: horizontal-stack
+    cards:
+    - !include
+      - '../templates/headers/label.yaml'
+      - content: Living Room
+    - !include
+      - '../templates/headers/label.yaml'
+      - content: Dining Room
+  - type: horizontal-stack
+    cards:
+    - !include '../templates/buttons/edge.yaml'
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: media_player.yamaha_rx_v6a
+        icon: fapro:power-zone-1
+        color: rgba(228, 94, 101)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: switch.echo_through_living_room
+        icon: fapro:speaker-bluetooth-alexa
+        color: rgba(49, 196, 243)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: switch.living_room_airplay
+        icon: mdi:cast-audio-variant
+        color: rgba(49, 196, 243)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: media_player.yamaha_rx_v6a_zone2
+        icon: fapro:power-zone-2
+        color: rgba(228, 94, 101)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: switch.echo_through_dining_room
+        icon: fapro:speaker-bluetooth-alexa
+        color: rgba(49, 196, 243)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: switch.dining_room_airplay
+        icon: mdi:cast-audio-variant
+        color: rgba(49, 196, 243)
+    - !include '../templates/buttons/edge.yaml'
+
+  - type: conditional
+    conditions:
+    - entity: binary_sensor.yamaha_receiver
+      state: 'on'
+    card:
+      type: vertical-stack
+      cards:
+      - type: horizontal-stack
+        cards:
+        - !include '../templates/buttons/edge.yaml'
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: sensor.active_media_player
+            service: multizone_controller.next_zone
+            use_entity: true
+        - !include '../templates/buttons/spacer.yaml'
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: sensor.active_media_player
+            service: multizone_controller.volume_up
+            icon: mdi:volume-plus
+            use_entity: true
+            repeat: 250
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: sensor.active_media_player
+            service: multizone_controller.volume_down
+            icon: mdi:volume-minus
+            use_entity: true
+            repeat: 250
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: sensor.active_media_player
+            service: multizone_controller.toggle_volume_mute
+            icon: mdi:volume-mute
+            use_entity: true
+        - !include '../templates/buttons/edge.yaml'
+      - type: custom:auto-entities
+        card: 
+          type: vertical-stack
+        card_param: cards
+        filter:
+          include:
+          - domain: media_player
+            entity_id: '*yamaha_rx_v6a*'
+            options:
+              type: media-control
+          exclude:
+          - state: standby
+          - state: unavailable
+          - state: 'off'
+
+
+  - type: horizontal-stack
+    cards:
+    - !include
+      - '../templates/headers/label.yaml'
+      - content: Deck
+    - !include
+      - '../templates/headers/label.yaml'
+      - content: Basement
+  - type: horizontal-stack
+    cards:
+    - !include '../templates/buttons/edge.yaml'
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: media_player.yamaha_receiver
+        icon: fapro:power-zone-1
+        color: rgba(228, 94, 101)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: switch.echo_through_deck
+        icon: fapro:speaker-bluetooth-alexa
+        color: rgba(49, 196, 243)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: switch.deck_airplay
+        icon: mdi:cast-audio-variant
+        color: rgba(49, 196, 243)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: media_player.yamaha_receiver_zone_2
+        icon: fapro:power-zone-2
+        color: rgba(228, 94, 101)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: switch.echo_through_basement
+        icon: fapro:speaker-bluetooth-alexa
+        color: rgba(49, 196, 243)
+    - !include
+      - '../templates/remote/harmony/toggle.yaml'
+      - entity: switch.basement_airplay
+        icon: mdi:cast-audio-variant
+        color: rgba(49, 196, 243)
+    - !include '../templates/buttons/edge.yaml'
+
+  - type: conditional
+    conditions:
+    - entity: binary_sensor.basement_yamaha_receiver
+      state: 'on'
+    card:
+      type: vertical-stack
+      cards:
+      - type: horizontal-stack
+        cards:
+        - !include '../templates/buttons/edge.yaml'
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: sensor.basement_active_media_player
+            service: multizone_controller.next_zone
+            use_entity: true
+        - !include '../templates/buttons/spacer.yaml'
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: sensor.basement_active_media_player
+            service: multizone_controller.volume_up
+            icon: mdi:volume-plus
+            use_entity: true
+            repeat: 250
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: sensor.basement_active_media_player
+            service: multizone_controller.volume_down
+            icon: mdi:volume-minus
+            use_entity: true
+            repeat: 250
+        - !include
+          - '../templates/remote/harmony/control.yaml'
+          - entity: sensor.basement_active_media_player
+            service: multizone_controller.toggle_volume_mute
+            icon: mdi:volume-mute
+            use_entity: true
+        - !include '../templates/buttons/edge.yaml'
+      - type: custom:auto-entities
+        card: 
+          type: vertical-stack
+        card_param: cards
+        filter:
+          include:
+          - domain: media_player
+            entity_id: '*yamaha_receiver*'
+            options:
+              type: media-control
+          exclude:
+          - state: standby
+          - state: unavailable
+          - state: 'off'
+
+  - type: custom:auto-entities
+    card: 
+      type: vertical-stack
+    card_param: cards
+    filter:
+      include:
+      - domain: media_player
+        entity_id: '*_echo_dot*'
+        options:
+          type: media-control
+      exclude:
+      - state: standby
+      - state: unavailable
+      - state: 'off'

@@ -128,7 +128,7 @@ power_off:
 
 media_player_on:
   mode: single
-  fields:
+  fields: &media_player_fields
     media_player:
       description: (Required) The media_player.
       example: media_player.yamaha_rx_v6a
@@ -166,6 +166,14 @@ media_player_on:
         data:
           source: "{{ source }}"
 
+media_player_off:
+  mode: single
+  fields: *media_player_fields
+  sequence:
+  - service: script.power_off
+    data:
+      entity: "{{ media_player }}"
+
 echo_through_receiver_on:
   mode: single
   sequence:
@@ -177,13 +185,32 @@ echo_through_receiver_on:
     data:
       media_player: media_player.yamaha_rx_v6a
       volume: 0.7
-      source: Echo
+      source: audio3
   
   - service: script.media_player_on
     data:
       media_player: media_player.yamaha_rx_v6a_zone2
       volume: 0.7
-      source: Echo
+      source: audio3
+
+airplay_through_receiver_on:
+  mode: single
+  sequence:
+  - service: script.power_on
+    data:
+      entity: switch.floating_outlet_switch
+  
+  - service: script.media_player_on
+    data:
+      media_player: media_player.yamaha_rx_v6a
+      volume: 0.7
+      source: airplay
+  
+  - service: script.media_player_on
+    data:
+      media_player: media_player.yamaha_rx_v6a_zone2
+      volume: 0.7
+      source: airplay
 
 echo_through_receiver_off:
   mode: single
@@ -205,3 +232,46 @@ echo_through_receiver_off:
   - service: script.power_off
     data:
       entity: switch.floating_outlet_switch
+
+echo_through_media_player:
+  mode: single
+  fields: 
+    switch:
+      description: (Required) The bluetooth switch
+      example: switch.basement_bluetooth
+    media_player:
+      description: (Required) The list of media players
+      example: media_player.yamaha_rx_v6a
+    desired_state: 
+      description: (Required) The list of media players
+      example: 'on'
+    source:
+      description: (Required) The desired source
+      example: Echo
+  variables:
+    players: >
+      {% if media_player is string %}
+        {{ [media_player] }}
+      {% elif media_player is not string and media_player is iterable and media_player is not mapping %}
+        {{ media_player }}
+      {% else %}
+        {{ [] }}
+      {% endif %}
+    continue: >
+      {{ media_player | length > 0 }}
+  sequence:
+  - condition: template
+    value_template: "{{ continue }}"
+
+  - service: script.power_{{ desired_state }}
+    data:
+      entity: "{{ switch }}"
+
+  - repeat: 
+      for_each: "{{ players }}"
+      sequence:
+      - service: script.media_player_{{ desired_state }}
+        data:
+          media_player: "{{ repeat.item }}"
+          volume: 0.7
+          source: "{{ source }}"

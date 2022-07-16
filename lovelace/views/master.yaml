@@ -815,6 +815,16 @@
     ],
     'type': '../templates/summary/overview.yaml',
   },{
+    'name': 'Music',
+    'icon': 'mdi:mdi:music-box',
+    'image': '/local/images/remote_2.png',
+    'view': 'music.yaml',
+    'triggers_update': [ 'media_player.yamaha_rx_v6a', 'media_player.yamaha_rx_v6a_zone2', 'media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2' ],
+    'display': [
+      {'domain': ['media_player'], 'state': ['on', 'playing'], 'icon': 'mdi:speaker-wireless', 'units': 'zones' },
+    ],
+    'type': '../templates/summary/overview.yaml',
+  },{
     'name': 'System',
     'icon': 'mdi:cog',
     'entities': systems,
