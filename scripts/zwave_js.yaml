@@ -594,10 +594,24 @@ zwave_multicast_group:
       switch.floating_double_plug_right:
         endpoint: 2
     lights: >
-      {%- set lights = expand(group) | selectattr('domain', 'eq', 'light')  %}
-      {%- set lights = lights | selectattr('state','eq', 'off' if value else 'on') %}
-      {%- set lights = lights | map(attribute='entity_id') | list %}
-      {{- lights or none }}
+      {% if value %}
+        {% set off_lights = expand('group.office_area') 
+          | selectattr('domain', 'eq', 'light')
+          | selectattr('state', 'eq', 'off')
+          | map(attribute='entity_id') | list %}
+        {% set on_lights = expand('group.office_area') 
+          | selectattr('domain', 'eq', 'light')
+          | selectattr('state', 'eq', 'on')
+          | selectattr('attributes.brightness', 'defined') 
+          | rejectattr('attributes.brightness','eq', level)
+          | map(attribute='entity_id') | list %}
+        {{ (off_lights + on_lights) or none }}
+      {% else %}
+        {{ expand('group.office_area') 
+          | selectattr('domain', 'eq', 'light')
+          | selectattr('state', 'eq', 'on')
+          | map(attribute='entity_id') | list or none }}
+      {% endif %}
     switches: >
       {%- set switches = expand(group) | selectattr('domain', 'eq', 'switch') %}
       {%- set switches = switches | selectattr('state','eq', 'off' if value else 'on') %}
