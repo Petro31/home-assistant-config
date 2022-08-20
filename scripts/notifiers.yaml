@@ -86,6 +86,7 @@ frigate_notification_petro:
       example: "Hello"
   variables:
     notify: notify.mobile_app_petro
+    persistent_notification: on
   sequence: &frigate_notification_sequence
 
   - variables:
@@ -98,6 +99,7 @@ frigate_notification_petro:
       message: "{{ message }}"
       notify: '{{ notify }}'
       silence: "{{ silence }}"
+      persistent_notification: "{{ persistent_notification }}"
 
   - wait_for_trigger:
     - platform: event
@@ -117,6 +119,7 @@ frigate_notification_lambo:
   fields: *frigate_notification_fields
   variables:
     notify: notify.mobile_app_lindsays_iphone
+    persistent_notification: off
   sequence: *frigate_notification_sequence
 
 # General notification engine for frigate
