@@ -595,11 +595,11 @@ zwave_multicast_group:
         endpoint: 2
     lights: >
       {% if value %}
-        {% set off_lights = expand('group.office_area') 
+        {% set off_lights = expand(group) 
           | selectattr('domain', 'eq', 'light')
           | selectattr('state', 'eq', 'off')
           | map(attribute='entity_id') | list %}
-        {% set on_lights = expand('group.office_area') 
+        {% set on_lights = expand(group) 
           | selectattr('domain', 'eq', 'light')
           | selectattr('state', 'eq', 'on')
           | selectattr('attributes.brightness', 'defined') 
@@ -607,7 +607,7 @@ zwave_multicast_group:
           | map(attribute='entity_id') | list %}
         {{ (off_lights + on_lights) or none }}
       {% else %}
-        {{ expand('group.office_area') 
+        {{ expand(group) 
           | selectattr('domain', 'eq', 'light')
           | selectattr('state', 'eq', 'on')
           | map(attribute='entity_id') | list or none }}
