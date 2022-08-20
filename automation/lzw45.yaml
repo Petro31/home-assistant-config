@@ -53,7 +53,7 @@
         data:
           entity_id: input_boolean.hue_color_temp
   - service: script.lzw45_ui_quick_effect
-    
+
 
 - alias: LZW45 - Manage LZW Pixel Effects & Quick Strip Effects
   id: manage_lzw_pixel_effects_and_quick_strip_effects
@@ -65,10 +65,12 @@
     - script.lzw45_ui_custom_effect
     - script.lzw45_party_effect
   variables:
+    from_state_trigger_valid: >
+      {{ trigger.from_state is defined and trigger.from_state is not none and trigger.from_state.state not in ['unavailable', 'unknown'] }}
+    to_state_trigger_valid: >
+      {{ trigger.to_state is defined and trigger.to_state is not none and trigger.to_state.state not in ['unavailable', 'unknown'] }}
     valid_trigger: >
-      {{ trigger.from_state is defined and trigger.from_state is not none 
-         and trigger.to_state is defined and trigger.to_state is not none 
-         and trigger.from_state.state != trigger.to_state.state }}
+      {{ from_state_trigger_valid and to_state_trigger_valid and trigger.from_state.state != trigger.to_state.state }}
     last_effect: >
       {%- if valid_trigger %}
         {%- if trigger.to_state.object_id in ('lzw45_ui_pixel_effect', 'lzw45_party_effect') %}
