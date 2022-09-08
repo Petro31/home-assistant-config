@@ -1,0 +1,10 @@
+test_context:
+  alias: Test Context
+  mode: parallel
+  variables:
+    user: >
+      {{ states.person | selectattr('attributes.user_id', 'eq', this.context.user_id) | map(attribute='name') | first | default }} 
+  sequence:
+  - service: persistent_notification.create
+    data:
+      message: "{{ user }}"
