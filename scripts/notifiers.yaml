@@ -71,10 +71,11 @@ notify:
 # otherwise home assistant stupidly bitches about recieving the same key making
 # anchors useless.  
 
-frigate_notification_petro:
+silencable_frigate_notification:
   mode: parallel
-  alias: Notify Lambo of Camera Detection
-  fields: &frigate_notification_fields
+  alias: Notify of Camera Detection
+  max: 20
+  fields: 
     id:
       description: The frigate payload id
       example: 1234567891.123456-abcdef
@@ -87,7 +88,7 @@ frigate_notification_petro:
   variables:
     notify: notify.mobile_app_petro
     persistent_notification: on
-  sequence: &frigate_notification_sequence
+  sequence: 
 
   - variables:
       silence: silence-{{ notify | replace(".", "-") | replace("_","-") }}-{{ camera }}
@@ -113,19 +114,11 @@ frigate_notification_petro:
   - delay:
       minutes: 30
 
-frigate_notification_lambo:
-  mode: parallel
-  alias: Notify Lambo of Camera Detection
-  fields: *frigate_notification_fields
-  variables:
-    notify: notify.mobile_app_lindsays_iphone
-    persistent_notification: off
-  sequence: *frigate_notification_sequence
-
 # General notification engine for frigate
 
 notify_frigate:
   mode: parallel
+  max: 40
   fields:
     id:
       description: The frigate payload id
