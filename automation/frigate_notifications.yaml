@@ -1,137 +1,111 @@
 
 # notify.mobile_app_petro
 
-- alias: Frigate Notifications - Petro - Backyard
-  id: frigate_notifications_petro_backyard
-  mode: single
-  trigger: &backyard
-  - platform: mqtt
-    topic: frigate/events
-    payload: backyard
-    value_template: >
-      {{ value_json.after.camera }}
-  variables: &variables
-    id: '{{ trigger.payload_json.after.id }}'
-    camera: '{{ trigger.payload_json.after.camera }}'
-    camera_name: '{{ camera | replace("_", " ") }}'
-    label: '{{ trigger.payload_json.after.label }}'
-    entered_zones: "{{ trigger.payload_json.after.entered_zones }}"
-    zones: 
-    - the_driveway
-    - patio
-    - deck
-    zone_names:
-      the_driveway_shadow: the driveway
-      the_driveway: the driveway
-      front_left_yard: the front yard
-      front_right_yard: the front yard
-      street: the street
-      patio: the patio
-      back_right_yard: the back yard
-      deck: the deck
-      lawn: the back yard
-      neighboors: the neighboors yard
-    in_zone: >
-      {{ zones | select('in', entered_zones) | list | length > 0 }}
-    the_unknown: the unknown
-    zone_phrase: >
-      {%- set ns = namespace(zones=[]) %}
-      {%- for z in entered_zones %}
-        {% set ns.zones = ns.zones + [ zone_names.get(z) or the_unknown ] %}
-      {%- endfor %}
-      {%- set names = ns.zones | unique | list %}
-      {%- if names | length <= 1 %}
-        {{ names | first | default(the_unknown) }}
-      {%- else %}
-        {{ names[:-1] | join(', ') }}, and {{ names[-1] }}
-      {%- endif %}
-    is_armed: >
-      {{ states('input_select.home_security') in ['armed'] }}
-    is_valid: >
-      {{ trigger.payload_json.type != "end" and in_zone and is_armed }}
-    message: >
-      A {{ label }} was detected on {{ zone_phrase }}.
-  condition: &condition
-  - condition: template
-    value_template: "{{ is_valid }}"
-  action: &petro
-  - service: script.frigate_notification_petro
-    data: &data
-      id: '{{ id }}'
-      camera: '{{ camera }}'
-      message: "{{ message }}"
+- alias: Frigate Notifications - Backyard
+  id: frigate_notifications_backyard
+  trigger: 
+  - payload: backyard
+    <<: &trigger
+      platform: mqtt
+      topic: frigate/events
+      value_template: >
+        {{ value_json.after.camera }}
+  <<: &automation
+    mode: single
+    max_exceeded: silent
+    variables:
+      id: '{{ trigger.payload_json.after.id }}'
+      camera: '{{ trigger.payload_json.after.camera }}'
+      camera_name: '{{ camera | replace("_", " ") }}'
+      label: '{{ trigger.payload_json.after.label }}'
+      entered_zones: "{{ trigger.payload_json.after.entered_zones }}"
+      zones: 
+      - the_driveway
+      - patio
+      - deck
+      - porch
+      zone_names:
+        the_driveway_shadow: the driveway
+        the_driveway: the driveway
+        front_left_yard: the front yard
+        front_right_yard: the front yard
+        street: the street
+        patio: the patio
+        back_right_yard: the back yard
+        deck: the deck
+        lawn: the back yard
+        neighboors: the neighboors yard
+        porch: the porch
+        walkway: the front yard
+      in_zone: >
+        {{ zones | select('in', entered_zones) | list | length > 0 }}
+      the_unknown: the unknown
+      zone_phrase: >
+        {%- set ns = namespace(zones=[]) %}
+        {%- for z in entered_zones %}
+          {% set ns.zones = ns.zones + [ zone_names.get(z) or the_unknown ] %}
+        {%- endfor %}
+        {%- set names = ns.zones | unique | list %}
+        {%- if names | length <= 1 %}
+          {{ names | first | default(the_unknown) }}
+        {%- else %}
+          {{ names[:-1] | join(', ') }}, and {{ names[-1] }}
+        {%- endif %}
+      is_armed: >
+        {{ states('input_select.home_security') in ['armed'] }}
+      is_valid: >
+        {{ trigger.payload_json.type != "end" and in_zone and is_armed }}
+      message: >
+        A {{ label }} was detected on {{ zone_phrase }}.
+  
+    condition:
+    - condition: template
+      value_template: "{{ is_valid }}"
+  
+    action:
+    - parallel:
+      - sequence:
+        - service: script.silencable_frigate_notification
+          data:
+            id: '{{ id }}'
+            camera: '{{ camera }}'
+            message: "{{ message }}"
+            notify: notify.mobile_app_petro
+            persistent_notification: on
+  
+      - sequence:
+        - service: script.silencable_frigate_notification
+          data:
+            id: '{{ id }}'
+            camera: '{{ camera }}'
+            message: "{{ message }}"
+            notify: notify.mobile_app_lindsays_iphone
+            persistent_notification: off
 
-- alias: Frigate Notifications - Petro - Driveway
-  id: frigate_notifications_petro_driveway
-  mode: single
-  trigger: &driveway
-  - platform: mqtt
-    topic: frigate/events
-    payload: driveway
-    value_template: >
-      {{ value_json.after.camera }}
-  variables: *variables
-  condition: *condition
-  action: *petro
-
-- alias: Frigate Notifications - Petro - Deck 1
-  id: frigate_notifications_petro_deck_1
-  mode: single
-  trigger: &deck1
-  - platform: mqtt
-    topic: frigate/events
-    payload: deck1
-    value_template: >
-      {{ value_json.after.camera }}
-  variables: *variables
-  condition: *condition
-  action: *petro
-
-- alias: Frigate Notifications - Petro - Deck 2
-  id: frigate_notifications_petro_deck_2
-  mode: single
-  trigger: &deck2
-  - platform: mqtt
-    topic: frigate/events
-    payload: deck2
-    value_template: >
-      {{ value_json.after.camera }}
-  variables: *variables
-  condition: *condition
-  action: *petro
-
-# notify.mobile_app_lindsays_iphone
-
-- alias: Frigate Notifications - Lambo - Backyard
-  id: frigate_notifications_lambo_backyard
-  mode: single
-  trigger: *backyard
-  variables: *variables
-  condition: *condition
-  action: &lambo
-  - service: script.frigate_notification_lambo
-    data: *data
-
-- alias: Frigate Notifications - Lambo - Driveway
-  id: frigate_notifications_lambo_driveway
-  mode: single
-  trigger: *driveway
-  variables: *variables
-  condition: *condition
-  action: *lambo
-
-- alias: Frigate Notifications - Lambo - Deck 1
-  id: frigate_notifications_lambo_deck_1
-  mode: single
-  trigger: *deck1
-  variables: *variables
-  condition: *condition
-  action: *lambo
-
-- alias: Frigate Notifications - Lambo - Deck 2
-  id: frigate_notifications_lambo_deck_2
-  mode: single
-  trigger: *deck2
-  variables: *variables
-  condition: *condition
-  action: *lambo
+- alias: Frigate Notifications - Driveway
+  id: frigate_notifications_driveway
+  trigger: 
+  - payload: driveway
+    <<: *trigger
+  <<: *automation
+      
+- alias: Frigate Notifications - Deck 1
+  id: frigate_notifications_deck_1
+  trigger: 
+  - payload: deck1
+    <<: *trigger
+  <<: *automation
+      
+- alias: Frigate Notifications - Deck 2
+  id: frigate_notifications_deck_2
+  trigger: 
+  - payload: deck2
+    <<: *trigger
+  <<: *automation
+      
+- alias: Frigate Notifications - Porch
+  id: frigate_notifications_porch
+  trigger: 
+  - payload: porch
+    <<: *trigger
+  <<: *automation
