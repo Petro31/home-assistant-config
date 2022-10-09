@@ -14,6 +14,7 @@ cards:
   - all
   style: |
     ha-card { --primary-text-color: var(--paper-item-icon-active-color); }
+  hours_to_show: 24
   entities:
   - entity: {{ entity }}
   - zone.cobbs_hill

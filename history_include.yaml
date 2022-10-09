@@ -7,8 +7,7 @@ entities:
   - binary_sensor.garage_entry_door
   - binary_sensor.main_door
   - binary_sensor.master_bathroom_humidity_status
-  - binary_sensor.office_burglar
-  - binary_sensor.office_motion
+  - binary_sensor.garage_presence
   - binary_sensor.sliding_door
   - binary_sensor.washer_power_coiot
   - binary_sensor.washer_power_mqtt
@@ -17,6 +16,8 @@ entities:
   - climate.living_room_thermostat
   - device_tracker.lambo
   - device_tracker.petro
+  - person.lambo
+  - person.petro
   - sensor.basement_battery_level
   - sensor.basement_humidity
   - sensor.basement_temperature
@@ -29,6 +30,9 @@ entities:
   - sensor.cgdk2_1_battery_level
   - sensor.cpu_temperature
   - sensor.database_size
+  - sensor.deck_humidity
+  - sensor.deck_temperature
+  - sensor.deck_temperature_sensor_battery_level
   - sensor.disk_free_home
   - sensor.disk_use_home
   - sensor.disk_use_percent_home
@@ -37,7 +41,8 @@ entities:
   - sensor.dryer_power
   - sensor.garage_humidity
   - sensor.garage_temperature
-  - sensor.garage_temperature_sensor_battery_level
+  - sensor.garage_ultraviolet
+  - sensor.garage_luminance
   - sensor.house_humidity
   - sensor.house_temperature
   - sensor.kitchen_humidity
@@ -59,9 +64,8 @@ entities:
   - sensor.memory_use_percent
   - sensor.memory_use_total
   - sensor.office_humidity
-  - sensor.office_luminance
   - sensor.office_temperature
-  - sensor.office_ultraviolet
+  - sensor.office_temperature_sensor_battery_level
   - sensor.orion_temperature
   - sensor.outside_temperature
   - sensor.processor_use
