@@ -3,7 +3,8 @@ homeassistant:
 
 alexa: !include alexa.yaml
 analytics:
-automation: !include_dir_merge_list automation
+automation: !include automations.yaml
+automation directory: !include_dir_merge_list automation
 binary_sensor: !include binary_sensor.yaml
 bluetooth:
 cloud:

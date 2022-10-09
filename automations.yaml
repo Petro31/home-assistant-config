@@ -1,0 +1,41 @@
+- id: '1662686050540'
+  alias: test schedule
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - schedule.test
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: persistent_notification.create
+    data:
+      message: test schedule
+  mode: single
+- id: '1662686251441'
+  alias: Test - Schedule
+  description: xyz
+  trigger:
+  - platform: state
+    entity_id:
+    - schedule.test
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: persistent_notification.create
+    data:
+      message: something
+  mode: single
+- id: '1663073165843'
+  alias: xyz
+  description: ''
+  trigger: []
+  condition: []
+  action:
+  - event: B
+    event_data: {}
+  - event: A
+    event_data: {}
+  mode: single
