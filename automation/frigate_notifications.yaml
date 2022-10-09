@@ -106,6 +106,6 @@
 - alias: Frigate Notifications - Porch
   id: frigate_notifications_porch
   trigger: 
-  - payload: porch
+  - payload: front_door
     <<: *trigger
   <<: *automation
