@@ -897,3 +897,68 @@
           data:
             workout: Upper Body
         turn_off: *chromecast_off
+
+      # WLED Kitchen Cabinet lights
+      cabinet_wled_1_above:
+        unique_id: cabinet_wled_1_above
+        value_template: >
+          {% set entity_id = 'light.cabinet_wled_1' %}
+          {% set rgbw = 255, 199, 125, 0 %}
+          {% set brightness = 217 %}
+          {% set s = expand(entity_id) | first | default %}
+          {{ s.state == 'on' and s.attributes.color_mode == 'rgbw' and s.attributes.rgbw_color == rgbw and s.attributes.brightness == brightness }}
+        availability_template: "{{ expand('light.cabinet_wled_2_segment_1') | first | default is not none }}"
+        turn_on:
+        - service: script.wled_cabinets
+          data:
+            wled: light.cabinet_wled_1
+            to_state: 'on'
+        turn_off:
+        - service: script.wled_cabinets
+          data:
+            wled: light.cabinet_wled_1
+            to_state: 'off'
+
+      cabinet_wled_2_above:
+        unique_id: cabinet_wled_2_above
+        value_template: >
+          {% set entity_id = 'light.cabinet_wled_2_above' %}
+          {% set rgbw = 255, 199, 125, 0 %}
+          {% set brightness = 217 %}
+          {% set s = expand(entity_id) | first | default %}
+          {{ s.state == 'on' and s.attributes.color_mode == 'rgbw' and s.attributes.rgbw_color == rgbw and s.attributes.brightness == brightness }}
+        availability_template: "{{ expand('light.cabinet_wled_2_above') | first | default is not none }}"
+        turn_on:
+        - service: script.wled_master_slave
+          data:
+            <<: &above_master_slave
+              master: light.cabinet_wled_2_master
+              slave: light.cabinet_wled_2_above
+            to_state: 'on'
+        turn_off:
+        - service: script.wled_master_slave
+          data:
+            <<: *above_master_slave
+            to_state: 'off'
+
+      cabinet_wled_2_below:
+        unique_id: cabinet_wled_2_below
+        value_template: >
+          {% set entity_id = 'light.cabinet_wled_2_below' %}
+          {% set rgbw = 255, 199, 125, 0 %}
+          {% set brightness = 217 %}
+          {% set s = expand(entity_id) | first | default %}
+          {{ s.state == 'on' and s.attributes.color_mode == 'rgbw' and s.attributes.rgbw_color == rgbw and s.attributes.brightness == brightness }}
+        availability_template: "{{ expand('light.cabinet_wled_2_below') | first | default is not none }}"
+        turn_on:
+        - service: script.wled_master_slave
+          data:
+            <<: &below_master_slave
+              master: light.cabinet_wled_2_master
+              slave: light.cabinet_wled_2_below
+            to_state: 'on'
+        turn_off:
+        - service: script.wled_master_slave
+          data:
+            <<: *below_master_slave
+            to_state: 'off'

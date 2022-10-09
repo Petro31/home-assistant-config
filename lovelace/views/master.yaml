@@ -170,6 +170,8 @@
       "switch.deck_mood_lighting",
       "light.deck_wled_1",
       "light.deck_wled_2",
+      "sensor.deck_temperature",
+      "sensor.deck_humidity",
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -243,6 +245,7 @@
       'switch.garage_ceiling_outlet',
       'sensor.garage_temperature',
       'sensor.garage_humidity',
+      'sensor.garage_luminance',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -295,8 +298,6 @@
       'switch.kitchen_cabinet',
       'switch.kitchen_pantry',
       'switch.lzw45_mood_lighting',
-      'switch.kitchen_outlet_above_fridge',
-      'switch.kitchen_outlet_above_microwave',
       'sensor.kitchen_temperature',
       'sensor.kitchen_humidity',
     ],
@@ -730,7 +731,7 @@
     'name': 'Bonus Server Room Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.cgdk2_1_battery_level',
+    'entity': 'sensor.office_battery_level',
     'name': 'Test Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
@@ -742,7 +743,7 @@
     'name': 'Garage Door Entrance Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.garage_temperature_sensor_battery_level',
+    'entity': 'sensor.deck_temperature_sensor_battery_level',
     'name': 'Garage Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
