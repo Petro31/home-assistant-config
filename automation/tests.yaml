@@ -1,0 +1,26 @@
+- alias: Test - Single Delay
+  id: test_single_delay
+  mode: single
+  trigger:
+  - platform: state
+    entity_id: input_boolean.test_door
+    from: 'off'
+    to: 'on'
+  action:
+  - service: script.notify
+    data:
+      persistent_notification: on
+      message: "Single Delay"
+      notify: notify.mobile_app_petro
+  - delay: "00:01:00"
+
+- alias: Issue79061
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id: sensor.issue79061
+  action:
+  - service: persistent_notification.create
+    data:
+      message: >
+        {{ trigger.from_state.state }} {{ trigger.to_state.state }}
