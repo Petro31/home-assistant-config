@@ -1,10 +1,18 @@
 notify_alexa_ui:
-  alias: Alexa UI - Announce or TTS
+  alias: Alexa - Announce or TTS
   mode: parallel
   fields:
     announce:
       description: Annouce or TTS (True for announce, False or omit for TTS)
       example: true
+      default: on
+      selector:
+        boolean:
+    user_id:
+      description: Annouce or TTS (True for announce, False or omit for TTS)
+      selector:
+        text:
+          type: text
   variables:
     config: >
       {%- set ns = namespace(ret=[]) %}
@@ -16,23 +24,21 @@ notify_alexa_ui:
         {%- set ns.ret = ns.ret + [dict(boolean=boolean, player=entity_id)] %}
       {%- endfor %}
       {{ ns.ret }}
-    targets: >
-      {%- set ns = namespace(ret=[]) %}
-      {%- for item in config if is_state(item.boolean,'on') %}
-        {% set ns.ret = ns.ret + [ item.player ] %}
-      {%- endfor %}
-      {{ ns.ret }}
-    should_announce: >
-      {{ announce | default(false) }}
-    message: >
-      {{ states('input_text.alexa_say') }}
+    service_data:
+      entities: >
+        {%- set ns = namespace(ret=[]) %}
+        {%- for item in config if is_state(item.boolean,'on') %}
+          {% set ns.ret = ns.ret + [ item.player ] %}
+        {%- endfor %}
+        {{ ns.ret }}
+      announce: >
+        {{ announce | default(false) }}
+      message: >
+        {{ states('input_text.alexa_say') }}
+      user_id: "{{ user_id | default(none) }}"
   sequence:
   - service: script.notify_alexa
-    data:
-      entities: "{{ targets }}"
-      announce: "{{ should_announce }}"
-      message: "{{ message }}"
-      user_id: "{{ user_id | default(none) }}"
+    data: "{{ service_data }}"
 
 alexa_announce:
   alias: Alexa UI - Announce
@@ -45,11 +51,11 @@ alexa_announce:
       variables:
         announce: True
         user_id: >
-          {{ context.user_id  }}
+          {{ context.user_id }}
   - delay: "00:00:01"
 
 alexa_tts:
-  alias: Alexa UI - Text to Speech
+  alias: Alexa - Text to Speech
   mode: single
   sequence:
   - service: script.turn_on
@@ -59,41 +65,56 @@ alexa_tts:
       variables:
         announce: False
         user_id: >
-          {{ context.user_id  }}
+          {{ context.user_id }}
   - delay: "00:00:01"
 
 notify_alexa:
-  alias: Alexa - Text to Speech
+  alias: Notify - Alexa
   mode: parallel
   fields:
     entities:
       description: List of entities
       example: media_player.xyz
+      selector:
+        entity:
+          domain: media_player
+          multiple: true
+          integration: alexa_media
     message:
       description: Message to send
       example: "Hello"
+      selector:
+        text:
+          type: text
     announce:
       description: Annouce or TTS (True for announce, False or omit for TTS)
       example: true
+      selector:
+        boolean:
     user_id:
       description: User ID
       example: 50ff9ab2efb14c7e8e713fe8aa239043
+      selector:
+        text:
+          type: text
   variables:
     timestamp: >
       {{ (datetime | default(now())).isoformat() }}
     input: >
       {{ message | string | default('Empty') }}
+    target_person: >
+      {{ user_id | default }}
     found_person: >
-      {{ states.person | selectattr('attributes.user_id', 'eq', user_id | default) | map(attribute='entity_id') | first | default(none) }}
+      {{ states.person | selectattr('attributes.user_id', 'eq', target_person) | map(attribute='entity_id') | first | default }}
     found_user: >
-      {{ state_attr(found_person, 'friendly_name') if found_user is not none else none }}
+      {{ state_attr(found_person, 'friendly_name') if found_person is not none else none }}
     user: >
-      {{ found_user or 'Unknown' }}
+      {{ found_user or 'unknown' }}
     should_announce: >
       {{ announce is defined and announce }}
     text: >
       {%- if message is defined and message is string and message %}
-        {{ 'announcement from ' ~ user ~ ': ' if found_user is not none and should_announce else '' }}{{ message.replace('fuck',"fu'ck").replace('shit',"sh'it").replace('bitch',"b'itch").replace('cunt', "kh'unt") }}
+        {{ 'announcement from ' ~ user ~ ': ' if should_announce else '' }}{{ message.replace('fuck',"fu'ck").replace('shit',"sh'it").replace('bitch',"b'itch").replace('cunt', "kh'unt") }}
       {%- else %}none
       {%- endif %}
     method: >
@@ -119,6 +140,7 @@ notify_alexa:
       attributes: "{{ attrs | tojson }}"
 
 clear_alexa_text:
+  alias: Alexa - Clear Text Box
   sequence:
     - service: input_text.set_value
       data:

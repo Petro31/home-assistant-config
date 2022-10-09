@@ -1,15 +1,38 @@
 harmony_activity_on:
-  mode: single
+  alias: Harmony - Turn On Activity
+  mode: restart
+  description: >
+    Turns on any harmony activity and optionally any specified devices.
   fields:
     activity:
       description: (Required) The harmony activity name.
       example: Xbox One
-    remote:
-      description: (Optional) The remote for the harmony activity
-      example: remote.living_room
-    echo_through_reciever:
-      description: (Optional) Switch that turns on/off bluetooth adapter for echo
-      example: switch.echo_through_receiver
+      required: true
+      selector:
+        select:
+          options:
+          - Chromecast
+          - Playstation
+          - Roku
+          - Switch
+          - TV
+          - Xbox One
+    <<: &remote_field
+      remote:
+        description: (Optional) The remote for the harmony activity
+        example: remote.living_room
+        required: true
+        selector:
+          entity:
+            domain: binary_sensor
+            device_class: door
+    <<: &echo_field
+      echo_through_reciever:
+        description: (Optional) Switch that turns on/off bluetooth adapter for echo
+        example: switch.echo_through_receiver
+        selector:
+          entity:
+            domain: switch
   variables:
     harmony: "{{ remote | default('remote.living_room') }}"
     echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
@@ -25,11 +48,12 @@ harmony_activity_on:
       entity_id: "{{ echo }}"
 
 harmony_activity_off:
-  mode: single
+  alias: Harmony - Turn Off Activity
+  mode: restart
+  description: >
+    Turns off all harmony activities.
   fields:
-    remote:
-      description: (Optional) The remote for the harmony activity
-      example: remote.living_room
+    <<: *remote_field
   variables:
     harmony: "{{ remote | default('remote.living_room') }}"
   sequence:
@@ -40,14 +64,13 @@ harmony_activity_off:
       activity: PowerOff
 
 harmony_all_off:
+  alias: Harmony - Turn All Off
   mode: single
+  description: >
+    Turns off all harmony activities and auxilary devices.
   fields:
-    remote:
-      description: (Optional) The remote for the harmony activity
-      example: remote.living_room
-    echo_through_reciever:
-      description: (Optional) Switch that turns on/off bluetooth adapter for echo
-      example: switch.echo_through_receiver
+    <<: *remote_field
+    <<: *echo_field
   variables:
     poweroff: PowerOff
     harmony: "{{ remote | default('remote.living_room') }}"
@@ -64,17 +87,39 @@ harmony_all_off:
       entity_id: "{{ echo }}"
 
 roku_source_on:
+  alias: Harmony - Turn On Roku Activity
   mode: single
+  description: >
+    Turns on the harmony roku activity and opens the selected application.
   fields:
     source:
       description: (Required) The source to select on the roku
       example: Netflix
+      required: true
+      selector:
+        select:
+          options:
+          - Home
+          - Disney Plus
+          - HBO Max
+          - Hulu
+          - Netflix
+          - Peacock TV
+          - Plex - Free Movies & TV
+          - Prime Video
+          - Redbox.
+          - Roku Media Player
+          - The Roku Channel
+          - Vudu Movie & TV Store
+          - YouTube
     roku:
       description: (Optional) The Roku media_player.
       example: media_player.roku_living_room
-    echo_through_reciever:
-      description: (Optional) Switch that turns on/off bluetooth adapter for echo
-      example: switch.echo_through_receiver
+      selector:
+        entity:
+          domain: media_player
+          integration: roku
+    <<: *echo_field
   variables:
     switch: switch.roku
     media_player: "{{ roku | default('media_player.roku_living_room') }}"
@@ -100,11 +145,16 @@ roku_source_on:
       source: "{{ source }}"
 
 power_on:
+  alias: Power - Turn On Any Entity
   mode: parallel
+  description: >
+    Turns off any entity that can turn on, if they are off.
   fields: &power_fields
     entity:
       description: (Required) The entity in question
       example: media_player.yamaha_rx_v6a
+      selector:
+        entity:
   variables:
     state: 'off'
     service: "{{ entity.split('.')[0] }}.turn_on"
@@ -119,7 +169,10 @@ power_on:
           entity_id: "{{ entity }}"
 
 power_off:
+  alias: Power - Turn Off Any Entity
   mode: parallel
+  description: >
+    Turns off any entity that can turn off, if they are on.
   fields: *power_fields
   variables:
     state: 'on'
@@ -127,18 +180,36 @@ power_off:
   sequence: *power_sequence
 
 media_player_on:
+  alias: Power - Turn On Any Media Player and Set Volume
   mode: single
-  fields: &media_player_fields
-    media_player:
-      description: (Required) The media_player.
-      example: media_player.yamaha_rx_v6a
-    source:
-      description: (Required) The source to select
-      example: Echo
+  description: >
+    Turns on any media player to a desired source and sets the volume to 0.7.
+  fields: 
+    <<: &media_player_field
+      media_player:
+        description: (Required) The media_player.
+        example: media_player.yamaha_rx_v6a
+        required: true
+        selector:
+          entity:
+            domain: media_player
+    <<: &source_field
+      source:
+        description: (Required) The source to select
+        required: true
+        example: Echo
+        selector:
+          text:
+            type: text
     volume:
       description: (Required) The volume level
       example: 0.7
-      
+      selector:
+        number:
+          min: 0.0
+          max: 1.25
+          step: 0.05
+          unit_of_measurement: Volume
   sequence:
   - service: script.power_on
     data:
@@ -167,15 +238,22 @@ media_player_on:
           source: "{{ source }}"
 
 media_player_off:
+  alias: Power - Turn Off Any Media Player
   mode: single
-  fields: *media_player_fields
+  description: >
+    Turns off any media player that is on.
+  fields: 
+    <<: *media_player_field
   sequence:
   - service: script.power_off
     data:
       entity: "{{ media_player }}"
 
 echo_through_receiver_on:
+  alias: Living Room Streaming - Echo at 30db.
   mode: single
+  description: >
+    Streams from an echo on all zones and sets volume to -30db.
   sequence:
   - service: script.power_on
     data:
@@ -194,7 +272,10 @@ echo_through_receiver_on:
       source: audio3
 
 airplay_through_receiver_on:
+  alias: Living Room Streaming - Airplay
   mode: single
+  description: >
+    Streams airplay on all zones and sets volume to -30db.
   sequence:
   - service: script.media_player_on
     data:
@@ -209,7 +290,10 @@ airplay_through_receiver_on:
       source: airplay
 
 echo_through_receiver_off:
+  alias: Living Room Streaming - All Off
   mode: single
+  description: >
+    Turns off all streaming.
   sequence:
 
   # Turns off audio one but does not turn off the reciever.
@@ -230,20 +314,27 @@ echo_through_receiver_off:
       entity: switch.floating_outlet_switch
 
 echo_through_media_player:
+  alias: Basement Streaming - Any
   mode: single
+  description: >
+    Turns on a stream through the basement receiver.
   fields: 
     switch:
       description: (Required) The bluetooth switch
       example: switch.basement_bluetooth
-    media_player:
-      description: (Required) The list of media players
-      example: media_player.yamaha_rx_v6a
+      required: true
+      selector:
+        entity:
+          domain: switch
+    <<: *media_player_field
     desired_state: 
-      description: (Required) The list of media players
+      description: (Required) The target state for the script
       example: 'on'
-    source:
-      description: (Required) The desired source
-      example: Echo
+      required: true
+      selector:
+        text:
+          type: text
+    <<: *source_field
   variables:
     players: >
       {% if media_player is string %}

@@ -1,80 +1,134 @@
 # These automations are for the ability to restart the script & duration over again.
 
-notify_count_test_door: &door_count_script
-  mode: restart
-  fields:
-    duration:
-      description: Duration that we have to wait before sending the notification
-      example: 60
-    door_name:
-      description: Door that caused the notification
-      example: "Main Door"
-    count: 
-      description: Door open count.
-      example: 1
-    count_timestamp:
-      description: Timestamp when the door was first opened.
-      example: '2021-04-25T17:56:06.448826+00:00'
-  sequence:
+notify_count_test_door: 
+  alias: Notify - Test Door Count
+  <<: &door_count_script
+    mode: restart
+    fields:
+      duration:
+        description: Duration that we have to wait before sending the notification
+        example: 60
+        selector:
+          number:
+            min: 0
+            max: 600
+            unit_of_measurement: seconds
+      <<: &door_fields
+        door_name:
+          description: Door that caused the notification
+          example: "Main Door"
+          selector:
+            text:
+              type: text
+        count: 
+          description: Door open count.
+          example: 1
+          selector:
+            number:
+              min: 0
+              max: 600
+              unit_of_measurement: count
+        count_timestamp:
+          description: Timestamp when the door was first opened.
+          example: '2021-04-25T17:56:06.448826+00:00'
+          selector:
+            datetime:
+    variables:
+      wait_duration: "{{ duration }}"
+      service_data: >
+        {{ {
+          'door_name': door_name,
+          'count': count,
+          'count_timestamp': count_timestamp
+        } }}
+    sequence:
+  
+    - delay: "{{ wait_duration }}"
+  
+    - service: script.notify_count_base
+      data: "{{ service_data }}"
 
-  - delay: "{{ duration }}"
+notify_count_main_door: 
+  alias: Notify - Main Door Count
+  <<: *door_count_script
 
-  # passes door_name, count, count_timestamp, and notify to the base door notification.
+notify_count_garage_entry_door:
+  alias: Notify - Garage Entry Door Count
+  <<: *door_count_script
 
-  - service: script.notify_count_base
-    data:
-      door_name: "{{ door_name }}"
-      count: "{{ count }}"
-      count_timestamp: "{{ count_timestamp }}"
-
-notify_count_main_door: *door_count_script
-notify_count_garage_entry_door: *door_count_script
-notify_count_sliding_door: *door_count_script
-notify_count_garage_door_tilt: *door_count_script
-notify_count_back_garage_door_tilt: *door_count_script
+notify_count_sliding_door:
+  alias: Notify - Sliding Door Count
+  <<: *door_count_script
+  
+notify_count_garage_door_tilt:
+  alias: Notify - Garage Door Count
+  <<: *door_count_script
+  
+notify_count_back_garage_door_tilt:
+  alias: Notify - Rear Garage Door Count
+  <<: *door_count_script
+  
 
 # These automations are for the ability to restart the script & duration over again.
 
-resume_input_boolean_test_switch: &resume_scene_after_duration
-  mode: restart
-  fields:
-    duration:
-      description: Duration that we have to wait before sending the notification
-      example: 60
-    scene_id:
-      description: Id of the scene
-      example: scene_a_or_b
-  sequence:
+resume_input_boolean_test_switch:
+  alias: Illuminate Door - Resume Test Switch 1
+  <<: &resume_scene_after_duration
+    mode: restart
+    fields:
+      duration:
+        description: Duration that we have to wait before sending the notification
+        example: 60
+        selector:
+          number:
+            min: 0
+            max: 600
+            unit_of_measurement: seconds
+      scene_id:
+        description: Id of the scene
+        example: scene_a_or_b
+        selector:
+          text:
+            type: text
+    variables:
+      wait_duration: "{{ duration }}"
+      target: scene.{{ scene_id }}
+    sequence:
+  
+    - delay: "{{ wait_duration }}"
+  
+    - service: scene.turn_on
+      target:
+        entity_id: "{{ target }}"
 
-  - delay: "{{ duration }}"
+resume_input_boolean_test_switch_2: 
+  alias: Illuminate Door - Resume Test Switch 2
+  <<: *resume_scene_after_duration
 
-  - service: scene.turn_on
-    target:
-      entity_id: scene.{{ scene_id }}
+resume_switch_foyer:
+  alias: Illuminate Door - Resume Foyer Switch
+  <<: *resume_scene_after_duration
 
-resume_input_boolean_test_switch_2: *resume_scene_after_duration
-resume_switch_foyer: *resume_scene_after_duration
-resume_switch_garage_entry: *resume_scene_after_duration
-resume_switch_garage_cans: *resume_scene_after_duration
-resume_light_dining_room_chandelier: *resume_scene_after_duration
+resume_switch_garage_entry:
+  alias: Illuminate Door - Resume Garage Entry Switch
+  <<: *resume_scene_after_duration
+
+resume_switch_garage_cans:
+  alias: Illuminate Door - Resume Garage Bays Switch
+  <<: *resume_scene_after_duration
+
+resume_light_dining_room_chandelier:
+  alias: Illuminate Door - Resume Dining Room Chandelier
+  <<: *resume_scene_after_duration
 
 notify_count_base:
-  fields:
-    door_name:
-      description: Door that caused the notification
-      example: "Main Door"
-    count: 
-      description: Door open count.
-      example: 1
-    count_timestamp:
-      description: Timestamp when the door was first opened.
-      example: '2021-04-25T17:56:06.448826+00:00'
+  alias: Notify - Door Count
+  fields: *door_fields
   variables:
-    debug: >
-      {{ debug | default(false) }}
     duration: >
-      {%- set count_datetime = count_timestamp | default | as_datetime or now() %}
-      {%- set up_time = (now()-count_datetime).seconds %}
+      {%- set n = now() %}
+      {%- set dt = count_timestamp | default | as_datetime or n %}
+      {%- set up_time = (n - dt | as_local).seconds %}
 
       {%- macro phrase(name, divisor, mod=None) %}
         {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
@@ -87,64 +141,71 @@ notify_count_base:
                  phrase('second', 1, 60) 
              ] | select('!=','') | list %}
                     
-      {{ values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first }}
+      {{ values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first | default }}
     message: >
       The {{ door_name }} was opened {{ count }} time{{'s' if count > 1 else ''}} over the past {{ duration }}.
   sequence:
 
-  - choose:
-    - conditions: "{{ debug }}"
-      sequence:
-      - service: script.debug_script_variables
-        data:
-          script_variables:
-            door_name: "{{ door_name }}"
-            count: "{{ count }}"
-            count_timestamp: "{{ count_timestamp }}"
-
   - service: script.notify
     data:
-      title: "{{ door_name }} Open Tally"
       message: "{{ message }}"
 
 notify_if_ajar:
+  alias: Notify - Door Ajar
   mode: parallel
   fields:
     door:
       description: Entity Id for the door
       example: binary_sensor.main_door
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
     duration:
       description: Duration that we have to wait before sending the notification
       example: 60
+      selector:
+        number:
+          min: 0
+          max: 600
+          unit_of_measurement: seconds
     door_name:
       description: Door that caused the notification
       example: "Main Door"
+      selector:
+        text:
+          type: text
     timestamp:
       description: Timestamp when the door was first opened.
       example: '2021-04-25T17:56:06.448826+00:00'
+      selector:
+        datetime:
+  variables:
+    timeout: "{{ duration | timestamp_custom('%H:%M:%S', false, '00:01:00') }}"
+    message: >
+      {%- set up_time = duration %}
+
+      {%- macro phrase(name, divisor, mod=None) %}
+        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
+        {%- set end = 's' if value > 1 else '' %}
+        {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
+      {%- endmacro %}
+      
+      {%- set values = [ 
+                 phrase('minute', 60, 604800), 
+                 phrase('second', 1, 60) 
+             ] | select('!=','') | list %}
+                    
+      {% set span = values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first %}
+      {{ door_name }} has been open for {{ span }}!
+
   sequence:
   - wait_template: "{{ is_state(door, 'off') }}"
-    timeout: "{{ duration | timestamp_custom('%H:%M:%S', false, '00:01:00') }}"
+    timeout: "{{ timeout }}"
   - condition: template
     value_template: >
       {%- set ts = timestamp | default | as_datetime or now() %}
       {{ (now() - ts).seconds >= duration }}
   - service: script.notify
     data:
-      title: "{{ door_name }} Door Ajar!"
-      message: >
-        {%- set up_time = duration %}
-
-        {%- macro phrase(name, divisor, mod=None) %}
-          {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
-          {%- set end = 's' if value > 1 else '' %}
-          {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
-        {%- endmacro %}
-        
-        {%- set values = [ 
-                   phrase('minute', 60, 604800), 
-                   phrase('second', 1, 60) 
-               ] | select('!=','') | list %}
-                      
-        {% set span = values[:-1] | join(', ') ~ ' and ' ~ values[-1] if values | length > 1 else values | first %}
-        {{ door_name }} has been open for {{ span }}!
+      message: "{{ message }}"

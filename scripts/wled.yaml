@@ -1,0 +1,77 @@
+wled_cabinets:
+  alias: Wled - Cabinets
+  mode: parallel
+  fields:
+    wled: &wled_light_field
+      description: (Required) The wled light.
+      example: light.wled
+      required: true
+      selector:
+        entity:
+          domain: light
+          integration: wled
+    to_state: &to_state_field
+      description: The desired state
+      example: 'on'
+      required: True
+      selector:
+        state:
+          entity_id: light.deck_wled_1
+  variables:
+    to_on:
+      brightness: 217
+      rgbw_color: [ 255, 199, 125, 0 ]
+      transition: 0
+    to_off:
+      transition: 0
+    service: light.turn_{{ to_state }}
+    service_data: "{{ to_on if to_state == 'on' else to_off }}"
+  sequence:
+  - condition: template
+    value_template: "{{ to_state in ['on', 'off'] }}"
+
+  - service: "{{ service }}"
+    target:
+      entity_id: "{{ wled }}"
+    data: "{{ service_data }}"
+
+wled_master_slave:
+  alias: Wled - Master/Slave
+  mode: parallel
+  fields:
+    master: *wled_light_field
+    slave: *wled_light_field
+    to_state: *to_state_field
+  variables:
+    common: "{{ master.split('_')[:-1] | join('_') }}"
+    to_on:
+      brightness: 217
+      rgbw_color: [ 255, 199, 125, 0 ]
+      transition: 0
+    to_off:
+      transition: 0
+    service: light.turn_{{ to_state }}
+    service_data: "{{ to_on if to_state == 'on' else to_off }}"
+    opposite_state: "{{ 'off' if to_state == 'on' else 'on' }}"
+  sequence:
+  - condition: template
+    value_template: "{{ to_state in ['on', 'off'] }}"
+
+  - service: "{{ service }}"
+    target:
+      entity_id: "{{ common }}"
+    data: "{{ service_data }}"
+
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ is_state(master, opposite_state) }}"
+      sequence:
+      - service: "{{ service }}"
+        target:
+          entity_id: "{{ master }}"
+
+  - service: "{{ service }}"
+    target:
+      entity_id: "{{ slave }}"
+    data: "{{ service_data }}"

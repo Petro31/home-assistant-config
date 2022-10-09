@@ -1,12 +1,28 @@
 cast_workout_video:
+  alias: Cast - Workout Video
   mode: single
   fields:
     workout:
       description: (Required) Name of the workout.
       example: Core
+      required: true
+      selector:
+        select:
+          options:
+          - Core
+          - Cardio Kickboxing
+          - Lower Body
+          - Total Body
+          - Upper Body
     chromecast:
       description: (Optional) The Roku media_player.
       example: media_player.chromecast
+      required: true
+      selector:
+        entity:
+          domain: media_player
+          multiple: true
+          integration: cast
   variables:
     media_player: "{{ chromecast | default('media_player.chromecast') }}"
     title: >
@@ -34,6 +50,7 @@ cast_workout_video:
       media_content_type: movie
 
 stop_casting:
+  alias: Cast - Stop Casting
   mode: single
   sequence:
   - service: media_player.turn_off

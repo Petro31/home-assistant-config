@@ -1,161 +1,193 @@
 # All remote scripts for the lovelace remote.
 
 remote_living_room_rewind:
+  alias: Living Room Remote - Rewind
   sequence:
   - event: remote_living_room
     event_data: {'command': 'Rewind'}
 
 remote_living_room_play:
+  alias: Living Room Remote - Play
   sequence:
   - event: remote_living_room
     event_data: {'command': 'Play'}
 
 remote_living_room_pause:
+  alias: Living Room Remote - Pause
   sequence:
   - event: remote_living_room
     event_data: {'command': 'Pause'}
 
 remote_living_room_fastforward:
+  alias: Living Room Remote - FastForward
   sequence:
   - event: remote_living_room
     event_data: {'command': 'FastForward'}
 
 remote_living_room_directionup:
+  alias: Living Room Remote - DirectionUp
   sequence:
   - event: remote_living_room
     event_data: {'command': 'DirectionUp'}
 
 remote_living_room_directionleft:
+  alias: Living Room Remote - DirectionLeft
   sequence:
   - event: remote_living_room
     event_data: {'command': 'DirectionLeft'}
 
 remote_living_room_ok:
+  alias: Living Room Remote - OK
   sequence:
   - event: remote_living_room
     event_data: {'command': 'OK'}
 
 remote_living_room_directionright:
+  alias: Living Room Remote - DirectionRight
   sequence:
   - event: remote_living_room
     event_data: {'command': 'DirectionRight'}
 
 remote_living_room_directiondown:
+  alias: Living Room Remote - DirectionDown
   sequence:
   - event: remote_living_room
     event_data: {'command': 'DirectionDown'}
 
 remote_living_room_back:
+  alias: Living Room Remote - Back
   sequence:
   - event: remote_living_room
     event_data: {'command': 'Back'}
 
 remote_living_room_channelup:
+  alias: Living Room Remote - ChannelUp
   sequence:
   - event: remote_living_room
     event_data: {'command': 'ChannelUp'}
 
 remote_living_room_channeldown:
+  alias: Living Room Remote - ChannelDown
   sequence:
   - event: remote_living_room
     event_data: {'command': 'ChannelDown'}
 
 remote_living_room_channelprev:
+  alias: Living Room Remote - ChannelPrev
   sequence:
   - event: remote_living_room
     event_data: {'command': 'ChannelPrev'}
 
 remote_living_room_0:
+  alias: Living Room Remote - 0
   sequence:
   - event: remote_living_room
     event_data: {'command': '0'}
 
 remote_living_room_1:
+  alias: Living Room Remote - 1
   sequence:
   - event: remote_living_room
     event_data: {'command': '1'}
 
 remote_living_room_2:
+  alias: Living Room Remote - 2
   sequence:
   - event: remote_living_room
     event_data: {'command': '2'}
 
 remote_living_room_3:
+  alias: Living Room Remote - 3
   sequence:
   - event: remote_living_room
     event_data: {'command': '3'}
 
 remote_living_room_4:
+  alias: Living Room Remote - 4
   sequence:
   - event: remote_living_room
     event_data: {'command': '4'}
 
 remote_living_room_5:
+  alias: Living Room Remote - 5
   sequence:
   - event: remote_living_room
     event_data: {'command': '5'}
 
 remote_living_room_6:
+  alias: Living Room Remote - 6
   sequence:
   - event: remote_living_room
     event_data: {'command': '6'}
 
 remote_living_room_7:
+  alias: Living Room Remote - 7
   sequence:
   - event: remote_living_room
     event_data: {'command': '7'}
 
 remote_living_room_8:
+  alias: Living Room Remote - 8
   sequence:
   - event: remote_living_room
     event_data: {'command': '8'}
 
 remote_living_room_9:
+  alias: Living Room Remote - 9
   sequence:
   - event: remote_living_room
     event_data: {'command': '9'}
 
 remote_living_room_period:
+  alias: Living Room Remote - Period
   sequence:
   - event: remote_living_room
     event_data: {'command': 'Period'}
 
 remote_living_room_homebutton:
+  alias: Living Room Remote - HomeButton
   sequence:
   - event: remote_living_room
     event_data: {'command': 'HomeButton'}
 
 remote_living_room_menubutton:
+  alias: Living Room Remote - MenuButton
   sequence:
   - event: remote_living_room
     event_data: {'command': 'MenuButton'}
 
 remote_living_room_lowerleft:
+  alias: Living Room Remote - LowerLeft
   sequence:
   - event: remote_living_room
     event_data: {'command': 'LowerLeft'}
 
 remote_living_room_lowerright:
+  alias: Living Room Remote - LowerRight
   sequence:
   - event: remote_living_room
     event_data: {'command': 'LowerRight'}
 
 remote_living_room_bottombutton:
+  alias: Living Room Remote - BottomButton
   sequence:
   - event: remote_living_room
     event_data: {'command': 'BottomButton'}
 
 remote_living_room_rightbutton:
+  alias: Living Room Remote - RightButton
   sequence:
   - event: remote_living_room
     event_data: {'command': 'RightButton'}
 
 remote_living_room_topbutton:
+  alias: Living Room Remote - TopButton
   sequence:
   - event: remote_living_room
     event_data: {'command': 'TopButton'}
 
 remote_living_room_leftbutton:
+  alias: Living Room Remote - LeftButton
   sequence:
   - event: remote_living_room
     event_data: {'command': 'LeftButton'}
@@ -163,24 +195,28 @@ remote_living_room_leftbutton:
 # Multizone scripts for remote
 
 multizone_volume_up:
+  alias: Multizone Controller - Volume Up
   sequence:
   - event: mz_volume_up
     event_data:
       event_id: multizone
       
 multizone_volume_down:
+  alias: Multizone Controller - Volume Down
   sequence:
   - event: mz_volume_down
     event_data:
       event_id: multizone
       
 multizone_volume_mute:
+  alias: Multizone Controller - Volume Mute
   sequence:
   - event: mz_volume_mute
     event_data:
       event_id: multizone
       
 multizone_cycle_zone:
+  alias: Multizone Controller - Cycle Zone
   sequence:
   - event: mz_cycle_zone
     event_data:

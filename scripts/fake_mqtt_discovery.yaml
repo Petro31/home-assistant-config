@@ -1,7 +1,30 @@
 mqtt_automated_states:
+  alias: Mqtt - Publish State and Attributes
   mode: parallel
-  sequence:
-  - variables: &mqtt-variables
+  fields: 
+    <<: &mqtt-fields
+      domain:
+        description: The entities domain
+        selector:
+          text:
+            type: text
+      unique_id:
+        description: The entities state
+        selector:
+          text:
+            type: text
+    state:
+      description: The entities state
+      selector:
+        text:
+          type: text
+    attributes:
+      description: The entities attributes
+      example: A dictionary {} in yaml
+      selector:
+        object:
+  variables: 
+    <<: &mqtt-variables
       root: "homeassistant"
       topic_root: >
         {%- if domain is not defined or unique_id is not defined %}
@@ -9,38 +32,46 @@ mqtt_automated_states:
         {%- else %}
           {{- [ root, domain, unique_id ] | join('/') }}
         {%- endif %}
+    service_data: >
+      {{ {
+        'topic': topic_root ~ '/state',
+        'payload': '' ~ { 'state': state, 'attributes': attributes | default({}) } | tojson,
+        'retain': retain | default('true')
+      } }}
+
+  sequence:
   - service: mqtt.publish
-    data:
-      topic: "{{ topic_root ~ '/state' }}"
-      payload: >
-        {{ { 'state': state, 'attributes': attributes | default({}) } | tojson }}
-      retain: "{{ retain | default('true') }}"
+    data: "{{ service_data }}"
 
 mqtt_automated_config:
+  alias: Mqtt - Publish Discovery
   mode: parallel
+  fields: 
+    <<: *mqtt-fields
+    device_class: 
+      description: The entities device class
+      selector:
+        text:
+          type: text
+  variables:
+    name: >
+      {{ unique_id | default('') | replace('_', ' ') | title }}
+    <<: *mqtt-variables
+    service_data: >
+      {%- set items = [
+        ( "name", name),
+        ( "unique_id", unique_id | default(none)),
+        ( "state_topic", topic_root ~ "/state"),
+        ( "value_template", "{{ value_json.state }}"),
+        ( "json_attributes_topic", topic_root ~ "/state"),
+        ( "json_attributes_template", "{{ value_json.attributes | tojson }}"),
+        ( "device_class", device_class | default(none) ),
+      ] %}
+      {% set payload = dict.from_keys(items | rejectattr('1', 'none') | list) %}
+      {{ {
+        'topic': topic_root ~ '/config',
+        'payload': '' ~ payload | tojson,
+      } }}
   sequence:
-  - variables:
-      name: >
-        {{ unique_id | replace('_', ' ') | title }}
-      <<: *mqtt-variables
-      payload: >
-        {%- set items = [
-          ( "name", name),
-          ( "unique_id", unique_id),
-          ( "state_topic", topic_root ~ "/state"),
-          ( "value_template", "{{ value_json.state }}"),
-          ( "json_attributes_topic", topic_root ~ "/state"),
-          ( "json_attributes_template", "{{ value_json.attributes | tojson }}"),
-          ( "device_class", device_class ),
-        ] %}
-        {% set ns = namespace(items=[]) %}
-        {%- for k, v in items %}
-          {%- if v is defined %}
-            {%- set ns.items = ns.items + [ '"{}": "{}"'.format(k, v) ] %}
-          {%- endif %}
-        {%- endfor %}
-        {{ ("{" ~ ns.items | join(', ') ~ "}") }}
   - service: mqtt.publish
-    data:
-      topic: "{{ topic_root ~ '/config' }}"
-      payload: "{{ payload | tojson }}"
+    data: "{{ service_data }}"

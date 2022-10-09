@@ -1,14 +1,25 @@
 sunrise_sunset:
-  alias: Sunrise Sunset Actions
+  alias: Sunrise/Sunset - Scenes
   mode: single
   fields:
     event: 
       description: Sunrise or sunset event
       example: sunrise
+      required: true
+      selector:
+        select:
+          options:
+          - label: Sunrise
+            value: sunrise
+          - label: Sunset
+            value: sunset
     scene:
       description: What Scene to run, if sunset
       example: scene.holiday_bulbs_soft_white
-      
+      selector:
+        entity:
+          domain: scene
+  
   variables:
     evt: >
       {{ event | default('invalid') }}
