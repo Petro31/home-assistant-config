@@ -72,9 +72,7 @@
   - platform: state
     entity_id: &cabinet_string_entities
     - switch.kitchen_cabinet
-    - switch.cabinet_wled_2_below
-    - switch.cabinet_wled_2_above
-    - switch.cabinet_wled_1_above
+    - switch.wled_all_cabinets
   variables:
     entities: *cabinet_string_entities
     state_list:

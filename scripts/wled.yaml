@@ -1,8 +1,15 @@
-wled_cabinets:
-  alias: Wled - Cabinets
+# THIS IS DANGEROUS, USE AT YOUR OWN RISK
+# CAUSES WLED TO CRASH WITH 13.3 (build 2208222) IF YOU 
+# CALL IT TOO QUICKLY.  I DON'T THINK WLED HANDLES
+# ASYNC WELL.  OR THE HA INTEGRATION DOESN'T HANDLE THE ASYNC
+# CALLS WELL.  OR THE REPO THAT HA USES TO INTERFACE WITH WLED
+# DOESN"T HANDLE ASYNC WELL.
+
+wled_master_segments:
+  alias: Wled - Master/Segments
   mode: parallel
   fields:
-    wled: &wled_light_field
+    master:
       description: (Required) The wled light.
       example: light.wled
       required: true
@@ -10,38 +17,22 @@ wled_cabinets:
         entity:
           domain: light
           integration: wled
-    to_state: &to_state_field
+    segments:
+      description: (Required) The wled light.
+      example: light.wled
+      required: true
+      selector:
+        entity:
+          multiple: true
+          domain: light
+          integration: wled
+    to_state: 
       description: The desired state
       example: 'on'
       required: True
       selector:
         state:
           entity_id: light.deck_wled_1
-  variables:
-    to_on:
-      brightness: 217
-      rgbw_color: [ 255, 199, 125, 0 ]
-      transition: 0
-    to_off:
-      transition: 0
-    service: light.turn_{{ to_state }}
-    service_data: "{{ to_on if to_state == 'on' else to_off }}"
-  sequence:
-  - condition: template
-    value_template: "{{ to_state in ['on', 'off'] }}"
-
-  - service: "{{ service }}"
-    target:
-      entity_id: "{{ wled }}"
-    data: "{{ service_data }}"
-
-wled_master_slave:
-  alias: Wled - Master/Slave
-  mode: parallel
-  fields:
-    master: *wled_light_field
-    slave: *wled_light_field
-    to_state: *to_state_field
   variables:
     common: "{{ master.split('_')[:-1] | join('_') }}"
     to_on:
@@ -53,13 +44,16 @@ wled_master_slave:
     service: light.turn_{{ to_state }}
     service_data: "{{ to_on if to_state == 'on' else to_off }}"
     opposite_state: "{{ 'off' if to_state == 'on' else 'on' }}"
+    paired_segments: >
+      {% set master_device = device_id('light.cabinet_wled_master') %}
+      {{ segments | select('in', device_entities(master_device)) | list }}
   sequence:
   - condition: template
-    value_template: "{{ to_state in ['on', 'off'] }}"
+    value_template: "{{ to_state in ['on', 'off'] and paired_segments | length > 0 }}"
 
   - service: "{{ service }}"
     target:
-      entity_id: "{{ common }}"
+      entity_id: "{{ paired_segments }}"
     data: "{{ service_data }}"
 
   - choose:
@@ -70,8 +64,3 @@ wled_master_slave:
       - service: "{{ service }}"
         target:
           entity_id: "{{ master }}"
-
-  - service: "{{ service }}"
-    target:
-      entity_id: "{{ slave }}"
-    data: "{{ service_data }}"
