@@ -28,7 +28,7 @@
         'sensor.master_bedroom_temperature',
         'sensor.office_temperature',
       ) %}
-      {{ temps | map(attribute='state') | map('is_number') | reject('eq', true) | list | length == 0 }}
+      {{ temps | map(attribute='state') | map('is_number') | select('eq', true) | list | length > 0 }}
     unit_of_measurement: '°F'
     attributes:
       template: temperature

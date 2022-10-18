@@ -27,7 +27,7 @@
         'sensor.master_bedroom_humidity',
         'sensor.office_humidity',
       ) %}
-      {{ temps | map(attribute='state') | map('is_number') | reject('eq', true) | list | length == 0 }}
+      {{ temps | map(attribute='state') | map('is_number') | select('eq', true) | list | length > 0 }}
     unit_of_measurement: '%'
     attributes:
       template: humidity
