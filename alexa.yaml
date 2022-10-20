@@ -12,6 +12,7 @@ smart_home:
       - fan.deck_fan_1
       - fan.deck_fan_2
       - fan.master_fixture
+      - light.all_living_room
       - light.basement_area
       - light.bonus_room_area
       - light.bonus_room_bedroom_fixture
@@ -30,9 +31,11 @@ smart_home:
       - light.garage_sconce_right_bulb
       - light.hallway
       - light.inside_area
+      - light.jims_lamp
       - light.kitchen_cans
       - light.kitchen_island
       - light.kitchen_target_area
+      - light.lindsays_lamp
       - light.living_room
       - light.main_door_left_bulb
       - light.main_door_right_bulb
@@ -44,6 +47,7 @@ smart_home:
       - light.master_closet
       - light.master_fixture
       - light.master_suite_target_area
+      - light.mikes_lamp
       - light.office_area
       - light.outside_area
       - light.passenger_door_bulb
@@ -133,6 +137,8 @@ smart_home:
       name: Deck Fan 2
     fan.master_fixture:
       name: Master Fan
+    light.all_living_room:
+      name: All Living Room Lamps
     light.basement_area:
       name: Target Basement 
     light.bonus_room_area:
@@ -167,12 +173,16 @@ smart_home:
       name: Hallway
     light.inside_area:
       name: Inside
+    light.jims_lamp:
+      name: Jims Lamp
     light.kitchen_cans:
       name: Can Lights
     light.kitchen_island:
       name: Island Lights
     light.kitchen_area:
       name: Target Kitchen
+    light.lindsays_lamp:
+      name: Lindsays Lamp
     light.living_room:
       name: Living Room Light
     light.main_door_left_bulb:
@@ -195,6 +205,8 @@ smart_home:
       name: Master Light
     light.master_suite_target_area:
       name: Target Master Suite
+    light.mikes_lamp:
+      name: Mikes Lamp
     light.office_area:
       name: Target Office
     light.outside_area:

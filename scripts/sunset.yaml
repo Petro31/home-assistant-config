@@ -23,22 +23,17 @@ sunrise_sunset:
   variables:
     evt: >
       {{ event | default('invalid') }}
-    start_scene: >
+    input_scene: >
       {{ scene | default('unknown') }}
     execute_scene: >
       {{ event == 'sunset' and start_scene not in ['unknown', 'unavailable'] }}
+    start_scene: >
+      {{ input_scene if event == 'sunset' else 'scene.sunrise_bulbs' }}
+    continue: >
+      {{ evt in ['sunset','sunrise'] and execute_scene }}
   sequence:
   - condition: template
-    value_template: "{{ evt in ['sunset','sunrise'] }}"
-  - service: light.turn_o{{ 'n' if evt == 'sunset' else 'ff' }}
-    target:
-      entity_id: light.outside_sunset
-  - condition: template
-    value_template: "{{ execute_scene }}"
-  - service: button.press
-    target:
-      entity_id: >
-        {{ state_attr('group.outside_bulbs', 'entity_id') }}
+    value_template: "{{ continue }}"
   - service: scene.turn_on
     target:
       entity_id: "{{ start_scene }}"

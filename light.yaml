@@ -234,21 +234,38 @@
       availability_template: >
         {{- expand('group.downstairs_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
       turn_on:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.downstairs_area
-          level: 255
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.downstairs_area
+            level: 255
+        - service: light.turn_on
+          target:
+            entity_id: light.all_living_room
+          data:
+            brightness: 255
       turn_off:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.downstairs_area
-          level: 0
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.downstairs_area
+            level: 0
+        - service: light.turn_off
+          target:
+            entity_id: light.all_living_room
       set_level:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.downstairs_area
-          level: >
-            {{- brightness }}
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.downstairs_area
+            level: >
+              {{- brightness }}
+        - service: light.turn_on
+          target:
+            entity_id: light.all_living_room
+          data:
+            brightness: >
+              {{- brightness }}
 
 
     #################################
@@ -506,21 +523,38 @@
       availability_template: >
         {{- expand('group.inside_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
       turn_on:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.inside_area
-          level: 255
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.inside_area
+            level: 255
+        - service: light.turn_on
+          target:
+            entity_id: light.all_living_room
+          data:
+            brightness: 255
       turn_off:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.inside_area
-          level: 0
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.inside_area
+            level: 0
+        - service: light.turn_off
+          target:
+            entity_id: light.all_living_room
       set_level:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.inside_area
-          level: >
-            {{- brightness }}
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.inside_area
+            level: >
+              {{- brightness }}
+        - service: light.turn_on
+          target:
+            entity_id: light.all_living_room
+          data:
+            brightness: >
+              {{- brightness }}
 
 
     #################################
@@ -676,21 +710,38 @@
       availability_template: >
         {{- expand('group.living_room_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
       turn_on:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.living_room_area
-          level: 255
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.living_room_area
+            level: 255
+        - service: light.turn_on
+          target:
+            entity_id: light.all_living_room
+          data:
+            brightness: 255
       turn_off:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.living_room_area
-          level: 0
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.living_room_area
+            level: 0
+        - service: light.turn_off
+          target:
+            entity_id: light.all_living_room
       set_level:
-      - service: script.zwave_multicast_group
-        data:
-          group: group.living_room_area
-          level: >
-            {{- brightness }}
+      - parallel:
+        - service: script.zwave_multicast_group
+          data:
+            group: group.living_room_area
+            level: >
+              {{- brightness }}
+        - service: light.turn_on
+          target:
+            entity_id: light.all_living_room
+          data:
+            brightness: >
+              {{- brightness }}
 
 
     #################################

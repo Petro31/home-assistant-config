@@ -85,7 +85,7 @@
 
       {%- set ns = namespace(event='unknown') %}
       {% for name, dt in events | sort(attribute='1') %}
-        {%- if dt.date() | string == now().date() | string %}
+        {%- if dt.date() | string <= now().date() | string %}
            {% set ns.event = scenes.get(name, 'soft') %}
         {%- endif %}
       {% endfor %}

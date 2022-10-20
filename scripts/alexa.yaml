@@ -93,7 +93,7 @@ notify_alexa:
         boolean:
     user_id:
       description: User ID
-      example: 50ff9ab2efb14c7e8e713fe8aa239043
+      example: 22e2ad009e2d4637994cb494afe30c8e
       selector:
         text:
           type: text
@@ -103,7 +103,7 @@ notify_alexa:
     input: >
       {{ message | string | default('Empty') }}
     target_person: >
-      {{ user_id | default }}
+      {{ user_id | default('22e2ad009e2d4637994cb494afe30c8e') }}
     found_person: >
       {{ states.person | selectattr('attributes.user_id', 'eq', target_person) | map(attribute='entity_id') | first | default }}
     found_user: >

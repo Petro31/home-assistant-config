@@ -221,3 +221,7 @@ home-assistant.log.fault
 D36DOD~I
 
 deleted_statistics.2021-12-19T12:33:16.256064\+00:00.json
+
+zigbee2mqtt/
+
+*.mp3

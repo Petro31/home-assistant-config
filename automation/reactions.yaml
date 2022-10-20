@@ -1,0 +1,101 @@
+- alias: Reaction - Keep Sunset Switches On.
+  id: reaction_keep_sunset_switches_on
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.passenger_sconce
+    - switch.sconces_garage
+    - switch.sconces_main_entrance
+    to: 'off'
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+  condition:
+  - condition: template
+    value_template: "{{ continue }}"
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: "{{ trigger.entity_id }}"
+  - service: script.notify
+    data:
+      title: "Sunset Switch Turned Off"
+      message: >
+        {{ state_attr(trigger.entity_id, 'friendly_name') }} door sconce switch was turned off, turning back on.
+  - service: script.notify_alexa
+    data:
+      message: Jim counter action initiative in affect. Turning on {{ state_attr(trigger.entity_id, 'friendly_name') }} door sconces.
+      announce: False
+      entities: media_player.living_room_echo_dot
+  - condition: sun
+    after: sunrise
+    before: sunset
+  - delay:
+      seconds: 5
+  - service: light.turn_off
+    target:
+      entity_id: light.outdoor_bulbs
+
+- alias: Reaction - Keep Sunset Living Room Switch On.
+  id: reaction_keep_living_room_on
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id:
+    - light.living_room_lamps_switch
+    to: 'off'
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+  condition:
+  - condition: template
+    value_template: "{{ continue }}"
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: "{{ trigger.entity_id }}"
+  - service: script.notify
+    data:
+      message: >
+        {{ state_attr(trigger.entity_id, 'friendly_name').capitalize() }} was turned off, turning back on.
+  - service: script.notify_alexa
+    data:
+      message: Jim counter action initiative in affect. Turning on {{ state_attr(trigger.entity_id, 'friendly_name') }}.  
+      announce: False
+      entities: media_player.living_room_echo_dot
+
+- alias: Reaction - Living Room Lamp Availability.
+  id: reaction_keep_living_room_lamps_available
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id: &lamp_lights
+    - light.jims_lamp
+    - light.mikes_lamp
+    - light.lindsays_lamp
+    to: 'unavailable'
+  variables:
+    triggering: >
+      {{ trigger.entity_id }}
+    entities: *lamp_lights
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    only_triggering_light: >
+      {{ expand(entities) | rejectattr('entity_id', 'eq', triggering) | map(attribute='state') | select('eq', 'unavailable') | list | length == 0 }}
+    name: >
+      {{ state_attr(triggering, 'friendly_name') or 'unknown' }}
+  condition:
+  - condition: template
+    value_template: "{{ continue and only_triggering_light }}"
+  action:
+  - service: script.notify
+    data:
+      message: >
+        {{ name.capitalize() }} went unavailable!  Notifying living room.
+  - service: script.notify_alexa
+    data:
+      message: >
+        Please do not turn off living room lamps, turn the lamp back on.  If you want to turn on this lamp in the future, say: Turn on {{ name }}.  
+      announce: False
+      entities: media_player.living_room_echo_dot
