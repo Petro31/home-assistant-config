@@ -28,6 +28,14 @@
       at: '15:30:00'
     - platform: time
       at: '19:00:00'
+  variables:
+    recycling: >
+      {% set recycling_origin = strptime(states('input_datetime.recycling'), '%Y-%m-%d') | as_local %}
+      {% set tomorrow = (today_at() + timedelta(days=1)) %}
+      {% set days = (tomorrow - recycling_origin).days %}
+      {{ (days // 7) % 2 == 0 }}
+    what: >
+      Trash {{ 'and Recycling ' if recycling else '' }}day tomorrow!
   condition:
     - condition: time
       weekday:
@@ -35,7 +43,7 @@
   action:
     - service: script.notify
       data:
-        message: "Trash day tomorrow!"
+        message: "{{ what }}"
         
 - alias: Timed Event - Change Filters Message
   id: change_filters_message
