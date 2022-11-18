@@ -26,7 +26,7 @@ sunrise_sunset:
     input_scene: >
       {{ scene | default('unknown') }}
     execute_scene: >
-      {{ event == 'sunset' and start_scene not in ['unknown', 'unavailable'] }}
+      {{ event in ['sunset', 'sunrise'] and start_scene not in ['unknown', 'unavailable'] }}
     start_scene: >
       {{ input_scene if event == 'sunset' else 'scene.sunrise_bulbs' }}
     continue: >
