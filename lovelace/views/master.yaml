@@ -168,8 +168,7 @@
       "fan.deck_fan_2",
       "switch.deck_walkway",
       "switch.deck_mood_lighting",
-      "light.deck_wled_1",
-      "light.deck_wled_2",
+      "light.deck_wled_master",
       "sensor.deck_temperature",
       "sensor.deck_humidity",
     ],
@@ -331,7 +330,11 @@
       { 'type': '../templates/headers/navigator.yaml', },  
     ],
     'entities': [
+      'light.lindsays_lamp',
+      'light.mikes_lamp',
+      'light.jims_lamp',
       'light.living_room',
+      'light.all_living_room',
       'switch.living_room_window',
       'climate.living_room_thermostat',
       'sensor.living_room_temperature',
@@ -460,6 +463,7 @@
     ],
     'entities': [
       "switch.outside_porch",
+      "switch.doorbell_chime_active"
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -694,22 +698,38 @@
 
 {%- set holidays = [
   {
-    'entity': 'switch.kitchen_outlet_above_microwave',
-    'icon': 'mdi:home-group', 
-    'name': 'Holiday Houses'
+    'type':  '../templates/buttons/toggle2.yaml',
+    'entity': 'light.christmas_blinking_houses',
+    'icon': 'mdi:home-group',
   },{
+    'type':  '../templates/buttons/toggle2.yaml',
+    'entity': 'light.christmas_flashing_houses',
+    'icon': 'mdi:home-group',
+  },{
+    'type':  '../templates/buttons/toggle2.yaml',
+    'entity': 'light.christmas_red_and_green_houses',
+    'icon': 'mdi:home-group',
+  },{
+    'type':  '../templates/buttons/toggle2.yaml',
+    'entity': 'light.christmas_town_is_on_fire',
+    'icon': 'mdi:home-group',
+  },{
+    'type':  '../templates/buttons/toggle2.yaml',
     'entity': 'switch.living_room_window',
     'icon': 'mdi:pine-tree', 
     'name': 'Christmas Tree'
   },{
+    'type':  '../templates/buttons/toggle2.yaml',
     'entity': 'switch.game_room_window',
     'icon': 'mdi:pine-tree', 
     'name': 'Large Window Tree'
   },{
+    'type':  '../templates/buttons/toggle2.yaml',
     'entity': 'switch.double_plug_left',
     'icon': 'fas:holly-berry', 
     'name': 'Hutch Lights'
   },{
+    'type':  '../templates/buttons/toggle2.yaml',
     'entity': 'switch.floating_double_plug_left',
     'icon': 'mdi:pine-tree', 
     'name': 'Small Window Tree'
@@ -847,14 +867,7 @@
     'image': '/local/images/plants.png',
     'view': '../views/plants.yaml',
   },{
-    'name': 'Mood Lighting',
-    'icon': 'mdi:glass-wine',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'type': '../templates/summary/overview.yaml',
-    'image': '/local/images/wine.png',
-    'view': '../views/mood_lighting.yaml',
-  },{
-    'name': 'Holiday',
+    'name': 'Christmas',
     'icon': 'mdi:string-lights',
     'image': '/local/images/tree.png',
     'header': [ 

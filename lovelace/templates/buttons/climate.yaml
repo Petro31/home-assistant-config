@@ -83,7 +83,7 @@ styles:
     - pointer-events: none
     info:
     - align-self: start
-    - width: 40%
+    - width: 47%
     - z-index: 5
     add:
     - justify-self: start
