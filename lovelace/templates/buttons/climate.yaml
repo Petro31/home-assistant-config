@@ -132,8 +132,11 @@ custom_fields:
     [[[
       var entity_id = (entity === undefined) ? 'Invalid Entity' : entity.entity_id;
       var temperature = (entity === undefined) ? unknown : entity.attributes.temperature;
+      var target_high = (entity === undefined) ? unknown : entity.attributes.target_temp_high;
+      var target_low = (entity === undefined) ? unknown : entity.attributes.target_temp_low;
+      var reading = (temperature) ? temperature : `${target_high}/${target_low}`;
 
-      // console.log(`${entity_id}: ${temperature}`);
+      // console.log(`${entity_id}: ${reading}`);
 
       // consts
       const length = 50;
@@ -142,7 +145,7 @@ custom_fields:
       return `
           <svg viewBox="0 0 50 50">
             <circle cx="25" cy="25" r="${radius}" fill="{{ color }}" />
-            <text x="50%" y="54%" fill="var(--paper-card-background-color)" font-weight="bold" font-size="14" text-anchor="middle" alignment-baseline="middle">${temperature}<tspan font-size="10" font-weight="normal" >${units}</tspan>
+            <text x="50%" y="54%" fill="var(--paper-card-background-color)" font-weight="bold" font-size="14" text-anchor="middle" alignment-baseline="middle">${reading}<tspan font-size="10" font-weight="normal" >${units}</tspan>
             </text>
           </svg>
           `;
