@@ -18,7 +18,6 @@
     name: Seasonal Lights
     state: >
       {%- macro mwd(month, week, day) -%}
-      {%- set month, week, day = 11, 4, 3 %}
       {%- set today = today_at() %}
       {%- set temp = today.replace(month=month, day=1) %}
       {%- set adjust = (day - temp.weekday()) % 7 %}
@@ -30,6 +29,15 @@
       {{ today_at().replace(month=month, day=day).isoformat() }}
       {%- endmacro %}
       
+      {%- macro lastdayinmonth(month, day) -%}
+      {%- set today = today_at() %}
+      {%- set temp = today.replace(month=month, day=1) + timedelta(days=31) %}
+      {%- set temp = temp.replace(day=1) - timedelta(days=7) %}
+      {%- set adjust = (day - temp.weekday()) % 7 %}
+      {%- set temp = temp + timedelta(days=adjust) -%}
+      {{ (temp).isoformat() }}
+      {%- endmacro %}
+
       {%- macro easter() %}
       {%- set year = now().year %}
       {%- set special_years = ['1954', '1981', '2049', '2076'] %}
@@ -51,6 +59,7 @@
       {%- set veterans = md(11,11) | as_datetime %}
       {%- set july4 = md(7,4) | as_datetime %}
       {%- set stpaddy = md(3,17) | as_datetime %}
+      {%- set memorial_day = lastdayinmonth(5,0) | as_datetime %}
 
       {%- set scenes = dict(
         christmas="scene.holiday_bulbs_christmas",
@@ -62,6 +71,7 @@
         stpaddy="scene.holiday_bulbs_st_patricks_day",
         thanksgiving="scene.holiday_bulbs_thanksgiving",
         valentines="scene.holiday_bulbs_valentines_day",
+        memorial_day="scene.holiday_bulbs_patriotic",
       ) %}
 
       {%- set events = [
@@ -72,7 +82,7 @@
         ('christmas', md(12,1) | as_datetime ),
         ('soft', md(1,7) | as_datetime ),
         ('halloween', md(10,8) | as_datetime ),
-        ('soft', md(10,31) | as_datetime ),
+        ('soft', md(11,1) | as_datetime ),
         ('patriotic', veterans - timedelta(days=1) ),
         ('soft', veterans + timedelta(days=1) ),
         ('patriotic', july4 - timedelta(days=6) ),
@@ -81,6 +91,8 @@
         ('soft', stpaddy + timedelta(days=1) ),
         ('valentines', valentines - timedelta(days=6) ),
         ('soft', valentines + timedelta(days=1) ),
+        ('memorial_day', memorial_day - timedelta(days=1)),
+        ('soft', memorial_day + timedelta(days=1) ),
       ] %}
 
       {%- set ns = namespace(event='unknown') %}
