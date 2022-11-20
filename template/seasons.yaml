@@ -13,6 +13,15 @@
     attributes:
       template: seasons
 
+  - unique_id: indoor_christmas
+    name: Indoor Christmas
+    device_class: light
+    state: >
+      {% set t = now() %}
+      {% set s = today_at(states('input_datetime.indoor_christmas_lights_start')) %}
+      {% set e = today_at(states('input_datetime.indoor_christmas_lights_end')) %}
+      {{ s <= t <= e and is_state('binary_sensor.christmas_season', 'on') }}
+
 - sensor:
   - unique_id: seasonal_lights
     name: Seasonal Lights

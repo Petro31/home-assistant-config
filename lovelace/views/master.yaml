@@ -296,7 +296,6 @@
       'light.kitchen_cans',
       'switch.kitchen_cabinet',
       'switch.kitchen_pantry',
-      'switch.lzw45_mood_lighting',
       'sensor.kitchen_temperature',
       'sensor.kitchen_humidity',
     ],
@@ -699,40 +698,24 @@
 {%- set holidays = [
   {
     'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'light.christmas_blinking_houses',
-    'icon': 'mdi:home-group',
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'light.christmas_flashing_houses',
-    'icon': 'mdi:home-group',
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'light.christmas_red_and_green_houses',
-    'icon': 'mdi:home-group',
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'light.christmas_town_is_on_fire',
-    'icon': 'mdi:home-group',
+    'entity': 'switch.indoor_christmas',
+    'icon': 'mdi:string-lights', 
+    'name': 'Festive Lights'
   },{
     'type':  '../templates/buttons/toggle2.yaml',
     'entity': 'switch.living_room_window',
     'icon': 'mdi:pine-tree', 
     'name': 'Christmas Tree'
   },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.game_room_window',
+    'type':  '../templates/buttons/wled_select.yaml',
+    'entity': 'select.front_tree_preset',
     'icon': 'mdi:pine-tree', 
-    'name': 'Large Window Tree'
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.double_plug_left',
-    'icon': 'fas:holly-berry', 
-    'name': 'Hutch Lights'
+    'name': 'Game Room Tree'
   },{
     'type':  '../templates/buttons/toggle2.yaml',
     'entity': 'switch.floating_double_plug_left',
     'icon': 'mdi:pine-tree', 
-    'name': 'Small Window Tree'
+    'name': 'Bedroom Tree'
   },
 ]%}
 
@@ -899,6 +882,13 @@
       {'domain': ['binary_sensor', 'sensor'], 'state': ['on', '1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20'], 'icon': 'mdi:battery-10', 'units': 'low' },
       {'domain': ['binary_sensor', 'sensor'], 'state': ['unavailable', 'unknown', '0'], 'icon': 'mdi:battery-alert', 'units': 'dead' },
     ],
+  },{
+    'name': 'Mood Lighting',
+    'icon': 'mdi:glass-wine',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'type': '../templates/summary/overview.yaml',
+    'image': '/local/images/wine.png',
+    'view': '../views/mood_lighting.yaml',
   },
 ] %}
 

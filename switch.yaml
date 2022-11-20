@@ -902,30 +902,39 @@
       wled_all_cabinets:
         unique_id: wled_all_cabinets
         value_template: >
-          {% set master = 'light.cabinet_wled_master' %}
-          {% set segments = 'light.wled_microwave_uplight', 'light.wled_refrigerator_uplight', 'light.wled_refrigerator_surface' %}
-          {% set rgbw = 255, 199, 125, 0 %}
-          {% set brightness = 217 %}
-          {% set s = 'on' %}
-          {{ expand(segments) 
-                | selectattr('state', 'eq', 'on')
-                | selectattr('attributes.color_mode', 'defined')
-                | selectattr('attributes.rgbw_color', 'defined')
-                | selectattr('attributes.color_mode', 'eq', 'rgbw')
-                | selectattr('attributes.rgbw_color', 'eq', rgbw)
-                | list | count == segments | count and is_state(master, s) and is_state_attr(master, 'brightness', brightness)
-                }}
+          {{ states('select.cabinet_wled_preset') in ['Match', 'Christmas On'] }}
         availability_template: >
-          {% set entities = 'light.cabinet_wled_master', 'light.wled_microwave_uplight', 'light.wled_refrigerator_uplight', 'light.wled_refrigerator_surface' %}
-          {{ expand(entities) | map(attribute='state') | map('bool', none) | reject('none') | list | length == entities | length }}
+          {{ states('select.cabinet_wled_preset') not in ['unkown', 'unavailable'] }}
         turn_on:
         - <<: &wled_all_cabinets
             service: select.select_option
             target:
               entity_id: select.cabinet_wled_preset
           data:
-            option: Match Microwave Surface
+            option: >
+              {{ 'Match' if is_state('switch.indoor_christmas', 'off') else 'Christmas On' }}
         turn_off:
         - <<: *wled_all_cabinets
           data:
-            option: All Off
+            option: >
+              {{ 'Off' if is_state('switch.indoor_christmas', 'off') else 'Christmas Off' }}
+
+      # Indoor Christmas Lights
+      indoor_christmas:
+        unique_id: indoor_christmas
+        friendly_name: Indoor Christmas
+        value_template: >
+          {%- set entity_id = 'select.cabinet_wled_preset' %}
+          {%- set options = state_attr(entity_id, 'options') %}
+          {%- set cabinet = states(entity_id) in options | select('search', 'Christmas') | list %}
+          {%- set entity_id = 'select.front_tree_preset' %}
+          {%- set options = state_attr(entity_id, 'options') %}
+          {%- set tree = states(entity_id) in options | reject('in', ['Match','Off','On']) | list %}
+          {%- set entity_id = 'select.hutch_playlist' %}
+          {%- set options = state_attr(entity_id, 'options') %}
+          {%- set hutch = states(entity_id) in options %}
+          {{ cabinet and tree and hutch }}
+        turn_on:
+        - service: script.christmas_lights_on
+        turn_off:
+        - service: script.christmas_lights_off

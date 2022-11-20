@@ -161,14 +161,6 @@ outside_bulbs:
   - button.garage_sconce_left_bulb
   - button.garage_sconce_right_bulb
 
-holiday:
-  entities:
-  - switch.kitchen_outlet_above_microwave
-  - switch.living_room_window
-  - switch.game_room_window
-  - switch.double_plug_left
-  - switch.floating_double_plug_left
-
 #########
 # ROOMS #
 #########

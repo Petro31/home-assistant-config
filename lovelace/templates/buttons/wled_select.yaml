@@ -1,0 +1,152 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+{% set ratio = ratio|default('1/1') %}
+{% set imgratio = 'transparent_' ~ 'to'.join(ratio.split('/')) ~ '.png' %}
+{% set name = name | default(none) %}
+
+type: custom:button-card
+aspect_ratio: {{ ratio }}
+entity: {{ entity }}
+icon: {{ icon }}
+{%- if name is not none %}
+name: {{ name }}
+{%- endif %}
+color: var(--paper-item-icon-color)
+show_name: true
+show_label: true
+show_icon: true
+show_last_changed: true
+size: 70%
+tap_action:
+  action: more-info
+  haptic: light
+styles:
+  icon:
+  - opacity: 0.3
+  - width: 100%
+  img_cell:
+  - top: 0%
+  - left: 30%
+  - position: absolute
+  - z-index: 1
+  grid:
+  - grid-template-areas: '"info" "n" "add" "l"'
+  - grid-template-columns: 100%
+  - grid-template-rows: 1fr min-content min-content min-content
+  - position: relative
+  card:
+  - padding: 10px
+  - border-radius: 15px
+  name:
+  - z-index: 2
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  label:
+  - z-index: 2
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  custom_fields:
+    info:
+    - align-self: start
+    - width: 47%
+    add:
+    - justify-self: start
+    - align-self: end
+    - font-weight: bold
+    - font-family: Helvetica 
+    - font-size: 12px
+    - text-align: start
+    - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+    - -webkit-background-clip: text
+    - -webkit-text-fill-color: transparent
+    - position: relative
+    - display: inline-block
+    - width: 100%
+    - align-content: start
+    - text-align: start
+    - text-overflow: unset
+    - z-index: 5
+custom_fields:
+  info: |
+    [[[
+      var state = (entity.state != 'Off') ? 'On' : 'Off';
+      const length = 50;
+      const width = 3;
+      var color = "{{ color }}";
+      const radius = (length - width) / 2;
+      return `
+        <svg viewBox="0 0 50 50">
+          <circle cx="25" cy="25" r="${radius}" fill="{{ color }}" />
+          <text x="50%" y="51%" fill="var(--paper-card-background-color)" font-weight="bold" font-size="14" text-anchor="middle" alignment-baseline="middle">${state}
+          </text>
+        </svg>
+        `;
+    ]]]
+  add: | 
+    [[[
+      return entity.state;
+    ]]]
+state:
+- value: 'on'
+  styles:
+    card:
+    - opacity: 1.0
+    name:
+      - color: white
+    state:
+      - color: gray
+    lock:
+      - color: white 
+    label:
+      - color: gray
+- value: 'off'
+  styles:
+    card:
+    - opacity: 0.5
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: var(--primary-text-color)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)
+- value: "unavailable"
+  styles:
+    card:
+    - opacity: 0.2
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: hsl(0, 100%, 50%)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)
