@@ -1,0 +1,188 @@
+- alias: Button - Workshop Lights
+  id: button_toggle_game_room_lights
+  trigger:
+  - platform: state
+    entity_id: sensor.workshop_button_action
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    to_state: >
+      {{ trigger.to_state.state | default('') if continue else '' }}
+    which: >
+      {%- if to_state == 'single' %}
+        light.workshop_desk
+      {%- elif to_state == 'double' %}
+        light.workshop_dome
+      {%- else %}
+        None
+      {% endif %}
+  condition:
+  - condition: template
+    value_template: "{{ continue and which is not none }}"
+  action:
+  - service: light.toggle
+    target:
+      entity_id: "{{ which }}"
+
+- alias: Button - Living Room Scene Controller
+  id: button_living_room_scene_controller
+  mode: parallel
+  trigger:
+  - platform: event
+    event_type: zwave_js_value_notification
+  variables:
+    device: >
+      {{ trigger.event.data.device_id }}
+    value: >
+      {{ trigger.event.data.value }}
+    label: >
+      {{ trigger.event.data.label }} 
+    config:
+      f7a1fe2db74bf6a3b652301589f7cebc:
+
+        # Top Left Button
+        'Scene 001': 
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id: light.mikes_lamp
+          # KeyPressed2x:
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
+
+        # Top Right Button
+        'Scene 002':
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id: light.lindsays_lamp
+
+        # Bottom Left Button
+        'Scene 003':
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id: light.jims_lamp
+
+        # Bottom Right Button
+        'Scene 004':
+          KeyPressed:
+            service: switch.toggle
+            data:
+              entity_id: switch.hyperion_usb_capture
+          KeyPressed2x:
+            service: switch.toggle
+            data:
+              entity_id: switch.hyperion_cinema
+          KeyPressed3x:
+            service: switch.toggle
+            data:
+              entity_id: switch.hyperion_rainbow_swirl_fast
+          # KeyPressed4x:
+          # KeyPressed5x:
+
+        # Top button
+        'Scene 005':
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id: light.living_room
+          KeyPressed2x: 
+            service: light.toggle
+            data:
+              entity_id: light.all_living_room
+    service: >
+      {{ config.get(device, {}).get(label, {}).get(value, {}).get('service') }}
+    data: >
+      {{ config.get(device, {}).get(label, {}).get(value, {}).get('data') }}
+  condition:
+  - condition: template
+    value_template: "{{ service is not none and data is not none }}"
+  action:
+  - service: "{{ service }}"
+    data: "{{ data }}"
+
+- alias: Button - Living Room Scene Controller LEDs
+  id: button_living_room_scene_controller_leds
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id:
+    - light.mikes_lamp
+    - light.lindsays_lamp
+    - light.jims_lamp
+    - switch.hyperion_usb_capture
+    - switch.hyperion_cinema
+    - switch.hyperion_rainbow_swirl_fast
+    - light.living_room
+    - light.all_living_room
+  variables:
+    values:
+      'on': 2
+      'off': 3
+      'unavailable': 3
+      'unknown': 3
+    colors:
+      white: 0
+      blue: 1
+      green: 2
+      red: 3
+    config:
+      light.mikes_lamp:
+        parameter: 2
+      light.lindsays_lamp: 
+        parameter: 3
+      light.jims_lamp:
+        parameter: 4
+      switch.hyperion_usb_capture: 
+        parameter: 5
+      switch.hyperion_cinema: 
+        parameter: 5
+      switch.hyperion_rainbow_swirl_fast: 
+        parameter: 5
+      light.living_room:
+        parameter: 1
+      light.all_living_room:
+        parameter: 1
+    value: >
+      {{ values.get(trigger.to_state.state) }}
+    state_parameter: >
+      {{ config.get(trigger.entity_id, {}).get('parameter') }}
+    color_parameter: >
+      {{ state_parameter + 5 if state_parameter is not none else none }}
+    state_good: >
+      {{ trigger.to_state.state in ['on', 'off'] }}
+    state_bad: >
+      {{ trigger.to_state.state in ['unavailable', 'unknown'] }}
+    state_off: >
+      {{ trigger.to_state.state == 'off' }}
+    color: >
+      {% if state_good and state_off %}
+        {{ colors.get('white') }}
+      {% elif state_bad %}
+        {{ colors.get('red') }}
+      {% else %}
+        None
+      {% endif %}
+  condition:
+  - condition: template
+    value_template: "{{ value is not none and state_parameter is not none }}"
+  action:
+  - <<: &target
+      service: zwave_js.bulk_set_partial_config_parameters
+      target:
+        device_id: f7a1fe2db74bf6a3b652301589f7cebc
+    data:
+      parameter: "{{ state_parameter }}"
+      value: "{{ value }}"
+
+  # Only set the color if we are 'off', 'unavailable', or 'unknown'
+
+  - condition: template
+    value_template: "{{ color is not none and (state_bad or state_off) }}"
+
+  - <<: *target
+    data:
+      parameter: "{{ color_parameter }}"
+      value: "{{ color }}"

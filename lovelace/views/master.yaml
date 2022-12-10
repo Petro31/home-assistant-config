@@ -470,6 +470,24 @@
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
     ],
+  },{
+    'name': 'Workshop',
+    'icon': 'mdi:head-lightbulb',
+    'image': '',
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
+    'entities': [
+      "light.workshop",
+      "light.workshop_dome",
+      "light.workshop_desk",
+    ],
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
   }] %}
 
 {%- set systems = [

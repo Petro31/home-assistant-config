@@ -37,34 +37,6 @@
     target:
       entity_id: light.outdoor_bulbs
 
-- alias: Reaction - Keep Sunset Living Room Switch On.
-  id: reaction_keep_living_room_on
-  mode: parallel
-  trigger:
-  - platform: state
-    entity_id:
-    - light.living_room_lamps_switch
-    to: 'off'
-  variables:
-    continue: >
-      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
-  condition:
-  - condition: template
-    value_template: "{{ continue }}"
-  action:
-  - service: switch.turn_on
-    target:
-      entity_id: "{{ trigger.entity_id }}"
-  - service: script.notify
-    data:
-      message: >
-        {{ state_attr(trigger.entity_id, 'friendly_name').capitalize() }} was turned off, turning back on.
-  - service: script.notify_alexa
-    data:
-      message: Jim counter action initiative in affect. Turning on {{ state_attr(trigger.entity_id, 'friendly_name') }}.  
-      announce: False
-      entities: media_player.living_room_echo_dot
-
 - alias: Reaction - Living Room Lamp Availability.
   id: reaction_keep_living_room_lamps_available
   mode: parallel
