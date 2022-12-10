@@ -22,7 +22,7 @@ christmas_lights_on:
         {% set ns.ret = ns.ret + [(name, {'entity_id': value.entity_id, 'option': value.options | random})] %}
       {% endfor %}
       {{ dict.from_keys(ns.ret) }}
-    entities:
+    entities: &entities
     - switch.floating_double_plug_left
     - switch.living_room_window
     service: switch.turn_on
@@ -53,5 +53,6 @@ christmas_lights_off:
       hutch: 
         entity_id: select.hutch_preset
         option: 'Off'
+    entities: *entities
     service: switch.turn_off
   sequence: *sequence

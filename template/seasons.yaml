@@ -2,14 +2,7 @@
   - unique_id: christmas_season
     name: Christmas Season
     state: >
-      {%- set month, week, day = 11, 4, 3 %}
-      {%- set today = now().date() %}
-      {%- set temp = today.replace(month=month, day=1) %}
-      {%- set adjust = (day - temp.weekday()) % 7 %}
-      {%- set temp = temp + timedelta(days=adjust) %}
-      {%- set thanksgiving = temp + timedelta(weeks = week - 1) %}
-      {%- set jan15th = temp.replace(month=1, day=15) %}
-      {{ today <= jan15th or today > thanksgiving }}
+      {{ is_state('sensor.seasonal_lights', 'scene.holiday_bulbs_christmas') }}
     attributes:
       template: seasons
 
@@ -86,9 +79,7 @@
       {%- set events = [
         ('easter', easter_day - timedelta(days=6)),
         ('soft', easter_day + timedelta(days=1)),
-        ('thanksgiving', thanksgiving),
-        ('soft', thanksgiving + timedelta(days=1)),
-        ('christmas', md(12,1) | as_datetime ),
+        ('christmas', thanksgiving - timedelta(days=4)),
         ('soft', md(1,7) | as_datetime ),
         ('halloween', md(10,8) | as_datetime ),
         ('soft', md(11,1) | as_datetime ),
