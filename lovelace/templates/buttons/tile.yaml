@@ -1,0 +1,5 @@
+# lovelace_gen
+
+type: tile
+entity: {{ entity }}
+icon: {{ icon }}
