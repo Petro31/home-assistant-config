@@ -148,3 +148,29 @@
       - service: persistent_notification.dismiss
         data:
           notification_id: "{{ notification_ids[repeat.index - 1] }}"
+
+- alias: Calendar - Simple Thermostat
+  id: simple_thermostat
+  trigger:
+  - platform: calendar
+    # Possible values: start, end
+    event: start
+    # The calendar entity_id
+    entity_id: calendar.thermostat
+  variables:
+    config:
+      heat: 72
+      cool: 69
+    event: >
+      {{ trigger.calendar_event.summary.lower() }}
+    temperature: >
+      {{ config.get(event) }}
+  condition:
+  - condition: template
+    value_template: "{{ temperature is not none }}"
+  action:
+  - service: climate.set_temperature
+    target:
+      entity_id: climate.living_room_thermostat
+    data:
+      temperature: "{{ temperature }}"
