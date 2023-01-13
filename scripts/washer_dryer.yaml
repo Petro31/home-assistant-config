@@ -1,0 +1,125 @@
+reset_washer:
+  # You're feeling lazy right now, you'll need to add a way to actually reset this in the future
+  # To do this, set an on/off sequence that matches the test_washer's configuration.  You'll
+  # need to setup a loop of services to run to reset it based on the current state
+  # of the actual washer.  Again, you can only be mad at yourself when you do this in the future
+  # because you were a lazy ass and didn't feel like doing it today.
+  alias: Washer - Reset the washer state
+  mode: single
+  variables:
+    current: "{{ states('input_number.test_washer') | int }}"
+    filtered: "{{ range(80) | reject('eq', current) | list }}"
+    next_value: "{{ filtered | random }}"
+  sequence:
+  - service: input_number.set_value
+    target:
+      entity_id: input_number.test_washer
+    data:
+      value: "{{ next_value }}"
+
+calculate_washer_cycle:
+  alias: Washer - Calculate Current Cycle
+  mode: parallel
+  fields:
+    prefix:
+      description: (Required) start part of the unique_id
+      example: foo
+    source: 
+      description: (Required) Source of the state change
+      example: sensor.washer_status
+    next_phase:
+      description: (Required) State of the next phase
+      example: 'on'
+  variables:
+
+    # MQTT SETUP
+    root: homeassistant
+    topic_root: binary_sensor
+    config: &config
+      input_boolean.test_washer:
+        final_spin:
+          duration: 10
+          window: 5
+      binary_sensor.washer_status:
+        object_id: washer
+        final_spin:
+          duration: 600
+          window: 60
+
+    # SETTING THE BINARY SENSOR STATE
+    current: >
+      {{ config.get(source) }}
+    have_current: >
+      {{ current is not none }}
+    object_id: >
+      {{ current.object_id if current.object_id is defined and have_current else source.split('.')[-1] }}
+    entity: >
+      {{ topic_root }}.{{ object_id }}
+    unique_id: >
+      {{ prefix }}{{ object_id }}
+    phase_timestamp: >
+      {{ now().isoformat() }}
+    idle:
+      phase: 'off'
+      start: "{{ phase_timestamp }}"
+      action: 'idle'
+    current_cycles: >
+      {{ state_attr(entity or 'dump', 'cycles') or [] }}
+    current_cycle: >
+      {{ (current_cycles or []) | last | default(none) }}
+    current_phase: >
+      {{ current_cycle.phase if current_cycle is not none else none }}
+    next_cycle: >
+      {% if current_cycle is not none %}
+        {% if current_phase != next_phase %}
+          {{ {'phase': next_phase, 'start': phase_timestamp} }}
+        {% else %}
+          {{ current_cycle }}
+        {% endif %}
+      {% else %}
+        {{ {'phase': next_phase if next_phase == 'on' else 'off', 'start': phase_timestamp} }}
+      {% endif %}
+    cycles: >
+      {% set rollup = current_cycles + [ next_cycle ] %}
+      {% set ns = namespace(ret=[], attrs=[]) %}
+
+      {# setup durations for phases #}
+      {% for i in range(rollup | length) %}
+        {% set attrs = rollup[i] %}
+        {% set next_attrs = rollup[i + 1] if i + 1 < rollup | length else {} %}
+        {% set ns.attrs = attrs.items() | rejectattr('0','in',['duration', 'action']) | list %}
+        {% set duration = (next_attrs.start | as_datetime - attrs.start | as_datetime).seconds if next_attrs else 0.0 %}
+        {% set ns.attrs = ns.attrs + [('duration', duration)] %}
+
+        {% if attrs.phase == 'on' %}
+
+          {# on state, try to find phase #}
+          {% set l, u = current.final_spin.duration - current.final_spin.window, current.final_spin.duration + current.final_spin.window %}
+          {% if l <= duration <= u %}
+            {% set ns.attrs = ns.attrs + [('action', "finish")] %}
+          {% else %}
+            {% set ns.attrs = ns.attrs + [('action', "spinning")] %} 
+          {% endif %}
+        {% else %}
+          {# off state, do not collect phase #}
+          {% set ns.attrs = ns.attrs + [('action', "idle")] %}
+        {% endif %}
+        {% set ns.ret = ns.ret + [dict(ns.attrs)] %}
+      {% endfor %}
+      {% set last = ns.ret | list | last | default(idle) %}
+      {% if ns.ret | length == 1 and last.phase in ['off', 'idle'] %}
+        []
+      {% else %}
+        {{ ns.ret if 'finish' not in ns.ret | map(attribute='action') else [] }}
+      {% endif %}
+    next_state: >
+      O{{ 'N' if cycles | length > 0 else 'FF' }}
+
+  sequence:
+  - service: script.mqtt_automated_states
+    data:
+      <<: &mqtt
+        domain: binary_sensor
+      unique_id: "{{ unique_id }}"
+      state: "{{ next_state }}"
+      attributes: "{{ {'source': source, 'cycles': cycles} }}"

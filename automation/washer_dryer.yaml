@@ -5,7 +5,7 @@
   - platform: state
     entity_id: 
     - binary_sensor.dryer_status
-    - binary_sensor.washer_status
+    - binary_sensor.washer
     to: 'off'
     from: 'on'
   variables:
@@ -76,3 +76,55 @@
   - service: "{{ service_call }}"
     target:
       entity_id: "{{ service_target }}"
+
+- alias: Washer and Dryer - Cycle Counter
+  id: washer_and_dryer_cycle_counter
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.test_washer
+    - binary_sensor.washer_status
+  variables:
+
+    <<: &prefix
+      prefix: washer_dryer_
+
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    continue: >
+      {{ trigger.to_state.state != trigger.from_state.state if valid else False }}
+    source: >
+      {{ trigger.entity_id }}
+    next_phase: >
+      {{ trigger.to_state.state if valid else none }}
+
+  condition:
+  - condition: template
+    value_template: "{{ continue }}"
+  action:
+  - service: script.calculate_washer_cycle
+    data:
+      prefix: "{{ prefix }}"
+      source: "{{ source }}"
+      next_phase: "{{ next_phase }}"
+
+- alias: Washer and Dryer - MQTT Discovery
+  trigger:
+  - platform: homeassistant
+    event: start
+  action:
+  - variables:
+      <<: *prefix
+      binary_sensors:
+      - test_washer
+      - washer
+  - repeat:
+      count: "{{ binary_sensors | length }}"
+      sequence:
+      - service: script.mqtt_automated_config
+        data:
+          domain: binary_sensor
+          unique_id: "{{ prefix }}{{ binary_sensors[repeat.index - 1] }}"
+          object_id: "{{ binary_sensors[repeat.index - 1] }}"
+          device_class: running

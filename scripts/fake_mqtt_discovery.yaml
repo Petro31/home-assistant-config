@@ -9,7 +9,12 @@ mqtt_automated_states:
           text:
             type: text
       unique_id:
-        description: The entities state
+        description: The entities unique_id
+        selector:
+          text:
+            type: text
+      object_id:
+        description: The entities object_id
         selector:
           text:
             type: text
@@ -55,17 +60,24 @@ mqtt_automated_config:
           type: text
   variables:
     name: >
-      {{ unique_id | default('') | replace('_', ' ') | title }}
+      {% if object_id is defined %}
+        {{ object_id | default('') | replace('_', ' ') | title }}
+      {% elif unique_id is defined %}
+        {{ unique_id | default('') | replace('_', ' ') | title }}
+      {% else %}
+        Unknown Entity
+      {% endif %}
     <<: *mqtt-variables
     service_data: >
       {%- set items = [
-        ( "name", name),
-        ( "unique_id", unique_id | default(none)),
-        ( "state_topic", topic_root ~ "/state"),
-        ( "value_template", "{{ value_json.state }}"),
-        ( "json_attributes_topic", topic_root ~ "/state"),
-        ( "json_attributes_template", "{{ value_json.attributes | tojson }}"),
-        ( "device_class", device_class | default(none) ),
+        ("name", name),
+        ("unique_id", unique_id | default(none)),
+        ("object_id", object_id | default(none)),
+        ("state_topic", topic_root ~ "/state"),
+        ("value_template", "{{ value_json.state }}"),
+        ("json_attributes_topic", topic_root ~ "/state"),
+        ("json_attributes_template", "{{ value_json.attributes | tojson }}"),
+        ("device_class", device_class | default(none) ),
       ] %}
       {% set payload = dict.from_keys(items | rejectattr('1', 'none') | list) %}
       {{ {

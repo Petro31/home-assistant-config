@@ -1,46 +1,9 @@
 - binary_sensor:
-  - unique_id: washer_status_raw
-    name: Washer Status Raw
-    device_class: power
-    state: >
-      {{ is_state('input_boolean.washer', 'on') }}
-    attributes:
-      template: energy
-
   - unique_id: washer_status
     name: Washer Status
-    device_class: door
+    device_class: power
     state: >
       {{ is_state('input_boolean.washer', 'on') }}
-    delay_off:
-      minutes: 4
-    attributes:
-      template: energy
-
-  - unique_id: washer_power_coiot
-    name: Washer Power CoIoT
-    device_class: power
-    state: >
-      {% set value = states('sensor.washer_power') %}
-      {{ value | float > 80 if is_number(value) else none }}
-    availability: >
-      {{ is_number(states('sensor.washer_power')) }}
-    attributes:
-      template: energy
-
-  - unique_id: announce_washer
-    name: Announce Washer
-    device_class: door
-    state: >
-      {{ is_state('switch.announce_washer', 'on') }}
-    attributes:
-      template: energy
-
-  - unique_id: dryer_status_raw
-    name: Dryer Status Raw
-    device_class: power
-    state: >
-      {{ is_state('input_boolean.dryer', 'on') }}
     attributes:
       template: energy
 
@@ -49,25 +12,6 @@
     device_class: door
     state: >
       {{ is_state('input_boolean.dryer', 'on') }}
-    attributes:
-      template: energy
-
-  - unique_id: dryer_power_coiot
-    name: Dryer Power CoIoT
-    device_class: power
-    state: >
-      {% set value = states('sensor.dryer_power') %}
-      {{ value | float > 150 if is_number(value) else none }}
-    availability: >
-      {{ is_number(states('sensor.dryer_power')) }}
-    attributes:
-      template: energy
-
-  - unique_id: announce_dryer
-    name: Announce Dryer
-    device_class: door
-    state: >
-      {{ is_state('switch.announce_dryer', 'on') }}
     attributes:
       template: energy
 
