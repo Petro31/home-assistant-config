@@ -1,18 +1,13 @@
 entities:
-  - binary_sensor.dryer_power_coiot
-  - binary_sensor.dryer_power_mqtt
   - binary_sensor.dryer_status
-  - binary_sensor.dryer_status_raw
   - binary_sensor.garage_door_tilt
   - binary_sensor.garage_entry_door
   - binary_sensor.main_door
   - binary_sensor.master_bathroom_humidity_status
   - binary_sensor.garage_presence
   - binary_sensor.sliding_door
-  - binary_sensor.washer_power_coiot
-  - binary_sensor.washer_power_mqtt
   - binary_sensor.washer_status
-  - binary_sensor.washer_status_raw
+  - binary_sensor.washer
   - climate.living_room_thermostat
   - device_tracker.lambo
   - device_tracker.petro
