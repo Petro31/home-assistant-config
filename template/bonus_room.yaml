@@ -1,0 +1,8 @@
+- binary_sensor:
+  - unique_id: bonus_room_television
+    name: Bonus Room Television
+    state: > 
+      {{ is_state('media_player.bonus_room_roku', 'on') }}
+    device_class: power
+    attributes:
+      template: bonus_room

@@ -45,3 +45,37 @@
     name: Basement Speakers
     children:
     - media_player.yamaha_receiver_zone_2
+
+  - platform: universal
+    name: Bonus Room Television
+    commands:
+      turn_on:
+        <<: &remote
+          service: remote.send_command
+          target:
+            entity_id: remote.bonus_room_remote
+        data:
+          device: TV
+          command: power
+      turn_off:
+        <<: *remote
+        data:
+          device: TV
+          command: power
+      volume_up:
+        <<: *remote
+        data:
+          device: TV
+          command: volume_up
+      volume_down:
+        <<: *remote
+        data:
+          device: TV
+          command: volume_down
+      volume_mute:
+        <<: *remote
+        data:
+          device: TV
+          command: volume_mute
+    attributes:
+      state: binary_sensor.bonus_room_television
