@@ -159,8 +159,8 @@
     entity_id: calendar.thermostat
   variables:
     config:
-      heat: 72
-      cool: 69
+      heat: 70
+      cool: 66
     event: >
       {{ trigger.calendar_event.summary.lower() }}
     temperature: >
