@@ -77,6 +77,7 @@
       ) %}
 
       {%- set events = [
+        ('christmas', md(1,1) | as_datetime),
         ('easter', easter_day - timedelta(days=6)),
         ('soft', easter_day + timedelta(days=1)),
         ('christmas', thanksgiving - timedelta(days=4)),
