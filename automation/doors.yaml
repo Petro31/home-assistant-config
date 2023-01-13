@@ -302,9 +302,14 @@
   condition: &sun_door_condition
   - condition: template
     value_template: "{{ valid }}"
-  - condition: state
-    entity_id: sun.sun
-    state: "below_horizon"
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: sun.sun
+      state: "below_horizon"
+    - condition: numeric_state
+      entity_id: sensor.garage_luminance
+      below: 11
 
   action:
   - choose:
