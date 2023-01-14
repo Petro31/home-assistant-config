@@ -1,0 +1,174 @@
+- filter:
+    include_entities:
+    - fan.bonus_room_bedroom
+    - fan.bonus_room_office
+    - fan.deck_fan_1
+    - fan.deck_fan_2
+    - fan.master_fixture
+    - light.bonus_room_bedroom_fixture
+    - light.bonus_room_bedroom_recessed
+    - light.bonus_room_entrance
+    - light.bonus_room_office_fixture
+    - light.bonus_room_office_recessed
+    - light.deck
+    - light.dining_room_chandelier
+    - light.garage_sconce_left_bulb
+    - light.garage_sconce_right_bulb
+    - light.hallway
+    - light.jims_lamp
+    - light.kitchen_cans
+    - light.kitchen_island
+    - light.lindsays_lamp
+    - light.main_door_left_bulb
+    - light.main_door_right_bulb
+    - light.master_bathroom_cans
+    - light.master_bathroom_sink
+    - light.master_closet
+    - light.master_fixture
+    - light.mikes_lamp
+    - light.passenger_door_bulb
+    - light.workshop_desk
+    - light.workshop_dome
+    - sensor.basement_temperature
+    - sensor.bonus_room_temperature
+    - sensor.garage_temperature
+    - sensor.kitchen_temperature
+    - sensor.master_bathroom_temperature
+    - sensor.master_bedroom_temperature
+    - sensor.office_temperature
+    - switch.basement_cans
+    - switch.basement_stairs
+    - switch.deck_walkway
+    - switch.dining_room_hutch
+    - switch.flood_light
+    - switch.foyer
+    - switch.garage_cans
+    - switch.garage_entry
+    - switch.garage_workbench
+    - switch.kitchen_cabinet
+    - switch.kitchen_pantry
+    - switch.laundry
+    - switch.master_bathroom_fan
+    - switch.master_nightstand_left
+    - switch.master_nightstand_right
+    - switch.game_room_switch
+    - switch.game_room_wall_outlet
+    - switch.game_room_window
+    - switch.outside_porch
+    - switch.patio_string_light
+    - switch.sliding_door_sconce
+  entity_config:
+    fan.bonus_room_bedroom:
+      name: Bonus Room Fan
+    fan.bonus_room_office:
+      name: Office Fan
+    fan.deck_fan_1:
+      name: Deck Fan 1
+    fan.deck_fan_2:
+      name: Deck Fan 2
+    fan.master_fixture:
+      name: Master Bedroom Fan
+    light.bonus_room_bedroom_fixture:
+      name: Bonus Room Fixture
+    light.bonus_room_bedroom_recessed:
+      name: Bonus Room Recessed
+    light.bonus_room_entrance:
+      name: Bonus Room Hallway
+    light.bonus_room_office_fixture:
+      name: Office Fixture
+    light.bonus_room_office_recessed:
+      name: Office Recessed
+    light.deck:
+      name: Deck Recessed
+    light.dining_room_chandelier:
+      name: Dining Room Chandelier
+    light.garage_sconce_left_bulb:
+      name: Outside Garage Left Bulb
+    light.garage_sconce_right_bulb:
+      name: Outside Garage Right Bulb
+    light.hallway:
+      name: Hallway Fixture
+    light.jims_lamp:
+      name: Living Room Jims Lamp
+    light.kitchen_cans:
+      name: Kitchen Recessed
+    light.kitchen_island:
+      name: Kitchen Island
+    light.lindsays_lamp:
+      name: Living Room Lindsays Lamp
+    light.main_door_left_bulb:
+      name: Outside Main Door Left
+    light.main_door_right_bulb:
+      name: Outside Door Right
+    light.master_bathroom_cans:
+      name: Master Bathroom Recessed
+    light.master_bathroom_sink:
+      name: Master Bathroom Sink
+    light.master_closet:
+      name: Master Bedroom Closet
+    light.master_fixture:
+      name: Master Bedroom Fixture
+    light.mikes_lamp:
+      name: Living Room Mikes Lamp
+    light.passenger_door_bulb:
+      name: Outside Passenger Door Bulb
+    light.workshop_desk:
+      name: Workshop Desk
+    light.workshop_dome:
+      name: Workshop Fixture
+    sensor.basement_temperature:
+      name: Basement Temperature
+    sensor.bonus_room_temperature:
+      name: Bonus Room Temperature
+    sensor.garage_temperature:
+      name: Garage Temperature
+    sensor.kitchen_temperature:
+      name: Kitchen Temperature
+    sensor.master_bathroom_temperature:
+      name: Master Bathroom Temperature
+    sensor.master_bedroom_temperature:
+      name: Master Bedroom Temperature
+    sensor.office_temperature:
+      name: Office Temperature
+    switch.basement_cans:
+      name: Basement Recessed
+    switch.basement_stairs:
+      name: Basement Stairs
+    switch.deck_walkway:
+      name: Deck Walkway
+    switch.dining_room_hutch:
+      name: Dining Room Hutch
+    switch.flood_light:
+      name: Deck Flood
+    switch.foyer:
+      name: Foyer Fixture
+    switch.garage_cans:
+      name: Garage Recessed
+    switch.garage_entry:
+      name: Mud Room Fixture
+    switch.garage_workbench:
+      name: Garage Workbench
+    switch.kitchen_cabinet:
+      name: Kitchen Cabinets
+    switch.kitchen_pantry:
+      name: Kitchen Pantry
+    switch.laundry:
+      name: Laundry Fixture
+    switch.master_bathroom_fan:
+      name: Master Bathroom Fan
+    switch.master_nightstand_left:
+      name: Master Bedroom Mikes Nightstand
+    switch.master_nightstand_right:
+      name: Master Bedroom Lindsays Nightstand
+    switch.game_room_switch:
+      name: Game Room Switch
+    switch.game_room_wall_outlet:
+      name: Game Room Light
+    switch.game_room_window:
+      name: Game Room Outlet
+    switch.outside_porch:
+      name: Porch Outlet
+    switch.patio_string_light:
+      name: Patio String
+    switch.sliding_door_sconce:
+      name: Deck Sconce
