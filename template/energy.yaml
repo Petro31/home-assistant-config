@@ -7,11 +7,27 @@
     attributes:
       template: energy
 
+  - unique_id: announce_washer
+    name: Announce Washer
+    device_class: door
+    state: >
+      {{ is_state('switch.announce_washer', 'on') }}
+    attributes:
+      template: energy
+
   - unique_id: dryer_status
     name: Dryer Status
     device_class: door
     state: >
       {{ is_state('input_boolean.dryer', 'on') }}
+    attributes:
+      template: energy
+
+  - unique_id: announce_dryer
+    name: Announce Dryer
+    device_class: door
+    state: >
+      {{ is_state('switch.announce_dryer', 'on') }}
     attributes:
       template: energy
 
