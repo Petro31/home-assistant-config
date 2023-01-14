@@ -4,131 +4,135 @@ smart_home:
   client_secret: !secret alexa_client_secret
   filter:
     include_entities:
-      - binary_sensor.doorbell_chime
-      - binary_sensor.announce_dryer
-      - binary_sensor.announce_washer
-      - fan.bonus_room_bedroom
-      - fan.bonus_room_office
-      - fan.deck_fan_1
-      - fan.deck_fan_2
-      - fan.master_fixture
-      - light.all_living_room
-      - light.basement_area
-      - light.bonus_room_area
-      - light.bonus_room_bedroom_fixture
-      - light.bonus_room_bedroom_recessed
-      - light.bonus_room_entrance
-      - light.bonus_room_office_fixture
-      - light.bonus_room_office_recessed
-      - light.christmas_tree
-      - light.deck
-      - light.dining_room_area
-      - light.dining_room_chandelier
-      - light.downstairs_area
-      - light.game_room_target_area
-      - light.garage_area
-      - light.garage_sconce_left_bulb
-      - light.garage_sconce_right_bulb
-      - light.hallway
-      - light.inside_area
-      - light.jims_lamp
-      - light.kitchen_cans
-      - light.kitchen_island
-      - light.kitchen_target_area
-      - light.lindsays_lamp
-      - light.living_room
-      - light.main_door_left_bulb
-      - light.main_door_right_bulb
-      - light.master_bathroom_area
-      - light.master_bathroom_cans
-      - light.master_bathroom_sink
-      - light.master_bathroom_target_area
-      - light.master_bedroom_area
-      - light.master_closet
-      - light.master_fixture
-      - light.master_suite_target_area
-      - light.mikes_lamp
-      - light.office_area
-      - light.outside_area
-      - light.passenger_door_bulb
-      - light.upstairs_area
-      - media_player.yamaha_rx_v6a
-      - media_player.yamaha_rx_v6a_zone2
-      - sensor.garage_temperature
-      - sensor.kitchen_temperature
-      - sensor.basement_temperature
-      - sensor.bonus_room_temperature
-      - sensor.master_bathroom_temperature
-      - sensor.master_bedroom_temperature
-      - sensor.office_temperature
-      - switch.echo_through_basement
-      - switch.echo_through_deck
-      - switch.deck_airplay
-      - switch.basement_airplay
-      - switch.basement_cans
-      - switch.basement_stairs
-      - switch.board_games_party
-      - switch.cast_workout_core
-      - switch.cast_workout_cardio_kickboxing
-      - switch.cast_workout_lower_body
-      - switch.cast_workout_total_body
-      - switch.cast_workout_upper_body
-      - switch.christmas_party
-      - switch.deck_walkway
-      - switch.dining_room_hutch
-      - switch.disney_plus
-      - switch.echo_through_receiver
-      - switch.flood_light
-      - switch.floating_outlet_switch
-      - switch.foyer
-      - switch.game_room_switch
-      - switch.game_room_wall_outlet
-      - switch.game_room_window
-      - switch.garage_cans
-      - switch.garage_entry
-      - switch.garage_workbench
-      - switch.hbo
-      - switch.hulu
-      - switch.hyperion
-      - switch.hyperion_cinema
-      - switch.hyperion_rainbow_swirl_fast
-      - switch.hyperion_usb_capture
-      - switch.kitchen_cabinet
-      - switch.kitchen_outlet_above_fridge
-      - switch.kitchen_outlet_above_microwave
-      - switch.kitchen_pantry
-      - switch.laundry
-      - switch.living_room_window
-      - switch.lzw45_mood_lighting
-      - switch.master_bathroom_fan
-      - switch.master_nightstand_left
-      - switch.master_nightstand_right
-      - switch.netflix
-      - switch.outside_porch
-      - switch.passenger_sconce
-      - switch.prime_video
-      - switch.playstation
-      - switch.roku
-      - switch.sconces_garage
-      - switch.sconces_main_entrance
-      - switch.sliding_door_sconce
-      - switch.switch
-      - switch.the_80s_party
-      - switch.tv
-      - switch.xbox_one
+    - binary_sensor.doorbell_chime
+    - binary_sensor.announce_dryer
+    - binary_sensor.announce_washer
+    - fan.bonus_room_bedroom
+    - fan.bonus_room_office
+    - fan.deck_fan_1
+    - fan.deck_fan_2
+    - fan.master_fixture
+    - light.all_living_room
+    - light.basement_area
+    - light.bonus_room_area
+    - light.bonus_room_bedroom_fixture
+    - light.bonus_room_bedroom_recessed
+    - light.bonus_room_entrance
+    - light.bonus_room_office_fixture
+    - light.bonus_room_office_recessed
+    - light.christmas_tree
+    - light.deck
+    - light.dining_room_area
+    - light.dining_room_chandelier
+    - light.downstairs_area
+    - light.game_room_target_area
+    - light.garage_area
+    - light.garage_sconce_left_bulb
+    - light.garage_sconce_right_bulb
+    - light.hallway
+    - light.inside_area
+    - light.jims_lamp
+    - light.kitchen_cans
+    - light.kitchen_island
+    - light.kitchen_target_area
+    - light.lindsays_lamp
+    - light.living_room
+    - light.main_door_left_bulb
+    - light.main_door_right_bulb
+    - light.master_bathroom_area
+    - light.master_bathroom_cans
+    - light.master_bathroom_sink
+    - light.master_bathroom_target_area
+    - light.master_bedroom_area
+    - light.master_closet
+    - light.master_fixture
+    - light.master_suite_target_area
+    - light.mikes_lamp
+    - light.office_area
+    - light.outside_area
+    - light.passenger_door_bulb
+    - light.upstairs_area
+    - light.workshop
+    - media_player.yamaha_rx_v6a
+    - media_player.yamaha_rx_v6a_zone2
+    - media_player.bonus_room_television
+    - sensor.garage_temperature
+    - sensor.kitchen_temperature
+    - sensor.basement_temperature
+    - sensor.bonus_room_temperature
+    - sensor.master_bathroom_temperature
+    - sensor.master_bedroom_temperature
+    - sensor.office_temperature
+    - switch.echo_through_basement
+    - switch.echo_through_deck
+    - switch.deck_airplay
+    - switch.basement_airplay
+    - switch.basement_cans
+    - switch.basement_stairs
+    - switch.board_games_party
+    - switch.cast_workout_core
+    - switch.cast_workout_cardio_kickboxing
+    - switch.cast_workout_lower_body
+    - switch.cast_workout_total_body
+    - switch.cast_workout_upper_body
+    - switch.christmas_party
+    - switch.deck_walkway
+    - switch.dining_room_hutch
+    - switch.disney_plus
+    - switch.echo_through_receiver
+    - switch.flood_light
+    - switch.floating_outlet_switch
+    - switch.foyer
+    - switch.game_room_switch
+    - switch.game_room_wall_outlet
+    - switch.game_room_window
+    - switch.garage_cans
+    - switch.garage_entry
+    - switch.garage_workbench
+    - switch.hbo
+    - switch.hulu
+    - switch.hyperion
+    - switch.hyperion_cinema
+    - switch.hyperion_rainbow_swirl_fast
+    - switch.hyperion_usb_capture
+    - switch.kitchen_cabinet
+    - switch.kitchen_outlet_above_fridge
+    - switch.kitchen_outlet_above_microwave
+    - switch.kitchen_pantry
+    - switch.laundry
+    - switch.living_room_window
+    - switch.lzw45_mood_lighting
+    - switch.master_bathroom_fan
+    - switch.master_nightstand_left
+    - switch.master_nightstand_right
+    - switch.netflix
+    - switch.outside_porch
+    - switch.passenger_sconce
+    - switch.patio_string_light
+    - switch.prime_video
+    - switch.playstation
+    - switch.roku
+    - switch.sconces_garage
+    - switch.sconces_main_entrance
+    - switch.sliding_door_sconce
+    - switch.switch
+    - switch.the_80s_party
+    - switch.tv
+    - switch.xbox_one
+
   entity_config:
     binary_sensor.doorbell_chime:
       name: Front Door
       description: "Doorbell Binary Sensor"
       display_categories: DOORBELL
-    binary_sensor.dryer_status:
-      name: Dryer Status
+    binary_sensor.announce_dryer:
+      name: Announce Dryer
       description: "Dryer Binary Sensor"
-    binary_sensor.washer_status:
-      name: Washer Status
+    binary_sensor.announce_washer:
+      name: Announce Washer
       description: "Washer Binary Sensor"
     fan.bonus_room_bedroom:
-      name: Bonusroom Fan
+      name: Bonus Room Fan
     fan.bonus_room_office:
       name: Office Fan
     fan.deck_fan_1:
@@ -144,11 +148,11 @@ smart_home:
     light.bonus_room_area:
       name: Target Bonus Room
     light.bonus_room_bedroom_fixture:
-      name: Bonusroom Fixture
+      name: Bonus Room Fixture
     light.bonus_room_bedroom_recessed:
-      name: Bonusroom Cans
+      name: Bonus Room Cans
     light.bonus_room_entrance:
-      name: Bonusroom Hallway
+      name: Bonus Room Hallway
     light.bonus_room_office_fixture:
       name: Office Fixture
     light.bonus_room_office_recessed:
@@ -215,10 +219,14 @@ smart_home:
       name: Passenger Door Bulb
     light.upstairs_area:
       name: Upstairs
+    light.workshop:
+      name: Workshop
     media_player.yamaha_rx_v6a:
       name: Living Room Speakers
     media_player.yamaha_rx_v6a_zone2:
       name: Dining Room Speakers
+    media_player.bonus_room_television:
+      name: Bonus Room Television
     sensor.basement_temperature:
       name: Basement Temperature
     sensor.bonus_room_temperature:
@@ -308,7 +316,7 @@ smart_home:
     switch.lzw45_mood_lighting:
       name: Mood Lighting
     switch.master_bathroom_fan:
-      name: Master Bath Fan
+      name: Master Bathroom Fan
     switch.master_nightstand_left:
       name: Mikes Nightstand
     switch.master_nightstand_right:
@@ -327,6 +335,8 @@ smart_home:
       name: Party
     switch.passenger_sconce:
       name: Passenger Sconce
+    switch.patio_string_light:
+      name: Patio
     switch.petro_awake_sleep_automation:
       name: Petros Automation
     switch.prime_video:
