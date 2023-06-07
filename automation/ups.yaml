@@ -1,0 +1,37 @@
+- alias: UPS - Notify of Power Outage
+  id: ups_notify_power_outage
+  trigger:
+  - id: notify
+    platform: state
+    entity_id: binary_sensor.house_power_status
+    to: 'on'
+  - id: power off
+    platform: state
+    entity_id: binary_sensor.house_power_status
+    to: 'on'
+    for: "00:01:00"
+  - id: cancel
+    platform: state
+    entity_id: binary_sensor.house_power_status
+    to: 'off'
+  variables:
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    message: >
+      {% if trigger.id == 'notify' %}
+        Detected power outage, starting power down sequence in 1 minute if power is not restored.
+      {% elif trigger.id == 'power off' %}
+        Power was not restored, starting power down sequence.
+      {% else %}
+        Power has restored, canceling power down sequence.
+      {% endif %}
+  condition:
+  - condition: template
+    value_template: "{{ valid }}"
+  action:
+  - service: script.notify
+    data:
+      message: "{{ message }}"
+  - condition: template
+    value_template: "{{ trigger.id == 'power off' }}"
+  - service: script.power_down_sequence
