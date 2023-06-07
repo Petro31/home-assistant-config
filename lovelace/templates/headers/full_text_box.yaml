@@ -6,6 +6,6 @@ style: |
     border-radius: 15px; 
     }
 entities:
-- type: custom:text-input-row
+- icon: mdi:bullhorn
   name: Text to speech
   entity: {{ entity }}

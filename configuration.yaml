@@ -20,7 +20,7 @@ frontend:
 group: !include group.yaml
 hardware:
 harmony_helper: !include harmony_helper.yaml
-history: !include history.yaml
+history:
 homeassistant_alerts:
 homekit: !include homekit.yaml
 http: !include http.yaml
@@ -54,4 +54,4 @@ switch: !include switch.yaml
 system_health:
 template: !include_dir_merge_list template
 timer:
-weather: !include weather.yaml
+# weather: !include weather.yaml

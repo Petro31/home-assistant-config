@@ -15,11 +15,6 @@ resources:
 - url: /hacsfiles/config-template-card/config-template-card.js?
   type: module
 
-# Text Input Row
-
-- url: /hacsfiles/lovelace-text-input-row/text-input-row.js?
-  type: module
-
 # Mini Graph Card
 
 - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js?
