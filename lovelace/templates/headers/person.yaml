@@ -1,21 +1,38 @@
 # lovelace_gen
 
 type: custom:button-card
+aspect_ratio: 800/571
 color: auto
-layout: name_label
 show_state: true
+show_label: true
 show_name: false
 show_entity_picture: true
 entity_picture: /local/images/petro_large.png
 entity: {{ entity|default('person.petro') }}
+label: |
+  [[[
+    var event = states['binary_sensor.personal_events'].attributes['events'][{{index}} - 1]
+    var plural = (event.days_away == 1) ? "" : "s";
+    return `Turning ${event.milestone} in ${event.days_away} day${plural}`
+  ]]]
+state_display: |
+  [[[
+    if (entity.state == 'home')
+      return "Home";
+    else if (entity.state == 'not_home')
+      return "Away";
+    else
+      return entity.state
+  ]]]
 tap_action:
   action: navigate
   navigation_path: {{ path|default("/lovelace/home") }}
   haptic: light
 styles:
   grid:
-    - grid-template-rows: auto auto auto
-    - grid-template-columns: auto auto
+    - grid-template-areas: '"" "s s" "l l"'
+    - grid-template-rows: 50% 20% 20%
+    - grid-template-columns: auto
   card:
     - background-image: |
         [[[
@@ -30,6 +47,15 @@ styles:
     - width: 100%
     - padding-bottom: 0%
     - opacity: 0.0
+  label:
+    - font-size: 15px
+    - font-family: Helvetica
+    - text-transform: capitalize
+    - font-weight: bold
+    - align-self: end
+    - justify-self: start
+    - padding: 9px 10px
+    - text-shadow: 0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black
   state:
     - font-size: 15px
     - font-family: Helvetica
@@ -40,7 +66,7 @@ styles:
     - padding: 9px 10px
     - text-shadow: 0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black
 state:
-  - value: 'home'
+  - value: home
     operator: '!='
     styles:
       card:

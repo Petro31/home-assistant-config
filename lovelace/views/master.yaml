@@ -926,9 +926,11 @@
       - type: '../templates/headers/person.yaml'
         entity: person.petro
         path: petro_map
+        index: 1
       - type: '../templates/headers/person.yaml'
         entity: person.lambo
         path: lambo_map
+        index: 2
 {{ toyaml('    ', 'entities', main_buttons) }}
 {%- if testing %}
     - name: Testing

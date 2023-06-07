@@ -1,0 +1,18 @@
+- binary_sensor:
+  - name: Personal Events
+    unique_id: personal_events
+    state: >
+      {% from 'dates.jinja' import dates %}
+      {{ today_at().date() | string in dates() }}
+    attributes:
+      events: >
+        {%- from 'dates.jinja' import events %}
+        {%- from 'easy_time.jinja' import count_the_days %}
+        {%- set ns = namespace(events=[]) %}
+        {%- for event in events %}
+          {%- set current = event.birth.replace(year=now().year) %}
+          {%- set current = current if today_at() <= current else current.replace(year=current.year+1) %}
+          {%- set milestone = (current - event.birth).days // 365 %}
+          {%- set ns.events = ns.events + [ dict(milestone=milestone, days_away=count_the_days(current)|int, who=event.who, event=event.event, when=current.date()|string) ] %}
+        {%- endfor %}
+        {{- ns.events }}
