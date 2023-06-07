@@ -109,6 +109,7 @@ smart_home:
     - switch.outside_porch
     - switch.passenger_sconce
     - switch.patio_string_light
+    - switch.peacock
     - switch.prime_video
     - switch.playstation
     - switch.roku
@@ -339,6 +340,8 @@ smart_home:
       name: Patio
     switch.petro_awake_sleep_automation:
       name: Petros Automation
+    switch.peacock:
+      name: Peacock
     switch.prime_video:
       name: Prime Video
     switch.ps4:
