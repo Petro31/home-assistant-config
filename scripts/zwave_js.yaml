@@ -4,7 +4,7 @@
 
 zwave_multicast_group:
   mode: parallel
-  alias: Multicast to Zwave Switch/Light Group
+  alias: Zwave JS - Multicast to Zwave Switch/Light Group
   fields:
     group:
       description: (Required) The group of lights & switches
@@ -20,6 +20,7 @@ zwave_multicast_group:
           min: 0
           max: 255
   variables:
+    multicast: False
     brightness_pct: >
       {%- set brightness_pct = (level | int(0) / 255 * 100) | int %}
       {%- set brightness_pct = [ 0, brightness_pct ] | max %}
@@ -107,14 +108,59 @@ zwave_multicast_group:
   sequence:
   - condition: template
     value_template: "{{ execute }}"
-  - repeat:
-      count: "{{ total }}"
+  - if:
+    - condition: template
+      value_template: "{{ multicast }}"
+    then:
+    - repeat:
+        count: "{{ total }}"
+        sequence:
+        - service: zwave_js.multicast_set_value
+          target:
+            entity_id: "{{ items[repeat.index - 1].entity_id }}"
+          data:
+            command_class: "{{ items[repeat.index - 1].command_class }}"
+            property: "{{ items[repeat.index - 1].property }}"
+            endpoint: "{{ items[repeat.index - 1].endpoint }}"
+            value: "{{ items[repeat.index - 1].value }}"
+    else:
+    - repeat:
+        count: "{{ total }}"
+        sequence:
+        - service: "{{ items[repeat.index - 1].domain }}.turn_o{{ 'n' if items[repeat.index - 1].value else 'ff' }}"
+          target:
+            entity_id: "{{ items[repeat.index - 1].entity_id }}"
+
+
+zwave_ping:
+  mode: parallel
+  alias: Zwave JS - Ping nodes after x seconds.
+  fields:
+    entities:
+      description: (Required) The group of lights & switches
+      example: group.bonus_room_area
+      selector:
+        entity:
+          integration: zwave_js
+          domain:
+          - light
+          - switch
+          multiple: True
+    delay:
+      description: (Optional) How long from now you'll ping the nodes.
+      example: 1
+      selector:
+        number:
+          min: 0
+          max: 300
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ delay is defined }}"
       sequence:
-      - service: zwave_js.multicast_set_value
-        target:
-          entity_id: "{{ items[repeat.index - 1].entity_id }}"
-        data:
-          command_class: "{{ items[repeat.index - 1].command_class }}"
-          property: "{{ items[repeat.index - 1].property }}"
-          endpoint: "{{ items[repeat.index - 1].endpoint }}"
-          value: "{{ items[repeat.index - 1].value }}"
+      - delay:
+          seconds: "{{ delay }}"
+  - service: zwave_js.ping
+    target:
+      entity_id: "{{ entities }}"
