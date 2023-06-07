@@ -30,6 +30,7 @@ input_select:
 input_text:
 input_datetime:
 input_number:
+input_button:
 intent_script: !include intent_script.yaml
 ios:
 light: !include light.yaml
