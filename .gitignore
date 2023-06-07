@@ -225,3 +225,5 @@ deleted_statistics.2021-12-19T12:33:16.256064\+00:00.json
 zigbee2mqtt/
 
 *.mp3
+custom_templates/dates.jinja
+custom_templates/easy_time.jinja
