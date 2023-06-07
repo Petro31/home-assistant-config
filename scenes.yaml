@@ -65,19 +65,19 @@
   entities:
     light.main_door_left_bulb:
       state: 'on'
-      rgb_color: [255, 212, 229]
+      rgb_color: [255, 0, 192]
     light.main_door_right_bulb:
       state: 'on'
-      rgb_color: [224, 205, 225]
+      rgb_color: [192, 3, 255]
     light.passenger_door_bulb:
       state: 'on'
-      rgb_color: [189, 232, 239]
+      rgb_color: [0, 255, 254]
     light.garage_sconce_left_bulb:
       state: 'on'
-      rgb_color: [183, 215, 132]
+      rgb_color: [192, 3, 255]
     light.garage_sconce_right_bulb:
       state: 'on'
-      rgb_color: [254, 255, 162]
+      rgb_color: [255, 0, 192]
 
 #
 # All valentines day colors
