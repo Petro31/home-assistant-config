@@ -1,0 +1,18 @@
+- binary_sensor:
+  - unique_id: house_power_status
+    name: House Power Status
+    state: > 
+      {{ 'OB' in states('sensor.cyberpower_status_data') }}
+    device_class: problem
+    attributes:
+      template: ups
+
+  - unique_id: house_voltage_status
+    name: House Voltage Status
+    state: > 
+      {{ states('sensor.cyberpower_output_voltage') | float > 118 }}
+    availability: >
+      {{ states('sensor.cyberpower_output_voltage') | is_number }}
+    device_class: problem
+    attributes:
+      template: ups

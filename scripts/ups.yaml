@@ -1,0 +1,33 @@
+power_down_sequence:
+  alias: Power Down Sequence
+  mode: single
+  fields:
+    devices:
+      description: Devices to power off
+      example: Synology DSM
+      selector:
+        select:
+          multiple: true
+          options:
+          - Synology DSM
+  variables:
+    selected: >
+      {{ devices | default([]) }}
+    config:
+    - name: Synology DSM
+      service: button.press
+      target:
+        entity: button.orion_shutdown
+    services: >
+      {{ config | selectattr('name', 'in', selected) | list }}
+  sequence:
+  - condition: template
+    value_template: "{{ services | length > 0 }}"
+  - repeat:
+      for_each: "{{ services }}"
+      sequence:
+      - service: script.notify
+        data:
+          message: Shutting down {{ repeat.item.name }}
+      - service: "{{ repeat.item.service }}"
+        target: "{{ repeat.item.target }}"

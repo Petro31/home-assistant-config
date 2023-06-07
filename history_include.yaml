@@ -24,6 +24,13 @@ entities:
   - sensor.bonus_server_room_temperature_sensor_battery_level
   - sensor.cgdk2_1_battery_level
   - sensor.cpu_temperature
+  - sensor.cyberpower_battery_charge
+  - sensor.cyberpower_battery_runtime
+  - sensor.cyberpower_input_voltage
+  - sensor.cyberpower_load
+  - sensor.cyberpower_output_voltage
+  - sensor.cyberpower_status
+  - sensor.cyberpower_status_data
   - sensor.database_size
   - sensor.deck_humidity
   - sensor.deck_temperature
