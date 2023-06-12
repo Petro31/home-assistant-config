@@ -1,0 +1,56 @@
+- alias: Events - Milestone Notifications
+  id: event_milestone_notifications
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '15:30:00'
+    - platform: time
+      at: '19:00:00'
+  variables:
+    target_date: >
+      {{ today_at().date() | string }}
+    events: >
+      {{ state_attr('binary_sensor.personal_events', 'events') | selectattr('when', 'eq', target_date) | list }}
+  condition:
+  - condition: state
+    entity_id: binary_sensor.personal_events
+    state: 'on'
+  action:
+  - repeat:
+      for_each: "{{ events }}"
+      sequence:
+      - service: script.notify
+        data:
+          message: >
+            Today is {{ repeat.item.who }}s {{ repeat.item.event }}!
+
+- alias: Events - Milestone Reminders
+  id: event_milestone_reminders
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '15:30:00'
+    - platform: time
+      at: '19:00:00'
+  variables:
+    target_dates: >
+      {% set ns = namespace(dates=[]) %}
+      {%- for offset in [30, 14, 7] %}
+      {%- set ns.dates = ns.dates + [(today_at() + timedelta(days=offset)).date() | string] %}
+      {%- endfor %}
+      {{ ns.dates }}
+    events: >
+      {{ state_attr('binary_sensor.personal_events', 'events') | selectattr('when', 'in', target_dates) | selectattr('who', 'search', 'Mike|Lindsay') | list }}
+  condition:
+  - condition: template
+    value_template: "{{ target_date in dates }}"
+  action:
+  - repeat:
+      for_each: "{{ events }}"
+      sequence:
+      - service: script.notify
+        data:
+          message: >
+            {{ repeat.item.who }}s {{ repeat.item.event }} is in {{ repeat.item.days_away }} day{{ 's' if repeat.item.days_away > 1 else '' }}!
