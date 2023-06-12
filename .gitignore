@@ -227,3 +227,5 @@ zigbee2mqtt/
 *.mp3
 custom_templates/dates.jinja
 custom_templates/easy_time.jinja
+
+core
