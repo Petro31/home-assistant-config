@@ -862,6 +862,13 @@
     'image': '/local/images/echo_2.png',
     'view': '../views/echos.yaml',
   },{
+    'name': 'Drinks',
+    'icon': 'mdi:glass-wine',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'type': '../templates/summary/overview.yaml',
+    'image': '/local/images/wine.png',
+    'view': '../views/drinks.yaml',
+  },{
     'name': 'Plants',
     'icon': 'mdi:flower',
     'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],

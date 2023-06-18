@@ -1,0 +1,39 @@
+# lovelace_gen
+
+type: custom:button-card
+aspect_ratio: 480/270
+color: auto
+icon: mdi:glass-cocktail
+show_state: true
+show_label: false
+show_name: false
+show_entity_picture: true
+entity_picture: /local/images/petro_large.png
+entity: select.drink
+styles:
+  grid:
+    - grid-template-areas: '"" "s s"'
+    - grid-template-rows: 50% 25% 25%
+    - grid-template-columns: auto
+  card:
+    - background-image: |
+        [[[
+          return `url(${entity.attributes.image})`;
+        ]]]
+    - background-repeat: no-repeat
+    - background-size: 100% 100%
+    - border-radius: 15px
+    - padding: 0px
+  entity_picture:
+    - width: 100%
+    - padding-bottom: 0%
+    - opacity: 0.0
+  state:
+    - font-size: 20px
+    - font-family: Helvetica
+    - text-transform: capitalize
+    - font-weight: bold
+    - align-self: end
+    - justify-self: start
+    - padding: 9px 10px
+    - text-shadow: 0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black
