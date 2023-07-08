@@ -2,13 +2,15 @@
   id: mqtt_store_drink_states_discovery
   mode: single
   trigger:
-  - platform: homeassistant
-    event: start
+    - platform: homeassistant
+      event: start
   variables:
     root: "homeassistant"
+    milliliter: 0.20288414
     teaspoon: 1
     tablespoon: 3
     ounce: 6
+    shot: 9
     quarter: 12
     third: 16
     half: 24
@@ -16,88 +18,105 @@
     three_forths: 36
     cup: 48
     drinks: &drinks
-    - name: Soco Manhattan
-      id: soco_manhattan
-      image: /local/images/manhattan.png
-      parts:
-      - name: Southern Comfort
-        type: parts
-        count: "{{ 3 * ounce }}"
-      - name: Sweet Vermouth
-        type: parts
-        count: "{{ ounce }}"
-      - name: Angostura Bitters
-        type: dash
-      - name: Cherry
-        type: garnish
+      - name: Soco Manhattan
+        id: soco_manhattan
+        image: /local/images/manhattan.png
+        parts:
+          - name: Southern Comfort
+            type: parts
+            count: "{{ 3 * ounce }}"
+          - name: Sweet Vermouth
+            type: parts
+            count: "{{ ounce }}"
+          - name: Angostura Bitters
+            type: dash
+          - name: Cherry
+            type: garnish
 
-    - name: Mango Habanero Margarita
-      id: mango_habanero
-      image: /local/images/spicy_margarita.png
-      parts:
-      - name: Habanero Tequila
-        type: parts
-        count: "{{ quarter }}"
-      - name: Naked Mango
-        type: parts
-        count: "{{ cup }}"
-      - name: Cointreau Orange Liqueur 
-        type: parts
-        count: "{{ 2 * tablespoon }}"
-      - name: Lime Juice
-        type: parts
-        count: "{{ tablespoon }}"
+      - name: Mango Habanero Margarita
+        id: mango_habanero
+        image: /local/images/spicy_margarita.png
+        parts:
+          - name: Habanero Tequila
+            type: parts
+            count: "{{ quarter }}"
+          - name: Naked Mango
+            type: parts
+            count: "{{ cup }}"
+          - name: Cointreau Orange Liqueur
+            type: parts
+            count: "{{ 2 * tablespoon }}"
+          - name: Lime Juice
+            type: parts
+            count: "{{ tablespoon }}"
 
-    - name: Apple Cider Margarita
-      id: apple_cider_margarita
-      image: /local/images/apple_cider_margarita.png
-      parts:
-      - name: Cinnamon Tequila
-        type: parts
-        count: "{{ quarter }}"
-      - name: Cider
-        type: parts
-        count: "{{ cup }}"
-      - name: Cointreau Orange Liqueur 
-        type: parts
-        count: "{{ ounce }}"
-      - name: Simple Syrup
-        type: parts
-        count: "{{ ounce }}"
+      - name: Apple Cider Margarita
+        id: apple_cider_margarita
+        image: /local/images/apple_cider_margarita.png
+        parts:
+          - name: Cinnamon Tequila
+            type: parts
+            count: "{{ quarter }}"
+          - name: Cider
+            type: parts
+            count: "{{ cup }}"
+          - name: Cointreau Orange Liqueur
+            type: parts
+            count: "{{ ounce }}"
+          - name: Simple Syrup
+            type: parts
+            count: "{{ ounce }}"
+
+      - name: Cosmopolitan
+        id: cosmopolitan
+        image: /local/images/apple_cider_margarita.png
+        parts:
+          - name: Vodka
+            type: parts
+            count: "{{ 2 * shot }}"
+          - name: Cranberry
+            type: parts
+            count: "{{ 2 * shot }}"
+          - name: Triple Sec
+            type: parts
+            count: "{{ shot }}"
+          - name: Lime Juice
+            type: parts
+            count: "{{ shot }}"
 
   action:
-  - service: script.mqtt_automated_config
-    data:
-      domain: sensor
-      unique_id: drinks_config
+    - service: script.mqtt_automated_config
+      data:
+        domain: sensor
+        unique_id: drinks_config
 
-  - service: script.mqtt_automated_states
-    data:
-      domain: sensor
-      unique_id: drinks_config
-      state: "{{ drinks | count }}"
-      attributes: >
-        {{ {
-            'drinks': drinks
-        } }}    
+    - service: script.mqtt_automated_states
+      data:
+        domain: sensor
+        unique_id: drinks_config
+        state: "{{ drinks | count }}"
+        attributes: >
+          {{ {
+              'drinks': drinks
+          } }}
 
-  - service: mqtt.publish
-    data: >
-      {% set command_template = "{% set drinks = " ~ drinks ~ "%}{% set drink = drinks | selectattr('name', 'eq', value) | first | default(drinks[0]) %}{{ drink | to_json }}" %}
-      {% set options = drinks | map(attribute='name') | list %}
-      {{
-        {
-            'topic': root ~ '/select/drinks/config',
-            'payload': {
-                'name': 'Drink',
-                'unique_id': 'drink_selector',
-                'object_id': 'drink',
-                'command_topic': root ~ '/select/drinks/state',
-                'command_template': command_template,
-                'json_attributes_topic': root ~ '/select/drinks/state',
-                'json_attributes_template': '{{ {"parts": value_json.parts, "image": value_json.image} | tojson }}',
-                'value_template': "{{ value_json.name }}",
-                'options': options,
-            } | to_json
-        }
-      }}
+    - service: mqtt.publish
+      data: >
+        {% set command_template = "{% set drinks = " ~ drinks ~ "%}{% set drink = drinks | selectattr('name', 'eq', value) | first | default(drinks[0]) %}{{ drink | to_json }}" %}
+        {% set options = drinks | map(attribute='name') | list %}
+        {{
+          {
+              'topic': root ~ '/select/drinks/config',
+              'payload': {
+                  'name': 'Drink',
+                  'unique_id': 'drink_selector',
+                  'object_id': 'drink',
+                  'command_topic': root ~ '/select/drinks/state',
+                  'command_template': command_template,
+                  'json_attributes_topic': root ~ '/select/drinks/state',
+                  'json_attributes_template': '{{ {"parts": value_json.parts, "image": value_json.image} | tojson }}',
+                  'value_template': "{{ value_json.name }}",
+                  'options': options,
+              } | to_json
+          }
+        }}

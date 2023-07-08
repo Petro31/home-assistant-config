@@ -3,111 +3,117 @@ icon: mdi:glass-cocktail
 path: drinks
 visible: false
 cards:
-- !include '../templates/headers/drink.yaml'
-- type: entities
-  entities:
-  - select.drink
-  - input_select.drink_units
-  - input_number.drink_count
-- type: markdown
-  content: >
-    {% set count = states('input_number.drink_count') | int %}
-    {% set selected = states('input_select.drink_units') %}
-    {% set parts = state_attr('select.drink', 'parts') %}
-    {% set selections = {
-      'Teaspoons':'ts',
-      'Tablespoons':'tbl',
-      'Ounces':'onc',
-      'Quarter Cups':'25',
-      '1/3 Cups':'33',
-      'Half Cups':'50',
-      '2/3 Cups':'66',
-      '3 Quarter Cups':'75',
-      'Cups':'cup',
-    } %}
-    {% set _selected = selections.get(selected, 'onc') %}
-    {% set _counts = {
-      'ts': 1,
-      'tbl': 3,
-      'onc': 6,
-      '25': 12,
-      '33': 16,
-      '50': 24,
-      '66': 32,
-      '75': 36,
-      'cup': 48
-    } %}
+  - !include "../templates/headers/drink.yaml"
+  - type: entities
+    entities:
+      - select.drink
+      - input_select.drink_units
+      - input_number.drink_count
+  - type: markdown
+    content: >
+      {% set count = states('input_number.drink_count') | int %}
+      {% set selected = states('input_select.drink_units') %}
+      {% set parts = state_attr('select.drink', 'parts') %}
+      {% set selections = {
+        'Teaspoons':'ts',
+        'Tablespoons':'tbl',
+        'Milliliters':'ml',
+        'Ounces':'onc',
+        'Shots':'shot',
+        'Quarter Cups':'25',
+        '1/3 Cups':'33',
+        'Half Cups':'50',
+        '2/3 Cups':'66',
+        '3 Quarter Cups':'75',
+        'Cups':'cup',
+      } %}
+      {% set _selected = selections.get(selected, 'onc') %}
+      {% set _counts = {
+        'ml': 0.20288414,
+        'ts': 1,
+        'tbl': 3,
+        'onc': 6,
+        'shot': 9,
+        '25': 12,
+        '33': 16,
+        '50': 24,
+        '66': 32,
+        '75': 36,
+        'cup': 48
+      } %}
 
-    {% set _targets = _counts.keys() | list %}
-    {% set _i = _targets.index(_selected) %}
-    {% set _filtered = _targets[_i + 1:] %}
+      {% set _targets = _counts.keys() | list %}
+      {% set _i = _targets.index(_selected) %}
+      {% set _filtered = _targets[_i + 1:] %}
 
-    {%- macro _phrase(id, value) %}
-    {%- set single, plural = {
-      'ts': ('teaspoon', 'teaspoons'), 
-      'tbl': ('tablespoon', 'tablespoons'),
-      'onc': ('ounce', 'ounces'),
-      '25': ('1/4 cup', '1/4 cups'), 
-      '33': ('1/3 cup', '1/3 cups'), 
-      '50': ('1/2 cup', '1/2 cups'), 
-      '66': ('2/3 cup', '2/3 cups'), 
-      '75': ('3/4 cup', '3/4 cups'), 
-      'cup': ('cup', 'cups'), 
-    }.get(id) %}
-    {%- set name = plural if value != 1 else single %}
-    {{- '{} ({})'.format(value, name.title()) if value | int > 0 else '' -}}
-    {% endmacro %}
+      {%- macro _phrase(id, value) %}
+      {%- set single, plural = {
+        'ts': ('teaspoon', 'teaspoons'), 
+        'tbl': ('tablespoon', 'tablespoons'),
+        'ml': ('milliliter', 'milliliters'),
+        'onc': ('ounce', 'ounces'),
+        'shot': ('shot', 'shots'),
+        '25': ('1/4 cup', '1/4 cups'), 
+        '33': ('1/3 cup', '1/3 cups'), 
+        '50': ('1/2 cup', '1/2 cups'), 
+        '66': ('2/3 cup', '2/3 cups'), 
+        '75': ('3/4 cup', '3/4 cups'), 
+        'cup': ('cup', 'cups'), 
+      }.get(id) %}
+      {%- set name = plural if value != 1 else single %}
+      {{- '{} ({})'.format(value, name.title()) if value | int > 0 else '' -}}
+      {% endmacro %}
 
-    {%- macro phrase(count, filtered) %}
-    {%- set ns = namespace(value=count, out=[]) %}
-    {%- set items = _counts.items() | rejectattr('0', 'in', filtered) | list %}
-    {%- for k, v in items | reverse %}
-      {%- set cnt = ns.value // v %}
-      {%- if cnt %}
-        {%- set ns.out = ns.out + [ _phrase(k, cnt) ] %}
-        {%- set remainder = ns.value % v %}
-        {%- set ns.value = remainder %}
-      {%- endif %}
-    {%- endfor %}
-    {{- ns.out[:-1] | join(', ') ~ ' & ' ~ ns.out[-1] if ns.out | length > 1 else ns.out | first  | default }}
-    {%- endmacro %}
-
-    # Ingredients
-
-    <table width="100%" style="margin: 0px">
-      {%- for part in parts %}
-      <tr>
-        <td>{{ part.name }}</td>
-        {%- if part.type == 'parts' %}
-        <td>{{ phrase(part.count * count, _filtered) }}</td>
-        {%- else %}
-        <td>{{ part.type }}</td>
+      {%- macro phrase(count, filtered) %}
+      {%- set ns = namespace(value=count, out=[]) %}
+      {%- set items = _counts.items() | rejectattr('0', 'in', filtered) | list %}
+      {%- for k, v in items | reverse %}
+        {%- set cnt = ns.value // v %}
+        {%- if cnt %}
+          {%- set ns.out = ns.out + [ _phrase(k, cnt) ] %}
+          {%- set remainder = ns.value % v %}
+          {%- set ns.value = remainder %}
         {%- endif %}
-      </tr>
       {%- endfor %}
-    </table>
+      {{- ns.out[:-1] | join(', ') ~ ' & ' ~ ns.out[-1] if ns.out | length > 1 else ns.out | first  | default }}
+      {%- endmacro %}
+
+      # Ingredients
+
+      <table width="100%" style="margin: 0px">
+        {%- for part in parts %}
+        <tr>
+          <td>{{ part.name }}</td>
+          {%- if part.type == 'parts' %}
+          <td>{{ phrase(part.count * count, _filtered) }}</td>
+          {%- else %}
+          <td>{{ part.type }}</td>
+          {%- endif %}
+        </tr>
+        {%- endfor %}
+      </table>
 
 
-    # Key
+      # Key
 
-    {%- set fractions = {0.020833: '1/48', 0.041667: '1/24', 0.0625: '1/16', 0.083333: '1/12', 0.104167: '5/48', 0.125: '1/8', 0.145833: '7/48', 0.166667: '1/6', 0.1875: '3/16', 0.208333: '5/24', 0.229167: '11/48', 0.25: '1/4', 0.270833: '13/48', 0.291667: '7/24', 0.3125: '5/16', 0.333333: '1/3', 0.354167: '17/48', 0.375: '3/8', 0.395833: '19/48', 0.416667: '5/12', 0.4375: '7/16', 0.458333: '11/24', 0.479167: '23/48', 0.5: '1/2', 0.520833: '25/48', 0.541667: '13/24', 0.5625: '9/16', 0.583333: '7/12', 0.604167: '29/48', 0.625: '5/8', 0.645833: '31/48', 0.666667: '2/3', 0.6875: '11/16', 0.708333: '17/24', 0.729167: '35/48', 0.75: '3/4', 0.770833: '37/48', 0.791667: '19/24', 0.8125: '13/16', 0.833333: '5/6', 0.854167: '41/48', 0.875: '7/8', 0.895833: '43/48', 0.916667: '11/12', 0.9375: '15/16', 0.958333: '23/24', 0.979167: '47/48', 1.0: '1'} %}
-    
-    {%- macro fraction(value, count=0) %}
-    {%- set out = fractions.get(value | round(6)) %}
-    {%- if out is not none %}
-    {{- out }}
-    {%- elif count <= 1 %}
-    {{- (value // 1) | int }}{{ ' & ' ~ fraction(value % 1, count + 1) if value % 1 else '' }}
-    {% else %}
-    {{- value }}
-    {%- endif %}
-    {%- endmacro %}
+      {%- set fractions = {0.020833: '1/48', 0.041667: '1/24', 0.0625: '1/16', 0.083333: '1/12', 0.104167: '5/48', 0.125: '1/8', 0.145833: '7/48', 0.166667: '1/6', 0.1875: '3/16', 0.208333: '5/24', 0.229167: '11/48', 0.25: '1/4', 0.270833: '13/48', 0.291667: '7/24', 0.3125: '5/16', 0.333333: '1/3', 0.354167: '17/48', 0.375: '3/8', 0.395833: '19/48', 0.416667: '5/12', 0.4375: '7/16', 0.458333: '11/24', 0.479167: '23/48', 0.5: '1/2', 0.520833: '25/48', 0.541667: '13/24', 0.5625: '9/16', 0.583333: '7/12', 0.604167: '29/48', 0.625: '5/8', 0.645833: '31/48', 0.666667: '2/3', 0.6875: '11/16', 0.708333: '17/24', 0.729167: '35/48', 0.75: '3/4', 0.770833: '37/48', 0.791667: '19/24', 0.8125: '13/16', 0.833333: '5/6', 0.854167: '41/48', 0.875: '7/8', 0.895833: '43/48', 0.916667: '11/12', 0.9375: '15/16', 0.958333: '23/24', 0.979167: '47/48', 1.0: '1'} %}
 
-    <table width="100%" style="margin: 0px">
-      {%- for selection, item in selections.items() %}
-      <tr>
-        <td>{{ selection[:-1] }}</td>
-        <td>{{ fraction(_counts[item] / _counts[_selected]) }} {{ selected }}</td>
-      </tr>
-      {%- endfor %}
-    </table>
+      {%- macro fraction(value, count=0) %}
+      {%- set out = fractions.get(value | round(6)) %}
+      {%- if out is not none %}
+      {{- out }}
+      {%- elif count <= 1 %}
+      {{- (value // 1) | int }}{{ ' & ' ~ fraction(value % 1, count + 1) if value % 1 else '' }}
+      {% else %}
+      {{- value }}
+      {%- endif %}
+      {%- endmacro %}
+
+      <table width="100%" style="margin: 0px">
+        {%- for selection, item in selections.items() %}
+        <tr>
+          <td>{{ selection[:-1] }}</td>
+          <td>{{ fraction(_counts[item] / _counts[_selected]) | replace('0 & ', '') }} {{ selected }}</td>
+        </tr>
+        {%- endfor %}
+      </table>
