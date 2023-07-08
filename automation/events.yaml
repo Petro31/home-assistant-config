@@ -45,7 +45,7 @@
       {{ state_attr('binary_sensor.personal_events', 'events') | selectattr('when', 'in', target_dates) | selectattr('who', 'search', 'Mike|Lindsay') | list }}
   condition:
   - condition: template
-    value_template: "{{ target_date in dates }}"
+    value_template: "{{ events | count > 0 }}"
   action:
   - repeat:
       for_each: "{{ events }}"
