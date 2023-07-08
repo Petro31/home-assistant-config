@@ -1,8 +1,8 @@
 - alias: Timed Event - Snapshot status
   id: snapshot_status
   trigger:
-  - platform: state
-    entity_id: sensor.samba_backup
+    - platform: state
+      entity_id: sensor.samba_backup
   variables:
     valid: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}"
@@ -11,23 +11,23 @@
     not_idle: >
       {{ status != 'idle' }}
   condition:
-  - condition: template
-    value_template: "{{ valid and not_idle }}"
+    - condition: template
+      value_template: "{{ valid and not_idle }}"
   action:
-  - service: script.notify
-    data:
-      title: Snapshot Status
-      message: "Samba backup {{ status }}."
+    - service: script.notify
+      data:
+        title: Snapshot Status
+        message: "Samba backup {{ status }}."
 
 - alias: Timed Event - Garbage Day Message
   id: garbage_day_message
   trigger:
     - platform: time
-      at: '10:00:00'
+      at: "10:00:00"
     - platform: time
-      at: '15:30:00'
+      at: "15:30:00"
     - platform: time
-      at: '19:00:00'
+      at: "19:00:00"
   variables:
     recycling: >
       {% set recycling_origin = strptime(states('input_datetime.recycling'), '%Y-%m-%d') | as_local %}
@@ -44,14 +44,14 @@
     - service: script.notify
       data:
         message: "{{ what }}"
-        
+
 - alias: Timed Event - Change Filters Message
   id: change_filters_message
   trigger:
     - platform: time
-      at: '10:00:00'
+      at: "10:00:00"
     - platform: time
-      at: '19:00:00'
+      at: "19:00:00"
   condition:
     - condition: template
       value_template: "{{ now().day == 1 and now().month in [ 1, 4, 7, 10 ] }}"
@@ -59,14 +59,14 @@
     - service: script.notify
       data:
         message: "Change HVAC filter."
-            
+
 - alias: Timed Event - Mosby Heartworm and Flee Medication.
   id: mosby_heartworm
   trigger:
     - platform: time
-      at: '10:00:00'
+      at: "10:00:00"
     - platform: time
-      at: '19:00:00'
+      at: "19:00:00"
   condition:
     - condition: template
       value_template: "{{ now().day == 1 }}"
@@ -79,9 +79,9 @@
   id: dst_warning
   trigger:
     - platform: time
-      at: '10:00:00'
+      at: "10:00:00"
     - platform: time
-      at: '19:00:00'
+      at: "19:00:00"
   condition:
     - condition: template
       value_template: >
@@ -97,66 +97,54 @@
 - alias: Timed Event - Indoor Christmas Lights
   id: indoor_christmas_lights
   trigger:
-  - platform: state
-    entity_id: binary_sensor.indoor_christmas
-    not_to:
-    - unknown
-    - unavailable
+    - platform: state
+      entity_id: binary_sensor.indoor_christmas
+      not_to:
+        - unknown
+        - unavailable
   condition:
-  - condition: template
-    value_template: "{{ is_state('binary_sensor.christmas_season', 'on') }}"
+    - condition: template
+      value_template: "{{ is_state('binary_sensor.christmas_season', 'on') }}"
   action:
-  - service: switch.turn_{{ trigger.to_state.state }}
-    target:
-      entity_id: 
-      - switch.indoor_christmas
+    - service: switch.turn_{{ trigger.to_state.state }}
+      target:
+        entity_id:
+          - switch.indoor_christmas
 
-  
 - alias: Timed Event - Outdoor Lights On at Sunset, Off at Sunrise
   id: outdoor_lights_on_off
   trigger:
-  - platform: sun
-    event: sunset
-  - platform: sun
-    event: sunrise
+    - platform: sun
+      event: sunset
+    - platform: sun
+      event: sunrise
   variables:
     event: >
       {{ trigger.event | default('invalid') }}
     scene: >
       {{ states('sensor.seasonal_lights') }}
   action:
-  - service: script.sunrise_sunset
-    data:
-      event: "{{ event }}"
-      scene: "{{ scene }}"
+    - service: script.sunrise_sunset
+      data:
+        event: "{{ event }}"
+        scene: "{{ scene }}"
 
 - alias: Timed Event - Clear persistent_notifications around bedtime.
   id: clear_persistent_notifications_around_bedtime
   trigger:
-  - platform: time
-    at: "22:00:00"
-  variables:
-    notification_ids: >
-      {{ states.persistent_notification | map(attribute='object_id') | list }}
-  condition:
-  - condition: template
-    value_template: "{{ notification_ids | length > 0 }}"
+    - platform: time
+      at: "22:00:00"
   action:
-  - repeat:
-      count: "{{ notification_ids | length }}"
-      sequence:
-      - service: persistent_notification.dismiss
-        data:
-          notification_id: "{{ notification_ids[repeat.index - 1] }}"
+    - service: persistent_notification.dismiss_all
 
 - alias: Calendar - Simple Thermostat
   id: simple_thermostat
   trigger:
-  - platform: calendar
-    # Possible values: start, end
-    event: start
-    # The calendar entity_id
-    entity_id: calendar.thermostat
+    - platform: calendar
+      # Possible values: start, end
+      event: start
+      # The calendar entity_id
+      entity_id: calendar.thermostat
   variables:
     config:
       heat: 70
@@ -166,11 +154,11 @@
     temperature: >
       {{ config.get(event) }}
   condition:
-  - condition: template
-    value_template: "{{ temperature is not none }}"
+    - condition: template
+      value_template: "{{ temperature is not none }}"
   action:
-  - service: climate.set_temperature
-    target:
-      entity_id: climate.living_room_thermostat
-    data:
-      temperature: "{{ temperature }}"
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.living_room_thermostat
+      data:
+        temperature: "{{ temperature }}"
