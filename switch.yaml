@@ -776,19 +776,20 @@
       hyperion_usb_capture:
         unique_id: hyperion_usb_capture
         value_template: >
-          {%- set entity = 'light.gpio_18_tv' %}
-          {{ is_state(entity, 'on') and is_state_attr(entity, 'effect', 'USB Capture') }}
+          {%- set entities = 'switch.gpio_18_tv_component_led_device', 'switch.gpio_18_tv_component_usb_capture' %}
+          {{ entities | select('is_state', 'on') | list | count == 2 }}
         turn_on:
-        - service: light.turn_on
-          target:
-            entity_id: light.gpio_18_tv
-          data:
-            brightness: 255
-            effect: USB Capture
+        - service: switch.turn_on
+          entity_id:
+          - switch.gpio_18_tv_component_led_device
+          - switch.gpio_18_tv_component_usb_capture
         turn_off:
-        - service: light.turn_off
+        - service: homeassistant.turn_off
           target:
-            entity_id: light.gpio_18_tv
+            entity_id: 
+            - light.gpio_18_tv
+            - switch.gpio_18_tv_component_led_device
+            - switch.gpio_18_tv_component_usb_capture
 
       hyperion_cinema:
         unique_id: hyperion_cinema
@@ -796,6 +797,8 @@
           {%- set entity = 'light.gpio_18_tv' %}
           {{ is_state(entity, 'on') and is_state_attr(entity, 'effect', 'Cinema dim lights') }}
         turn_on:
+        - service: switch.turn_on
+          entity_id: switch.gpio_18_tv_component_led_device
         - service: light.turn_on
           target:
             entity_id: light.gpio_18_tv
@@ -803,9 +806,11 @@
             brightness: 255
             effect: Cinema dim lights
         turn_off:
-        - service: light.turn_off
+        - service: homeassistant.turn_off
           target:
-            entity_id: light.gpio_18_tv
+            entity_id:
+            - light.gpio_18_tv
+            - switch.gpio_18_tv_component_led_device
 
       hyperion_rainbow_swirl_fast:
         unique_id: hyperion_rainbow_swirl_fast
@@ -813,6 +818,8 @@
           {%- set entity = 'light.gpio_18_tv' %}
           {{ is_state(entity, 'on') and is_state_attr(entity, 'effect', 'Rainbow swirl fast') }}
         turn_on:
+        - service: switch.turn_on
+          entity_id: switch.gpio_18_tv_component_led_device
         - service: light.turn_on
           target:
             entity_id: light.gpio_18_tv
@@ -820,9 +827,11 @@
             brightness: 255
             effect: Rainbow swirl fast
         turn_off:
-        - service: light.turn_off
+        - service: homeassistant.turn_off
           target:
-            entity_id: light.gpio_18_tv
+            entity_id:
+            - light.gpio_18_tv
+            - switch.gpio_18_tv_component_led_device
 
       hyperion_solid_green:
         unique_id: hyperion_solid_green
@@ -832,6 +841,8 @@
           {%- set is_green = is_state_attr(entity, 'rgb_color', (0, 255, 0)) %}
           {{ is_state(entity, 'on') and is_solid and is_green }}
         turn_on:
+        - service: switch.turn_on
+          entity_id: switch.gpio_18_tv_component_led_device
         - service: light.turn_on
           target:
             entity_id: light.gpio_18_tv
@@ -839,9 +850,11 @@
             brightness: 255
             rgb_color: [0, 255, 0]
         turn_off:
-        - service: light.turn_off
+        - service: homeassistant.turn_off
           target:
-            entity_id: light.gpio_18_tv
+            entity_id:
+            - light.gpio_18_tv
+            - switch.gpio_18_tv_component_led_device
 
       cast_workout_core:
         unique_id: cast_workout_core
