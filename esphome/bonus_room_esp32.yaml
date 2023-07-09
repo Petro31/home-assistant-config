@@ -1,0 +1,96 @@
+esphome:
+  name: bonus_room_esp32
+  platform: ESP32
+  board: mhetesp32devkit
+
+wifi:
+  ssid: !secret wifi_iot_upstairs_ssid
+  password: !secret wifi_iot_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Bonus Room Esp32"
+    password: !secret wifi_fallback_password
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+esp32_ble_tracker:
+
+switch:
+  - platform: restart
+    name: "Bonus Room ESP32 Restart"
+
+sensor:
+  - platform: xiaomi_lywsdcgq
+    mac_address: !secret mijia_ble_temperature_2
+    temperature:
+      name: "Bonus Server Room Temperature"
+      device_class: "temperature"
+      state_class: "measurement"
+    humidity:
+      name: "Bonus Server Room Humidity"
+      device_class: "humidity"
+      state_class: "measurement"
+    battery_level:
+      name: "Bonus Server Room Temperature Sensor Battery Level"
+      device_class: "battery"
+      
+  - platform: template
+    name: Bonus Server Room Temperature Sensor Number
+    lambda: |-
+      return 2;
+    update_interval: 86400s
+      
+  - platform: xiaomi_hhccjcy01
+    mac_address: !secret miflora_3
+    temperature:
+      name: "Markus Temperature"
+      device_class: "temperature"
+      state_class: "measurement"
+    moisture:
+      name: "Markus 3 Moisture"
+    illuminance:
+      name: "Markus 3 Illuminance"
+    conductivity:
+      name: "Markus 3 Soil Conductivity"
+      
+  - platform: template
+    name: Markus MiFlora Number
+    lambda: |-
+      return 3;
+    update_interval: 86400s
+
+  - platform: xiaomi_cgdk2
+    mac_address: !secret xiaomi_cgdk2_2_mac
+    bindkey: !secret xiaomi_cgdk2_2_bindkey
+    temperature:
+      name: Bonus Room Temperature
+    humidity:
+      name: Bonus Room Humidity
+    battery_level:
+      name: Bonus Room Battery Level
+
+  - platform: xiaomi_cgdk2
+    mac_address: !secret xiaomi_cgdk2_1_mac
+    bindkey: !secret xiaomi_cgdk2_1_bindkey
+    temperature:
+      name: Office Temperature
+    humidity:
+      name: Office Humidity
+    battery_level:
+      name: Office Battery Level
+
+  - platform: uptime
+    name: Bonus Room ESP32 Ethernet Uptime
+
+  - platform: template
+    name: Bonus Room ESP32 Free Memory
+    lambda: return heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+    unit_of_measurement: 'B'
+    state_class: measurement

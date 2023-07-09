@@ -1,0 +1,56 @@
+esphome:
+  name: kitchen_esp32
+  platform: ESP32
+  board: mhetesp32devkit
+
+wifi:
+  ssid: !secret wifi_iot_server_ssid
+  password: !secret wifi_iot_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Dining Room Esp32"
+    password: !secret wifi_fallback_password
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+esp32_ble_tracker:
+
+switch:
+  - platform: restart
+    name: "Kitchen ESP32 Restart"
+
+sensor:
+  - platform: xiaomi_lywsdcgq
+    mac_address: !secret mijia_ble_temperature_1
+    temperature:
+      name: "Kitchen Temperature"
+      device_class: "temperature"
+      state_class: "measurement"
+    humidity:
+      name: "Kitchen Humidity"
+      device_class: "humidity"
+      state_class: "measurement"
+    battery_level:
+      name: "Kitchen Temperature Sensor Battery Level"
+      
+  - platform: template
+    name: Kitchen Temperature Sensor Number
+    lambda: |-
+      return 1;
+    update_interval: 86400s
+
+  - platform: uptime
+    name: Kitchen ESP32 Ethernet Uptime
+
+  - platform: template
+    name: Kitchen ESP32 Free Memory
+    lambda: return heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+    unit_of_measurement: 'B'
+    state_class: measurement

@@ -1,0 +1,61 @@
+esphome:
+  name: game-room-esp32
+  platform: ESP32
+  board: esp32dev
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: !secret game_room_ota_password
+
+wifi:
+  ssid: !secret wifi_iot_server_ssid
+  password: !secret wifi_iot_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Game-Room-Esp32 Fallback Hotspot"
+    password: !secret wifi_iot_password
+
+captive_portal:
+
+esp32_ble_tracker:
+
+switch:
+  - platform: restart
+    name: "Game Room ESP32 Restart"
+
+sensor:
+
+  - platform: xiaomi_cgdk2
+    mac_address: !secret xiaomi_cgdk2_3_mac
+    bindkey: !secret xiaomi_cgdk2_3_bindkey
+    temperature:
+      name: Server Room Temperature
+    humidity:
+      name: Server Room Humidity
+    battery_level:
+      name: Server Room Battery Level
+
+  - platform: xiaomi_cgdk2
+    mac_address: !secret xiaomi_cgdk2_4_mac
+    bindkey: !secret xiaomi_cgdk2_4_bindkey
+    temperature:
+      name: Basement Temperature
+    humidity:
+      name: Basement Humidity
+    battery_level:
+      name: Basement Battery Level
+
+  - platform: uptime
+    name: Game Room ESP32 Ethernet Uptime
+
+  - platform: template
+    name: Game Room ESP32 Free Memory
+    lambda: return heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+    unit_of_measurement: 'B'
+    state_class: measurement

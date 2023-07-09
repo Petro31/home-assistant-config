@@ -1,0 +1,94 @@
+esphome:
+  name: dining_room_esp32
+  platform: ESP32
+  board: mhetesp32devkit
+
+wifi:
+  ssid: !secret wifi_iot_server_ssid
+  password: !secret wifi_iot_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Dining Room Esp32"
+    password: !secret wifi_fallback_password
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+esp32_ble_tracker:
+
+switch:
+  - platform: restart
+    name: "Dining Room ESP32 Restart"
+
+sensor:
+  - platform: xiaomi_hhccjcy01
+    mac_address: !secret miflora_1
+    temperature:
+      name: "Kitty Temperature"
+      device_class: "temperature"
+      state_class: "measurement"
+    moisture:
+      name: "Kitty Moisture"
+    illuminance:
+      name: "Kitty Illuminance"
+    conductivity:
+      name: "Kitty Soil Conductivity"
+      
+  - platform: template
+    name: Kitty MiFlora Number
+    lambda: |-
+      return 1;
+    update_interval: 86400s
+      
+  - platform: xiaomi_hhccjcy01
+    mac_address: !secret miflora_2
+    temperature:
+      name: "Yucca Temperature"
+      device_class: "temperature"
+      state_class: "measurement"
+    moisture:
+      name: "Yucca Moisture"
+    illuminance:
+      name: "Yucca Illuminance"
+    conductivity:
+      name: "Yucca Soil Conductivity"
+      
+  - platform: template
+    name: Yucca MiFlora Number
+    lambda: |-
+      return 2;
+    update_interval: 86400s
+
+  - platform: xiaomi_lywsdcgq
+    mac_address: !secret mijia_ble_temperature_4
+    temperature:
+      name: "Deck Temperature"
+      device_class: "temperature"
+      state_class: "measurement"
+    humidity:
+      name: "Deck Humidity"
+      device_class: "humidity"
+      state_class: "measurement"
+    battery_level:
+      name: "Deck Temperature Sensor Battery Level"
+      
+  - platform: template
+    name: Deck Temperature Sensor Number
+    lambda: |-
+      return 4;
+    update_interval: 86400s
+
+  - platform: uptime
+    name: Dining Room ESP32 Ethernet Uptime
+
+  - platform: template
+    name: Dining Room ESP32 Free Memory
+    lambda: return heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+    unit_of_measurement: 'B'
+    state_class: measurement
