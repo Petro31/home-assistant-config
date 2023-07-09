@@ -117,6 +117,7 @@
                   'json_attributes_template': '{{ {"parts": value_json.parts, "image": value_json.image} | tojson }}',
                   'value_template': "{{ value_json.name }}",
                   'options': options,
-              } | to_json
+                } | to_json,
+              'retain': True,
           }
         }}
