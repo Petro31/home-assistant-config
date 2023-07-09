@@ -934,10 +934,12 @@
         entity: person.petro
         path: petro_map
         index: 1
+        weight: sensor.petro_weight
       - type: '../templates/headers/person.yaml'
         entity: person.lambo
         path: lambo_map
         index: 2
+        weight: sensor.lambo_weight
 {{ toyaml('    ', 'entities', main_buttons) }}
 {%- if testing %}
     - name: Testing

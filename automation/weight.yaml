@@ -1,0 +1,67 @@
+- alias: Weight - MQTT Discovery & Automation
+  id: mqtt_store_and_automate_weights
+  mode: parallel
+  trigger:
+    - id: start
+      platform: homeassistant
+      event: start
+    - id: new
+      platform: state
+      entity_id: sensor.master_scale_weight
+  variables:
+    root: "homeassistant"
+    range: 20
+    config:
+      - person: person.petro
+        initial: 190
+      - person: person.lambo
+        initial: 145
+    people: >
+      {%- set ns = namespace(items=[]) %}
+      {%- for item in config %}
+        {%- set object_id = item.person.split('.')[-1] ~ '_weight' %}
+        {%- set ns.items = ns.items + [{
+            'unique_id': object_id,
+            'object_id': object_id,
+            'initial': item.initial,
+            'current': states('sensor.' ~ object_id) | float(None),
+        }] %}
+      {%- endfor %}
+      {{ ns.items }}
+    weight: >
+      {%- if trigger.id == 'new' and trigger.to_state.state | is_number %}
+        {%- set next_weight = trigger.to_state.state | float %}
+        {%- set ns = namespace(items=[]) %}
+        {%- for person in people %}
+          {%- set current = person.current or person.initial %}
+          {%- if current - range <= next_weight <= current + range %}
+            {%- set ns.items = ns.items + [{'next':next_weight, 'unique_id':person.unique_id}] %}
+          {%- endif %}
+        {%- endfor %}
+        {{ ns.items | first | default }}
+      {%- else -%}
+        None
+      {%- endif %}
+  action:
+  - choose:
+    - conditions: "{{ trigger.id == 'start' }}"
+      sequence:
+      - repeat:
+          for_each: "{{ people }}"
+          sequence:
+          - service: script.mqtt_automated_config
+            data:
+              domain: sensor
+              unique_id: "{{ repeat.item.unique_id }}"
+              object_id: "{{ repeat.item.object_id }}"
+              state_class: measurement
+              device_class: weight
+              unit_of_measurement: lb
+
+    - conditions: "{{ weight is not none }}"
+      sequence:
+      - service: script.mqtt_automated_states
+        data:
+          domain: sensor
+          unique_id: "{{ weight.unique_id }}"
+          state: "{{ weight.next }}"

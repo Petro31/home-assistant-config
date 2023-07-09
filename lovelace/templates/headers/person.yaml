@@ -11,9 +11,8 @@ entity_picture: /local/images/petro_large.png
 entity: {{ entity|default('person.petro') }}
 label: |
   [[[
-    var event = states['binary_sensor.personal_events'].attributes['events'][{{index}} - 1]
-    var plural = (event.days_away == 1) ? "" : "s";
-    return `Turning ${event.milestone} in ${event.days_away} day${plural}`
+    var event = states['{{ weight }}'].state;
+    return `${event} lbs`
   ]]]
 state_display: |
   [[[
@@ -30,8 +29,8 @@ tap_action:
   haptic: light
 styles:
   grid:
-    - grid-template-areas: '"" "s s" "l l"'
-    - grid-template-rows: 50% 20% 20%
+    - grid-template-areas: '"blank" "s" "l" "age"'
+    - grid-template-rows: fill min-content min-content min-content
     - grid-template-columns: auto
   card:
     - background-image: |
@@ -47,24 +46,42 @@ styles:
     - width: 100%
     - padding-bottom: 0%
     - opacity: 0.0
-  label:
+  label: &text
     - font-size: 15px
     - font-family: Helvetica
     - text-transform: capitalize
     - font-weight: bold
     - align-self: end
     - justify-self: start
-    - padding: 9px 10px
+    - padding-left: 9px
     - text-shadow: 0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black
-  state:
+  state: *text
+  custom_fields:
+    age:
     - font-size: 15px
     - font-family: Helvetica
     - text-transform: capitalize
     - font-weight: bold
     - align-self: end
     - justify-self: start
-    - padding: 9px 10px
+    - padding: 0px 0px 9px 9px
     - text-shadow: 0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black
+custom_fields:
+  blank: |
+    [[[
+      return "";
+    ]]]
+  padding: |
+    [[[
+      return "";
+    ]]]
+  age:  |
+    [[[
+      var event = states['binary_sensor.personal_events'].attributes['events'][{{index}} - 1]
+      var plural = (event.days_away == 1) ? "" : "s";
+      return `Turning ${event.milestone} in ${event.days_away} day${plural}`
+    ]]]
+    
 state:
   - value: home
     operator: '!='
