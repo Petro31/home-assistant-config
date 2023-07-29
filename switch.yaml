@@ -761,17 +761,23 @@
 
       hyperion:
         unique_id: hyperion
-        value_template: "{{ is_state('light.gpio_18_tv', 'on') }}"
+        value_template: >
+          {%- set entities = 'switch.gpio_18_tv_component_led_device', 'switch.gpio_18_tv_component_usb_capture' %}
+          {{ entities | select('is_state', 'on') | list | count == 2 }}
         turn_on:
         - service: light.turn_on
           target:
-            entity_id: light.gpio_18_tv
-          data:
-            brightness: 255
+            entity_id: 
+            - light.gpio_18_tv
+            - switch.gpio_18_tv_component_led_device
+            - switch.gpio_18_tv_component_usb_capture
         turn_off:
         - service: light.turn_off
           target:
-            entity_id: light.gpio_18_tv
+            entity_id: 
+            - light.gpio_18_tv
+            - switch.gpio_18_tv_component_led_device
+            - switch.gpio_18_tv_component_usb_capture
 
       hyperion_usb_capture:
         unique_id: hyperion_usb_capture
