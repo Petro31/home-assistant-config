@@ -191,3 +191,5 @@ esphome/esp32_temp/
 esphome/kitchen_esp32/
 
 esphome/master_closet_esp32/
+
+.cloud/
