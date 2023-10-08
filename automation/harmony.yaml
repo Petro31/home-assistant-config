@@ -32,7 +32,7 @@
   action:
   - service: switch.turn_off
     target:
-      entity_id: switch.hyperion
+      entity_id: switch.hyperion_usb_capture
 
 - alias: Harmony - Give ChromeCast control to remote using emulated roku.
   id: harmony_give_chromecast_control_to_remote_using_emulated_roku
