@@ -82,7 +82,7 @@
         ('soft', easter_day + timedelta(days=1)),
         ('christmas', thanksgiving - timedelta(days=4)),
         ('soft', md(1,7) | as_datetime ),
-        ('halloween', md(10,8) | as_datetime ),
+        ('halloween', md(10,1) | as_datetime ),
         ('soft', md(11,1) | as_datetime ),
         ('patriotic', veterans - timedelta(days=1) ),
         ('soft', veterans + timedelta(days=1) ),
