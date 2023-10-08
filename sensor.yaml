@@ -128,14 +128,3 @@
     name: Master Bathroom Humidity Change
     source: sensor.master_bathroom_filtered_humidity
     unit: '%'
-
-  - platform: waqi
-    token: !secret waqi_token
-    locations: !secret waqi_locations
-    
-  - platform: waqi
-    token: !secret waqi_token
-    locations:
-    - ""
-    stations:
-    - rochester-near-rd
