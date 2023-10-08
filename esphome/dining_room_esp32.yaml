@@ -22,6 +22,8 @@ ota:
 
 esp32_ble_tracker:
 
+bluetooth_proxy:
+
 switch:
   - platform: restart
     name: "Dining Room ESP32 Restart"

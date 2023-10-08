@@ -21,7 +21,6 @@ api:
 ota:
 
 bluetooth_proxy:
-  active: true
 
 esp32_ble_tracker:
 
@@ -43,30 +42,11 @@ sensor:
     battery_level:
       name: "Bonus Server Room Temperature Sensor Battery Level"
       device_class: "battery"
-      
+
   - platform: template
     name: Bonus Server Room Temperature Sensor Number
     lambda: |-
       return 2;
-    update_interval: 86400s
-      
-  - platform: xiaomi_hhccjcy01
-    mac_address: !secret miflora_3
-    temperature:
-      name: "Markus Temperature"
-      device_class: "temperature"
-      state_class: "measurement"
-    moisture:
-      name: "Markus 3 Moisture"
-    illuminance:
-      name: "Markus 3 Illuminance"
-    conductivity:
-      name: "Markus 3 Soil Conductivity"
-      
-  - platform: template
-    name: Markus MiFlora Number
-    lambda: |-
-      return 3;
     update_interval: 86400s
 
   - platform: xiaomi_cgdk2
@@ -78,16 +58,6 @@ sensor:
       name: Bonus Room Humidity
     battery_level:
       name: Bonus Room Battery Level
-
-  - platform: xiaomi_cgdk2
-    mac_address: !secret xiaomi_cgdk2_1_mac
-    bindkey: !secret xiaomi_cgdk2_1_bindkey
-    temperature:
-      name: Office Temperature
-    humidity:
-      name: Office Humidity
-    battery_level:
-      name: Office Battery Level
 
   - platform: uptime
     name: Bonus Room ESP32 Ethernet Uptime

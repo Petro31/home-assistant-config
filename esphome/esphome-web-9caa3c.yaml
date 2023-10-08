@@ -1,8 +1,11 @@
 esphome:
-  name: game-room-esp32
-  friendly_name: Game Room Esp32
-  platform: ESP32
+  name: basement-esp32
+  friendly_name: Basement Esp32
+
+esp32:
   board: esp32dev
+  framework:
+    type: arduino
 
 # Enable logging
 logger:
@@ -19,7 +22,7 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Game-Room-Esp32 Fallback Hotspot"
+    ssid: "Basement-Esp32 Fallback Hotspot"
     password: !secret wifi_iot_password
 
 captive_portal:
@@ -28,21 +31,26 @@ esp32_ble_tracker:
 
 bluetooth_proxy:
 
+i2c:
+- sda: 21
+  scl: 22
+  scan: true
+
 switch:
   - platform: restart
-    name: "Game Room ESP32 Restart"
+    name: "Restart"
 
 sensor:
-
-  - platform: xiaomi_cgdk2
-    mac_address: !secret xiaomi_cgdk2_3_mac
-    bindkey: !secret xiaomi_cgdk2_3_bindkey
+  - platform: bme280
     temperature:
-      name: Server Room Temperature
+      name: "BME280 Temperature"
+      oversampling: 16x
+    pressure:
+      name: "BME280 Pressure"
     humidity:
-      name: Server Room Humidity
-    battery_level:
-      name: Server Room Battery Level
+      name: "BME280 Humidity"
+    address: 0x76
+    update_interval: 30s
 
   - platform: uptime
     name: Ethernet Uptime
@@ -52,3 +60,13 @@ sensor:
     lambda: return heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
     unit_of_measurement: 'B'
     state_class: measurement
+
+  - platform: xiaomi_cgdk2
+    mac_address: !secret xiaomi_cgdk2_4_mac
+    bindkey: !secret xiaomi_cgdk2_4_bindkey
+    temperature:
+      name: Basement CGDK2 Temperature
+    humidity:
+      name: Basement CGDK2 Humidity
+    battery_level:
+      name: Basement CGDK2 Battery Level

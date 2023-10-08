@@ -1,0 +1,46 @@
+esphome:
+  name: office-d1-mini
+  friendly_name: Office D1 Mini
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+i2c:
+- sda: 4
+  scl: 5
+  scan: true
+
+wifi:
+  ssid: !secret wifi_iot_server_ssid
+  password: !secret wifi_iot_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: basement-d1-mini
+    password: !secret wifi_fallback_password
+
+switch:
+  - platform: restart
+    name: "Restart"
+
+sensor:
+  - platform: bme280
+    temperature:
+      name: Temperature
+    pressure:
+      name: Pressure
+    humidity:
+      name: Humidity
+    address: 0x76
+    update_interval: 30s
+
+  - platform: uptime
+    name: Ethernet Uptime

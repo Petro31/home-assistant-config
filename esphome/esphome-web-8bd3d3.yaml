@@ -1,0 +1,38 @@
+esphome:
+  name: test-temperature-bme280
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+i2c:
+- sda: 4
+  scl: 5
+  scan: true
+
+wifi:
+  ssid: !secret wifi_iot_server_ssid
+  password: !secret wifi_iot_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: test-temperature-bme280
+    password: !secret wifi_fallback_password
+
+sensor:
+  - platform: bme280
+    temperature:
+      name: Temperature
+    pressure:
+      name: Pressure
+    humidity:
+      name: Humidity
+    address: 0x76
+    update_interval: 5s
