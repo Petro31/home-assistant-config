@@ -63,7 +63,6 @@
     - input_select.quick_strip_effect
     - script.lzw45_ui_pixel_effect
     - script.lzw45_ui_custom_effect
-    - script.lzw45_party_effect
   variables:
     from_state_trigger_valid: >
       {{ trigger.from_state is defined and trigger.from_state is not none and trigger.from_state.state not in ['unavailable', 'unknown'] }}

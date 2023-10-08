@@ -209,7 +209,7 @@ cards:
     conditions:
       - entity: switch.alexa_source
         state: 'on'
-      - entity: media_player.living_room_dot
+      - entity: media_player.living_room_echo_dot
         state_not: 'off'
     card:
       type: horizontal-stack
@@ -217,7 +217,7 @@ cards:
       - !include '../templates/spacer_edge.yaml'
       - !include 
         - '../templates/media_player_custom.yaml'
-        - entity: media_player.living_room_dot
+        - entity: media_player.living_room_echo_dot
           bluetooth: switch.floating_outlet_switch
       - !include '../templates/spacer_edge.yaml'
   - type: conditional

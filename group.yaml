@@ -155,11 +155,11 @@ outside_sunset:
 
 outside_bulbs:
   entities:
-  - button.main_door_left_bulb
-  - button.main_door_right_bulb
-  - button.passenger_door_bulb
-  - button.garage_sconce_left_bulb
-  - button.garage_sconce_right_bulb
+  - light.main_door_left_bulb
+  - light.main_door_right_bulb
+  - light.passenger_door_bulb
+  - light.garage_sconce_left_bulb
+  - light.garage_sconce_right_bulb
 
 #########
 # ROOMS #
@@ -366,22 +366,16 @@ receivers:
 # CAMERAS #
 ###########
 
-cameras:
-  entities:
-    - camera.backyard
-    - camera.driveway
-    - camera.floating
-    - camera.foyer
-    - camera.garage
-    - camera.kitchen
-
 camera_network_switches:
   entities:
-    - switch.backyard_camera
-    - switch.driveway_camera
-    - switch.foyer_camera
-    - switch.garage_camera
-    - switch.kitchen_camera
+    - switch.driveway_camera_port
+    - switch.deck_camera_port
+    - switch.foyer_camera_port
+    - switch.front_door_camera_port
+    - switch.garage_camera_port
+    - switch.garage_camera_2_port
+    - switch.kitchen_camera_port
+    - switch.patio_camera_port
 
 ##################
 # PEOPLE AT HOME #

@@ -13,8 +13,8 @@
   - service: switch.turn_off
     data:
       entity_id:
-      - switch.driveway_camera
-      - switch.backyard_camera
+      - switch.driveway_camera_port
+      - switch.patio_camera_port
 
 - alias: Camera Event - Turn on Outside Cameras based on temperature
   id: turn_on_outside_cameras_based_on_temperature
@@ -31,5 +31,5 @@
   - service: switch.turn_on
     data:
       entity_id:
-      - switch.driveway_camera
-      - switch.backyard_camera
+      - switch.driveway_camera_port
+      - switch.patio_camera_port

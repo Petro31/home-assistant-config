@@ -741,7 +741,7 @@
 {% set batteries = [
   {
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.basement_battery_level',
+    'entity': 'sensor.basement_cgdk2_battery_level',
     'name': 'Basement Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
@@ -751,10 +751,6 @@
     'type':  '../templates/buttons/battery.yaml',
     'entity': 'sensor.bonus_server_room_temperature_sensor_battery_level',
     'name': 'Bonus Server Room Sensor',
-  },{
-    'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.office_battery_level',
-    'name': 'Test Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
     'entity': 'binary_sensor.garage_door_battery',

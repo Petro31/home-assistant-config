@@ -89,7 +89,7 @@
   - unique_id: basement_humidity_high
     name: Basement Humidity High
     state: >
-      {{ states('sensor.basement_humidity') | float > 60 }}
+      {{ states('sensor.basement_cgdk2_humidity') | float > 60 }}
     availability: >
-      {{ states('sensor.basement_humidity') | is_number }}
+      {{ states('sensor.basement_cgdk2_humidity') | is_number }}
     device_class: moisture

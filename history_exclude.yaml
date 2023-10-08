@@ -4,7 +4,7 @@ entities:
   - light.test
   - light.test_1
   - light.test_2
-  - media_player.living_room_dot
+  - media_player.living_room_echo_dot
   - media_player.master_dot
   - media_player.michael_s_alexa_apps
   - media_player.this_device_2

@@ -18,13 +18,10 @@ cards:
   entities:
   - entity: {{ entity }}
   - zone.cobbs_hill
-  - zone.flower_city_crossfit
   - zone.home
   - zone.lambs_lakehouse
   - zone.lambs_springville
   - zone.petros_lakehouse
-  - zone.pharos
-  - zone.qvi
   - zone.rit_gym
   - zone.ruckhouse
   - zone.tops
