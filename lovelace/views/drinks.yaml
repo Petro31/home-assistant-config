@@ -13,7 +13,7 @@ cards:
     content: >
       {% set count = states('input_number.drink_count') | int %}
       {% set selected = states('input_select.drink_units') %}
-      {% set parts = state_attr('select.drink', 'parts') %}
+      {% set parts = state_attr('select.drink', 'parts') or [] %}
       {% set selections = {
         'Teaspoons':'ts',
         'Tablespoons':'tbl',
