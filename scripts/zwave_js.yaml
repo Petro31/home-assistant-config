@@ -20,7 +20,7 @@ zwave_multicast_group:
           min: 0
           max: 255
   variables:
-    multicast: False
+    multicast: True
     brightness_pct: >
       {%- set brightness_pct = (level | int(0) / 255 * 100) | int %}
       {%- set brightness_pct = [ 0, brightness_pct ] | max %}
