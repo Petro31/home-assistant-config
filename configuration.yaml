@@ -55,4 +55,3 @@ switch: !include switch.yaml
 system_health:
 template: !include_dir_merge_list template
 timer:
-# weather: !include weather.yaml
