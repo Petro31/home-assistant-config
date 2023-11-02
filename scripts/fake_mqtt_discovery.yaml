@@ -41,7 +41,7 @@ mqtt_automated_states:
       {{ {
         'topic': topic_root ~ '/state',
         'payload': '' ~ { 'state': state, 'attributes': attributes | default({}) } | tojson,
-        'retain': retain | default('true')
+        'retain': retain | default(True)
       } }}
 
   sequence:
