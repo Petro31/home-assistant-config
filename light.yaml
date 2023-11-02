@@ -51,7 +51,7 @@
 #       level_template: >
 #         {{%- set entities = expand('group.{0}') %}}
 #         {{%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}}
-#         {{%- set levels = lights | map(attribute='attributes.brightness') | map('int') | list %}}
+#         {{%- set levels = lights | map(attribute='attributes.brightness') | reject('none') | list %}}
 #         {{{{- levels | average if levels else 0 }}}}
 #       availability_template: >
 #         {{{{- expand('group.{0}') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}}}
@@ -93,7 +93,7 @@
       level_template: >
         {%- set entities = expand('group.all_areas') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.all_areas') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -127,7 +127,7 @@
       level_template: >
         {%- set entities = expand('group.basement_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.basement_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -161,7 +161,7 @@
       level_template: >
         {%- set entities = expand('group.bonus_room_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.bonus_room_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -195,7 +195,7 @@
       level_template: >
         {%- set entities = expand('group.dining_room_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.dining_room_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -229,7 +229,7 @@
       level_template: >
         {%- set entities = expand('group.downstairs_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.downstairs_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -280,7 +280,7 @@
       level_template: >
         {%- set entities = expand('group.downstairs_areas') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.downstairs_areas') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -314,7 +314,7 @@
       level_template: >
         {%- set entities = expand('group.foyer_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.foyer_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -348,7 +348,7 @@
       level_template: >
         {%- set entities = expand('group.game_room_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.game_room_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -382,7 +382,7 @@
       level_template: >
         {%- set entities = expand('group.game_room_target_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.game_room_target_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -416,7 +416,7 @@
       level_template: >
         {%- set entities = expand('group.garage_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.garage_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -450,7 +450,7 @@
       level_template: >
         {%- set entities = expand('group.garage_entrance_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.garage_entrance_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -484,7 +484,7 @@
       level_template: >
         {%- set entities = expand('group.hall_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.hall_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -518,7 +518,7 @@
       level_template: >
         {%- set entities = expand('group.inside_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.inside_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -569,7 +569,7 @@
       level_template: >
         {%- set entities = expand('group.inside_areas') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.inside_areas') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -603,7 +603,7 @@
       level_template: >
         {%- set entities = expand('group.kitchen_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.kitchen_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -637,7 +637,7 @@
       level_template: >
         {%- set entities = expand('group.kitchen_target_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.kitchen_target_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -671,7 +671,7 @@
       level_template: >
         {%- set entities = expand('group.laundry_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.laundry_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -705,7 +705,7 @@
       level_template: >
         {%- set entities = expand('group.living_room_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.living_room_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -756,7 +756,7 @@
       level_template: >
         {%- set entities = expand('group.master_bathroom_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.master_bathroom_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -790,7 +790,7 @@
       level_template: >
         {%- set entities = expand('group.master_bathroom_target_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.master_bathroom_target_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -824,7 +824,7 @@
       level_template: >
         {%- set entities = expand('group.master_bedroom_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.master_bedroom_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -858,7 +858,7 @@
       level_template: >
         {%- set entities = expand('group.master_suite_target_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.master_suite_target_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -892,7 +892,7 @@
       level_template: >
         {%- set entities = expand('group.office_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.office_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -926,7 +926,7 @@
       level_template: >
         {%- set entities = expand('group.outside_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.outside_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -960,7 +960,7 @@
       level_template: >
         {%- set entities = expand('group.outside_areas') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.outside_areas') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -994,7 +994,7 @@
       level_template: >
         {%- set entities = expand('group.upstairs_area') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.upstairs_area') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -1028,7 +1028,7 @@
       level_template: >
         {%- set entities = expand('group.upstairs_areas') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.upstairs_areas') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
@@ -1061,7 +1061,7 @@
       level_template: >
         {%- set entities = expand('group.outside_sunset') %}
         {%- set lights = entities | selectattr('domain', 'eq', 'light') | selectattr('state', 'eq', 'on') %}
-        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | map('int') | list %}
+        {%- set levels = lights | selectattr('attributes.brightness', 'defined') | map(attribute='attributes.brightness') | reject('none') | list %}
         {{- levels | average if levels else 0 }}
       availability_template: >
         {{- expand('group.outside_sunset') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
