@@ -1,0 +1,18 @@
+update_esphome:
+  alias: Update Esphome Devices
+  mode: single
+  variables:
+    entities: >
+      {{ integration_entities('esphome') | select('search','^update') | select('is_state','on') | list }}
+    message: >
+      Updating firmware for household sensors.  The doorbell will ring.
+  sequence:
+  - condition: template
+    value_template: "{{ entities | length > 0 }}"
+  - service: script.notify
+    data:
+      title: "Firmware Update"
+      message: "{{ message }}"
+  - service: update.install
+    target:
+      entity_id: "{{ entities }}"
