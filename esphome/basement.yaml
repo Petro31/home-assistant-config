@@ -19,7 +19,7 @@ i2c:
   scan: true
 
 wifi:
-  ssid: !secret wifi_iot_server_ssid
+  ssid: !secret wifi_iot_upstairs_ssid
   password: !secret wifi_iot_password
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
