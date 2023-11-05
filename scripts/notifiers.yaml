@@ -52,7 +52,12 @@ notify:
             value: notify.homeowners
   variables:
     timestamp: >
-      {{ now().strftime(format | default("%-I:%M:%S %p")) if format else None }}
+      {% set t = now() %}
+      {% if format is defined %}
+        {{ None if format is none else t.strftime(format) }}
+      {% else %}
+        {{ t.strftime("%-I:%M:%S %p") }}
+      {% endif %}
     persistent_notification: >
       {{ persistent_notification | default(true) }}
     out_notify: "{{ notify | default('notify.homeowners') }}"
