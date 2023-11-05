@@ -143,7 +143,7 @@ events:
           - label: Home Owners
             value: notify.homeowners
   variables:
-    days_ahead: [183, 60, 30, 14, 7, 1]
+    days_ahead: [183, 90, 60, 30, 14, 7, 1]
     targets: >
       {{ days_ahead + [ test ] if test is defined else days_ahead }}
     events: >
