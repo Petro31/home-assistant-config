@@ -99,18 +99,7 @@ event:
   fields:
     card: 
       description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
-    notify: &notify_homeowners
-      description: Devices to notify.
-      example: notify.mobile_app_petro
-      selector:
-        select:
-          options:
-          - label: Petro
-            value: notify.mobile_app_petro
-          - label: Lambo
-            value: notify.mobile_app_lindsays_iphone
-          - label: Home Owners
-            value: notify.homeowners
+    notify: *notify_homeowners
   variables:
     service_data:
       format: None
@@ -135,18 +124,7 @@ events:
           min: 0
           max: 730
           mode: box
-    notify: &notify_homeowners
-      description: Devices to notify.
-      example: notify.mobile_app_petro
-      selector:
-        select:
-          options:
-          - label: Petro
-            value: notify.mobile_app_petro
-          - label: Lambo
-            value: notify.mobile_app_lindsays_iphone
-          - label: Home Owners
-            value: notify.homeowners
+    notify: *notify_homeowners
   variables:
     days_ahead: [183, 90, 60, 30, 14, 7, 1]
     targets: >
