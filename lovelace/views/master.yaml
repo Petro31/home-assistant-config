@@ -678,6 +678,10 @@
     'type': '../templates/buttons/door.yaml',
     'cover': 'cover.rear_garage_door',
     'door_type': 'garage',
+  },{
+    'entity': 'switch.garage_temporary_laser',
+    'name': '45 Second Laser',
+    'type': '../templates/buttons/toggle2.yaml',
   }
 ] %}
 
@@ -821,6 +825,7 @@
     'triggers_update': doors | map(attribute='entity') | list | sort,
     'display': [
       {'domain': ['sensor','binary_sensor'] , 'state': ['on', 'open'], 'icon': 'mdi:door-open', 'units': 'doors' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'fapro:laser', 'units': 'lasers' },
     ],
     'type': '../templates/summary/overview.yaml',
   },{
