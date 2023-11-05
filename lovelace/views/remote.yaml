@@ -44,9 +44,8 @@ cards:
         color: rgba(228, 94, 101)
     - !include
       - '../templates/remote/harmony/toggle.yaml'
-      - entity: switch.echo_through_receiver
-        icon: fapro:speaker-bluetooth-alexa
-        color: rgba(49, 196, 243)
+      - entity: switch.movie_time
+        color: rgba(252,194,82)
     - !include
       - '../templates/remote/harmony/toggle.yaml'
       - entity: media_player.yamaha_rx_v6a

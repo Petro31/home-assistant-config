@@ -1031,3 +1031,47 @@
         turn_off:
         - service: switch.turn_off
           <<: *garage_temporary_laser
+
+      # Movie / TV viewing
+      movie_time:
+        unique_id: movie_time
+        friendly_name: Movie Time
+        value_template: >
+          {{
+            is_state('switch.hyperion_usb_capture', 'on')
+            and is_state('switch.dining_room_hutch', 'on')
+            and is_state('switch.kitchen_cabinet', 'on')
+            and is_state('switch.wled_all_cabinets', 'on')
+            and is_state('light.dining_room_chandelier', 'off')
+            and is_state('light.kitchen_cans', 'off')
+            and is_state('light.kitchen_island', 'off')
+            and is_state('switch.kitchen_pantry', 'off')
+          }}
+        turn_on:
+        - parallel:
+          - service: switch.turn_on
+            target:
+              entity_id: 
+              - switch.hyperion_usb_capture
+              - switch.dining_room_hutch
+              - switch.kitchen_cabinet
+              - switch.wled_all_cabinets
+          - service: homeassistant.turn_off
+            target:
+              entity_id: 
+              - light.dining_room_chandelier
+              - light.kitchen_cans
+              - light.kitchen_island
+              - switch.kitchen_pantry
+        turn_off:
+        - service: homeassistant.turn_off
+          target:
+            entity_id: 
+            - switch.hyperion_usb_capture
+            - switch.dining_room_hutch
+            - switch.kitchen_cabinet
+            - switch.wled_all_cabinets
+            - light.dining_room_chandelier
+            - light.kitchen_cans
+            - light.kitchen_island
+            - switch.kitchen_pantry
