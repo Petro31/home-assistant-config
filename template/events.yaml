@@ -37,60 +37,70 @@
         {% set info = [
             {
                'find': 'disney',
+               'category': 'vacation',
                'picture': 'local\\images\\disney_vacation.png',
                'badge_color': '#000000',
                'badge_icon': 'fapro:mickey'
             },
             {
                'find': 'vacation',
+               'category': 'vacation',
                'picture': 'local\\images\\vacation.png',
                'badge_color': '#FDB813',
                'badge_icon': 'mdi:white-balance-sunny'
             },
             {
                'find': 'ultra',
+               'category': 'race',
                'picture': 'local\\images\\ultra.png',
                'badge_color': '#000000',
                'badge_icon': 'mdi:run-fast'
             },
             {
                'find': 'trifecta',
+               'category': 'race',
                'picture': 'local\\images\\trifecta.png',
                'badge_color': '#000000',
                'badge_icon': 'mdi:run-fast'
             },
             {
                'find': 'beast',
+               'category': 'race',
                'picture': 'local\\images\\beast.png',
                'badge_color': '#000000',
                'badge_icon': 'mdi:run-fast'
             },
             {
                'find': 'super',
+               'category': 'race',
                'picture': 'local\\images\\super.png',
                'badge_color': '#000000',
                'badge_icon': 'mdi:run-fast'
             },
             {
                'find': 'sprint',
+               'category': 'race',
                'picture': 'local\\images\\sprint.png',
                'badge_color': '#000000',
                'badge_icon': 'mdi:run-fast'
             },
             {
                'find': 'trail',
+               'category': 'race',
                'picture': 'local\\images\\mountains.png',
                'badge_color': '#4b371c',
                'badge_icon': 'mdi:run-fast'
             },
             {
                'find': 'marathon|half',
+               'category': 'race',
                'picture': 'local\\images\\road.png',
                'badge_color': None,
                'badge_icon': 'mdi:run-fast'
             },
             {
                'find': 'conference',
+               'category': 'work',
                'picture': 'local\\images\\expo.png',
                'badge_color': None,
                'badge_icon': 'mdi:briefcase'

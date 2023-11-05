@@ -957,3 +957,60 @@
         - service: script.christmas_lights_on
         turn_off:
         - service: script.christmas_lights_off
+
+      # Event Radios
+      event_category_all:
+        unique_id: event_category_all
+        friendly_name: Event Category All
+        value_template: >
+          {{ is_state('input_select.event_category', 'All') }}
+        turn_on:
+        - <<: &event_category
+            service: input_select.select_option
+            target:
+              entity_id: input_select.event_category
+          <<: &event_category_all
+            data:
+              option: All
+        turn_off:
+        - <<: *event_category
+          <<: *event_category_all
+
+      event_category_vacation:
+        unique_id: event_category_vacation
+        friendly_name: Event Category Vacation
+        value_template: >
+          {{ is_state('input_select.event_category', 'Vacation') }}
+        turn_on:
+        - <<: *event_category
+          data:
+            option: Vacation
+        turn_off:
+        - <<: *event_category
+          <<: *event_category_all
+
+      event_category_race:
+        unique_id: event_category_race
+        friendly_name: Event Category Race
+        value_template: >
+          {{ is_state('input_select.event_category', 'Race') }}
+        turn_on:
+        - <<: *event_category
+          data:
+            option: Race
+        turn_off:
+        - <<: *event_category
+          <<: *event_category_all
+
+      event_category_work:
+        unique_id: event_category_work
+        friendly_name: Event Category Work
+        value_template: >
+          {{ is_state('input_select.event_category', 'Work') }}
+        turn_on:
+        - <<: *event_category
+          data:
+            option: Work
+        turn_off:
+        - <<: *event_category
+          <<: *event_category_all

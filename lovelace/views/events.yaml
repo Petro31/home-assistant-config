@@ -12,6 +12,37 @@ cards:
         - '../templates/headers/navigator.yaml'
         - name: Events
       - !include '../templates/buttons/edge.yaml'
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - entity: switch.event_category_all
+        icon: mdi:calendar-blank
+        <<: &base
+          type: custom:button-card
+          color: var(--paper-item-icon-active-color)
+          aspect_ratio: 1/1
+          show_name: false
+          show_label: false
+          show_icon: true
+          styles:
+            icon:
+            - width: 80%
+            card:
+            - padding: 0px
+            - border-radius: 18%
+            - !include '../templates/buttons/edge.yaml'
+      - entity: switch.event_category_race
+        icon: mdi:run-fast
+        <<: *base
+      - entity: switch.event_category_vacation
+        icon: mdi:white-balance-sunny
+        <<: *base
+      - entity: switch.event_category_work
+        icon: mdi:briefcase
+        <<: *base
+      - !include '../templates/buttons/spacer.yaml'
+      - !include '../templates/buttons/spacer.yaml'
+      - !include '../templates/buttons/edge.yaml'
 
   - type: custom:auto-entities
     card:
@@ -19,4 +50,9 @@ cards:
     card_param: cards
     filter:
       template: >
-        {{ state_attr('sensor.lambosino_s_random_events', 'events') | map(attribute='card') | list or [] }}
+        {% set category = states('input_select.event_category').lower() %}
+        {% if category != 'all' %}
+          {{ state_attr('sensor.lambosino_s_random_events', 'events') | map(attribute='card') | selectattr('category', 'eq', category) | list or [] }}
+        {% else %}
+          {{ state_attr('sensor.lambosino_s_random_events', 'events') | map(attribute='card') | list or [] }}
+        {% endif %}
