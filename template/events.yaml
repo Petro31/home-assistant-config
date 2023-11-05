@@ -16,3 +16,125 @@
           {%- set ns.events = ns.events + [ dict(milestone=milestone, days_away=count_the_days(current)|int, who=event.who, event=event.event, when=current.date()|string) ] %}
         {%- endfor %}
         {{- ns.events }}
+
+- trigger:
+  - platform: time
+    at: "00:00:00"
+  - platform: homeassistant
+    event: start
+  - platform: event
+    event_type: event_template_reloaded
+  action:
+  - service: calendar.list_events
+    data:
+      start_date_time: "{{ today_at() }}"
+      end_date_time: "{{ today_at().replace(year=now().year + 2, day=1, month=1) }}"
+    target:
+      entity_id: calendar.lambosino_s_random_events
+    response_variable: gathered
+  - variables:
+      events: >
+        {% set info = [
+            {
+               'find': 'disney',
+               'picture': 'local\\images\\disney_vacation.png',
+               'badge_color': '#000000',
+               'badge_icon': 'fapro:mickey'
+            },
+            {
+               'find': 'vacation',
+               'picture': 'local\\images\\vacation.png',
+               'badge_color': '#FDB813',
+               'badge_icon': 'mdi:white-balance-sunny'
+            },
+            {
+               'find': 'ultra',
+               'picture': 'local\\images\\ultra.png',
+               'badge_color': '#000000',
+               'badge_icon': 'mdi:run-fast'
+            },
+            {
+               'find': 'trifecta',
+               'picture': 'local\\images\\trifecta.png',
+               'badge_color': '#000000',
+               'badge_icon': 'mdi:run-fast'
+            },
+            {
+               'find': 'beast',
+               'picture': 'local\\images\\beast.png',
+               'badge_color': '#000000',
+               'badge_icon': 'mdi:run-fast'
+            },
+            {
+               'find': 'super',
+               'picture': 'local\\images\\super.png',
+               'badge_color': '#000000',
+               'badge_icon': 'mdi:run-fast'
+            },
+            {
+               'find': 'sprint',
+               'picture': 'local\\images\\sprint.png',
+               'badge_color': '#000000',
+               'badge_icon': 'mdi:run-fast'
+            },
+            {
+               'find': 'trail',
+               'picture': 'local\\images\\mountains.png',
+               'badge_color': '#4b371c',
+               'badge_icon': 'mdi:run-fast'
+            },
+            {
+               'find': 'marathon|half',
+               'picture': 'local\\images\\road.png',
+               'badge_color': None,
+               'badge_icon': 'mdi:run-fast'
+            },
+            {
+               'find': 'conference',
+               'picture': 'local\\images\\expo.png',
+               'badge_color': None,
+               'badge_icon': 'mdi:briefcase'
+            },
+        ] %}
+        {% set days = {
+            0: 'Today',
+            1: 'Tomorrow'
+        } %}
+        {% set ns = namespace(items=[]) %}
+        {% if gathered.events %}
+          {% for event in gathered.events %}
+            {% set inspect = event.summary.lower() %}
+            {% set found = namespace(value={'picture': 'local\\images\\home.jpg', 'badge_icon': 'mdi:calendar-question', 'badge_color': None}) %}
+            {% for i in info if inspect is search(i.find) %}
+              {% set found.value = i %}{% break %}
+            {% endfor %}
+            {% set found = found.value %}
+            {% set date = event.start | as_datetime | as_local %}
+            {% set end = event.end | as_datetime | as_local %}
+            {% set duration = (end - date).days %}
+            {% set count = (date - today_at()).days %}
+            {% set count = count if count > 0 else 0 %}
+            {% set days_away = days.get(count, '\n'.join([ duration | string ~ ' day event in %s days'%count, date.strftime('%B %-d, %Y')])) %}
+            {% set ns.items = ns.items + [{
+                'event': event,
+                'days': count,
+                'card': dict(
+                    type='custom:mushroom-template-card',
+                    primary=event.summary,
+                    secondary=days_away,
+                    multiline_secondary=True,
+                    **found
+                )}
+            ]  %}
+          {% endfor %}
+        {% else %}
+          {% set ns.items = ns.items + [{'type': 'custom:mushroom-template-card', 'primary': "No Events", 'icon': 'mdi:calendar-alert-outline'}] %}
+        {% endif %}
+        {{ ns.items }}
+  sensor:
+  - name: Lambosino's Random Events
+    unique_id: lambosino_s_random_events
+    state: "{{ now() }}"
+    device_class: timestamp
+    attributes:
+      events: "{{ events }}"

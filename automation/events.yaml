@@ -54,3 +54,11 @@
         data:
           message: >
             {{ repeat.item.who }}s {{ repeat.item.event }} is in {{ repeat.item.days_away }} day{{ 's' if repeat.item.days_away > 1 else '' }}!
+
+- alias: Events - Calendar Reminders
+  id: event_calendar_reminders
+  trigger:
+    - platform: time
+      at: '19:00:00'
+  action:
+  - service: script.events

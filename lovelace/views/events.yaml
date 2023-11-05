@@ -1,0 +1,22 @@
+title: Events
+icon: mdi:calendar-outline
+path: events
+visible: false
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/headers/navigator.yaml'
+        - name: Events
+      - !include '../templates/buttons/edge.yaml'
+
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    card_param: cards
+    filter:
+      template: >
+        {{ state_attr('sensor.lambosino_s_random_events', 'events') | map(attribute='card') | list or [] }}

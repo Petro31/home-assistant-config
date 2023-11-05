@@ -858,6 +858,12 @@
     'image': '/local/images/echo_2.png',
     'view': '../views/echos.yaml',
   },{
+    'name': 'Events',
+    'icon': 'mdi:calendar-outline',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'type': '../templates/summary/overview.yaml',
+    'view': '../views/events.yaml',
+  },{
     'name': 'Drinks',
     'icon': 'mdi:glass-wine',
     'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],

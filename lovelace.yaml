@@ -44,3 +44,8 @@ resources:
 
 - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
   type: module
+
+# mushroom-cards
+
+- url: /hacsfiles/lovelace-mushroom/mushroom.js
+  type: module

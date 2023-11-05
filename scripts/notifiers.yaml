@@ -31,6 +31,13 @@ notify:
       selector:
         text:
           type: text
+    image:
+      description: Local image.
+      example: "local\\images\\home.jpg"
+      default: None
+      selector:
+        text:
+          type: url
     notify: &notify_homeowners
       description: Devices to notify.
       example: notify.mobile_app_petro
@@ -45,32 +52,112 @@ notify:
             value: notify.homeowners
   variables:
     timestamp: >
-      {%- set format = format | default("%-I:%M:%S %p") %}
-      {{ as_timestamp(now(), none) | timestamp_custom(format, default="???") }}
+      {{ now().strftime(format | default("%-I:%M:%S %p")) if format else None }}
     persistent_notification: >
       {{ persistent_notification | default(true) }}
     out_notify: "{{ notify | default('notify.homeowners') }}"
-    notification_data: >
+    external_url: !secret external_url
+    url: >
+      {% if image | default %}
+        {{ external_url }}/{{ image.replace('\\', '/') }}
+      {% endif %}
+    persistent_notification_data: >
       {% set ret = namespace(data=[]) %}
       {% if title | default %}
         {% set ret.data = ret.data +[('title', title)] %}
       {% endif %}
       {% if message | default %}
-        {% set ret.data = ret.data +[('message', '[{}] {}'.format(timestamp, message))] %}
+        {% set ret.data = ret.data +[('message', '[{}] {}'.format(timestamp, message) if timestamp else message)] %}
       {% endif %}
       {{ dict.from_keys(ret.data) or {'message': 'No Message Provided'} }}
+    notification_data: >
+      {% if image | default %}
+        {{ dict(data={'attachment': {'url': url}}, **persistent_notification_data)}}
+      {% else %}
+        {{ persistent_notification_data }}
+      {% endif %}
 
   sequence:
   - choose:
     - conditions: "{{ persistent_notification }}"
       sequence:
       - service: persistent_notification.create
-        data: "{{ notification_data }}"
+        data: "{{ persistent_notification_data }}"
   - choose:
     - conditions: "{{ out_notify.startswith('notify.') }}"
       sequence:
       - service: "{{ out_notify }}"
         data: "{{ notification_data }}"
+
+event:
+  alias: Notify - Event
+  fields:
+    card: 
+      description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
+    notify: &notify_homeowners
+      description: Devices to notify.
+      example: notify.mobile_app_petro
+      selector:
+        select:
+          options:
+          - label: Petro
+            value: notify.mobile_app_petro
+          - label: Lambo
+            value: notify.mobile_app_lindsays_iphone
+          - label: Home Owners
+            value: notify.homeowners
+  variables:
+    service_data:
+      format: None
+      title: >
+        {{ card.primary | default('Unknown') }}
+      message: >
+        {{ card.secondary | default('Unknown') }}
+      image: >
+        {{ card.picture | default('local/images/home.jpg') }}
+  sequence:
+  - service: script.notify
+    data: "{{ service_data }}"
+      
+events:
+  alias: Notify - Events
+  fields:
+    test: 
+      description: Test days ahead
+      example: 50
+      selector:
+        number:
+          min: 0
+          max: 730
+          mode: box
+    notify: &notify_homeowners
+      description: Devices to notify.
+      example: notify.mobile_app_petro
+      selector:
+        select:
+          options:
+          - label: Petro
+            value: notify.mobile_app_petro
+          - label: Lambo
+            value: notify.mobile_app_lindsays_iphone
+          - label: Home Owners
+            value: notify.homeowners
+  variables:
+    days_ahead: [183, 60, 30, 14, 7, 1]
+    targets: >
+      {{ days_ahead + [ test ] if test is defined else days_ahead }}
+    events: >
+      {{ state_attr('sensor.lambosino_s_random_events', 'events') | selectattr('days', 'in', targets) | list }}
+  sequence:
+  - condition: template
+    value_template: "{{ events | count > 0 }}"
+  - repeat:
+      for_each: "{{ events }}"
+      sequence:
+      - service: script.event
+        data: 
+          card: "{{ repeat.item.card }}"
+          notify: "{{ notify | default }}"
 
 # call frigate notification.
 # a small wrapper so that I can just call a script with a different notificaiton
