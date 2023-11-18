@@ -28,45 +28,7 @@ switch:
   - platform: restart
     name: "Dining Room ESP32 Restart"
 
-sensor:
-  - platform: xiaomi_hhccjcy01
-    mac_address: !secret miflora_1
-    temperature:
-      name: "Kitty Temperature"
-      device_class: "temperature"
-      state_class: "measurement"
-    moisture:
-      name: "Kitty Moisture"
-    illuminance:
-      name: "Kitty Illuminance"
-    conductivity:
-      name: "Kitty Soil Conductivity"
-      
-  - platform: template
-    name: Kitty MiFlora Number
-    lambda: |-
-      return 1;
-    update_interval: 86400s
-      
-  - platform: xiaomi_hhccjcy01
-    mac_address: !secret miflora_2
-    temperature:
-      name: "Yucca Temperature"
-      device_class: "temperature"
-      state_class: "measurement"
-    moisture:
-      name: "Yucca Moisture"
-    illuminance:
-      name: "Yucca Illuminance"
-    conductivity:
-      name: "Yucca Soil Conductivity"
-      
-  - platform: template
-    name: Yucca MiFlora Number
-    lambda: |-
-      return 2;
-    update_interval: 86400s
-
+sensor:      
   - platform: xiaomi_lywsdcgq
     mac_address: !secret mijia_ble_temperature_4
     temperature:
