@@ -17,6 +17,3 @@ cards:
 - type: custom:flower-card
   entity: plant.yucca
   species: "yucca elephantipes"
-- type: custom:flower-card
-  entity: plant.markus
-  species: "chlorophytum comosum"
