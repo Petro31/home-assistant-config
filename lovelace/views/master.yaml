@@ -188,6 +188,8 @@
     'entities': [
       'light.dining_room_chandelier',
       'switch.dining_room_hutch',
+      'light.dining_room_uplights',
+      'switch.wled_hutch',
       'sensor.sliding_door_temperature',
     ],
     'type': '../templates/summary/overview.yaml',
@@ -269,6 +271,24 @@
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
     ],
   },{
+    'name': 'Great Room',
+    'icon': 'mdi:sofa-single',
+    'image': '',
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
+    'entities': [
+      'light.downstairs_ambiance',
+      'light.all_living_room',
+      'light.great_room_hue',
+    ],
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+  },{
     'name': 'Hall',
     'icon': 'mdi:home-floor-2',
     'image': '',
@@ -332,8 +352,7 @@
       'light.lindsays_lamp',
       'light.mikes_lamp',
       'light.jims_lamp',
-      'light.living_room',
-      'light.all_living_room',
+      'light.living_room_uplight',
       'switch.living_room_window',
       'climate.living_room_thermostat',
       'sensor.living_room_temperature',

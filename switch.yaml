@@ -768,14 +768,12 @@
         - service: light.turn_on
           target:
             entity_id: 
-            - light.gpio_18_tv
             - switch.gpio_18_tv_component_led_device
             - switch.gpio_18_tv_component_usb_capture
         turn_off:
         - service: light.turn_off
           target:
             entity_id: 
-            - light.gpio_18_tv
             - switch.gpio_18_tv_component_led_device
             - switch.gpio_18_tv_component_usb_capture
 
@@ -793,7 +791,6 @@
         - service: homeassistant.turn_off
           target:
             entity_id: 
-            - light.gpio_18_tv
             - switch.gpio_18_tv_component_led_device
             - switch.gpio_18_tv_component_usb_capture
 
@@ -938,6 +935,34 @@
             option: >
               {{ 'Off' if is_state('switch.indoor_christmas', 'off') else 'Christmas Off' }}
 
+      # WLED Kitchen Cabinet Lights
+      wled_hutch:
+        unique_id: wled_hutch
+        value_template: >
+          {{ states('select.hutch_preset') in ['Match', 'Christmas On'] 
+            or states('select.hutch_playlist') in ['Red & Green Swapping'] }}
+        availability_template: >
+          {{ states('select.hutch_preset') not in ['unkown', 'unavailable'] }}
+        turn_on:
+        - if: "{{ is_state('switch.indoor_christmas', 'on') }}"
+          then:
+          - service: select.select_option
+            target:
+              entity_id: select.hutch_playlist
+            data:
+              option: Red & Green Swapping
+          else:
+          - <<: &wled_hutch
+              service: select.select_option
+              target:
+                entity_id: select.hutch_preset
+            data:
+              option: Match
+        turn_off:
+        - <<: *wled_hutch
+          data:
+            option: 'Off'
+
       # Indoor Christmas Lights
       indoor_christmas:
         unique_id: indoor_christmas
@@ -1039,8 +1064,8 @@
         value_template: >
           {{
             is_state('switch.hyperion_usb_capture', 'on')
-            and is_state('switch.dining_room_hutch', 'on')
-            and is_state('switch.kitchen_cabinet', 'on')
+            and is_state('light.downstairs_ambiance', 'on')
+            and is_state('switch.wled_hutch', 'on')
             and is_state('switch.wled_all_cabinets', 'on')
             and is_state('light.dining_room_chandelier', 'off')
             and is_state('light.kitchen_cans', 'off')
@@ -1049,16 +1074,17 @@
           }}
         turn_on:
         - parallel:
-          - service: switch.turn_on
+          - service: homeassistant.turn_on
             target:
               entity_id: 
               - switch.hyperion_usb_capture
-              - switch.dining_room_hutch
-              - switch.kitchen_cabinet
+              - switch.wled_hutch
               - switch.wled_all_cabinets
+              - light.downstairs_ambiance
           - service: homeassistant.turn_off
             target:
               entity_id: 
+              - light.all_living_room
               - light.dining_room_chandelier
               - light.kitchen_cans
               - light.kitchen_island
@@ -1068,9 +1094,9 @@
           target:
             entity_id: 
             - switch.hyperion_usb_capture
-            - switch.dining_room_hutch
-            - switch.kitchen_cabinet
+            - switch.wled_hutch
             - switch.wled_all_cabinets
+            - light.downstairs_ambiance
             - light.dining_room_chandelier
             - light.kitchen_cans
             - light.kitchen_island
