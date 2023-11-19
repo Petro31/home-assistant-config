@@ -112,7 +112,7 @@ event:
   sequence:
   - service: script.notify
     data: "{{ service_data }}"
-      
+
 events:
   alias: Notify - Events
   fields:
