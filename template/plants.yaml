@@ -1,0 +1,37 @@
+- sensor:
+  - name: Plant Events
+    unique_id: plant_events
+    device_class: timestamp
+    state: >
+      {{ expand('group.plants') | map(attribute='last_updated') | sort(reverse=True) | first }}
+    attributes:
+      events: >
+        {% set _translations = {
+            'conductivity':  'plant food',
+            'moisture': 'water',
+        } %}
+        {%- set ns = namespace(items=[], spool=[]) %}
+        {%- for plant in expand('group.plants') %}
+          {%- if plant.attributes.problem %}
+            {%- set problems = plant.attributes.problem.split(', ') if plant.attributes.problem else [] %}
+            {%- for problem in problems %}
+              {%- set target = _translations.get(problem.split(' ') | first) %}
+              {%- if target is not none %}
+                {%- set ns.spool = ns.spool + [ target ] %}
+              {%- endif %}
+            {%- endfor %}
+            {%- if ns.spool %}
+              {%- set phrases = ns.spool %}
+              {%- set phrase = phrases[:-1] | join(', ') ~ ' and ' ~ phrases[-1] if phrases | length > 1 else phrases | first | default %}
+              {%- set ns.items = ns.items + [{'name': plant.name, 'problems': phrase}] %}
+              {%- set ns.spool = [] %}
+            {%- endif %}
+          {%- endif %}
+        {%- endfor %}
+
+- binary_sensor:
+  - name: Plant Issue
+    unique_id: plant_issue
+    device_class: problem
+    state: >
+      {{ state_attr('sensor.plant_events', 'events') | length > 0 }}

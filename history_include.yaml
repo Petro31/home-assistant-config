@@ -52,7 +52,6 @@ entities:
   - sensor.kitchen_humidity
   - sensor.kitchen_temperature
   - sensor.kitchen_temperature_sensor_battery_level
-  - sensor.kitty_temperature
   - sensor.lambo_weight
   - sensor.markus_temperature
   - sensor.master_bathroom_filtered_humidity_statistics
@@ -74,6 +73,14 @@ entities:
   - sensor.orion_temperature
   - sensor.outside_temperature
   - sensor.petro_weight
+  - sensor.plant_sensor_2_conductivity
+  - sensor.plant_sensor_2_illuminance
+  - sensor.plant_sensor_2_moisture
+  - sensor.plant_sensor_2_temperature
+  - sensor.plant_sensor_3_conductivity
+  - sensor.plant_sensor_3_illuminance
+  - sensor.plant_sensor_3_moisture
+  - sensor.plant_sensor_3_temperature
   - sensor.processor_use
   - sensor.roomba_battery_level
   - sensor.server_room_battery_level
@@ -103,7 +110,6 @@ entities:
   - sensor.ups_load
   - sensor.washer_energy
   - sensor.washer_power
-  - sensor.yucca_temperature
 
   - sensor.bonus_room_cgdk2_battery
   - sensor.bonus_room_cgdk2_humidity

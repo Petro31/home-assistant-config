@@ -1,0 +1,60 @@
+- alias: Plants - Update Group Members
+  id: plants_update group members
+  trigger:
+  - platform: time
+    at: '00:00:00'
+  - platform: homeassistant
+    event: start
+  - platform: event
+    event_type: event_template_reloaded
+  action:
+  - service: group.set
+    data:
+      name: Plants
+      object_id: plants
+      icon: mdi:sprout
+      entities: "{{ states.plant | map(attribute='entity_id') | list }}"
+
+- alias: Plants - Notify
+  id: plants_notify
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.plant_issue
+    to: 'on'
+    from: 'off'
+    variables:
+      state: "{{ trigger.to_state.state }}"
+  - platform: time
+    at: "10:00"
+    variables: &vars
+      state: "{{ states('binary_sensor.plant_issue') }}"
+  - platform: time
+    at: "15:30"
+    variables: *vars
+  - platform: time
+    at: "19:00"
+    variables: *vars
+  variables:
+    problems: >
+      {{ state_attr('sensor.plant_events', 'events') }}
+    count: >
+      {{ problems | length }}
+    title: >
+      Plant{{ 's' if count > 1 else '' }} Need{{ '' if count > 1 else 's' }} Attention!
+    message: >
+      {%- set ns = namespace(items=[]) %}
+      {%- for issue, plants in problems | groupby(attribute='problems') %}
+        {%- set phrases = plants | map(attribute='name') | list %}
+        {%- set phrase = phrases[:-1] | join(', ') ~ ' and ' ~ phrases[-1] if phrases | length > 1 else phrases | first | default %}
+        {%- set plural = '' if phrases | length > 1 else 's' %}
+        {%- set ns.items = ns.items + [ (phrase ~ ' need%s ' % plural ~ issue ~ '.') | capitalize ] %}
+      {%- endfor %}
+      {{ ns.items | join('\n') }}
+  condition:
+  - condition: template
+    value_template: "{{ count > 0 }}"
+  action:
+  - service: script.notify
+    data:
+      title: "{{ title }}"
+      message: "{{ message }}"
