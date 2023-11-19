@@ -38,6 +38,65 @@
     label: >
       {{ trigger.event.data.label }} 
     config:
+      215253fb0f54a57d98bc940fac442073:
+        # Top Left Button
+        'Scene 001': 
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id: light.downstairs_ambiance
+          # KeyPressed2x:
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
+
+        # Top Right Button
+        'Scene 002':
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id: light.living_room_uplight
+          # KeyPressed2x:
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
+        
+        # Bottom Left Button
+        'Scene 003':
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id: light.dining_room_uplight_1
+          # KeyPressed2x:
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
+
+        # Bottom Right Button
+        'Scene 004':
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id:  light.dining_room_uplight_2
+          # KeyPressed2x:
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
+        
+        # Top button
+        'Scene 005':
+          KeyPressed:
+            service: light.toggle
+            data:
+              entity_id: light.living_room
+          KeyPressed2x: 
+            service: light.toggle
+            data:
+              entity_id: light.all_living_room
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
+
       f7a1fe2db74bf6a3b652301589f7cebc:
 
         # Top Left Button
@@ -57,6 +116,10 @@
             service: light.toggle
             data:
               entity_id: light.lindsays_lamp
+          # KeyPressed2x:
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
 
         # Bottom Left Button
         'Scene 003':
@@ -64,6 +127,10 @@
             service: light.toggle
             data:
               entity_id: light.jims_lamp
+          # KeyPressed2x:
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
 
         # Bottom Right Button
         'Scene 004':
@@ -92,6 +159,9 @@
             service: light.toggle
             data:
               entity_id: light.all_living_room
+          # KeyPressed3x:
+          # KeyPressed4x:
+          # KeyPressed5x:
     service: >
       {{ config.get(device, {}).get(label, {}).get(value, {}).get('service') }}
     data: >
@@ -115,8 +185,11 @@
     - switch.hyperion_usb_capture
     - switch.hyperion_cinema
     - switch.hyperion_rainbow_swirl_fast
-    - light.living_room
     - light.all_living_room
+    - light.downstairs_ambiance
+    - light.dining_room_uplight_1
+    - light.dining_room_uplight_2
+    - light.living_room_uplight
   variables:
     values:
       'on': 2
@@ -130,25 +203,47 @@
       red: 3
     config:
       light.mikes_lamp:
-        parameter: 2
+        devices: &controller1 f7a1fe2db74bf6a3b652301589f7cebc
+        parameter: &top_left 2
       light.lindsays_lamp: 
-        parameter: 3
+        devices: *controller1
+        parameter: &top_right 3
       light.jims_lamp:
-        parameter: 4
+        devices: *controller1
+        parameter: &bottom_left 4
       switch.hyperion_usb_capture: 
-        parameter: 5
+        devices: *controller1
+        parameter: &bottom_right 5
       switch.hyperion_cinema: 
-        parameter: 5
-      switch.hyperion_rainbow_swirl_fast: 
-        parameter: 5
-      light.living_room:
-        parameter: 1
+        devices: *controller1
+        parameter: *bottom_right
+      switch.hyperion_rainbow_swirl_fast:
+        devices: *controller1
+        parameter: *bottom_right
       light.all_living_room:
+        devices: 
+        - *controller1
+        - &controller2 215253fb0f54a57d98bc940fac442073
         parameter: 1
+      light.downstairs_ambiance:
+        devices: *controller2
+        parameter: *top_left
+      light.dining_room_uplight_1:
+        devices: *controller2
+        parameter: *bottom_left
+      light.dining_room_uplight_2:
+        devices: *controller2
+        parameter: *bottom_right
+      light.living_room_uplight:
+        devices: *controller2
+        parameter: *top_right
     value: >
       {{ values.get(trigger.to_state.state) }}
     state_parameter: >
       {{ config.get(trigger.entity_id, {}).get('parameter') }}
+    devices: >
+      {% set devices = config.get(trigger.entity_id, {}).get('devices') %}
+      {{ devices if devices is list else [devices] }}
     color_parameter: >
       {{ state_parameter + 5 if state_parameter is not none else none }}
     state_good: >
@@ -169,20 +264,26 @@
   - condition: template
     value_template: "{{ value is not none and state_parameter is not none }}"
   action:
-  - <<: &target
-      service: zwave_js.bulk_set_partial_config_parameters
-      target:
-        device_id: f7a1fe2db74bf6a3b652301589f7cebc
-    data:
-      parameter: "{{ state_parameter }}"
-      value: "{{ value }}"
+  - repeat:
+      for_each: "{{ devices }}"
+      sequence:
+      - <<: &target
+          service: zwave_js.bulk_set_partial_config_parameters
+          target:
+            device_id: "{{ repeat.item }}"
+        data:
+          parameter: "{{ state_parameter }}"
+          value: "{{ value }}"
 
   # Only set the color if we are 'off', 'unavailable', or 'unknown'
 
   - condition: template
     value_template: "{{ color is not none and (state_bad or state_off) }}"
 
-  - <<: *target
-    data:
-      parameter: "{{ color_parameter }}"
-      value: "{{ color }}"
+  - repeat:
+      for_each: "{{ devices }}"
+      sequence:
+      - <<: *target
+        data:
+          parameter: "{{ color_parameter }}"
+          value: "{{ color }}"
