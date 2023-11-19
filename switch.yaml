@@ -1040,6 +1040,19 @@
         - <<: *event_category
           <<: *event_category_all
 
+      event_category_party:
+        unique_id: event_category_party
+        friendly_name: Event Category Party
+        value_template: >
+          {{ is_state('input_select.event_category', 'Party') }}
+        turn_on:
+        - <<: *event_category
+          data:
+            option: Party
+        turn_off:
+        - <<: *event_category
+          <<: *event_category_all
+
       # Garage Temporary laser
       garage_temporary_laser:
         unique_id: garage_temporary_laser

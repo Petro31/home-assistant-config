@@ -40,7 +40,9 @@ cards:
       - entity: switch.event_category_work
         icon: mdi:briefcase
         <<: *base
-      - !include '../templates/buttons/spacer.yaml'
+      - entity: switch.event_category_party
+        icon: mdi:party-popper
+        <<: *base
       - !include '../templates/buttons/spacer.yaml'
       - !include '../templates/buttons/edge.yaml'
 
