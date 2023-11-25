@@ -33,6 +33,44 @@
           - name: Cherry
             type: garnish
 
+      - name: Smoke Rings
+        id: smoke_rings
+        image: /local/images/smoke_rings.png
+        parts:
+          - name: Rittenhouse Rye Whiskey
+            type: parts
+            count: "{{ 3 * ounce }}"
+          - name: Sweet Vermouth
+            type: parts
+            count: "{{ ounce }}"
+          - name: Angostura Bitters
+            type: dash
+          - name: Hickory Smoke
+            type: garnish
+          - name: Maple Syrup
+            type: parts
+            count: "{{ teaspoon }}"
+
+      - name: Old Fashioned
+        id: old_fashio
+        image: /local/images/old_fashioned.png
+        parts:
+          - name: Rye Whiskey or Bourbon
+            type: parts
+            count: "{{ 3 * shot }}"
+          - name: Cherry Juice
+            type: parts
+            count: "{{ 1/2 * shot }}"
+          - name: Club Soda
+            type: parts
+            count: "{{ 1/2 * shot }}"
+          - name: Angostura Bitters
+            type: dash
+          - name: Orance Slice
+            type: garnish
+          - name: 3 Cherries
+            type: garnish
+
       - name: Mango Habanero Margarita
         id: mango_habanero
         image: /local/images/spicy_margarita.png

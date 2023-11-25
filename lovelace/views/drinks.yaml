@@ -30,6 +30,7 @@ cards:
         'Tablespoons':'tbl',
         'Milliliters':'ml',
         'Ounces':'onc',
+        'Half Shot': 'hlfshot',
         'Shots':'shot',
         'Quarter Cups':'25',
         '1/3 Cups':'33',
@@ -43,6 +44,7 @@ cards:
         'ml': 0.20288414,
         'ts': 1,
         'tbl': 3,
+        'hlfshot': 4.5,
         'onc': 6,
         'shot': 9,
         '25': 12,
@@ -63,6 +65,7 @@ cards:
         'tbl': ('tablespoon', 'tablespoons'),
         'ml': ('milliliter', 'milliliters'),
         'onc': ('ounce', 'ounces'),
+        'hlfshot': ('1/2 shot', '1/2 shots'),
         'shot': ('shot', 'shots'),
         '25': ('1/4 cup', '1/4 cups'), 
         '33': ('1/3 cup', '1/3 cups'), 
@@ -72,7 +75,18 @@ cards:
         'cup': ('cup', 'cups'), 
       }.get(id) %}
       {%- set name = plural if value != 1 else single %}
-      {{- '{} ({})'.format(value, name.title()) if value | int > 0 else '' -}}
+      {%- set chopped = value | int %}
+      {%- if chopped == 1 and ('1' in name or '2' in name or '3' in name or '4' in name) %}
+      {{- name.title() -}}
+      {%- elif chopped > 0 %}
+        {%- if '1' in name or '2' in name or '3' in name or '4' in name %}
+          {{- '{} ({})'.format(chopped, name.title()) -}}
+        {%- else %}
+          {{- '{} {}'.format(chopped, name.title()) -}}
+        {%- endif %}
+      {%- else %}
+        {{- '' -}}
+      {%- endif %}
       {% endmacro %}
 
       {%- macro phrase(count, filtered) %}
