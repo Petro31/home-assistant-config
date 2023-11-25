@@ -244,6 +244,7 @@
       'switch.garage_cans',
       'switch.garage_workbench',
       'switch.garage_ceiling_outlet',
+      'light.garage_buffet_strip',
       'sensor.garage_temperature',
       'sensor.garage_humidity',
       'sensor.garage_luminance',
@@ -500,6 +501,7 @@
       "light.workshop",
       "light.workshop_dome",
       "light.workshop_desk",
+      "light.workshop_bench_strip",
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -934,13 +936,6 @@
       {'domain': ['binary_sensor', 'sensor'], 'state': ['on', '1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20'], 'icon': 'mdi:battery-10', 'units': 'low' },
       {'domain': ['binary_sensor', 'sensor'], 'state': ['unavailable', 'unknown', '0'], 'icon': 'mdi:battery-alert', 'units': 'dead' },
     ],
-  },{
-    'name': 'Mood Lighting',
-    'icon': 'mdi:glass-wine',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
-    'type': '../templates/summary/overview.yaml',
-    'image': '/local/images/wine.png',
-    'view': '../views/mood_lighting.yaml',
   },
 ] %}
 
