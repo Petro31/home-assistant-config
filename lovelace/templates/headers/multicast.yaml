@@ -4,6 +4,10 @@
 {%- set name = name | default("Home") | title %}
 {%- set back_path = back_path | default("/home") %}
 {%- set icon = icon | default("mdi:home") %}
+{%- set dashboard = dashboard | default("lovelace") %}
+{%- set on_icon = on_icon | default("mdi:lightbulb-multiple") %}
+{%- set off_icon = off_icon | default("mdi:lightbulb-multiple-off") %}
+{%- set domain = entity.split('.')[0] %}
 
 {%- set template_areas = '"back allon alloff label"' %}
 {%- set template_cols = '16.66% 16.66% 16.66% 50%' %}
@@ -55,25 +59,25 @@ card:
     icon: mdi:arrow-left
     tap_action:
       action: navigate
-      navigation_path: /lovelace/{{ back_path }}
+      navigation_path: /{{ dashboard }}/{{ back_path }}
       haptic: light
   - <<: *base
     view_layout:
       grid-area: allon
-    icon: mdi:lightbulb-multiple
+    icon: {{ on_icon }}
     tap_action:
       action: call-service
-      service: light.turn_on
+      service: {{ domain }}.turn_on
       service_data:
         entity_id: {{ entity }}
       haptic: light
   - <<: *base
     view_layout:
       grid-area: alloff
-    icon: mdi:lightbulb-multiple-off
+    icon: {{ off_icon }}
     tap_action:
       action: call-service
-      service: light.turn_off
+      service: {{ domain }}.turn_off
       service_data:
         entity_id: {{ entity }}
       haptic: light

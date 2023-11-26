@@ -582,14 +582,24 @@
 {%- set holidays = [
   {
     'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.indoor_christmas',
-    'icon': 'mdi:string-lights', 
-    'name': 'Festive Lights'
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
     'entity': 'switch.living_room_window',
     'icon': 'mdi:pine-tree', 
     'name': 'Christmas Tree'
+  },{
+    'type':  '../templates/buttons/toggle2.yaml',
+    'entity': 'switch.front_trees',
+    'icon': 'mdi:pine-tree', 
+    'name': 'Front Tree'
+  },{
+    'type':  '../templates/buttons/toggle2.yaml',
+    'entity': 'switch.hutch_christmas',
+    'icon': 'mdi:dresser', 
+    'name': 'Hutch'
+  },{
+    'type':  '../templates/buttons/toggle2.yaml',
+    'entity': 'switch.cabinet_christmas',
+    'icon': 'mdi:home-group', 
+    'name': 'Cabinets'
   },{
     'type':  '../templates/buttons/toggle2.yaml',
     'entity': 'switch.uplight_christmas',
@@ -682,7 +692,9 @@
     'header': [ 
       { 
         'type': '../templates/headers/multicast.yaml',
-        'entity': 'light.christmas_tree',
+        'entity': 'switch.indoor_christmas',
+        'on_icon': 'mdi:string-lights',
+        'off_icon': 'mdi:string-lights-off',
       },
     ],
     'entities': holidays,

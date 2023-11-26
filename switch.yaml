@@ -968,20 +968,86 @@
         unique_id: indoor_christmas
         friendly_name: Indoor Christmas
         value_template: >
-          {%- set entity_id = 'select.cabinet_wled_preset' %}
-          {%- set options = state_attr(entity_id, 'options') %}
-          {%- set cabinet = states(entity_id) in options | select('search', 'Christmas') | list %}
-          {%- set entity_id = 'select.front_tree_preset' %}
-          {%- set options = state_attr(entity_id, 'options') %}
-          {%- set tree = states(entity_id) in options | reject('in', ['Match','Off','On']) | list %}
-          {%- set entity_id = 'select.hutch_playlist' %}
-          {%- set options = state_attr(entity_id, 'options') %}
-          {%- set hutch = states(entity_id) in options %}
-          {{ cabinet and tree and hutch }}
+          {%- set entities = [
+            'switch.front_trees',
+            'switch.living_room_window',
+            'switch.uplight_christmas',
+            'switch.hutch_christmas',
+            'switch.cabinet_christmas',
+          ] %}
+          {{ entities | select('is_state', 'on') | list | length > 0 }}
         turn_on:
-        - service: script.christmas_lights_on
+        - service: switch.turn_on
+          <<: &indoor_christmas
+            target: 
+              entity_id:
+              - switch.front_trees
+              - switch.living_room_window
+              - switch.uplight_christmas
+              - switch.hutch_christmas
+              - switch.cabinet_christmas
         turn_off:
-        - service: script.christmas_lights_off
+        - service: switch.turn_off
+          <<: *indoor_christmas
+
+      # Front Trees
+      front_trees:
+        unique_id: front_trees
+        friendly_name: Front Trees
+        value_template: >
+          {{ states('select.front_tree_preset') in state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list }}
+        turn_on:
+        - service: select.select_option
+          <<: &front_trees
+            target:
+              entity_id: select.front_tree_preset
+          data:
+            option: "{{ state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list | random }}"
+        turn_off:
+        - <<: &wled_select_off
+            service: select.select_option
+            data:
+              option: "Off"
+          <<: *front_trees
+
+      # Hutch Christmas
+      hutch_christmas:
+        unique_id: hutch_christmas
+        friendly_name: Hutch Christmas
+        value_template: >
+          {{ states('select.hutch_playlist') in state_attr('select.hutch_playlist', 'options') }}
+        turn_on:
+        - service: select.select_option
+          target:
+            entity_id: select.hutch_playlist
+          data:
+            option: "{{ state_attr('select.hutch_playlist', 'options') | random }}"
+        turn_off:
+        - <<: *wled_select_off
+          target:
+            entity_id: select.hutch_preset
+
+      # Cabinet Christmas
+      cabinet_christmas:
+        unique_id: cabinet_christmas
+        friendly_name: Cabinet Christmas
+        value_template: >
+          {% set reject_state = 'Off' if is_state('select.cabinet_wled_preset', 'Match') else 'On' %}
+          {% set current = states('select.cabinet_wled_preset') %}
+          {% set options = state_attr('select.cabinet_wled_preset', 'options') | select('search', 'Christmas') | reject('search', reject_state) | list %}
+          {{ current in options }}
+        turn_on:
+        - service: select.select_option
+          <<: &cabinet_christmas
+            target:
+              entity_id: select.cabinet_wled_preset
+          data:
+            option: >
+              {% set reject_state = 'Off' if is_state('select.cabinet_wled_preset', 'Match') else 'On' %}
+              {{ state_attr('select.cabinet_wled_preset', 'options') | select('search', 'Christmas') | reject('search', reject_state) | list | random }}
+        turn_off:
+        - <<: *wled_select_off
+          <<: *cabinet_christmas
 
       # Uplighting Christmas
       uplight_christmas:
