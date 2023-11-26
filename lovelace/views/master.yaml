@@ -501,8 +501,9 @@
       { 'type': '../templates/headers/navigator.yaml', }, 
     ],
     'entities': [
-      "light.workshop",
       "light.workshop_dome",
+      "switch.floating_double_plug_left",
+      "switch.floating_double_plug_right",
       "light.workshop_desk",
       "light.workshop_bench_strip",
     ],
@@ -590,15 +591,10 @@
     'icon': 'mdi:pine-tree', 
     'name': 'Christmas Tree'
   },{
-    'type':  '../templates/buttons/wled_select.yaml',
-    'entity': 'select.front_tree_preset',
-    'icon': 'mdi:pine-tree', 
-    'name': 'Game Room Tree'
-  },{
     'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.floating_double_plug_left',
-    'icon': 'mdi:pine-tree', 
-    'name': 'Bedroom Tree'
+    'entity': 'switch.uplight_christmas',
+    'icon': 'mdi:light-flood-up', 
+    'name': 'Uplights'
   },
 ]%}
 

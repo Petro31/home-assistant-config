@@ -983,6 +983,32 @@
         turn_off:
         - service: script.christmas_lights_off
 
+      # Uplighting Christmas
+      uplight_christmas:
+        unique_id: uplight_christmas
+        friendly_name: Uplight Christmas
+        value_template: >
+          {% set colors = [(255, 0, 0), (0, 255, 0)] %}
+          {{
+            [
+              "light.living_room_uplight",
+              "light.dining_room_uplight_1",
+              "light.dining_room_uplight_2"
+            ] | select('is_state', 'on') | select('is_state_attr', 'color_mode', 'xy') | map('state_attr', 'rgb_color') | reject('none') | select('in', colors) | list | count > 0
+          }}
+        turn_on:
+          service: light.turn_on
+          target: &uplight_christmas
+            entity_id:
+            - light.living_room_uplight
+            - light.dining_room_uplight_1
+            - light.dining_room_uplight_2
+          data:
+            color_name: "{{ ['red', 'green'] | random }}"
+        turn_off:
+          service: light.turn_off
+          target: *uplight_christmas
+
       # Event Radios
       event_category_all:
         unique_id: event_category_all

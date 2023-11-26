@@ -23,7 +23,6 @@ christmas_lights_on:
       {% endfor %}
       {{ dict.from_keys(ns.ret) }}
     entities: &entities
-    - switch.floating_double_plug_left
     - switch.living_room_window
     service: switch.turn_on
   sequence: &sequence
