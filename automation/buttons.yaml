@@ -1,5 +1,5 @@
 - alias: Button - Workshop Lights
-  id: button_toggle_game_room_lights
+  id: button_toggle_workshop_lights
   trigger:
   - platform: state
     entity_id: sensor.workshop_button_action
@@ -14,7 +14,7 @@
       {%- elif to_state == 'double' %}
         ['light.workshop_desk', 'light.workshop_bench_strip']
       {%- elif to_state == 'hold' %}
-        ['light.workshop_desk', 'light.workshop_dome', 'light.workshop_bench_strip']
+        ['light.workshop_desk', 'light.workshop_dome', 'switch.floating_double_plug_left', 'light.workshop_bench_strip']
       {% endif %}
     are_on: >
       {{ which | select('is_state', 'on') | list | count > 0 }}
@@ -177,7 +177,7 @@
 
 - alias: Button - Living Room Scene Controller LEDs
   id: button_living_room_scene_controller_leds
-  mode: parallel
+  mode: queued
   trigger:
   - platform: state
     entity_id:
