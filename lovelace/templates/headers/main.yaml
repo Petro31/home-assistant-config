@@ -32,14 +32,10 @@ card:
   layout:
     grid-template-columns: 16.66% 16.66% 16.66% 16.66% 33.34%
     grid-template-rows: auto
-    grid-template-areas: '"security company allon alloff label"'
+    grid-template-areas: '"company allon alloff empty label"'
     grid-gap: 4px
   grid_cols: 1fr 4px 1fr 4px 1fr 4px 1fr 2fr 4px
   cards:
-  - <<: *base
-    entity: switch.security_notifications
-    view_layout:
-      grid-area: security
   - <<: *base
     entity: input_boolean.company
     icon: mdi:account-multiple

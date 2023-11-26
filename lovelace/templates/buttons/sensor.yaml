@@ -114,7 +114,12 @@ custom_fields:
     [[[
       var entity_id = (entity === undefined) ? 'Invalid Entity' : entity.entity_id;
       var statestr = (entity === undefined || entity.state === undefined) ? null : entity.state;
-      var units = (statestr && entity.attributes.unit_of_measurement) ? entity.attributes.unit_of_measurement : null;
+      var state_class = (statestr && entity.attributes.state_class) ? entity.attributes.state_class : null;
+      var units = null;
+      if (statestr && entity.attributes.unit_of_measurement)
+        units = entity.attributes.unit_of_measurement
+      else if (state_class == 'total')
+        units = 'entities'
       var date = (statestr && entity.attributes.device_class === 'timestamp') ? new Date(statestr) : null;
       var value;
       if (statestr && date === null) {
