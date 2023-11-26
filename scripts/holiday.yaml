@@ -24,6 +24,7 @@ christmas_lights_on:
       {{ dict.from_keys(ns.ret) }}
     entities: &entities
     - switch.living_room_window
+    - switch.uplight_christmas
     service: switch.turn_on
   sequence: &sequence
   - parallel:
