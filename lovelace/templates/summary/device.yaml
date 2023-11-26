@@ -6,6 +6,7 @@
 {%- set max_display = max_display | default(-1) %}
 {%- set triggers_update = triggers_update | default('') %}
 {%- set imgratio = 'transparent_' ~ 'to'.join(aspect_ratio.split('/')) ~ '.png' %}
+{%- set dashboard = dashboard | default("lovelace") %}
 
 {%- set found = namespace(sensor='', entities=[]) %}
 {%- for entity in entities %}
@@ -103,7 +104,7 @@ label: |
   ]]]
 tap_action:
   action: navigate
-  navigation_path: /lovelace/{{ path | default("home") }}
+  navigation_path: /{{ dashboard }}/{{ path | default("home") }}
   haptic: light
 styles:
   icon:

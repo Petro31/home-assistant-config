@@ -1,5 +1,7 @@
 # lovelace_gen
 
+{%- set dashboard = dashboard | default("lovelace") %}
+
 {%- macro fixstate(state) %}
 {%- if state in [True, False] %}{{- 'on' if state else 'off' -}}
 {%- else %}{{- state -}}
@@ -83,7 +85,7 @@ triggers_update:
 {%- endif %}
 tap_action:
   action: navigate
-  navigation_path: {{ path|default("/home") }}
+  navigation_path: /{{ dashboard }}/{{ path | default("home") }}
   haptic: light
 styles:
   icon:

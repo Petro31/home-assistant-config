@@ -49,3 +49,12 @@ resources:
 
 - url: /hacsfiles/lovelace-mushroom/mushroom.js
   type: module
+
+dashboards:
+  ui-status:
+    mode: yaml
+    title: Status
+    icon: mdi:home-search
+    show_in_sidebar: true
+    require_admin: true
+    filename: ui-status.yaml

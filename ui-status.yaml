@@ -1,0 +1,4 @@
+title: Status
+# Exclude entities from "Unused entities" view
+
+views: !include lovelace/views/status_master.yaml

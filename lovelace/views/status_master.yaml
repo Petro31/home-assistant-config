@@ -1,0 +1,335 @@
+# lovelace_gen
+
+# I Created the following macros because I was running into issues
+#   lines being truncated when passing via includes.  I believe the max
+#   line limit is 1024, but i didn't bother looking further because that
+#   was the only possible issue.
+# 
+# After creating these macros, the front end started again when passing very large objects
+#   inside included files.
+
+{#- # Macro for building a Dictionary #}
+{%- macro buildmapping(indent, items, iterfunc) %}
+{%- for attr, value in items.items() %}
+{%- set line = indent ~ '- ' if loop.first else indent ~ '  ' %}
+{%- if value is iterable and value is not string and value is not mapping %}
+{{ line }}{{ attr }}:
+{{- iterfunc(indent ~ '  ', value) }}
+{%- elif value is mapping %}
+{{ line }}{{ attr }}:
+{{- buildmapping(indent+'  ', value, iterfunc) }}
+{%- elif value %}
+{{ line }}{{ attr }}: {{ value }}
+{%- endif %}
+{%- endfor %}
+{%- endmacro %}
+
+{#- # Macro for building a List #}
+{%- macro builditerable(indent, values) %}
+{%- for value in values %}
+{%- if value is iterable and value is not string and value is not mapping %}
+{{ indent ~ '- ' }}
+{{- builditerable(indent+'  ', value) }}
+{%- elif value is mapping %}
+{{- buildmapping(indent, value, builditerable) }}
+{%- elif value %}
+{{ indent  ~ '- ' }}{{ value }}
+{%- endif %}
+{%- endfor %}
+{%- endmacro %}
+
+{#- # Macro for turning an object into yaml #}
+{%- macro toyaml(indent, attr, value, first=False) %}
+{%- set line = indent[:-2] ~ '- ' if first else indent %}
+{%- if value is iterable and value is not string and value is not mapping %}
+{%- if attr %}{{- line }}{{ attr }}:{%- endif %}
+{{- builditerable(indent, value) }}
+{%- elif value is mapping %}
+{%- if attr %}{{- line }}{{ attr }}:{%- endif %}
+{{- buildmapping(indent, value, builditerable) }}
+{%- elif value %}
+{{- line }}{{ attr }}: {{ value }}
+{%- endif %}
+{%- endmacro %}
+
+####################
+# UI CONFIGURATION #
+####################
+
+{% set batteries = [
+  {
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'sensor.basement_cgdk2_battery_level',
+    'name': 'Basement Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'sensor.bonus_room_battery_level',
+    'name': 'Bonus Room Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'sensor.bonus_server_room_temperature_sensor_battery_level',
+    'name': 'Bonus Server Room Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'binary_sensor.garage_door_battery',
+    'name': 'Garage Door Tilt Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'binary_sensor.garage_entrance_battery',
+    'name': 'Garage Door Entrance Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'sensor.deck_temperature_sensor_battery_level',
+    'name': 'Garage Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'sensor.kitchen_temperature_sensor_battery_level',
+    'name': 'Kitchen Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'binary_sensor.main_entrance_battery',
+    'name': 'Main Door Entrance Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'sensor.master_bathroom_temperature_sensor_battery_level',
+    'name': 'Master Bathroom Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'sensor.master_bedroom_temperature_sensor_battery_level',
+    'name': 'Master Bedroom Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'binary_sensor.rear_garage_door_battery',
+    'name': 'Rear Garage Door Tilt Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'sensor.server_room_battery_level',
+    'name': 'Server Room Sensor',
+  },{
+    'type':  '../templates/buttons/battery.yaml',
+    'entity': 'binary_sensor.sliding_door_battery',
+    'name': 'Sliding Door Entrance Sensor',
+  },
+]%}
+
+{%- set dashboard = 'ui-status' %}
+{%- set main_buttons = [
+  {
+    'name': 'Speed Test',
+    'icon': 'mdi:speedometer',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', 'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.speedtest_download',
+      'sensor.speedtest_upload',
+      'sensor.speedtest_ping',
+    ],
+  },{
+    'name': 'Intel Nuc',
+    'image': '/local/images/devices/nuc_5.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.last_boot',
+      'sensor.memory_use_percent',
+      'sensor.processor_use',
+      'sensor.cpu_temperature',
+      'sensor.memory_use',
+      'sensor.memory_use_total',
+      'sensor.disk_use_percent_home',
+      'sensor.disk_use_total',
+      'sensor.disk_use_home',
+      'device_tracker.intel_nuc',
+    ],
+  },{
+    'name': 'HomeAssistant',
+    'image': '/local/images/devices/home-assistant-logo.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'triggers_update': 'all',
+    'entities': [
+      'sensor.uptime',
+      'sensor.current_version',
+      'sensor.entity_counter_zwave',
+      'sensor.entity_counter_sensor',
+      'sensor.entity_counter_light',
+      'sensor.entity_counter_automation',
+      'sensor.entity_counter_binary_sensor',
+      'sensor.entity_counter_camera',
+      'sensor.entity_counter_cover',
+      'sensor.entity_counter_device_tracker',
+      'sensor.entity_counter_fan',
+      'sensor.entity_counter_group',
+      'sensor.entity_counter_media_player',
+      'sensor.entity_counter_person',
+      'sensor.entity_counter_script',
+      'sensor.entity_counter_switch',
+      'sensor.entity_counter_zone',
+    ],
+  },{
+    'name': 'CyberPower CP1500PFCLCDa',
+    'image': '/local/images/devices/BR1500G_1.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.cyberpower_status',
+      'sensor.cyberpower_status_data',
+      'sensor.cyberpower_load',
+      'sensor.cyberpower_input_voltage',
+      'sensor.cyberpower_battery_charge',
+      'sensor.cyberpower_battery_runtime',
+      'sensor.cyberpower_output_voltage',
+    ],
+  },{
+    'name': 'Synology',
+    'image': '/local/images/devices/synology_ds216j.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.synology_uptime',
+      'sensor.synology_volume_used_volume_1',
+      'sensor.synology_memory_usage_real',
+      'sensor.synology_cpu_load_total',
+      'sensor.synology_used_space_volume_1',
+      'sensor.synology_total_size_volume_1',
+      'sensor.synology_average_disk_temp_volume_1',
+      'sensor.synology_network_down',
+      'sensor.synology_network_up',
+      'device_tracker.synology_ds216j',
+    ],
+  },{
+    'name': 'Gateway Pro',
+    'image': '/local/images/devices/unifi_gateway_pro.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.server_room_gateway_uptime',
+      'device_tracker.server_room_gateway_pro',
+    ],
+  },{
+    'name': 'Server Room Switch',
+    'image': '/local/images/devices/unifi_16port_switch_2.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.server_room_temperature',
+      'sensor.server_room_humidity',
+      'sensor.server_room_switch_uptime',
+      'sensor.server_room_switch_temperature',
+      'device_tracker.server_room_16_port_poe_switch',
+      'sensor.bonus_server_room_temperature',
+      'sensor.bonus_server_room_humidity',
+    ],
+  },{
+    'name': 'Bonus Room Switch',
+    'image': '/local/images/devices/unifi_16port_switch_2.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.bonus_room_switch_uptime',
+      'sensor.bonus_room_switch_temperature',
+      'device_tracker.bonus_room_16_port_poe_switch',
+    ],
+  },{
+    'name': 'Server Room AC-Lite',
+    'image': '/local/images/devices/unifi_aclite.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.server_room_ac_lite_uptime',
+      'device_tracker.server_room_ac_lite',
+    ],
+  },{
+    'name': 'Hall Closet AC-Lite',
+    'image': '/local/images/devices/unifi_aclite.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.hall_closet_ac_lite_uptime',
+      'device_tracker.hall_closet_ac_lite',
+    ],
+  },{
+    'name': 'Garage AC-Lite',
+    'image': '/local/images/devices/unifi_aclite.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'sensor.garage_ac_lite_uptime',
+      'device_tracker.garage_ac_lite',
+    ],
+  },{
+    'name': 'Cloud Key',
+    'image': '/local/images/devices/unifi_cloud_key_gen1.png',
+    'type': '../templates/summary/device.yaml',
+    'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'entities': [
+      'device_tracker.unifi_cloudkey',
+    ],
+  },{
+    'name': 'Batteries',
+    'icon': 'mdi:string-lights',
+    'image': '/local/images/batteries.png',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', 'dashboard': dashboard, }, ],
+    'dashboard': dashboard, 
+    'rows': 7,
+    'columns': 2,
+    'entities': batteries,
+    'triggers_update': batteries | map(attribute='entity') | list | sort,
+    'no_sensors': true,
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['binary_sensor', 'sensor'], 'state': ['on', '1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20'], 'icon': 'mdi:battery-10', 'units': 'low' },
+      {'domain': ['binary_sensor', 'sensor'], 'state': ['unavailable', 'unknown', '0'], 'icon': 'mdi:battery-alert', 'units': 'dead' },
+    ],
+  },{
+    'name': 'Testing',
+    'icon': 'mdi:test-tube',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'type': '../templates/summary/overview.yaml',
+    'dashboard': dashboard, 
+    'view': '../views/testing.yaml',
+  },
+] %}
+
+# Set up the home page.
+- !include
+  - dynamic_view_builder.yaml
+  - name: Status
+    icon: mdi:home-search
+    visible: true
+{{ toyaml('    ', 'entities', main_buttons) }}
+{%- if testing %}
+    - name: Testing
+      type: '../templates/summary/overview.yaml'
+      icon: mdi:test-tube
+      dashboard: "{{ dashboard }}"
+{%- endif %}
+
+# Dynamically create all the main views.
+
+{%- for view in main_buttons %}
+{%- set attrs = view.items() | list %}
+{%- set view = attrs | selectattr('0','eq','view') | first %}
+{%- set attrs = attrs | rejectattr('0', 'in', ['view', 'image', 'type', 'triggers_update', 'display']) | list %}
+- !include
+{%- if view is defined %}
+  - {{ view[1] }}
+{%- else %}
+  - dynamic_view_builder.yaml
+{%- endif %}
+{%- for attr, value in attrs %}
+{{ toyaml('    ', attr, value, loop.first) }}
+{%- endfor %}
+{%- endfor %}

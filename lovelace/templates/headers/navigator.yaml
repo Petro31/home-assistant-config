@@ -2,6 +2,7 @@
 
 {%- set color = color|default('var(--paper-item-icon-active-color)') %}
 {%- set name = name | default("Home") | title %}
+{%- set dashboard = dashboard | default("lovelace") %}
 {%- set back_path = back_path | default("/home") %}
 {%- set icon = icon | default("mdi:home") %}
 {%- set entities = entities | default([]) %}
@@ -76,7 +77,7 @@ card:
     icon: mdi:arrow-left
     tap_action:
       action: navigate
-      navigation_path: /lovelace/{{ back_path }}
+      navigation_path: /{{ dashboard }}/{{ back_path }}
       haptic: light
   {%- if entities %}
   - <<: *base
