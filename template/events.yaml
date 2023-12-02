@@ -25,14 +25,18 @@
   - platform: event
     event_type: event_template_reloaded
   action:
-  - service: calendar.list_events
+  - variables:
+      calendar: calendar.lambosino_s_random_events
+  - service: calendar.get_events
     data:
       start_date_time: "{{ today_at() }}"
       end_date_time: "{{ today_at().replace(year=now().year + 2, day=1, month=1) }}"
     target:
-      entity_id: calendar.lambosino_s_random_events
-    response_variable: gathered
+      entity_id: "{{ calendar }}"
+    response_variable: raw_events
   - variables:
+      gathered: >
+        {{ {'events': raw_events[calendar].events} }}
       events: >
         {% set info = [
             {
