@@ -1,0 +1,21 @@
+- alias: Timed Event - Indoor Christmas Lights
+  id: indoor_christmas_lights
+  mode: parallel
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.indoor_christmas
+      not_from: 
+      - unknown
+      - unavailable
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    to_state: >
+      {{ trigger.to_state.state | default if continue else None }}
+  condition:
+  - condition: template
+    value_template: "{{ continue and to_state in ['on','off'] }}"
+  action:
+    - service: switch.turn_{{ to_state }}
+      target:
+        entity_id: switch.indoor_christmas
