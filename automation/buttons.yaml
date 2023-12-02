@@ -15,12 +15,16 @@
         ['light.workshop_desk', 'light.workshop_bench_strip']
       {%- elif to_state == 'hold' %}
         ['light.workshop_desk', 'light.workshop_dome', 'switch.floating_double_plug_left', 'light.workshop_bench_strip']
+      {%- else %}
+        []
       {% endif %}
+    targets: >
+      {{ which | count > 0 }}
     are_on: >
       {{ which | select('is_state', 'on') | list | count > 0 }}
   condition:
   - condition: template
-    value_template: "{{ continue and which is not none }}"
+    value_template: "{{ continue and targets }}"
   action:
   - service: light.turn_o{{ 'ff' if are_on else 'n' }}
     target:
