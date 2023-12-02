@@ -320,8 +320,8 @@
 
       echo_through_receiver:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'audio3')
-             and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'audio3')
+          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'Echo')
+             and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Echo')
              and is_state('switch.floating_outlet_switch', 'on') }}
         turn_on:
         - service: script.echo_through_receiver_on
@@ -330,8 +330,8 @@
 
       airplay_through_receiver:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'airplay')
-             and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'airplay') }}
+          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'AirPlay')
+             and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'AirPlay') }}
         turn_on:
         - service: script.airplay_through_receiver_on
         turn_off:
@@ -341,7 +341,7 @@
 
       echo_through_living_room:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'audio3')
+          {{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Echo')
              and is_state('switch.floating_outlet_switch', 'on') }}
         turn_on:
         - service: script.echo_through_media_player
@@ -349,7 +349,7 @@
             switch: switch.floating_outlet_switch
             media_player: media_player.yamaha_rx_v6a
             desired_state: "on"
-            source: audio3
+            source: Echo
           
         turn_off:
         - service: script.echo_through_media_player
@@ -357,17 +357,17 @@
             switch: switch.floating_outlet_switch
             media_player: media_player.yamaha_rx_v6a
             desired_state: "off"
-            source: audio3
+            source: Echo
 
       living_room_airplay:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'airplay') }}
+          {{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'AirPlay') }}
         turn_on:
         - service: script.media_player_on
           data:
             media_player: media_player.yamaha_rx_v6a
             volume: 0.7
-            source: airplay
+            source: AirPlay
           
         turn_off:
         - service: script.media_player_off
@@ -378,7 +378,7 @@
 
       echo_through_dining_room:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'audio3')
+          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'Echo')
              and is_state('switch.floating_outlet_switch', 'on') }}
         turn_on:
         - service: script.echo_through_media_player
@@ -386,7 +386,7 @@
             switch: switch.floating_outlet_switch
             media_player: media_player.yamaha_rx_v6a_zone2
             desired_state: "on"
-            source: audio3
+            source: Echo
           
         turn_off:
         - service: script.echo_through_media_player
@@ -394,17 +394,17 @@
             switch: switch.floating_outlet_switch
             media_player: media_player.yamaha_rx_v6a_zone2
             desired_state: "off"
-            source: audio3
+            source: Echo
 
       dining_room_airplay:
         value_template: >
-          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'airplay') }}
+          {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'AirPlay') }}
         turn_on:
         - service: script.media_player_on
           data:
             media_player: media_player.yamaha_rx_v6a_zone2
             volume: 0.7
-            source: airplay
+            source: AirPlay
           
         turn_off:
         - service: script.media_player_off
@@ -489,42 +489,42 @@
       
       # Xbox Source
       xbox_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi1') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Xbox One') }}"
         turn_on: &xbox_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_rx_v6a
-              source: hdmi1
+              source: Xbox One
         turn_off: *xbox_source
 
       # Playstation Source
       playstation_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi2') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'PlayStation 5') }}"
         turn_on: &playstation_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_rx_v6a
-              source: hdmi2
+              source: PlayStation 5
         turn_off: *playstation_source
 
       # Switch Source
       nintendo_switch_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi4') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Switch') }}"
         turn_on: &nintendo_switch_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_rx_v6a
-              source: hdmi4
+              source: Switch
         turn_off: *nintendo_switch_source
 
       # Roku Source
       roku_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi3') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Roku') }}"
         turn_on: &roku_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_rx_v6a
-              source: hdmi3
+              source: Roku
         turn_off: *roku_source
 
       # Phone Source
@@ -539,22 +539,22 @@
 
       # Phone Source
       chromecast_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'hdmi5') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Chromecast') }}"
         turn_on: &chromecast_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_rx_v6a
-              source: hdmi5
+              source: Chromecast
         turn_off: *chromecast_source
 
       # Alexa Source
       alexa_source:
-        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'audio3') }}"
+        value_template: "{{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Echo') }}"
         turn_on: &alexa_source
           - service: media_player.select_source
             data:
               entity_id: media_player.yamaha_rx_v6a
-              source: audio3
+              source: Echo
         turn_off: *alexa_source
 
       # Surround Sound Modes
