@@ -3,7 +3,9 @@
     unique_id: plant_events
     device_class: timestamp
     state: >
-      {{ expand('group.plants') | map(attribute='last_updated') | sort(reverse=True) | first }}
+      {{ expand('group.plants') | map(attribute='last_updated') | sort(reverse=True) | first | default }}
+    availability: >
+      {{ expand('group.plants') | list | length > 0 }}
     attributes:
       events: >
         {% set _translations = {
