@@ -70,8 +70,6 @@
     value_template: >
       {{ (now().timestamp() - (value | int(default=0) / 100)) | timestamp_custom('%Y-%m-%dT%H:%M:%S.%f+00:00', False, now().isoformat()) }}
 
-  - platform: uptime
-
   - platform: multizone_controller
     unique_id: active_media_player
     zones:
