@@ -348,8 +348,8 @@ family_network:
 doors:
   entities:
     - binary_sensor.sliding_door
-    - binary_sensor.garage_door_tilt
-    - binary_sensor.rear_garage_door_tilt
+    - binary_sensor.front_garage_door
+    - binary_sensor.rear_garage_door
     - binary_sensor.garage_entry_door
     - binary_sensor.main_door
 
@@ -388,4 +388,4 @@ people:
   - person.james
   - person.owen
   - person.bonnie
-  - input_boolean.company
+  - binary_sensor.guests

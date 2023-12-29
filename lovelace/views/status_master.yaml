@@ -71,10 +71,6 @@
     'name': 'Bonus Server Room Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'binary_sensor.garage_door_battery',
-    'name': 'Garage Door Tilt Sensor',
-  },{
-    'type':  '../templates/buttons/battery.yaml',
     'entity': 'binary_sensor.garage_entrance_battery',
     'name': 'Garage Door Entrance Sensor',
   },{
@@ -97,10 +93,6 @@
     'type':  '../templates/buttons/battery.yaml',
     'entity': 'sensor.master_bedroom_temperature_sensor_battery_level',
     'name': 'Master Bedroom Sensor',
-  },{
-    'type':  '../templates/buttons/battery.yaml',
-    'entity': 'binary_sensor.rear_garage_door_battery',
-    'name': 'Rear Garage Door Tilt Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
     'entity': 'sensor.server_room_battery_level',

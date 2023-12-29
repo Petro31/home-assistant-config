@@ -1,8 +1,16 @@
 - binary_sensor:
   - name: Garage Door
     unique_id: binary_sensor.garage_door_tilt_inverted
-    state: "{{ not is_state('binary_sensor.garage_door_tilt_inverted', 'on') }}"
-    availability: "{{ states('binary_sensor.garage_door_tilt_inverted') in ['on', 'off'] }}"
+    state: "{{ not is_state('cover.front_garage_door', 'closed') }}"
+    availability: "{{ states('cover.front_garage_door') in ['open', 'opening', 'closed', 'closing'] }}"
+    device_class: garage_door
+    attributes:
+      template: door
+
+  - name: Rear Garage Door
+    unique_id: rear_garage_door
+    state: "{{ not is_state('cover.rear_garage_door', 'closed') }}"
+    availability: "{{ states('cover.rear_garage_door') in ['open', 'opening', 'closed', 'closing'] }}"
     device_class: garage_door
     attributes:
       template: door

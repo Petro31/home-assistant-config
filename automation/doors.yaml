@@ -6,21 +6,46 @@
     event: start
   variables:
     doors:
-    # - test_door_last_opened
-    - main_door_last_opened
-    - sliding_door_last_opened
-    - garage_door_tilt_last_opened
-    - garage_entry_door_last_opened
-    - rear_garage_door_tilt_last_opened
+    - name: Main Door
+      identifiers: 
+      - a8541
+      unique_id: main_door_last_opened
+    - name: Sliding Door
+      identifiers: 
+      - 59e40
+      unique_id: sliding_door_last_opened
+    - name: Garage Door
+      identifiers: 
+      - 922c2
+      unique_id: front_garage_door_last_opened
+    - name: Garage Entry Door
+      identifiers: 
+      - 5ef46
+      unique_id: garage_entry_door_last_opened
+    - name: Rear Garage Door
+      identifiers: 
+      - 0fff6
+      unique_id: rear_garage_door_last_opened
+    - name: Passenger Door
+      identifiers: 
+      - 069aa
+      unique_id: passenger_door_last_opened
   action:
   - repeat:
-      count: "{{ doors | length }}"
+      for_each: "{{ doors }}"
       sequence:
       - service: script.mqtt_automated_config
         data:
           domain: sensor
-          unique_id: "{{ doors[repeat.index - 1] }}"
+          name: Last Opened
+          unique_id: "{{ repeat.item.unique_id }}"
           device_class: timestamp
+          device:
+            name: "{{ repeat.item.name }}"
+            identifiers: "{{ repeat.item.identifiers }}"
+            manufacturer: Petro
+            model: Virtual Door
+            sw_version: "1.0"
 
 - alias: Doors - Notify when Open
   id: notify_on_door_state_change
@@ -32,8 +57,9 @@
     - binary_sensor.main_door
     - binary_sensor.garage_entry_door
     - binary_sensor.sliding_door
-    - binary_sensor.garage_door_tilt
-    - binary_sensor.rear_garage_door_tilt
+    - binary_sensor.front_garage_door
+    - binary_sensor.rear_garage_door
+    - binary_sensor.passenger_door
     from: 'off'
     to: 'on'
   variables:
@@ -183,8 +209,9 @@
         'binary_sensor.main_door': 90,
         'binary_sensor.garage_entry_door': 90,
         'binary_sensor.sliding_door': 240,
-        'binary_sensor.garage_door_tilt': 300,
-        'binary_sensor.rear_garage_door_tilt': 300,
+        'binary_sensor.front_garage_door': 300,
+        'binary_sensor.rear_garage_door': 300,
+        'binary_sensor.passenger_door': 90,
         'input_boolean.test_door': 5,
       } %}
       {%- if valid and trigger.to_state.entity_id in times %}
@@ -216,6 +243,7 @@
     - binary_sensor.main_door
     - binary_sensor.garage_entry_door
     - binary_sensor.sliding_door
+    - binary_sensor.server_room_door_contact
     from: 'off'
     to: 'on'
   variables:
@@ -390,3 +418,23 @@
   - service: script.turn_off
     target:
       entity_id: "{{ script }}"
+
+- alias: Doors - Illuminate Server Room
+  id: illuminate_server_room
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.server_room_door_contact
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    to_state: >
+      {{ trigger.to_state.state | default('') if continue else '' }}
+  condition:
+  - condition: template
+    value_template: "{{ continue and to_state in ['on','off'] }}"
+  action:
+  - service: switch.turn_{{ to_state }}
+    target:
+      entity_id:
+      - switch.server_room_switch

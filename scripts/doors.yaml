@@ -60,12 +60,16 @@ notify_count_sliding_door:
   alias: Notify - Sliding Door Count
   <<: *door_count_script
   
-notify_count_garage_door_tilt:
+notify_count_front_garage_door:
   alias: Notify - Garage Door Count
   <<: *door_count_script
   
-notify_count_back_garage_door_tilt:
+notify_count_rear_garage_door:
   alias: Notify - Rear Garage Door Count
+  <<: *door_count_script
+  
+notify_count_passenger_door:
+  alias: Notify - Passenger Door Count
   <<: *door_count_script
   
 

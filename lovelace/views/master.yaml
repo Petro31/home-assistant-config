@@ -535,23 +535,23 @@
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
   },{
-    'entity': 'binary_sensor.garage_door_tilt',
-    'name': 'Garage',
-    'last_opened': 'sensor.garage_door_tilt_last_opened',
+    'entity': 'binary_sensor.front_garage_door',
+    'name': 'Front Garage',
+    'last_opened': 'sensor.garage_door_last_opened',
     'type': '../templates/buttons/door.yaml',
-    'cover': 'cover.garage_door',
     'door_type': 'garage',
   },{
-    'entity': 'binary_sensor.rear_garage_door_tilt',
-    'name': 'Garage',
-    'last_opened': 'sensor.rear_garage_door_tilt_last_opened',
+    'entity': 'binary_sensor.rear_garage_door',
+    'name': 'Rear Garage',
+    'last_opened': 'sensor.rear_garage_door_last_opened',
     'type': '../templates/buttons/door.yaml',
-    'cover': 'cover.rear_garage_door',
     'door_type': 'garage',
   },{
-    'entity': 'switch.garage_temporary_laser',
-    'name': '45 Second Laser',
-    'type': '../templates/buttons/toggle2.yaml',
+    'entity': 'binary_sensor.passenger_door',
+    'name': 'Passenger',
+    'last_opened': 'binary_sensor.passenger_door_last_opened',
+    'type': '../templates/buttons/door.yaml',
+    'door_type': 'garage',
   }
 ] %}
 
@@ -631,7 +631,7 @@
     'icon': 'mdi:door',
     'entities': doors,
     'image': '/local/images/door_4.png',
-    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'header': [  { 'type': '../templates/headers/door_navigator.yaml', }, ],
     'triggers_update': doors | map(attribute='entity') | list | sort,
     'display': [
       {'domain': ['sensor','binary_sensor'] , 'state': ['on', 'open'], 'icon': 'mdi:door-open', 'units': 'doors' },

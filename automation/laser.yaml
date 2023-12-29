@@ -4,7 +4,7 @@
   trigger: 
   - platform: state
     entity_id:
-    - binary_sensor.garage_door_tilt
+    - binary_sensor.front_garage_door
   variables:
     laser: switch.garage_ceiling_outlet
     valid: >

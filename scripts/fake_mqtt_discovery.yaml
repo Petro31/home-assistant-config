@@ -79,7 +79,8 @@ mqtt_automated_config:
         ("json_attributes_template", "{{ value_json.attributes | tojson }}"),
         ("device_class", device_class | default(none) ),
         ("unit_of_measurement", unit_of_measurement | default(none) ),
-        ("state_class", state_class | default(none))
+        ("state_class", state_class | default(none)),
+        ("device", device | default(none))
       ] %}
       {% set payload = dict.from_keys(items | rejectattr('1', 'none') | list) %}
       {{ {

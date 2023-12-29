@@ -1,0 +1,153 @@
+# lovelace_gen
+
+{%- set color = color|default('var(--paper-item-icon-active-color)') %}
+{%- set name = name | default("Home") | title %}
+{%- set dashboard = dashboard | default("lovelace") %}
+{%- set back_path = back_path | default("/home") %}
+{%- set icon = icon | default("mdi:home") %}
+{%- set entities = entities | default([]) %}
+{%- set valid_domains = ['light','switch'] %}
+
+{%- set ns = namespace(entities=[]) %}
+{%- for entity_id in entities if entity_id is string and entity_id.count('.') == 1 %}
+{%- set domain, object_id = entity_id.split(".") %}
+{%- if domain in valid_domains %}
+{%- set ns.entities = ns.entities + [ entity_id ] %}
+{%- endif %}
+{%- endfor %}
+
+{%- set entities = ns.entities %}
+
+{%- if entities %}
+{%- set template_areas = '"back allon alloff label"' %}
+{%- set template_cols = '16.66% 16.66% 16.66% 50%' %}
+{%- set gap = '4px' %}
+{%- set cols = '1fr 4px 1fr 4px 1fr 3fr' %}
+{%- set total = 6 %}
+{%- set ratio = 4 %}
+{%- else %}
+{%- set template_areas = '"back label"' %}
+{%- set template_cols = '16.66% 83.33%' %}
+{%- set gap = '8px' %}
+{%- set cols = '1fr 8px 5fr' %}
+{%- set total = 3 %}
+{%- set ratio = 2 %}
+{%- endif %}
+
+anchors:
+  base: &base
+    type: custom:button-card
+    color: var(--paper-item-icon-active-color)
+    aspect_ratio: 1/1
+    show_name: false
+    show_label: false
+    show_icon: true
+    styles:
+      icon:
+      - width: 80%
+      card:
+      - padding: 0px
+      - border-radius: 18%
+
+type: custom:mod-card
+style: 
+  layout-card:
+    $:
+      grid-layout:
+        $: |
+          div {
+              margin: 0px !important;
+              --masonry-view-card-margin: 0px;
+            }
+
+card:
+  type: vertical-stack
+  cards:
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
+    layout:
+      grid-template-columns: {{ template_cols }}
+      grid-template-rows: auto
+      grid-template-areas: |
+        {{ template_areas }}
+      grid-gap: {{ gap }}
+    gridcols: {{ cols }}
+    cards:
+    - <<: *base
+      view_layout:
+        grid-area: back
+      icon: mdi:arrow-left
+      tap_action:
+        action: navigate
+        navigation_path: /{{ dashboard }}/{{ back_path }}
+        haptic: light
+    {%- if entities %}
+    - <<: *base
+      view_layout:
+        grid-area: allon
+      icon: mdi:lightbulb-multiple
+      tap_action:
+        action: call-service
+        service: script.lovelace_toggle
+        service_data:
+          entities: {{ entities }}
+          state: 'on'
+        haptic: light
+    - <<: *base
+      view_layout:
+        grid-area: alloff
+      icon: mdi:lightbulb-multiple-off
+      tap_action:
+        action: call-service
+        service: script.lovelace_toggle
+        service_data:
+          entities: {{ entities }}
+          state: 'off'
+        haptic: light
+    {%- endif %}
+    - type: custom:button-card
+      color: var(--paper-item-icon-color)
+      view_layout:
+        grid-area: label
+      icon: {{ icon }}
+      label: {{ name }}
+      aspect_ratio: {{ 6 - ratio + 1 }}/1
+      show_name: false
+      show_label: true
+      show_icon: false
+      styles:
+        grid:
+        - grid-template-areas: '"l"'
+        - grid-template-columns: 1fr
+        - grid-template-rows: 1fr
+        card:
+        - padding: 0px
+        - margin: 0px
+        - --ha-card-background: rgba(0,0,0,0)
+        - box-shadow: none
+        - pointer-events: none
+        label:
+        - align-self: start
+        - justify-self: end
+        - font-family: Helvetica
+        - font-size: 20px
+        - padding-right: 10px
+        icon:
+        - width: 100%%
+        - color: var(--paper-item-icon-color)
+
+  - type: custom:mushroom-cover-card
+    entity: cover.front_garage_door
+    name: Front Garage
+    show_position_control: false
+    show_buttons_control: true
+    layout: horizontal
+  - type: custom:mushroom-cover-card
+    entity: cover.rear_garage_door
+    fill_container: true
+    show_position_control: false
+    show_buttons_control: true
+    layout: horizontal
+    name: Rear Garage
+  - type: tile
+    entity: switch.garage_temporary_laser

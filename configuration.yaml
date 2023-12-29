@@ -14,7 +14,6 @@ command_line: !include_dir_merge_list command_line
 compensation: !include compensation.yaml
 config:
 conversation:
-cover: !include cover.yaml
 energy:
 frontend:
   themes: !include_dir_merge_named themes/
