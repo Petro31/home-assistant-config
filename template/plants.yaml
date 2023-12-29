@@ -37,3 +37,5 @@
     device_class: problem
     state: >
       {{ state_attr('sensor.plant_events', 'events') | length > 0 }}
+    availability: >
+      {{ state_attr('sensor.plant_events', 'events') is not none }}
