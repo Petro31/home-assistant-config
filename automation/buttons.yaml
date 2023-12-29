@@ -1,23 +1,56 @@
-- alias: Button - Workshop Lights
-  id: button_toggle_workshop_lights
+- alias: Button - Toggle Lights
+  id: button_toggle_lights
+  mode: parallel
   trigger:
   - platform: state
-    entity_id: sensor.workshop_button_action
+    entity_id:
+    - sensor.workshop_button_action
+    - sensor.mikes_button_action
+    - sensor.jims_button_action
+    - sensor.lindsays_button_action
   variables:
     continue: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
-    to_state: >
+    event: >
       {{ trigger.to_state.state | default('') if continue else '' }}
+    source: >
+      {{ trigger.entity_id }}
+    config:
+      sensor.workshop_button_action:
+        single:
+        - light.workshop_desk
+        double:
+        - light.workshop_desk
+        - light.workshop_bench_strip
+        hold:
+        - light.workshop_desk
+        - light.workshop_dome
+        - switch.floating_double_plug_left
+        - light.workshop_bench_strip
+      sensor.mikes_button_action:
+        single:
+        - light.mikes_lamp
+        double:
+        - light.living_room
+        hold:
+        - switch.movie_time
+      sensor.jims_button_action:
+        single:
+        - light.jims_lamp
+        double:
+        - light.all_living_room
+        hold:
+        - light.all_living_room
+      sensor.lindsays_button_action:
+        single:
+        - light.lindsays_lamp
+        double:
+        - light.living_room
+        hold:
+        - light.all_living_room
     which: >
-      {%- if to_state == 'single' %}
-        ['light.workshop_desk']
-      {%- elif to_state == 'double' %}
-        ['light.workshop_desk', 'light.workshop_bench_strip']
-      {%- elif to_state == 'hold' %}
-        ['light.workshop_desk', 'light.workshop_dome', 'switch.floating_double_plug_left', 'light.workshop_bench_strip']
-      {%- else %}
-        []
-      {% endif %}
+      {%- set item = config.get(source, {}) %}
+      {{ item.get(event, []) }}
     targets: >
       {{ which | count > 0 }}
     are_on: >
@@ -26,7 +59,7 @@
   - condition: template
     value_template: "{{ continue and targets }}"
   action:
-  - service: light.turn_o{{ 'ff' if are_on else 'n' }}
+  - service: homeassistant.turn_o{{ 'ff' if are_on else 'n' }}
     target:
       entity_id: "{{ which }}"
 
