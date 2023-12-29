@@ -1,0 +1,26 @@
+- sensor:
+  - name: Total Unifi Guests
+    unique_id: total_unifi_guests
+    unit_of_measurement: Guests
+    state: >
+      {{ integration_entities('unifi') | select('search','^device_tracker') | expand | selectattr('attributes.essid', 'eq', 'Spartan Family') | list | count }}
+
+  - name: Total Unifi Trusted Devices
+    unique_id: total_unifi_trusted_devices
+    unit_of_measurement: Devices
+    state: >
+      {{ integration_entities('unifi') | select('search','^device_tracker') | expand | selectattr('attributes.essid', 'eq', 'Spartan') | list | count }}
+
+- binary_sensor:
+  - name: Unifi Guests
+    unique_id: unifi_guests
+    device_class: presence
+    state: >
+      {{ integration_entities('unifi') | select('search','^device_tracker') | expand | selectattr('attributes.essid', 'eq', 'Spartan Family') | list | count > 0 }}
+
+- binary_sensor:
+  - name: Manual Guests
+    unique_id: manual_guests
+    device_class: presence
+    state: >
+      {{ is_state('input_boolean.company', 'on') }}
