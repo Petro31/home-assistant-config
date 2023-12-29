@@ -494,6 +494,22 @@
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
     ],
   },{
+    'name': 'Server Room',
+    'icon': 'mdi:server',
+    'image': '',
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
+    'entities': [
+      "switch.server_room_switch",
+    ],
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+  },{
     'name': 'Workshop',
     'icon': 'mdi:head-lightbulb',
     'image': '',
