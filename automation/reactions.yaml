@@ -1,4 +1,4 @@
-- alias: Reaction - Keep Sunset Switches On.
+- alias: Keep Sunset Switches On.
   id: reaction_keep_sunset_switches_on
   mode: parallel
   trigger:
@@ -37,7 +37,7 @@
     target:
       entity_id: light.outdoor_bulbs
 
-- alias: Reaction - Living Room Lamp Availability.
+- alias: Living Room Lamp Availability.
   id: reaction_keep_living_room_lamps_available
   mode: parallel
   trigger:

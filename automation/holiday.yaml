@@ -1,10 +1,10 @@
-- alias: Timed Event - Christmas Lights
-  id: indoor_christmas_lights
+- alias: Timed Event - Holiday Lights
+  id: indoor_holiday_lights
   mode: parallel
   trigger:
     - id: indoor
       platform: state
-      entity_id: binary_sensor.indoor_christmas
+      entity_id: binary_sensor.indoor_holiday
       not_from: 
       - unknown
       - unavailable
@@ -28,7 +28,7 @@
         {{ trigger.id.split('_')[-1] }}
       {% endif %}
     target: > 
-      {{ 'switch.indoor_christmas' if trigger.id == 'indoor' else 'switch.outside_porch' }}
+      {{ 'switch.indoor_holiday' if trigger.id == 'indoor' else 'switch.outside_porch' }}
   condition:
   - condition: template
     value_template: "{{ continue and to_state in ['on','off'] }}"

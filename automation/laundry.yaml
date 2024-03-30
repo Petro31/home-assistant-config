@@ -1,4 +1,4 @@
-- alias: Washer and Dryer - Notify
+- alias: Notify
   id: announce_dryer_when_complete
   mode: parallel
   trigger:
@@ -35,7 +35,7 @@
       title: "{{ name }} is finished!"
       message: "{{ name }} is finished!"
 
-- alias: Washer and Dryer - Booleans
+- alias: Booleans
   id: washer_and_dryer_booleans
   mode: parallel
   trigger:
@@ -77,7 +77,7 @@
     target:
       entity_id: "{{ service_target }}"
 
-- alias: Washer and Dryer - Cycle Counter
+- alias: Cycle Counter
   id: washer_and_dryer_cycle_counter
   mode: parallel
   trigger:
@@ -109,7 +109,8 @@
       source: "{{ source }}"
       next_phase: "{{ next_phase }}"
 
-- alias: Washer and Dryer - MQTT Discovery
+- alias: MQTT Discovery
+  id: 3e5e2ffb-d811-4818-a6bd-1f1386c6dbae
   trigger:
   - platform: homeassistant
     event: start

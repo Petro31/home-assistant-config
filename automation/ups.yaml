@@ -1,4 +1,4 @@
-- alias: UPS - Notify of Power Outage
+- alias: Notify Power Outage
   id: ups_notify_power_outage
   trigger:
   - id: notify

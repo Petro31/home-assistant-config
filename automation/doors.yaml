@@ -1,4 +1,4 @@
-- alias: Doors - MQTT Discovery on Startup
+- alias: MQTT Discovery
   id: mqtt_store_door_states_discovery
   mode: single
   trigger:
@@ -47,7 +47,7 @@
             model: Virtual Door
             sw_version: "1.0"
 
-- alias: Doors - Notify when Open
+- alias: Notify when Open
   id: notify_on_door_state_change
   mode: parallel
   trigger: &door_trigger
@@ -191,7 +191,7 @@
         title: Found {{ what }} user!
         message: The person who used the {{ what | lower }} is {{ state_attr('sensor.people_at_home', 'or') }}!
 
-- alias: Doors - Notify when Open too long.
+- alias: Notify when Open too long.
   id: notify_on_door_ajar
   mode: parallel
   trigger: *door_trigger
@@ -233,7 +233,7 @@
       door_name: "{{ door_name }}"
       timestamp: "{{ timestamp }}"
 
-- alias: Doors - Illuminate Door
+- alias: Illuminate Door
   id: illuminate_doors_when_open
   mode: parallel
   trigger: 
@@ -368,7 +368,7 @@
           duration: "{{ duration }}"
           scene_id: "{{ action_data.scene_ids[repeat.index - 1] }}"
 
-- alias: Doors - Illuminate Event Handler
+- alias: Illuminate Event Handler
   id: illuminate_door_event_handler
   mode: parallel
   trigger:
@@ -392,7 +392,7 @@
       duration: "{{ duration }}"
       scene_id: "{{ scene_id }}"
 
-- alias: Doors - Cancel Scheduled Resume State
+- alias: Cancel Scheduled Resume State
   id: cancel_scheduled_resume_state
   mode: parallel
   trigger:
@@ -419,7 +419,7 @@
     target:
       entity_id: "{{ script }}"
 
-- alias: Doors - Illuminate Server Room
+- alias: Illuminate Server Room
   id: illuminate_server_room
   mode: parallel
   trigger:

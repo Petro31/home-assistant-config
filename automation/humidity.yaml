@@ -1,4 +1,4 @@
-- alias: Bathroom - Turn on fan when humidity is high.
+- alias: Turn on fan when bathroom humidity is high.
   id: bathroom_turn_on_fan_when_humidity_is_high
   mode: restart
   trigger:
@@ -31,7 +31,7 @@
   - delay:
       seconds: 1
 
-- alias: Basement - Notify when humidity is high
+- alias: Notify when basement humidity is high
   id: basement_notify_when_humidity_is_high
   mode: parallel
   trigger:

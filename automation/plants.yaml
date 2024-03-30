@@ -1,4 +1,4 @@
-- alias: Plants - Update Group Members
+- alias: Update Group Members
   id: plants_update group members
   trigger:
   - platform: time
@@ -15,7 +15,7 @@
       icon: mdi:sprout
       entities: "{{ states.plant | map(attribute='entity_id') | list }}"
 
-- alias: Plants - Notify
+- alias: Notify
   id: plants_notify
   trigger:
   - platform: state

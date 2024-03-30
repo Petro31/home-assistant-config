@@ -1,4 +1,4 @@
-- alias: Doorbell - Notify
+- alias: Notify
   id: announce_and_notify_on_doorbell_press
   mode: parallel
   trigger:
@@ -25,7 +25,7 @@
       title: "Door Bell!"
       message: "Door Bell!"
 
-- alias: Doorbell - Suppress Chime
+- alias: Suppress Chime
   id: suppress_doorbell_chime
   mode: single
   trigger:

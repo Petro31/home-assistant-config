@@ -1,4 +1,4 @@
-- alias: Repair - Ignore Spook Repair
+- alias: Ignore Spook Repair
   id: repair_ignore_spook_repair
   trigger:
   - platform: state

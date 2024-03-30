@@ -1,4 +1,4 @@
-- alias: Camera Event - Turn off Outside Cameras based on temperature
+- alias: Turn off Outside Cameras based on temperature
   id: turn_off_outside_cameras_based_on_temperature
   trigger:
   - platform: state
@@ -16,7 +16,7 @@
       - switch.driveway_camera_port
       - switch.patio_camera_port
 
-- alias: Camera Event - Turn on Outside Cameras based on temperature
+- alias: Turn on Outside Cameras based on temperature
   id: turn_on_outside_cameras_based_on_temperature
   trigger:
   - platform: state

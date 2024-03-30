@@ -1,4 +1,4 @@
-- alias: Drinks - MQTT Discovery on Startup
+- alias: MQTT Discovery
   id: mqtt_store_drink_states_discovery
   mode: single
   trigger:

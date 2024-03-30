@@ -1,4 +1,4 @@
-- alias: Weight - MQTT Discovery & Automation
+- alias: MQTT Discovery and Automation
   id: mqtt_store_and_automate_weights
   mode: parallel
   trigger:

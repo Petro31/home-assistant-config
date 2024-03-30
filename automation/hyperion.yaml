@@ -1,4 +1,4 @@
-- alias: Hyperion - Execute Effects
+- alias: Execute Effects
   id: hyperion_execute_effects
   mode: restart
   trigger:

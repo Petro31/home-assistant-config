@@ -1,4 +1,4 @@
-- alias: Harmony - Turn On Livingroom lights with Harmony Activities
+- alias: Turn On Livingroom lights with Activities
   id: turn_on_livingroom_lights_with_harmony_activities
   trigger:
   - platform: state
@@ -20,7 +20,7 @@
       - light.living_room
       - switch.hyperion_usb_capture
 
-- alias: Harmony - Turn Off Hyperion with Harmony Activities
+- alias: Turn Off Hyperion with Activities
   id: turn_off_hyperion_lights_with_harmony_activities
   trigger:
   - platform: template
@@ -34,7 +34,7 @@
     target:
       entity_id: switch.hyperion_usb_capture
 
-- alias: Harmony - Give ChromeCast control to remote using emulated roku.
+- alias: Give ChromeCast control to remote using emulated roku
   id: harmony_give_chromecast_control_to_remote_using_emulated_roku
   mode: restart
   trigger:

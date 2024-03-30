@@ -1,4 +1,4 @@
-- alias: Timed Event - Snapshot status
+- alias: Notify Snapshot status
   id: snapshot_status
   trigger:
     - platform: state
@@ -19,7 +19,7 @@
         title: Snapshot Status
         message: "Samba backup {{ status }}."
 
-- alias: Timed Event - Garbage Day Message
+- alias: Notify Garbage Day Message
   id: garbage_day_message
   trigger:
     - platform: time
@@ -45,7 +45,7 @@
       data:
         message: "{{ what }}"
 
-- alias: Timed Event - Change Filters Message
+- alias: Notify Change Filters Message
   id: change_filters_message
   trigger:
     - platform: time
@@ -60,7 +60,7 @@
       data:
         message: "Change HVAC filter."
 
-- alias: Timed Event - Mosby Heartworm and Flee Medication.
+- alias: Notify Mosby Heartworm and Flee Medication.
   id: mosby_heartworm
   trigger:
     - platform: time
@@ -75,7 +75,7 @@
       data:
         message: "Give mosby heartworm and flee medication."
 
-- alias: Timed Event - DST Warning
+- alias: Notify DST Change
   id: dst_warning
   trigger:
     - platform: time
@@ -94,7 +94,7 @@
           {%- set plural = 's' if days | int(0) > 1 else '' %}
           Daylight savings in {{ days }} day{{plural}}, you will {{ states('sensor.daylight_savings_phrase') }}!
 
-- alias: Timed Event - Outdoor Lights On at Sunset, Off at Sunrise
+- alias: Outdoor Lights On at Sunset, Off at Sunrise
   id: outdoor_lights_on_off
   trigger:
     - platform: sun
@@ -112,7 +112,7 @@
         event: "{{ event }}"
         scene: "{{ scene }}"
 
-- alias: Timed Event - Clear persistent_notifications around bedtime.
+- alias: Clear persistent_notifications at bedtime
   id: clear_persistent_notifications_around_bedtime
   trigger:
     - platform: time
@@ -120,7 +120,7 @@
   action:
     - service: persistent_notification.dismiss_all
 
-- alias: Calendar - Simple Thermostat
+- alias: Simple Thermostat
   id: simple_thermostat
   trigger:
     - platform: calendar

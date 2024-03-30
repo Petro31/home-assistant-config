@@ -1,4 +1,4 @@
-- alias: Button - Toggle Lights
+- alias: Zigbee Button Toggler
   id: button_toggle_lights
   mode: parallel
   trigger:
@@ -63,7 +63,7 @@
     target:
       entity_id: "{{ which }}"
 
-- alias: Button - Living Room Scene Controller
+- alias: Living Room Scene Controller
   id: button_living_room_scene_controller
   mode: parallel
   trigger:
@@ -212,7 +212,7 @@
   - service: "{{ service }}"
     data: "{{ data }}"
 
-- alias: Button - Living Room Scene Controller LEDs
+- alias: Living Room Scene Controller LEDs
   id: button_living_room_scene_controller_leds
   mode: queued
   trigger:

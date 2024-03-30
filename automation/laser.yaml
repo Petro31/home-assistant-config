@@ -1,4 +1,4 @@
-- alias: Laser - Garage position indicator automation
+- alias: Garage position indicator
   id: laser_position_indicator_automation
   mode: parallel
   trigger: 

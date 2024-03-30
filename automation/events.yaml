@@ -62,3 +62,13 @@
       at: '19:00:00'
   action:
   - service: script.events
+
+- alias: Events - Forward Reload Templates
+  id: reload_templates
+  trigger:
+  - platform: event
+    event_type: event_template_reloaded
+  action:
+  - delay: "00:00:01"
+  - event: templates_reloaded
+    event_data: {}

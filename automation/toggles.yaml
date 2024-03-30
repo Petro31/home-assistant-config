@@ -1,4 +1,4 @@
-- alias: Toggle - Game Room Lights
+- alias: Game Room Lights
   id: toggle_game_room_lights
   trigger:
   - platform: state
@@ -19,7 +19,7 @@
       - switch.game_room_buffet_outlet
 
 
-- alias: Toggle - Basement Lights
+- alias: Basement Lights
   id: toggle_basement_lights
   trigger:
   - platform: state
@@ -39,7 +39,7 @@
       - switch.basement_cans
 
 
-- alias: Toggle - Deck String Lights
+- alias: Deck String Lights
   id: toggle_deck_string_lights
   trigger:
   - platform: state
@@ -65,7 +65,7 @@
     target:
       entity_id: "{{ targets }}"
 
-- alias: Toggle - Cabinet String Lights
+- alias: Cabinet String Lights
   id: toggle_cabinet_string_lights
   mode: parallel
   trigger:
