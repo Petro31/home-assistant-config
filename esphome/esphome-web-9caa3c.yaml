@@ -41,7 +41,7 @@ switch:
     name: "Restart"
 
 sensor:
-  - platform: bme280
+  - platform: bme280_i2c
     temperature:
       name: "BME280 Temperature"
       oversampling: 16x

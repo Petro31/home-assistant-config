@@ -32,7 +32,7 @@ switch:
     name: "Restart"
 
 sensor:
-  - platform: bme280
+  - platform: bme280_i2c
     temperature:
       name: Temperature
     pressure:

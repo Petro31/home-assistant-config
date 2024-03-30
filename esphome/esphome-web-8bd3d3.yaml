@@ -27,7 +27,7 @@ wifi:
     password: !secret wifi_fallback_password
 
 sensor:
-  - platform: bme280
+  - platform: bme280_i2c
     temperature:
       name: Temperature
     pressure:
