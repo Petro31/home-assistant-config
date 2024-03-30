@@ -1,5 +1,5 @@
 test_context:
-  alias: Test - Context
+  alias: Context
   mode: parallel
   variables:
     user: >
@@ -10,7 +10,7 @@ test_context:
       message: "{{ user }}"
 
 debug_script_variables:
-  alias: Test - Debug Script Variables
+  alias: Debug Script Variables
   fields:
     script_variables:
       description: Dictionary of variables

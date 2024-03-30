@@ -1,5 +1,5 @@
 mqtt_automated_states:
-  alias: Mqtt - Publish State and Attributes
+  alias: Publish State and Attributes
   mode: parallel
   fields: 
     <<: &mqtt-fields
@@ -49,7 +49,7 @@ mqtt_automated_states:
     data: "{{ service_data }}"
 
 mqtt_automated_config:
-  alias: Mqtt - Publish Discovery
+  alias: Publish Discovery
   mode: parallel
   fields: 
     <<: *mqtt-fields

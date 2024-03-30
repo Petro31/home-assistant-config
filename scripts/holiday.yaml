@@ -1,5 +1,5 @@
 indoor_ambiance:
-  alias: Lights - Indoor Ambiance
+  alias: Indoor Ambiance
   mode: parallel
   variables:
     pass: foo
@@ -10,7 +10,7 @@ indoor_ambiance:
 
 
 indoor_holiday_colors:
-  alias: Lights - Indoor Holiday Colors
+  alias: Indoor Holiday Colors
   mode: single
   fields:
     targets:

@@ -1,5 +1,5 @@
 harmony_activity_on:
-  alias: Harmony - Turn On Activity
+  alias: Turn On Activity
   mode: restart
   description: >
     Turns on any harmony activity and optionally any specified devices.
@@ -48,7 +48,7 @@ harmony_activity_on:
       entity_id: "{{ echo }}"
 
 harmony_activity_off:
-  alias: Harmony - Turn Off Activity
+  alias: Turn Off Activity
   mode: restart
   description: >
     Turns off all harmony activities.
@@ -64,7 +64,7 @@ harmony_activity_off:
       activity: PowerOff
 
 harmony_all_off:
-  alias: Harmony - Turn All Off
+  alias: Turn All Off
   mode: single
   description: >
     Turns off all harmony activities and auxilary devices.
@@ -87,7 +87,7 @@ harmony_all_off:
       entity_id: "{{ echo }}"
 
 roku_source_on:
-  alias: Harmony - Turn On Roku Activity
+  alias: Turn On Roku Activity
   mode: single
   description: >
     Turns on the harmony roku activity and opens the selected application.

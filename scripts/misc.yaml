@@ -2,7 +2,7 @@
 # when the button is pressed and everything is off.  e.g.  all lights are off and press off does not
 # result in a lovelace call-service error.
 lovelace_toggle:
-  alias: UI - Toggle Entities
+  alias: Toggle UI Entities
   description: >
     Toggle a set of entities
   fields:
@@ -28,15 +28,4 @@ lovelace_toggle:
     data:
       entity_id: "{{ target_entities }}"
 
-# A timer script for turning on and off the lasers for positioning cars
-# in the carport.
-laser_position_timer:
-  alias: Garage - Laser Timer
-  mode: single
-  variables:
-    laser: switch.garage_ceiling_outlet
-  sequence:
-  - delay: "00:02:00"
-  - service: switch.turn_off
-    target:
-      entity_id: "{{ laser }}"
+

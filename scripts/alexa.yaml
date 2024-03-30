@@ -1,5 +1,5 @@
 notify_alexa_ui:
-  alias: Alexa - Announce or TTS
+  alias: Announce or TTS
   mode: parallel
   fields:
     announce:
@@ -55,7 +55,7 @@ alexa_announce:
   - delay: "00:00:01"
 
 alexa_tts:
-  alias: Alexa - Text to Speech
+  alias: Text to Speech
   mode: single
   sequence:
   - service: script.turn_on
@@ -140,7 +140,7 @@ notify_alexa:
       attributes: "{{ attrs | tojson }}"
 
 clear_alexa_text:
-  alias: Alexa - Clear Text Box
+  alias: Clear Text Box
   sequence:
     - service: input_text.set_value
       data:

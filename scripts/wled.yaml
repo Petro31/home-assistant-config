@@ -6,7 +6,7 @@
 # DOESN"T HANDLE ASYNC WELL.
 
 wled_master_segments:
-  alias: Wled - Master/Segments
+  alias: Master/Segments
   mode: parallel
   fields:
     master:
@@ -67,7 +67,7 @@ wled_master_segments:
 
 
 wled_cabinet_segment_handler:
-  alias: WLED - Cabinet Segments
+  alias: Cabinet Segments
   mode: single
   fields: &holiday_fields
     to_state: 
@@ -202,7 +202,7 @@ wled_cabinet_segment_handler:
 
 
 wled_hutch_segment_handler:
-  alias: WLED - Hutch Segments
+  alias: Hutch Segments
   mode: single
   fields: *holiday_fields
   variables:

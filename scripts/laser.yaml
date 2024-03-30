@@ -1,0 +1,12 @@
+# A timer script for turning on and off the lasers for positioning cars
+# in the carport.
+laser_position_timer:
+  alias: Garage Timer
+  mode: single
+  variables:
+    laser: switch.garage_ceiling_outlet
+  sequence:
+  - delay: "00:02:00"
+  - service: switch.turn_off
+    target:
+      entity_id: "{{ laser }}"

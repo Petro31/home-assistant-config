@@ -4,7 +4,7 @@
 
 zwave_multicast_group:
   mode: parallel
-  alias: Zwave JS - Multicast to Zwave Switch/Light Group
+  alias: Multicast to Zwave Switch/Light Group
   fields:
     group:
       description: (Required) The group of lights & switches
@@ -134,7 +134,7 @@ zwave_multicast_group:
 
 zwave_ping:
   mode: parallel
-  alias: Zwave JS - Ping nodes after x seconds.
+  alias: Ping nodes after x seconds
   fields:
     entities:
       description: (Required) The group of lights & switches

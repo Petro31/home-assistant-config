@@ -1,5 +1,5 @@
 cast_workout_video:
-  alias: Cast - Workout Video
+  alias: Workout Video
   mode: single
   fields:
     workout:
@@ -50,7 +50,7 @@ cast_workout_video:
       media_content_type: movie
 
 stop_casting:
-  alias: Cast - Stop Casting
+  alias: Stop Casting
   mode: single
   sequence:
   - service: media_player.turn_off
