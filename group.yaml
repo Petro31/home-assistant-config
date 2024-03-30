@@ -17,6 +17,11 @@ inside_area:
     - light.hallway
     - light.kitchen_cans
     - light.kitchen_island
+    - light.living_room_uplight
+    - light.dining_room_uplight_1
+    - light.dining_room_uplight_2
+    - switch.hutch_holiday
+    - switch.cabinet_holiday
     - light.living_room
     - light.master_bathroom_cans
     - light.master_bathroom_sink
@@ -73,6 +78,11 @@ downstairs_area:
     - light.kitchen_cans
     - light.kitchen_island
     - light.living_room
+    - light.living_room_uplight
+    - light.dining_room_uplight_1
+    - light.dining_room_uplight_2
+    - switch.hutch_holiday
+    - switch.cabinet_holiday
     - switch.dining_room_hutch
     - switch.foyer
     - switch.garage_cans

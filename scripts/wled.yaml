@@ -64,3 +64,181 @@ wled_master_segments:
       - service: "{{ service }}"
         target:
           entity_id: "{{ master }}"
+
+
+wled_cabinet_segment_handler:
+  alias: WLED - Cabinet Segments
+  mode: single
+  fields: &holiday_fields
+    to_state: 
+      description: The desired state, to turn the light fully off, set this to off and holiday to no_holiday
+      example: 'on'
+      required: True
+      selector:
+        state:
+          entity_id: light.cabinet_wled_master
+    holiday:
+      description: Override the input holiday for testing purposes
+      example: valentines
+      required: False
+      selector:
+        select:
+          options:
+          - label: No Holiday
+            value: no_holiday
+          - label: Patriotic
+            value: patriotic
+          - label: Valentines Day
+            value: valentines
+          - label: St Patricks Day
+            value: st_patricks_day
+          - label: Easter
+            value: easter
+          - label: Memorial Day
+            value: memorial_day
+          - label: 4th of July
+            value: independence_day
+          - label: Halloween
+            value: halloween
+          - label: Veterans Day
+            value: veterans_day
+          - label: Christmas
+            value: christmas
+          - label: Thanksgiving
+            value: thanksgiving
+    random_playlist:
+      description: Use random effects from the playlist.
+      example: true
+      required: false
+      selector:
+        boolean:
+  variables:
+    preset: 
+      entity_id:
+      - select.cabinet_wled_preset
+    playlist:
+      entity_id: []
+    master: 
+      entity_id:
+      - light.cabinet_wled_master
+    uplight:
+      entity_id:
+      - light.wled_microwave_uplight
+      - light.wled_refrigerator_uplight
+    surface:
+      entity_id:
+      - light.wled_refrigerator_surface
+    <<: &holiday_setup
+      config:
+        christmas:
+          "on": Christmas On
+          "off": Christmas Off
+        no_holiday:
+          "on": Match
+          "off": "Off"
+      color_config: >
+        {% from 'holiday.jinja' import color_configuration %}
+        {{ color_configuration }}
+      found: >
+        {{ holiday if holiday is defined else states('sensor.holiday_lighting') }}
+      colors: >
+        {{ color_config.get(found, color_config.no_holiday) }}
+      color: >
+        {% set name, value = colors.items() | list | random %}
+        {{ {'name': name, 'value': value} }}
+      config_option: >
+        {{ config.get(found, {}) }}
+    services: >
+      {%- set option = config_option.get(to_state) %}
+      {%- if random_playlist is defined and random_playlist and playlist.entity_id %}
+        {{ [{
+          'service': 'select.select_option',
+          'target': playlist,
+          'data': {'option': state_attr(playlist.entity_id[0], 'options') | random}
+        }] }}
+      {%- elif option %}
+        {{ [{
+          'service': 'select.select_option',
+          'target': preset,
+          'data': {'option': option}
+          }] }}
+      {%- elif to_state == 'on' %}
+        {{ [{
+            'service': 'light.turn_on',
+            'target': uplight,
+            'data': {'rgbw_color': color.value} if color.value is list else color.value
+          },
+          {
+            'service': 'light.turn_on',
+            'target': surface,
+            'data': {'rgbw_color': color_config.no_holiday.match}
+          }] }}
+      {%- else %}
+        {# THIS IS TURN OFF WHILE IN HOLIDAY MODE #}
+        {{ [{
+            'service': 'light.turn_on',
+            'target': uplight,
+            'data': {'rgbw_color': color.value} if color.value is list else color.value
+          },
+          {
+            'service': 'light.turn_off',
+            'target': surface,
+            'data': {}
+          }] }}
+      {%- endif %}
+  sequence: &holiday_sequence
+  - condition: template
+    value_template: "{{ services | length > 0 }}"
+  - if: "{{ not is_state(master.entity_id[0], to_state) }}"
+    then:
+    - service: light.turn_on
+      target: "{{ master }}"
+  - repeat:
+      for_each: "{{ services }}"
+      sequence:
+      - service: "{{ repeat.item.service }}"
+        target: "{{ repeat.item.target }}"
+        data: "{{ repeat.item.data }}"
+
+
+wled_hutch_segment_handler:
+  alias: WLED - Hutch Segments
+  mode: single
+  fields: *holiday_fields
+  variables:
+    preset: 
+      entity_id:
+      - select.hutch_preset
+    playlist:
+      entity_id:
+      - select.hutch_playlist
+    master: 
+      entity_id:
+      - light.hutch_master
+    uplight:
+      entity_id:
+      - light.hutch_uplight
+    <<: *holiday_setup
+    services: >
+      {%- set option = config_option.get(to_state) %}
+      {%- if random_playlist is defined and random_playlist and playlist.entity_id %}
+        {{ [{
+          'service': 'select.select_option',
+          'target': playlist,
+          'data': {'option': state_attr(playlist.entity_id[0], 'options') | random}
+        }] }}
+      {%- elif option %}
+        {{ [{
+          'service': 'select.select_option',
+          'target': preset,
+          'data': {'option': option}
+          }] }}
+      {%- else %}
+        {{ [{
+            'service': 'light.turn_on',
+            'target': uplight,
+            'data': {'rgbw_color': color.value} if color.value is list else color.value
+          }] }}
+      {%- endif %}
+      
+  sequence: *holiday_sequence

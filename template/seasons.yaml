@@ -1,105 +1,199 @@
 - binary_sensor:
-  - unique_id: christmas_season
-    name: Christmas Season
-    state: >
-      {{ is_state('sensor.seasonal_lights', 'scene.holiday_bulbs_christmas') }}
-    attributes:
-      template: seasons
-
-  - unique_id: indoor_christmas
-    name: Indoor Christmas
+  - unique_id: indoor_holiday
+    name: Indoor Holiday
     device_class: light
     state: >
       {% set t = now() %}
-      {% set s = today_at(states('input_datetime.indoor_christmas_lights_start')) %}
-      {% set e = today_at(states('input_datetime.indoor_christmas_lights_end')) %}
-      {{ s <= t <= e and is_state('binary_sensor.christmas_season', 'on') }}
+      {% set s = today_at(states('input_datetime.indoor_holiday_lights_start')) %}
+      {% set e = today_at(states('input_datetime.indoor_holiday_lights_end')) %}
+      {{ s <= t <= e and not is_state('sensor.holiday_lighting', 'no_holiday') }}
+    attributes:
+      template: seasons
+      entity_id: >      
+        {%- set holiday = states('sensor.holiday_lighting') %}
+        {%- set entities = [
+              'switch.uplight_holiday',
+              'switch.hutch_holiday',
+              'switch.cabinet_holiday',
+            ] %}
+        {%- set holidays = {
+            'christmas': [
+              'switch.front_trees',
+              'switch.living_room_window',
+              'switch.uplight_holiday',
+              'switch.hutch_holiday',
+              'switch.cabinet_holiday',
+            ]} %}
+        {{ holidays.get(holiday, entities) }}
+      colors: >
+        {% from 'holiday.jinja' import color_configuration %}
+        {%- set holiday = states('sensor.holiday_lighting') %}
+        {{ color_configuration.get(holiday, {}) }}
 
 - sensor:
   - unique_id: seasonal_lights
     name: Seasonal Lights
     state: >
-      {%- macro mwd(month, week, day) -%}
-      {%- set today = today_at() %}
-      {%- set temp = today.replace(month=month, day=1) %}
-      {%- set adjust = (day - temp.weekday()) % 7 %}
-      {%- set temp = temp + timedelta(days=adjust) -%}
-      {{ (temp + timedelta(weeks = week - 1)).isoformat() }}
-      {%- endmacro %}
-      
-      {%- macro md(month, day) -%}
-      {{ today_at().replace(month=month, day=day).isoformat() }}
-      {%- endmacro %}
-      
-      {%- macro lastdayinmonth(month, day) -%}
-      {%- set today = today_at() %}
-      {%- set temp = today.replace(month=month, day=1) + timedelta(days=31) %}
-      {%- set temp = temp.replace(day=1) - timedelta(days=7) %}
-      {%- set adjust = (day - temp.weekday()) % 7 %}
-      {%- set temp = temp + timedelta(days=adjust) -%}
-      {{ (temp).isoformat() }}
-      {%- endmacro %}
-
-      {%- macro easter() %}
-      {%- set year = now().year %}
-      {%- set special_years = ['1954', '1981', '2049', '2076'] %}
-      {%- set special_year_sub = 7 %}
-      {%- set a = year % 19 %}
-      {%- set b = year % 4 %}
-      {%- set c = year % 7 %}
-      {%- set d = (19 * a + 24) % 30 %}
-      {%- set e = ((2 * b) + (4 * c) + (6 * d) + 5) % 7 %}
-      {%- set day = (22 + d + e) - special_year_sub if year in special_years else 22 + d + e %}
-      {%- set month = 4 if day > 31 else 3 %}
-      {%- set day = day - 31 if day > 31 else day -%}
-      {{ today_at().replace(month=month, day=day).isoformat() }}
-      {%- endmacro %}
-
-      {%- set easter_day = easter() | as_datetime %}
-      {%- set thanksgiving = mwd(11, 4, 3) | as_datetime %}
-      {%- set valentines = md(2,14) | as_datetime %}
-      {%- set veterans = md(11,11) | as_datetime %}
-      {%- set july4 = md(7,4) | as_datetime %}
-      {%- set stpaddy = md(3,17) | as_datetime %}
-      {%- set memorial_day = lastdayinmonth(5,0) | as_datetime %}
-
       {%- set scenes = dict(
         christmas="scene.holiday_bulbs_christmas",
-        day="scene.holiday_bulbs_daylight",
         easter="scene.holiday_bulbs_easter",
         halloween="scene.holiday_bulbs_halloween",
-        patriotic="scene.holiday_bulbs_patriotic",
-        soft="scene.holiday_bulbs_soft_white",
-        stpaddy="scene.holiday_bulbs_st_patricks_day",
+        independence_day="scene.holiday_bulbs_patriotic",
+        veterans_day="scene.holiday_bulbs_patriotic",
+        memorial_day="scene.holiday_bulbs_patriotic",
+        st_patricks_day="scene.holiday_bulbs_st_patricks_day",
         thanksgiving="scene.holiday_bulbs_thanksgiving",
         valentines="scene.holiday_bulbs_valentines_day",
-        memorial_day="scene.holiday_bulbs_patriotic",
       ) %}
+      {%- set holiday = states('sensor.holiday_lighting') %}
+      {{ scenes.get(holiday, "scene.holiday_bulbs_soft_white") }}
+    attributes:
+      template: seasons
 
-      {%- set events = [
-        ('christmas', md(1,1) | as_datetime),
-        ('easter', easter_day - timedelta(days=6)),
-        ('soft', easter_day + timedelta(days=1)),
-        ('christmas', thanksgiving - timedelta(days=4)),
-        ('soft', md(1,7) | as_datetime ),
-        ('halloween', md(10,1) | as_datetime ),
-        ('soft', md(11,1) | as_datetime ),
-        ('patriotic', veterans - timedelta(days=1) ),
-        ('soft', veterans + timedelta(days=1) ),
-        ('patriotic', july4 - timedelta(days=6) ),
-        ('soft', july4 + timedelta(days=1) ),
-        ('stpaddy', stpaddy - timedelta(days=6) ),
-        ('soft', stpaddy + timedelta(days=1) ),
-        ('valentines', valentines - timedelta(days=6) ),
-        ('soft', valentines + timedelta(days=1) ),
-        ('memorial_day', memorial_day - timedelta(days=1)),
-        ('soft', memorial_day + timedelta(days=1) ),
-      ] %}
+- trigger:
+  - platform: time
+    at: "00:00:00"
+  - platform: homeassistant
+    event: start
 
-      {%- set ns = namespace(event='unknown') %}
-      {% for name, dt in events | sort(attribute='1') %}
-        {%- if dt.date() | string <= now().date() | string %}
-           {% set ns.event = scenes.get(name, 'soft') %}
+  # If you end up here to copy this, it relies on an automation in config\automation\events
+  # named "Events - Forward Reload Templates"
+  - platform: event
+    event_type: templates_reloaded
+  - platform: state
+    entity_id: input_select.holiday_override
+  action:
+  - variables:
+      holidays:
+
+        # These holidays are meant to be used with easy_time.jinja
+        # start, end, and event are all dictionaries that contain macro and kwargs.
+        # macro is the macro used from easy_time.jina.
+        # kwargs are the arguments used by name, e.g. if the macro uses month, day as inputs
+        # kwargs will be set to month: #, day: #.
+
+        valentines:
+          event:
+            macro: month_day
+            kwargs:
+              month: 2
+              day: 14
+          before:
+            days: 14
+          after:
+            days: 1
+
+        st_patricks_day:
+          event:
+            macro: month_day
+            kwargs:
+              month: 3
+              day: 17
+          before:
+            days: 6
+          after:
+            days: 1
+
+        easter:
+          event:
+            macro: easter
+          before:
+            days: 6
+          after:
+            days: 1
+
+        memorial_day:
+          event:
+            macro: last_day_in_month
+            kwargs:
+              month: 5
+              weekday: 0
+          before:
+            days: 6
+          after:
+            days: 1
+
+        independence_day:
+          event:
+            macro: month_day
+            kwargs:
+              month: 7
+              day: 4
+          before:
+            days: 6
+          after:
+            days: 1
+
+        halloween:
+          start:
+            macro: month_day
+            kwargs:
+              month: 10
+              day: 1
+          end:
+            macro: month_day
+            kwargs:
+              month: 11
+              day: 1
+
+        veterans_day:
+          event:
+            macro: month_day
+            kwargs:
+              month: 11
+              day: 11
+          before:
+            days: 6
+          after:
+            days: 1
+
+        christmas:
+          start:
+            macro: month_week_day
+            kwargs:
+              month: 11
+              week: 4
+              weekday: 7
+          end:
+            macro: month_day
+            kwargs:
+              month: 1
+              day: 7
+
+      event: >
+        {%- set override = states('input_select.holiday_override') %}
+        {%- if override == 'automatic' %}
+          {%- import 'easy_time.jinja' as easy_time %}
+          {%- set dflt = {'minutes': 0 } %}
+          {%- set ns = namespace(events=[], found='no_holiday') %}
+          {%- for holiday, items in holidays.items() %}
+            {%- set event = items.get('event') %}
+            {%- set start = items.get('start') %}
+            {%- set end = items.get('end') %}
+            {%- if event %}
+              {%- set e = easy_time[event['macro']](**event.get('kwargs', {})) | as_datetime | as_local %}
+              {%- set b = timedelta(**items.get('before', dflt)) %}
+              {%- set a = timedelta(**items.get('after', dflt)) %}
+              {%- set ns.events = ns.events + [ (holiday, e - b), ('no_holiday', e + a) ] %}
+            {%- elif start and end %}
+              {%- set s = easy_time[start['macro']](**start.get('kwargs', {})) | as_datetime | as_local %}
+              {%- set e = easy_time[end['macro']](**end.get('kwargs', {})) | as_datetime | as_local %}
+              {%- set ns.events = ns.events + [ (holiday, s), ('no_holiday', e) ] %}
+            {%- endif %}
+          {%- endfor %}
+  
+          {%- for event, dt in ns.events | sort(attribute='1') %}
+            {%- if dt.date() <= now().date() %}
+              {%- set ns.found = event %}
+            {%- endif %}
+          {%- endfor %}
+          {{ ns.found }}
+        {%- else %}
+          {{ override }}
         {%- endif %}
-      {% endfor %}
-      {{ ns.event }}
+  sensor:
+  - unique_id: indoor_holiday_lighting
+    name: Holiday Lighting
+    state: "{{ event }}"
+    attributes:
+      template: seasons

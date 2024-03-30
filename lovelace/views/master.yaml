@@ -608,17 +608,17 @@
     'name': 'Front Tree'
   },{
     'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.hutch_christmas',
+    'entity': 'switch.hutch_holiday',
     'icon': 'mdi:dresser', 
     'name': 'Hutch'
   },{
     'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.cabinet_christmas',
+    'entity': 'switch.cabinet_holiday',
     'icon': 'mdi:home-group', 
     'name': 'Cabinets'
   },{
     'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.uplight_christmas',
+    'entity': 'switch.uplight_holiday',
     'icon': 'mdi:light-flood-up', 
     'name': 'Uplights'
   },
@@ -708,7 +708,7 @@
     'header': [ 
       { 
         'type': '../templates/headers/multicast.yaml',
-        'entity': 'switch.indoor_christmas',
+        'entity': 'switch.indoor_holiday',
         'on_icon': 'mdi:string-lights',
         'off_icon': 'mdi:string-lights-off',
       },
@@ -738,11 +738,13 @@
         path: petro_map
         index: 1
         weight: sensor.petro_weight
+        work: sensor.petro_at_work
       - type: '../templates/headers/person.yaml'
         entity: person.lambo
         path: lambo_map
         index: 2
         weight: sensor.lambo_weight
+        work: sensor.lambo_at_work
 {{ toyaml('    ', 'entities', main_buttons) }}
 {%- if testing %}
     - name: Testing

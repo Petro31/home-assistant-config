@@ -337,7 +337,9 @@
         turn_off:
         - service: script.echo_through_receiver_off
 
-      # LIVING ROOM MUSIC
+      #####################
+      # LIVING ROOM MUSIC #
+      #####################
 
       echo_through_living_room:
         value_template: >
@@ -374,7 +376,9 @@
           data:
             media_player: media_player.yamaha_rx_v6a
 
-      # DINING ROOM MUSIC
+      #####################
+      # DINING ROOM MUSIC #
+      #####################
 
       echo_through_dining_room:
         value_template: >
@@ -411,7 +415,9 @@
           data:
             media_player: media_player.yamaha_rx_v6a_zone2
 
-      # DECK MUSIC
+      ##############
+      # DECK MUSIC #
+      ##############
 
       echo_through_deck:
         value_template: >
@@ -448,7 +454,9 @@
           data:
             media_player: media_player.yamaha_receiver
 
-      # BASEMENT MUSIC
+      ##################
+      # BASEMENT MUSIC #
+      ##################
 
       echo_through_basement:
         value_template: >
@@ -485,7 +493,9 @@
           data:
             media_player: media_player.yamaha_receiver_zone_2
 
-      ### SOURCES FOR RECEIVER ###
+      #############################
+      # Receiver Sources - RX-V6A #
+      #############################
       
       # Xbox Source
       xbox_source:
@@ -557,7 +567,9 @@
               source: Echo
         turn_off: *alexa_source
 
-      # Surround Sound Modes
+      #################################
+      # Surround Sound Modes - RX-V6A #
+      #################################
 
       # Standard Surround Mode
       surround_mode_standard:
@@ -759,6 +771,10 @@
             sound_mode: straight
         turn_off: *surround_standard
 
+      ############
+      # Hyperion #
+      ############
+
       hyperion:
         unique_id: hyperion
         value_template: >
@@ -859,6 +875,10 @@
             - light.gpio_18_tv
             - switch.gpio_18_tv_component_led_device
 
+      ########
+      # CAST #
+      ########
+
       cast_workout_core:
         unique_id: cast_workout_core
         value_template: >
@@ -914,81 +934,87 @@
             workout: Upper Body
         turn_off: *chromecast_off
 
+      ########
+      # WLED #
+      ########
+
       # WLED Kitchen Cabinet Lights
+      
       wled_all_cabinets:
         unique_id: wled_all_cabinets
         value_template: >
-          {{ states('select.cabinet_wled_preset') in ['Match', 'Christmas On'] }}
-        availability_template: >
-          {{ states('select.cabinet_wled_preset') not in ['unkown', 'unavailable'] }}
+          {%- set lights = ['light.cabinet_wled_master', 'light.wled_microwave_uplight', 'light.wled_refrigerator_uplight', 'light.wled_refrigerator_surface'] %}
+          {{ lights | select('is_state', 'on') | list | count == lights | count }}
         turn_on:
-        - <<: &wled_all_cabinets
-            service: select.select_option
-            target:
-              entity_id: select.cabinet_wled_preset
-          data:
-            option: >
-              {{ 'Match' if is_state('switch.indoor_christmas', 'off') else 'Christmas On' }}
+        - if: "{{ is_state('switch.indoor_holiday', 'on') }}"
+          then:
+          - service: script.wled_cabinet_segment_handler
+            <<: &wled_script_on
+              data:
+                to_state: 'on'
+          else:
+          - <<: &wled_all_cabinets
+              service: select.select_option
+              target:
+                entity_id: select.cabinet_wled_preset
+            <<: &wled_match
+              data:
+                option: Match
         turn_off:
-        - <<: *wled_all_cabinets
-          data:
-            option: >
-              {{ 'Off' if is_state('switch.indoor_christmas', 'off') else 'Christmas Off' }}
+        - if: "{{ is_state('switch.indoor_holiday', 'on') }}"
+          then:
+          - service: script.wled_cabinet_segment_handler
+            <<: &wled_script_off
+              data:
+                to_state: 'off'
+          else:
+          - <<: *wled_all_cabinets
+            <<: &wled_off
+              data:
+                option: 'Off'
 
-      # WLED Kitchen Cabinet Lights
+      # WLED Hutch Lights
       wled_hutch:
         unique_id: wled_hutch
         value_template: >
-          {{ states('select.hutch_preset') in ['Match', 'Christmas On'] 
-            or states('select.hutch_playlist') in ['Red & Green Swapping'] }}
-        availability_template: >
-          {{ states('select.hutch_preset') not in ['unkown', 'unavailable'] }}
+          {%- set lights = ['light.hutch_master', 'light.hutch_uplight'] %}
+          {{ lights | select('is_state', 'on') | list | count == lights | count }}
         turn_on:
-        - if: "{{ is_state('switch.indoor_christmas', 'on') }}"
+        - if: "{{ is_state('switch.indoor_holiday', 'on') }}"
           then:
-          - service: select.select_option
-            target:
-              entity_id: select.hutch_playlist
-            data:
-              option: Red & Green Swapping
+          - service: script.wled_hutch_segment_handler
+            <<: *wled_script_on
           else:
           - <<: &wled_hutch
               service: select.select_option
               target:
                 entity_id: select.hutch_preset
-            data:
-              option: Match
+            <<: *wled_match
         turn_off:
-        - <<: *wled_hutch
-          data:
-            option: 'Off'
+        - if: "{{ is_state('switch.indoor_holiday', 'on') }}"
+          then:
+          - service: script.wled_hutch_segment_handler
+            <<: *wled_script_off
+          else:
+          - <<: *wled_hutch
+            <<: *wled_off
 
-      # Indoor Christmas Lights
-      indoor_christmas:
-        unique_id: indoor_christmas
-        friendly_name: Indoor Christmas
+      # Indoor Holiday Lights
+      indoor_holiday:
+        unique_id: indoor_holiday
+        friendly_name: Indoor Holiday
         value_template: >
-          {%- set entities = [
-            'switch.front_trees',
-            'switch.living_room_window',
-            'switch.uplight_christmas',
-            'switch.hutch_christmas',
-            'switch.cabinet_christmas',
-          ] %}
-          {{ entities | select('is_state', 'on') | list | length > 0 }}
+          {% set entity =  'binary_sensor.indoor_holiday' %}
+          {{ is_state(entity, 'on') and state_attr(entity, 'entity_id') | select('is_state', 'on') | list | length > 0 }}
         turn_on:
         - service: switch.turn_on
-          <<: &indoor_christmas
+          <<: &indoor_holiday
             target: 
-              entity_id:
-              - switch.front_trees
-              - switch.living_room_window
-              - switch.uplight_christmas
-              - switch.hutch_christmas
-              - switch.cabinet_christmas
+              entity_id: >
+                {{ state_attr('binary_sensor.indoor_holiday', 'entity_id') }}
         turn_off:
         - service: switch.turn_off
-          <<: *indoor_christmas
+          <<: *indoor_holiday
 
       # Front Trees
       front_trees:
@@ -1004,78 +1030,88 @@
           data:
             option: "{{ state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list | random }}"
         turn_off:
-        - <<: &wled_select_off
-            service: select.select_option
-            data:
-              option: "Off"
+        - service: select.select_option
+          <<: *wled_off
           <<: *front_trees
 
-      # Hutch Christmas
-      hutch_christmas:
-        unique_id: hutch_christmas
-        friendly_name: Hutch Christmas
+      # Hutch Holiday
+      hutch_holiday:
+        unique_id: hutch_holiday
+        friendly_name: Hutch Holiday
         value_template: >
-          {{ states('select.hutch_playlist') in state_attr('select.hutch_playlist', 'options') }}
+          {%- set preset = states('select.hutch_preset') %}
+          {%- set playlist = states['select.hutch_playlist'] %}
+          {%- set holiday = states('sensor.holiday_lighting') %}
+          {%- set is_holiday = holiday != 'no_holiday' %}
+          {%- if is_holiday %}
+            {%- if preset == 'unknown' %}
+            {#- We have a holiday, but we aren't using a preset or playlist, therefore we must be on #}
+              {{- is_state('light.hutch_master', 'on') and ['light.hutch_uplight'] | select('is_state', 'on') | list | count > 0 }}
+            {%- elif playlist.state is not none and playlist.state in playlist.attributes.options %}True
+            {%- else %}False
+            {%- endif %}
+          {%- else %}False
+          {%- endif %}
         turn_on:
-        - service: select.select_option
-          target:
-            entity_id: select.hutch_playlist
-          data:
-            option: "{{ state_attr('select.hutch_playlist', 'options') | random }}"
+        - service: script.wled_hutch_segment_handler
+          <<: *wled_script_on
         turn_off:
-        - <<: *wled_select_off
-          target:
-            entity_id: select.hutch_preset
+        - <<: *wled_hutch
+          <<: *wled_off
 
-      # Cabinet Christmas
-      cabinet_christmas:
-        unique_id: cabinet_christmas
-        friendly_name: Cabinet Christmas
+      # Cabinet Holiday
+      cabinet_holiday:
+        unique_id: cabinet_holiday
+        friendly_name: Cabinet Holiday
         value_template: >
-          {% set reject_state = 'Off' if is_state('select.cabinet_wled_preset', 'Match') else 'On' %}
-          {% set current = states('select.cabinet_wled_preset') %}
-          {% set options = state_attr('select.cabinet_wled_preset', 'options') | select('search', 'Christmas') | reject('search', reject_state) | list %}
-          {{ current in options }}
+          {%- set preset = states('select.cabinet_wled_preset') %}
+          {%- set holiday = states('sensor.holiday_lighting') %}
+          {%- set is_holiday = holiday != 'no_holiday' %}
+          {%- if is_holiday %}
+            {%- if preset == 'unknown' %}
+            {#- We have a holiday, but we aren't using a preset, therefore we must be on #}
+              {{- is_state('light.cabinet_wled_master', 'on') and ['light.wled_microwave_uplight', 'light.wled_refrigerator_uplight', 'light.wled_refrigerator_surface'] | select('is_state', 'on') | list | count > 0 }}
+            {%- else %}
+              {%- set reject_state = 'Off' if preset == 'Match' else 'On' %}
+              {%- set options = state_attr('select.cabinet_wled_preset', 'options') | select('search', 'Christmas') | reject('search', reject_state) | list %}
+              {{- preset in options }}
+            {%- endif %}
+          {%- else %}False
+          {%- endif %}
         turn_on:
-        - service: select.select_option
-          <<: &cabinet_christmas
-            target:
-              entity_id: select.cabinet_wled_preset
-          data:
-            option: >
-              {% set reject_state = 'Off' if is_state('select.cabinet_wled_preset', 'Match') else 'On' %}
-              {{ state_attr('select.cabinet_wled_preset', 'options') | select('search', 'Christmas') | reject('search', reject_state) | list | random }}
+        - service: script.wled_cabinet_segment_handler
+          <<: *wled_script_on
         turn_off:
-        - <<: *wled_select_off
-          <<: *cabinet_christmas
+        - <<: *wled_all_cabinets
+          <<: *wled_off
 
-      # Uplighting Christmas
-      uplight_christmas:
-        unique_id: uplight_christmas
-        friendly_name: Uplight Christmas
+      # Uplighting Holiday
+      uplight_holiday:
+        unique_id: uplight_holiday
+        friendly_name: Uplight Holiday
         value_template: >
-          {% set colors = [(255, 0, 0), (0, 255, 0)] %}
-          {{
-            [
+          {%- set lights = [
               "light.living_room_uplight",
               "light.dining_room_uplight_1",
               "light.dining_room_uplight_2"
-            ] | select('is_state', 'on') | select('is_state_attr', 'color_mode', 'xy') | map('state_attr', 'rgb_color') | reject('none') | select('in', colors) | list | count > 0
-          }}
+            ] %}
+          {{ lights | select('is_state', 'on') | select('is_state_attr', 'color_mode', 'xy') | list | count > 0 }}
         turn_on:
-          service: light.turn_on
-          target: &uplight_christmas
-            entity_id:
+          service: script.indoor_holiday_colors
+          data:
+            targets: &uplight_holiday
             - light.living_room_uplight
             - light.dining_room_uplight_1
             - light.dining_room_uplight_2
-          data:
-            color_name: "{{ ['red', 'green'] | random }}"
         turn_off:
           service: light.turn_off
-          target: *uplight_christmas
+          target:
+            entity_id: *uplight_holiday
 
-      # Event Radios
+      #################################################
+      # Event Radios - Selectors for Events Front End #
+      #################################################
+
       event_category_all:
         unique_id: event_category_all
         friendly_name: Event Category All
@@ -1145,7 +1181,10 @@
         - <<: *event_category
           <<: *event_category_all
 
-      # Garage Temporary laser
+      ##########################
+      # Garage Temporary laser #
+      ##########################
+
       garage_temporary_laser:
         unique_id: garage_temporary_laser
         friendly_name: Garage Temporary Laser
@@ -1162,7 +1201,10 @@
         - service: switch.turn_off
           <<: *garage_temporary_laser
 
-      # Movie / TV viewing
+      ######################
+      # Movie / TV viewing #
+      ######################
+
       movie_time:
         unique_id: movie_time
         friendly_name: Movie Time
