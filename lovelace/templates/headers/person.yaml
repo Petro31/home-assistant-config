@@ -29,8 +29,8 @@ tap_action:
   haptic: light
 styles:
   grid:
-    - grid-template-areas: '"blank" "s" "l" "age"'
-    - grid-template-rows: fill min-content min-content min-content
+    - grid-template-areas: '"blank" "s" "l" "work" "age"'
+    - grid-template-rows: fill min-content min-content min-content min-content
     - grid-template-columns: auto
   card:
     - background-image: |
@@ -58,14 +58,15 @@ styles:
   state: *text
   custom_fields:
     age:
-    - font-size: 15px
-    - font-family: Helvetica
-    - text-transform: capitalize
-    - font-weight: bold
-    - align-self: end
-    - justify-self: start
-    - padding: 0px 0px 9px 9px
-    - text-shadow: 0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black
+      - font-size: 15px
+      - font-family: Helvetica
+      - text-transform: capitalize
+      - font-weight: bold
+      - align-self: end
+      - justify-self: start
+      - padding: 0px 0px 9px 9px
+      - text-shadow: 0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black
+    work: *text
 custom_fields:
   blank: |
     [[[
@@ -75,16 +76,21 @@ custom_fields:
     [[[
       return "";
     ]]]
-  age:  |
+  age: |
     [[[
       var event = states['binary_sensor.personal_events'].attributes['events'][{{index}} - 1]
       var plural = (event.days_away == 1) ? "" : "s";
       return `Turning ${event.milestone} in ${event.days_away} day${plural}`
     ]]]
-    
+  work: |
+    [[[
+      var hours = Number(states['{{ work }}'].state);
+      return `${hours.toPrecision(3)} Hours at Work`
+    ]]]
+
 state:
   - value: home
-    operator: '!='
+    operator: "!="
     styles:
       card:
         - background-image: |

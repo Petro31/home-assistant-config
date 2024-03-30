@@ -1,0 +1,7 @@
+- sensor:
+    - name: Monday This Week
+      unique_id: a813b421-8a7a-4ea6-b0b2-1b963b1b37df
+      device_class: timestamp
+      state: >
+        {% set n = today_at() %}
+        {{ n - timedelta(days=n.weekday()) }}

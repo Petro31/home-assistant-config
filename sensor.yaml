@@ -106,7 +106,32 @@
     max_age:
       days: 1
 
-  - platform: derivative
-    name: Master Bathroom Humidity Change
-    source: sensor.master_bathroom_filtered_humidity
-    unit: '%'
+- platform: derivative
+  name: Master Bathroom Humidity Change
+  source: sensor.master_bathroom_filtered_humidity
+  unit: "%"
+
+- platform: history_stats
+  name: Petro at Work
+  unique_id: 532ca91c-17ed-4ea9-b95b-f14bc1673110
+  entity_id: person.petro
+  state: !secret petro_work
+  type: time
+  <<: &timeframe
+    start: >
+      {% set sensor = 'sensor.monday_this_week' %}
+      {% if sensor | has_value %}
+        {{ states(sensor) | as_datetime | as_local }}
+      {% else %}
+        {% set n = today_at() %}
+        {{ n - timedelta(days=n.weekday()) }}
+      {% endif %}
+    end: "{{ now() }}"
+
+- platform: history_stats
+  name: Lambo at Work
+  unique_id: 57a1843e-8aeb-43da-8d5b-4d06031140e4
+  entity_id: person.lambo
+  state: !secret lambo_work
+  type: time
+  <<: *timeframe
