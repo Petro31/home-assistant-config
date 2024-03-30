@@ -24,12 +24,40 @@ calculate_washer_cycle:
     prefix:
       description: (Required) start part of the unique_id
       example: foo
+      required: True
+      default: washer_dryer_
+      selector:
+        select:
+          options:
+          - washer_dryer_
     source: 
       description: (Required) Source of the state change
-      example: sensor.washer_status
+      example: binary_sensor.washer_status
+      required: True
+      default: binary_sensor.washer_status
+      selector:
+        entity:
+          include_entities:
+          - binary_sensor.washer_status
     next_phase:
       description: (Required) State of the next phase
       example: 'on'
+      required: True
+      default: 'off'
+      selector:
+        select:
+          options:
+          - label: "On"
+            value: 'on'
+          - label: "Off"
+            value: 'off'
+    reset:
+      description: (Optional) Reset the cycle.
+      example: True
+      default: False
+      selector:
+        boolean:
+
   variables:
 
     # MQTT SETUP
@@ -84,33 +112,37 @@ calculate_washer_cycle:
       {% set ns = namespace(ret=[], attrs=[]) %}
 
       {# setup durations for phases #}
-      {% for i in range(rollup | length) %}
-        {% set attrs = rollup[i] %}
-        {% set next_attrs = rollup[i + 1] if i + 1 < rollup | length else {} %}
-        {% set ns.attrs = attrs.items() | rejectattr('0','in',['duration', 'action']) | list %}
-        {% set duration = (next_attrs.start | as_datetime - attrs.start | as_datetime).seconds if next_attrs else 0.0 %}
-        {% set ns.attrs = ns.attrs + [('duration', duration)] %}
-
-        {% if attrs.phase == 'on' %}
-
-          {# on state, try to find phase #}
-          {% set l, u = current.final_spin.duration - current.final_spin.window, current.final_spin.duration + current.final_spin.window %}
-          {% if l <= duration <= u %}
-            {% set ns.attrs = ns.attrs + [('action', "finish")] %}
+      {% if reset is not defined or not reset %}
+        {% for i in range(rollup | length) %}
+          {% set attrs = rollup[i] %}
+          {% set next_attrs = rollup[i + 1] if i + 1 < rollup | length else {} %}
+          {% set ns.attrs = attrs.items() | rejectattr('0','in',['duration', 'action']) | list %}
+          {% set duration = (next_attrs.start | as_datetime - attrs.start | as_datetime).seconds if next_attrs else 0.0 %}
+          {% set ns.attrs = ns.attrs + [('duration', duration)] %}
+  
+          {% if attrs.phase == 'on' %}
+  
+            {# on state, try to find phase #}
+            {% set l, u = current.final_spin.duration - current.final_spin.window, current.final_spin.duration + current.final_spin.window %}
+            {% if l <= duration <= u %}
+              {% set ns.attrs = ns.attrs + [('action', "finish")] %}
+            {% else %}
+              {% set ns.attrs = ns.attrs + [('action', "spinning")] %} 
+            {% endif %}
           {% else %}
-            {% set ns.attrs = ns.attrs + [('action', "spinning")] %} 
+            {# off state, do not collect phase #}
+            {% set ns.attrs = ns.attrs + [('action', "idle")] %}
           {% endif %}
+          {% set ns.ret = ns.ret + [dict(ns.attrs)] %}
+        {% endfor %}
+        {% set last = ns.ret | list | last | default(idle) %}
+        {% if ns.ret | length == 1 and last.phase in ['off', 'idle'] %}
+          []
         {% else %}
-          {# off state, do not collect phase #}
-          {% set ns.attrs = ns.attrs + [('action', "idle")] %}
+          {{ ns.ret if 'finish' not in ns.ret | map(attribute='action') else [] }}
         {% endif %}
-        {% set ns.ret = ns.ret + [dict(ns.attrs)] %}
-      {% endfor %}
-      {% set last = ns.ret | list | last | default(idle) %}
-      {% if ns.ret | length == 1 and last.phase in ['off', 'idle'] %}
-        []
       {% else %}
-        {{ ns.ret if 'finish' not in ns.ret | map(attribute='action') else [] }}
+        []
       {% endif %}
     next_state: >
       O{{ 'N' if cycles | length > 0 else 'FF' }}
