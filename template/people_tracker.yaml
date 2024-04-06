@@ -2,11 +2,11 @@
   - unique_id: people_at_home
     name: People at Home
     state: >
-      {%- set people = state_attr('group.people', 'entity_id') %}
+      {%- set people = label_entities('person_of_interest') %}
       {{ people | select('is_state', ['home','on']) | list | count }}
     icon: >
       {%- set icons = ['account-off', 'account', 'account-multiple'] %}
-      {%- set people = state_attr('group.people', 'entity_id') %}
+      {%- set people = label_entities('person_of_interest') %}
       {%- set cnt = people | select('is_state', ['home','on']) | list | count %}
       {%- if cnt >= 0 %}
         mdi:{{ icons[cnt] if cnt in range(icons | count) else 'account-group' }}
@@ -16,28 +16,28 @@
     attributes:
       template: people_tracker
       people: > 
-        {%- set people = state_attr('group.people', 'entity_id') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
-        {%- set company = state_attr('group.people', 'entity_id') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
         {%- set people = people + company %}
         {{ people }}
       and: >
-        {%- set people = state_attr('group.people', 'entity_id') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
-        {%- set company = state_attr('group.people', 'entity_id') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
         {%- set people = people + company %}
         {%- if people | count > 0 %}
           {{- [people[:-1] | join(', '), 'and', people[-1]] | join(' ') if people | count > 1 else people[0] }}
         {%- else %}unknown
         {%- endif %}
       or: >
-        {%- set people = state_attr('group.people', 'entity_id') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
-        {%- set company = state_attr('group.people', 'entity_id') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
         {%- set people = people + company %}
         {%- if people | count > 0 %}
           {{- [people[:-1] | join(', '), 'or', people[-1]] | join(' ') if people | count > 1 else people[0] }}
         {%- else %}unknown
         {%- endif %}
       count: >
-        {%- set people = state_attr('group.people', 'entity_id') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
-        {%- set company = state_attr('group.people', 'entity_id') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
         {%- set people = people + company %}
         {{ people | count }}
