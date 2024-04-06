@@ -3,55 +3,31 @@ homeassistant:
 
 alexa: !include alexa.yaml
 analytics:
-assist_pipeline:
 automation: !include automations.yaml
 automation directory: !include_dir_merge_list automation
-binary_sensor: !include binary_sensor.yaml
-bluetooth:
-cloud:
-counter:
 command_line: !include_dir_merge_list command_line
 compensation: !include compensation.yaml
-config:
-conversation:
-energy:
+default_config:
 frontend:
   themes: !include_dir_merge_named themes/
 group: !include group.yaml
 hardware:
 harmony_helper: !include harmony_helper.yaml
-history:
-homeassistant_alerts:
 homekit: !include homekit.yaml
 http: !include http.yaml
-input_boolean:
-input_select:
-input_text:
-input_datetime:
-input_number:
-input_button:
 intent_script: !include intent_script.yaml
-ios:
 light: !include light.yaml
-logbook:
 logger: !include logger.yaml
 lovelace: !include lovelace.yaml
 lovelace_gen:
 media_player: !include media_player.yaml
-media_source:
-mobile_app:
-my:
 mqtt: !include_dir_merge_named mqtt/
 notify: !include notify.yaml
-person: 
 plant: !include plants.yaml
 recorder: !include recorder.yaml
 scene: !include scenes.yaml
-schedule:
 script: !include_dir_merge_named scripts/
 sensor: !include sensor.yaml
-sun:
 switch: !include switch.yaml
 system_health:
 template: !include_dir_merge_list template
-timer:
