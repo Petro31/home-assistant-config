@@ -1,6 +1,6 @@
 # lovelace_gen
 
-{%- set on = namespace(radius='2px', offset='0px') %}
+{%- set on = namespace(blur='2px', size='1px') %}
 
 {%- if icon is defined and icon.startswith('ptr:') %}
 {%- set i = icon.split(':')[-1] %}
@@ -44,11 +44,11 @@ styles:
     - justify-self: center
     - overflow: visible
     - color: var(--primary-background-color)
-    - filter: drop-shadow({{on.offset}} {{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow({{ on.offset }} -{{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow(-{{ on.offset }} {{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow(-{{ on.offset }} -{{ on.offset }} {{ on.radius }} {{ color }})
+    - filter: drop-shadow({{on.size}} {{ on.size }} {{ on.blur }} {{ color }}) drop-shadow({{ on.size }} -{{ on.size }} {{ on.blur }} {{ color }}) drop-shadow(-{{ on.size }} {{ on.size }} {{ on.blur }} {{ color }}) drop-shadow(-{{ on.size }} -{{ on.size }} {{ on.blur }} {{ color }})
 {%- else %}
   icon:
   - color: var(--primary-background-color)
-  - filter: drop-shadow({{on.offset}} {{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow({{ on.offset }} -{{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow(-{{ on.offset }} {{ on.offset }} {{ on.radius }} {{ color }}) drop-shadow(-{{ on.offset }} -{{ on.offset }} {{ on.radius }} {{ color }})
+  - filter: drop-shadow({{on.size}} {{ on.size }} {{ on.blur }} {{ color }}) drop-shadow({{ on.size }} -{{ on.size }} {{ on.blur }} {{ color }}) drop-shadow(-{{ on.size }} {{ on.size }} {{ on.blur }} {{ color }}) drop-shadow(-{{ on.size }} -{{ on.size }} {{ on.blur }} {{ color }})
 {%- endif %}
 {%- if svg is defined and svg != None %}
 custom_fields:
