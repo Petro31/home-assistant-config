@@ -10,13 +10,13 @@ compensation: !include compensation.yaml
 default_config:
 frontend:
   themes: !include_dir_merge_named themes/
-group: !include group.yaml
+group:
 hardware:
 harmony_helper: !include harmony_helper.yaml
 homekit: !include homekit.yaml
 http: !include http.yaml
 intent_script: !include intent_script.yaml
-light: !include light.yaml
+light: !include_dir_merge_list light
 logger: !include logger.yaml
 lovelace: !include lovelace.yaml
 lovelace_gen:

@@ -1,0 +1,22 @@
+- platform: template
+  lights:
+
+    #################################
+    ###      Christmas Tree       ###
+    #################################
+
+    christmas_tree:
+      unique_id: christmas_tree
+      friendly_name: Christmas Tree
+      value_template: >
+        {{ is_state('switch.living_room_window', 'on') }}
+      availability_template: >
+        {{- expand('switch.living_room_window') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+      turn_on:
+      - service: switch.turn_on
+        target: &christmas_tree_switch
+          entity_id: switch.living_room_window
+      turn_off:
+      - service: switch.turn_off
+        target: *christmas_tree_switch
+

@@ -53,7 +53,7 @@ card:
       action: call-service
       service: light.turn_on
       service_data:
-        entity_id: light.inside_area
+        entity_id: light.floor_inside
       haptic: light
   - <<: *base
     view_layout:
@@ -64,7 +64,7 @@ card:
       action: call-service
       service: light.turn_off
       service_data:
-        entity_id: light.inside_area
+        entity_id: light.floor_inside
       haptic: light
   - type: custom:button-card
     color: var(--paper-item-icon-color)

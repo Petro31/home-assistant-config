@@ -7,14 +7,16 @@ smart_home:
     - binary_sensor.doorbell_chime
     - binary_sensor.announce_dryer
     - binary_sensor.announce_washer
+
     - fan.bonus_room_bedroom
     - fan.bonus_room_office
     - fan.deck_fan_1
     - fan.deck_fan_2
     - fan.master_fixture
+
+    # Individual lights
+
     - light.all_living_room
-    - light.basement_area
-    - light.bonus_room_area
     - light.bonus_room_bedroom_fixture
     - light.bonus_room_bedroom_recessed
     - light.bonus_room_entrance
@@ -22,37 +24,49 @@ smart_home:
     - light.bonus_room_office_recessed
     - light.christmas_tree
     - light.deck
-    - light.dining_room_area
     - light.dining_room_chandelier
-    - light.downstairs_area
-    - light.game_room_target_area
-    - light.garage_area
     - light.garage_sconce_left_bulb
     - light.garage_sconce_right_bulb
     - light.hallway
-    - light.inside_area
     - light.jims_lamp
     - light.kitchen_cans
     - light.kitchen_island
-    - light.kitchen_target_area
     - light.lindsays_lamp
     - light.living_room
     - light.main_door_left_bulb
     - light.main_door_right_bulb
-    - light.master_bathroom_area
     - light.master_bathroom_cans
     - light.master_bathroom_sink
-    - light.master_bathroom_target_area
-    - light.master_bedroom_area
     - light.master_closet
     - light.master_fixture
-    - light.master_suite_target_area
     - light.mikes_lamp
-    - light.office_area
-    - light.outside_area
     - light.passenger_door_bulb
-    - light.upstairs_area
     - light.workshop
+
+    # Area based lights
+
+    - light.area_basement
+    - light.area_bonus_bedroom
+    - light.area_bonus_room
+    - light.area_car_bays
+    - light.area_deck
+    - light.area_dining_room
+    - light.area_game_room
+    - light.area_great_room
+    - light.area_kitchen
+    - light.area_master_bathroom
+    - light.area_master_bedroom
+    - light.area_master_suite
+    - light.area_mud_room
+    - light.area_office
+    - light.area_work_bench
+    - light.area_workshop
+    - light.floor_downstairs
+    - light.floor_garage
+    - light.floor_inside
+    - light.floor_outside
+    - light.floor_upstairs
+
     - media_player.yamaha_rx_v6a
     - media_player.yamaha_rx_v6a_zone2
     - media_player.bonus_room_television
@@ -87,11 +101,9 @@ smart_home:
     - switch.game_room_wall_outlet
     - switch.game_room_window
     - switch.garage_cans
-    - switch.garage_entry
     - switch.garage_workbench
     - switch.hbo
     - switch.hulu
-    - switch.hyperion
     - switch.hyperion_cinema
     - switch.hyperion_rainbow_swirl_fast
     - switch.hyperion_usb_capture
@@ -105,6 +117,7 @@ smart_home:
     - switch.master_bathroom_fan
     - switch.master_nightstand_left
     - switch.master_nightstand_right
+    - switch.movie_time
     - switch.netflix
     - switch.outside_porch
     - switch.passenger_sconce
@@ -144,10 +157,6 @@ smart_home:
       name: Master Fan
     light.all_living_room:
       name: All Living Room Lamps
-    light.basement_area:
-      name: Target Basement 
-    light.bonus_room_area:
-      name: Target Bonus Room
     light.bonus_room_bedroom_fixture:
       name: Bonus Room Fixture
     light.bonus_room_bedroom_recessed:
@@ -158,34 +167,22 @@ smart_home:
       name: Office Fixture
     light.bonus_room_office_recessed:
       name: Office Cans
-    light.dining_room_area:
-      name: Target Dining Room
     light.deck:
       name: Deck
     light.dining_room_chandelier:
       name: Chandelier
-    light.downstairs_area:
-      name: Downstairs
-    light.game_room_target_area:
-      name: Target Game Room
-    light.garage_area:
-      name: Target Garage
     light.garage_sconce_left_bulb:
       name: Garage Left Bulb
     light.garage_sconce_right_bulb:
       name: Garage Right Bulb
     light.hallway:
       name: Hallway
-    light.inside_area:
-      name: Inside
     light.jims_lamp:
       name: Jims Lamp
     light.kitchen_cans:
       name: Can Lights
     light.kitchen_island:
       name: Island Lights
-    light.kitchen_area:
-      name: Target Kitchen
     light.lindsays_lamp:
       name: Lindsays Lamp
     light.living_room:
@@ -194,34 +191,66 @@ smart_home:
       name: Main Door Left Bulb
     light.main_door_right_bulb:
       name: Main Door Right Bulb
-    light.master_bathroom_area:
-      name: Target Master Bathroom Shower
     light.master_bathroom_cans:
       name: Master Can
     light.master_bathroom_sink:
       name: Master Sink
-    light.master_bathroom_target_area:
-      name: Target Master Bathroom
-    light.master_bedroom_area:
-      name: Target Master Bedroom
     light.master_closet:
       name: Master Closet
     light.master_fixture:
       name: Master Light
-    light.master_suite_target_area:
-      name: Target Master Suite
     light.mikes_lamp:
       name: Mikes Lamp
-    light.office_area:
-      name: Target Office
-    light.outside_area:
-      name: Outside
     light.passenger_door_bulb:
       name: Passenger Door Bulb
-    light.upstairs_area:
-      name: Upstairs
     light.workshop:
-      name: Workshop
+      name: Workshop Dome
+
+    # Area / Floor Based Lights
+
+    light.area_basement:
+      name: Target Basement
+    light.area_bonus_bedroom:
+      name: Bonus Bedroom
+    light.area_bonus_room:
+      name: Target Bonus Room
+    light.area_car_bays:
+      name: Car Bays
+    light.area_deck:
+      name: Target Deck
+    light.area_dining_room:
+      name: Target Dining Room
+    light.area_game_room:
+      name: Target Game Room
+    light.area_great_room:
+      name: Target Great Room
+    light.area_kitchen:
+      name: Target Kitchen
+    light.area_master_bathroom:
+      name: Target Master Bathroom
+    light.area_master_bedroom:
+      name: Target Master Bedroom
+    light.area_master_suite:
+      name: Target Master Suite
+    light.area_mud_room:
+      name: Mud Room
+    light.area_office:
+      name: Target Office
+    light.area_work_bench:
+      name: Work Bench
+    light.area_workshop:
+      name: Target Workshop
+    light.floor_downstairs:
+      name: Downstairs
+    light.floor_garage:
+      name: Target Garage
+    light.floor_inside:
+      name: Inside
+    light.floor_outside:
+      name: Outside
+    light.floor_upstairs:
+      name: Upstairs
+
     media_player.yamaha_rx_v6a:
       name: Living Room Speakers
     media_player.yamaha_rx_v6a_zone2:
@@ -283,23 +312,19 @@ smart_home:
     switch.foyer:
       name: Foyer Lights
     switch.garage_cans:
-      name: Garage Fixtures
-    switch.garage_entry:
-      name: Entry Lights
+      name: Garage Recessed
     switch.garage_workbench:
       name: Workbench
     switch.hbo:
       name: HBO
     switch.hulu:
       name: Hulu
-    switch.hyperion:
-      name: Hyperion
     switch.hyperion_cinema:
-      name: Hyperion Cinema
+      name: Cinema
     switch.hyperion_rainbow_swirl_fast:
-      name: Hyperion Rainbow
+      name: Rainbow Swirl
     switch.hyperion_usb_capture:
-      name: Hyperion Capture
+      name: Hyperion
     switch.kitchen_cabinet:
       name: Cabinet Lights
     switch.kitchen_outlet_above_fridge:
@@ -322,6 +347,8 @@ smart_home:
       name: Mikes Nightstand
     switch.master_nightstand_right:
       name: Lindsays Nightstand
+    switch.movie_time:
+      name: Movie
     switch.netflix:
       name: Netflix
     switch.game_room_switch:

@@ -11,25 +11,6 @@
 - platform: template
   switches:
 
-      # security notifications
-      security_notifications:
-        unique_id: secutiry_notifications
-        friendly_name: Arm / Disarm Notifications
-        value_template: >
-          {{ is_state('input_select.home_security', 'armed') }}
-        turn_on:
-        - service: input_select.select_option
-          target: &security_notifications_target
-            entity_id: input_select.home_security
-          data:
-            option: armed
-        turn_off:
-        - service: input_select.select_option
-          target: *security_notifications_target
-          data:
-            option: disarmed
-        icon_template: mdi:{{ 'shield-lock' if is_state('input_select.home_security', 'armed') else 'shield-off' }}
-
       # drinking board games
       board_games_party:
         unique_id: board_games_party
@@ -118,62 +99,6 @@
             data:
               entity_id: input_select.quick_strip_effect
               option: 'off'
-
-      # INSIDE LIGHTS SWITCH
-      inside:
-        unique_id: 443e46ff-89e7-470e-931c-a6536d6f203b
-        friendly_name: Inside
-        value_template: "{{ is_state('group.inside_area','on') }}"
-        turn_on:
-          service: homeassistant.turn_on
-          data:
-            entity_id: group.inside_area
-        turn_off:
-          service: homeassistant.turn_off
-          data:
-            entity_id: group.inside_area
-      
-      # OUTSIDE LIGHTS SWITCH
-      outside:
-        unique_id: 950b45f3-2b3d-44cc-a929-9acbad784506
-        friendly_name: Outside
-        value_template: "{{ is_state('group.outside_area','on') }}"
-        turn_on:
-          service: homeassistant.turn_on
-          data:
-            entity_id: group.outside_area
-        turn_off:
-          service: homeassistant.turn_off
-          data:
-            entity_id: group.outside_area
-      
-      # UPSTAIRS LIGHTS SWITCH
-      upstairs:
-        unique_id: e0e25962-83b4-4c60-a5e4-92311e9e00d6
-        friendly_name: Upstairs
-        value_template: "{{ is_state('group.upstairs_area','on') }}"
-        turn_on:
-          service: homeassistant.turn_on
-          data:
-            entity_id: group.upstairs_area
-        turn_off:
-          service: homeassistant.turn_off
-          data:
-            entity_id: group.upstairs_area
-      
-      # DOWNSTAIRS LIGHTS SWITCH
-      downstairs:
-        unique_id: d1b92436-e08c-4d8f-8d71-7331df4d2cf0
-        friendly_name: Downstairs
-        value_template: "{{ is_state('group.downstairs_area','on') }}"
-        turn_on:
-          service: homeassistant.turn_on
-          data:
-            entity_id: group.downstairs_area
-        turn_off:
-          service: homeassistant.turn_off
-          data:
-            entity_id: group.downstairs_area
       
       # XBOX HARMONY ACTIVITY
       xbox_one:
