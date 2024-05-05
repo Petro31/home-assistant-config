@@ -83,8 +83,8 @@ get_light_endpoints:
     non_zwave:
       light:
         service: light.turn_o{{ 'n' if value else 'ff' }}
-        data:
-          brightness_pct: "{{ brightness_pct }}"
+        data: >
+          {{ dict(brightness_pct=brightness_pct) if value else {} }}
       switch:
         service: switch.turn_o{{ 'n' if value else 'ff' }}
         data: {}
