@@ -1,0 +1,274 @@
+irrigation_mqtt_discovery:
+  alias: MQTT Discovery
+  mode: single
+  variables:
+    root: "homeassistant"
+    sprinklers: >
+      {%- set ns = namespace(items=[]) %}
+      {%- for e in integration_entities('rainbird') | select('match', '^switch.') %}
+        {%- set identifier = device_attr(e, 'identifiers') | list | first | last %}
+        {%- set ns.items = ns.items + [
+            dict(
+                entity_id=e,
+                identifier=identifier,
+                object_id=e.split('.')[-1],
+                name=device_attr(e, 'name'),
+                manufacturer=device_attr(e, 'manufacturer')
+            ) ] %}
+      {%- endfor %}
+      {{- ns.items }}
+    area_ids: >
+      {{ integration_entities('rainbird') | select('match', '^switch.') | map('area_id') | unique | list }}
+  sequence:
+
+    # Setup Cycle Devices
+    - repeat:
+        for_each: "{{ area_ids }}"
+        sequence:
+
+        - variables:
+            unique_id: "{{ repeat.item | slugify }}"
+            object_id: "{{ unique_id }}"
+            device: 
+              name: "{{ area_name(repeat.item) }} Sprinker Cycle"
+              identifiers:
+              - "{{ unique_id }}"
+              manufacturer: Petro
+
+        # Day Cycle Slider
+        - service: mqtt.publish
+          data: >
+            {%- set domain = 'number' %}
+            {%- set this_id = 'ds' %}
+            {%- set topic = root ~ '/' ~ domain ~ '/' ~ unique_id ~ this_id ~ '/' %}
+            {{ {
+                'topic': topic ~ 'config',
+                'payload': {
+                    'name': 'Day Cycle',
+                    'unique_id': unique_id ~ this_id,
+                    'object_id': object_id ~ '_day_cycle',
+                    'state_topic': topic ~ 'state',
+                    'command_topic': topic ~ 'state',
+                    'command_template': "{{ value }}",
+                    'min': 1,
+                    'max': 5,
+                    'unit_of_measurement': 'days',
+                    'device': device,
+                    'retain': True,
+                  } | to_json,
+                'retain': True,
+            } }}
+
+        # enable/disable toggles.
+        - service: mqtt.publish
+          data: >
+            {%- set domain = 'switch' %}
+            {%- set this_id = 'sw' %}
+            {%- set topic = root ~ '/' ~ domain ~ '/' ~ unique_id ~ this_id ~ '/' %}
+            {{ {
+                'topic': topic ~ 'config',
+                'payload': {
+                    'name': 'Status',
+                    'unique_id': unique_id ~ this_id,
+                    'object_id': object_id ~ '_status',
+                    'state_topic': topic ~ 'state',
+                    'command_topic': topic ~ 'state',
+                    'device': device,
+                    'retain': True,
+                  } | to_json,
+                'retain': True,
+            } }}
+
+    # Zones
+    - repeat:
+        for_each: "{{ sprinklers }}"
+        sequence:
+        - variables:
+            object_id: "{{ repeat.item.object_id }}"
+            unique_id: "{{ repeat.item.identifier | slugify | replace('_', '') }}"
+            device: 
+              name: "{{ repeat.item.name }}"
+              identifiers:
+              - "{{ repeat.item.identifier }}"
+              manufacturer: Petro
+
+        # Create Program Timestamp sensors
+        - service: script.mqtt_automated_config
+          data:
+            name: Start
+            domain: sensor
+            object_id: "{{ object_id }}_start"
+            unique_id: "{{ unique_id }}ts"
+            device_class: timestamp
+            device: "{{ device }}"
+
+        # Create Program Duration numbers
+        - service: mqtt.publish
+          data: >
+            {%- set domain = 'number' %}
+            {%- set this_id = 'pd' %}
+            {%- set topic = root ~ '/' ~ domain ~ '/' ~ unique_id ~ this_id ~ '/' %}
+            {{ {
+                'topic': topic ~ 'config',
+                'payload': {
+                    'name': 'Program Duration',
+                    'unique_id': unique_id ~ this_id,
+                    'object_id': object_id ~ '_program_duration',
+                    'state_topic': topic ~ 'state',
+                    'command_topic': topic ~ 'state',
+                    'command_template': "{{ value }}",
+                    'min': 1,
+                    'max': 20,
+                    'unit_of_measurement': 'minutes',
+                    'device': device,
+                    'retain': True,
+                  } | to_json,
+                'retain': True,
+            } }}
+
+        # Create enable/disable toggles.
+        - service: mqtt.publish
+          data: >
+            {%- set domain = 'switch' %}
+            {%- set this_id = 'sw' %}
+            {%- set topic = root ~ '/' ~ domain ~ '/' ~ unique_id ~ this_id ~ '/' %}
+            {{ {
+                'topic': topic ~ 'config',
+                'payload': {
+                    'name': 'Status',
+                    'unique_id': unique_id ~ this_id,
+                    'object_id': object_id ~ '_status',
+                    'state_topic': topic ~ 'state',
+                    'command_topic': topic ~ 'state',
+                    'device': device,
+                    'retain': True,
+                  } | to_json,
+                'retain': True,
+            } }}
+
+
+get_irrigation_program:
+  alias: Get Program Times
+  mode: single
+  fields: &irrigation_fields
+    time:
+      description: Time when the irrigation will start.
+      required: True
+      selector:
+        time:
+    date:
+      description: Date when the irrigation will start.
+      required: True
+      selector:
+        date:
+    switches:
+      description: List of entities used in the irrigation 
+      required: True
+      selector:
+        entity:
+          multiple: True
+          filter:
+          - integration: rainbird
+            domain: switch
+  variables:
+    output: >
+      {%- set t = time | default("00:00:00") %}
+      {%- set d = date | default(today_at().date() | string) %}
+      {%- set dt = today_at(t) %}
+      {%- set ns = namespace(items=[], idx=0, duration=timedelta()) %}
+      {%- for e in switches %}
+        {%- set aid = area_id(e) %}
+        {%- set domain, object_id = e.split('.') %}
+        {%- set active = is_state('switch.' ~ aid ~ '_status', 'on') and is_state('switch.' ~ object_id ~ '_status', 'on') %}
+        {%- if active %}
+          {%- set ns.idx = ns.idx + 1 %}
+          {%- set duration = states('number.' ~ object_id ~ '_program_duration') | int %}
+          {%- set ns.items = ns.items + [dict(
+            entity_id='sensor.' ~ object_id ~ '_start',
+            datetime=((d ~ 'T' ~ (dt+ns.duration).time() | string) | as_datetime | as_local).isoformat(),
+          )] %}
+          {%- set ns.duration = ns.duration + timedelta(minutes=duration) %}
+        {%- endif %}
+      {%- endfor %}
+      {{- dict(zones=ns.items) }}
+  sequence:
+  - stop: "Stop"
+    response_variable: output
+
+
+get_irrigation_dates:
+  alias: Get Program Dates
+  mode: single
+  variables:
+    output: >
+      {%- set start = states('sensor.irrigation_season_start') | as_datetime | as_local %}
+      {%- set end = states('sensor.irrigation_season_end') | as_datetime | as_local %}
+      {%- set t = now().date() | string %}
+      {%- set ns = namespace(items=[]) %}
+      {%- for aid in integration_entities('rainbird') | select('match', '^switch.') | map('area_id') | unique %}
+        {%- set day_cycle = states('number.' ~ aid ~ '_day_cycle') | int %}
+        {%- set ns.current = [] %}
+        {%- for i in range(0, (end-start).days) %}
+          {%- if not i % day_cycle %}
+          {%- set ns.current = ns.current + [(start + timedelta(days=i)).date() | string] %}
+          {%- endif %}
+        {%- endfor %}
+        {%- set ns.items = ns.items + [ (aid, dict(dates=ns.current, next=ns.current|select('>=', t)|first)) ] %}
+      {%- endfor %}
+      {{ dict.from_keys(ns.items) }}
+  sequence:
+  - stop: "Stop"
+    response_variable: output
+
+
+get_next_irrigations:
+  alias: Get Next Irrigation
+  mode: single
+  sequence:
+  - service: script.get_irrigation_dates
+    response_variable: irrigation
+  - variables:
+      schedule: >
+        {%- set ns = namespace(items=[], ret=[]) %}
+        {%- for e in integration_entities('rainbird') | select('match', '^switch.') | sort %}
+          {%- set ns.items = ns.items + [
+            dict(date=irrigation[e | area_id].next, entity_id=e)
+          ] %}
+        {%- endfor %}
+        {%- for date, items in ns.items | groupby(attribute='date') %}
+          {%- set ns.ret = ns.ret + [dict(date=date, entity_id=items | map(attribute='entity_id') | list)] %}
+        {%- endfor %}
+        {{ dict(irrigations=ns.ret) }}
+  - stop: "Stop"
+    response_variable: schedule
+
+
+set_next_irrigation:
+  alias: Set Next Irrigation
+  mode: queued
+  fields: 
+    <<: *irrigation_fields
+  variables:
+    sprinklers: >
+      {# maps timestamp entity_id to the unique_id created in script.irrigation_mqtt_discovery #}
+      {%- set ns = namespace(items=[]) %}
+      {%- for e in integration_entities('rainbird') | select('match', '^switch.') %}
+        {%- set identifier = device_attr(e, 'identifiers') | list | first | last %}
+        {%- set ns.items = ns.items + [ (e | replace('switch', 'sensor') ~ '_start', identifier | slugify | replace('_', '') ~ 'ts') ] %}
+      {%- endfor %}
+      {{- dict.from_keys(ns.items) }}
+  sequence:
+  - service: script.get_irrigation_program
+    data:
+      time: "{{ time }}"
+      date: "{{ date }}"
+      switches: "{{ switches }}"
+    response_variable: zones
+  - repeat:
+      for_each: "{{ zones.zones }}"
+      sequence:
+      - service: script.mqtt_automated_states
+        data:
+          domain: sensor
+          unique_id: "{{ sprinklers[repeat.item.entity_id] }}"
+          state: "{{ repeat.item.datetime }}"

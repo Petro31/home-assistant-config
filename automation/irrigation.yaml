@@ -1,0 +1,69 @@
+- alias: MQTT Discovery
+  id: aafa91b8-a2e2-4df2-9412-536288327566
+  mode: single
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+
+  # MQTT Discovery
+  - service: script.turn_on
+    target:
+      entity_id: script.irrigation_mqtt_discovery
+
+- alias: Set Next Irrigation
+  id: 54f20352-b2ba-44d7-80f5-44ada2469dbc
+  mode: restart
+  trigger:
+    - platform: homeassistant
+      event: start
+    - platform: time
+      at: "00:00:00"
+    - platform: state
+      entity_id:
+      - input_datetime.irrigation_program_start
+      - switch.rain_bird_sprinkler_1_status
+      - switch.rain_bird_sprinkler_2_status
+      - switch.rain_bird_sprinkler_3_status
+      - switch.rain_bird_sprinkler_5_status
+      - switch.rain_bird_sprinkler_6_status
+      - switch.rain_bird_sprinkler_7_status
+      - switch.rain_bird_sprinkler_8_status
+      - switch.back_yard_status
+      - switch.front_yard_status
+      - number.rain_bird_sprinkler_1_program_duration
+      - number.rain_bird_sprinkler_2_program_duration
+      - number.rain_bird_sprinkler_3_program_duration
+      - number.rain_bird_sprinkler_5_program_duration
+      - number.rain_bird_sprinkler_6_program_duration
+      - number.rain_bird_sprinkler_7_program_duration
+      - number.rain_bird_sprinkler_8_program_duration
+  variables:
+    sprinklers: >
+      {# maps timestamp entity_id to the unique_id created in script.irrigation_mqtt_discovery #}
+      {%- set ns = namespace(items=[]) %}
+      {%- for e in integration_entities('rainbird') | select('match', '^switch.') %}
+        {%- set identifier = device_attr(e, 'identifiers') | list | first | last %}
+        {%- set ns.items = ns.items + [ (e | replace('switch', 'sensor') ~ '_start', identifier | slugify | replace('_', '') ~ 'ts') ] %}
+      {%- endfor %}
+      {{- dict.from_keys(ns.items) }}
+  action: 
+  - service: script.get_next_irrigations
+    response_variable: irrigations
+  - repeat:
+      for_each: "{{ irrigations.irrigations }}"
+      sequence:
+      - service: script.get_irrigation_program
+        data:
+          time: "{{ states('input_datetime.irrigation_program_start') }}"
+          date: "{{ repeat.item.date }}"
+          switches: "{{ repeat.item.entity_id }}"
+        response_variable: zones
+      - repeat:
+          for_each: "{{ zones.zones }}"
+          sequence:
+          - service: script.mqtt_automated_states
+            data:
+              domain: sensor
+              unique_id: "{{ sprinklers[repeat.item.entity_id] }}"
+              state: "{{ repeat.item.datetime }}"

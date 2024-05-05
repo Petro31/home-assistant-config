@@ -1,0 +1,26 @@
+- binary_sensor:
+  - unique_id: 0c5ddaed-deda-4bf4-8a4c-93f5d25b47fa
+    name: Irrigation Season
+    device_class: heat
+    state: >
+      {% set start, end = ['sensor.irrigation_season_start', 'sensor.irrigation_season_end'] | map('states') | map('as_datetime') | map('as_local') | list %}
+      {{ start <= now() <= end }}
+    availability: >
+      {{
+        ['sensor.irrigation_season_start', 'sensor.irrigation_season_end'] | select('has_value') | list | count == 2
+      }}
+
+- sensor:
+  - unique_id: 4554e955-260c-4f98-b564-953ef58da952
+    name: Irrigation Season Start
+    device_class: timestamp
+    state: >
+      {% from 'easy_time.jinja' import month_day %}
+      {{ month_day(6, 1) }}
+
+  - unique_id: c4a5a8a6-317e-4d6b-9b64-eb9f792e9dbf 
+    name: Irrigation Season End
+    device_class: timestamp
+    state: >
+      {% from 'easy_time.jinja' import month_day %}
+      {{ month_day(11, 1) }}
