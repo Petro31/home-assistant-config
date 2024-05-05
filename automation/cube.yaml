@@ -9,6 +9,9 @@
     event: "{{ trigger.to_state.state }}"
     player: media_player.yamaha_rx_v6a
     volume: "{{ state_attr(player, 'volume_level') }}"
+  condition:
+  - condition: template
+    value_template: "{{ event is not none }}"
   action:
     - alias: "Which action"
       choose:
