@@ -708,7 +708,7 @@
     'type': '../templates/summary/overview.yaml',
     'view': '../views/irrigation.yaml',
   },{
-    'name': 'Christmas',
+    'name': 'sensor.holiday_lighting',
     'icon': 'mdi:string-lights',
     'image': '/local/images/tree.png',
     'header': [ 
@@ -721,7 +721,7 @@
     ],
     'entities': holidays,
     'triggers_update': holidays | map(attribute='entity') | list | sort,
-    'type': '../templates/summary/overview.yaml',
+    'type': '../templates/summary/dynamic_name_overview.yaml',
     'display': [
       {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
