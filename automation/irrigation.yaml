@@ -67,3 +67,98 @@
               domain: sensor
               unique_id: "{{ sprinklers[repeat.item.entity_id] }}"
               state: "{{ repeat.item.datetime }}"
+
+- alias: Start Irrigation Cycle
+  id: 1c67152d-d153-41a9-b5a7-78ce036fecbf
+  mode: single
+  trigger:
+  - platform: time
+    at: &entities
+    - sensor.rain_bird_sprinkler_1_start
+    - sensor.rain_bird_sprinkler_2_start
+    - sensor.rain_bird_sprinkler_3_start
+    - sensor.rain_bird_sprinkler_5_start
+    - sensor.rain_bird_sprinkler_6_start
+    - sensor.rain_bird_sprinkler_7_start
+    - sensor.rain_bird_sprinkler_8_start
+  variables:
+    entities: *entities
+
+    # Ensure we have an isoformatted utc timestamp that matches the most recent minute.
+    trigger_time: >
+      {{ trigger.now.astimezone(utcnow().tzinfo).replace(second=0, microsecond=0).isoformat() }}
+
+    start: >
+      {{ entities | select('is_state', trigger_time) | first | default }}
+
+    object_id: >
+      {{ start | regex_findall('sensor.(.*)_start') | first }}
+
+    switch: switch.{{ object_id }}
+    number: number.{{ object_id }}_program_duration
+
+    # Default to zero for if checks when failing
+    duration: >
+      {{ states(number) | int(0) }}
+
+  condition:
+  - condition: template
+    value_template: "{{ duration > 0 }}"
+  - condition: state
+    entity_id: binary_sensor.rain_bird_controller_rainsensor
+    state: 'off'
+  action:
+  - service: rainbird.start_irrigation
+    data:
+      entity_id: "{{ switch }}"
+      duration: "{{ duration }}"
+
+- alias: Valve Reminders
+  id: 33596fc1-7dbf-4837-a589-953f2d5d072a
+  trigger:
+    - platform: time
+      at: '10:00:00'
+    - platform: time
+      at: '15:30:00'
+    - platform: time
+      at: '19:00:00'
+  variables:
+    target_dates: >
+      {% set ns = namespace(dates=[]) %}
+      {%- for offset in [7, 1] %}
+      {%- set ns.dates = ns.dates + [(today_at() + timedelta(days=offset)).date() | string] %}
+      {%- endfor %}
+      {{ ns.dates }}
+    entities:
+    - sensor.irrigation_season_start
+    - sensor.irrigation_season_end
+    events: >
+      {%- from 'easy_time.jinja' import speak_the_days %}
+      {%- set phrase = 'Turn o{} the water irrigation shutoff value{}{}' %}
+      {%- set ns = namespace(items=[]) %}
+      {%- for e in entities %}
+        {%- set dt = states(e) | as_datetime %}
+        {%- set date = dt.date() | string %}
+        {%- set name = state_attr(e, 'friendly_name') %}
+        {%- set p = 'n' if 'Start' in name else 'ff' %}
+        {%- set f = speak_the_days(dt) %}
+        {%- set m = ' ' if 'in' in f else ' before ' %}
+        {%- set ns.items = ns.items + [
+          dict(
+            title=name,
+            when=date,
+            message=phrase.format(p, m, f)
+          )
+        ] -%}
+      {%- endfor %}
+      {{ ns.items }}
+    event: >
+      {{ events | selectattr('when', 'in', target_dates) | list | first | default }}
+  condition:
+  - condition: template
+    value_template: "{{ event is not none }}"
+  action:
+  - service: script.notify
+    data:
+      title: "{{ event.title }}"
+      message: "{{ event.message }}"

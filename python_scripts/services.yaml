@@ -1,0 +1,11 @@
+combined_forecasts:
+  name: Combine Forecasts
+  description: Combine forecasts into 1 list of forecasts.
+  fields:
+    weather:
+      description: weather entities
+      example: weather.nws
+      selector:
+        entity:
+          domain: weather
+          multiple: True

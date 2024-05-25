@@ -155,6 +155,9 @@ entities:
   - sensor.basement_bme280_humidity
   - sensor.basement_bme280_temperature
 
+  - binary_sensor.rain_bird_controller_rainsensor
+  - sensor.rain_bird_controller_raindelay
+
 domains:
   - light
   - switch

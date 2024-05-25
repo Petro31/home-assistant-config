@@ -702,6 +702,12 @@
     'image': '/local/images/plants.png',
     'view': '../views/plants.yaml',
   },{
+    'name': 'Irrigation',
+    'icon': 'mdi:sprinkler-variant',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'type': '../templates/summary/overview.yaml',
+    'view': '../views/irrigation.yaml',
+  },{
     'name': 'Christmas',
     'icon': 'mdi:string-lights',
     'image': '/local/images/tree.png',

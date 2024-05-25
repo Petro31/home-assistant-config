@@ -24,6 +24,7 @@ media_player: !include media_player.yaml
 mqtt: !include_dir_merge_named mqtt/
 notify: !include notify.yaml
 plant: !include plants.yaml
+python_script:
 recorder: !include recorder.yaml
 scene: !include scenes.yaml
 script: !include_dir_merge_named scripts/
