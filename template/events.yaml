@@ -38,6 +38,7 @@
       gathered: >
         {{ {'events': raw_events[calendar].events} }}
       events: >
+        {% set card_mod_fmat = '^--' %}
         {% set info = [
             {
                'find': 'disney',
@@ -50,8 +51,9 @@
                'find': 'vacation',
                'category': 'vacation',
                'picture': 'local\\images\\vacation.png',
-               'badge_color': '#FDB813',
-               'badge_icon': 'mdi:white-balance-sunny'
+               'badge_color': 'rgba(0,0,0,0)',
+               'badge_icon': 'mdi:white-balance-sunny',
+               '--icon-color': '#FDB813'
             },
             {
                'find': 'ultra',
@@ -106,8 +108,9 @@
                'find': 'conference',
                'category': 'work',
                'picture': 'local\\images\\expo.png',
-               'badge_color': None,
-               'badge_icon': 'mdi:briefcase'
+               'badge_color': '#000000',
+               'badge_icon': 'mdi:briefcase',
+               '--icon-color': 'orange',
             },
             {
                'find': 'party',
@@ -115,6 +118,38 @@
                'picture': 'local\\images\\party.png',
                'badge_color': None,
                'badge_icon': 'mdi:party-popper'
+            },
+            {
+               'find': 'birthday',
+               'category': 'party',
+               'picture': 'local\\images\\party.png',
+               'badge_color': '#024CB0',
+               'badge_icon': 'mdi:cake-variant',
+               '--icon-color': 'silver',
+            },
+            {
+               'find': 'camping',
+               'category': 'party',
+               'picture': 'local\\images\\camping.png',
+               'badge_color': 'rgba(0,0,0,0)',
+               'badge_icon': 'mdi:weather-night',
+               '--icon-color': '#F6F1D5'
+            },
+            {
+               'find': 'wedding',
+               'category': 'party',
+               'picture': 'local\\images\\wedding.png',
+               'badge_color': 'silver',
+               'badge_icon': 'mdi:bell',
+               '--icon-color': 'gold',
+            },
+            {
+               'find': 'cruise',
+               'category': 'vacation',
+               'picture': 'local\\images\\cruise.png',
+               'badge_color': 'rgba(0,0,0,0)',
+               'badge_icon': 'mdi:ferry',
+               '--icon-color': '#FDB813'
             },
             {
                'find': '_christmas_party',
@@ -128,7 +163,8 @@
                'category': 'party',
                'picture': 'local\\images\\christmas_party.png',
                'badge_color': '#9119b3',
-               'badge_icon': 'mdi:halloween'
+               'badge_icon': 'mdi:halloween',
+               '--icon-color': 'black'
             },
         ] %}
         {% set days = {
@@ -139,7 +175,7 @@
         {% if gathered.events %}
           {% for event in gathered.events %}
             {% set inspect = event.summary.lower() %}
-            {% set found = namespace(value={'picture': 'local\\images\\home.jpg', 'badge_icon': 'mdi:calendar-question', 'badge_color': None}) %}
+            {% set found = namespace(value={'picture': 'local\\images\\home_transparent_6.png', 'badge_icon': 'mdi:calendar-question', 'badge_color': 'rgba(0, 0, 0, 0)'}) %}
             {% for i in info if inspect is search(i.find) %}
               {% set found.value = i %}{% break %}
             {% endfor %}
@@ -151,10 +187,25 @@
             {% elif found.find == 'party' and date.month == 12 %}
               {% set found = info | selectattr('find','eq','_christmas_party') | first %}
             {% endif %}
+            {% set card_mod = dict(found.items() | list | selectattr('0', 'search', '^--') | list) %}
+            {% if card_mod %}
+              {% set styles = card_mod.items() | list | map('join',': ') | join('; ') ~ ';' %}
+              {% set titems = found.items() | list | rejectattr('0', 'search', card_mod_fmat) | list + [
+                ('card_mod', dict(style="mushroom-badge-icon {{{0}}}".format(styles))),
+              ] %}
+              {% set found = dict.from_keys(titems) %}
+            {% endif %}
             {% set duration = (end - date).days %}
             {% set count = (date - today_at()).days %}
             {% set count = count if count > 0 else 0 %}
-            {% set days_away = days.get(count, '\n'.join([ duration | string ~ ' day event in %s days'%count, date.strftime('%B %-d, %Y')])) %}
+            {% if duration %}
+              {% set phrase = duration | string ~ ' day event in %s days'%count %}
+            {% elif date.minute %}
+              {% set phrase = '%s event in %s days'%(date.strftime('%-I:%M %p'),count) %}
+            {% else %}
+              {% set phrase = '%s event in %s days'%(date.strftime('%-I %p'),count) %}
+            {% endif %}
+            {% set days_away = days.get(count, '\n'.join([phrase, date.strftime('%B %-d, %Y')])) %}
             {% set ns.items = ns.items + [{
                 'event': event,
                 'days': count,
