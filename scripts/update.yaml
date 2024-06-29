@@ -5,8 +5,8 @@ update_esphome:
     entities: >
       {{ integration_entities('esphome') | select('search','^update') | select('is_state','on') | list }}
     message: >
-      Updating firmware for household sensors.  The doorbell will ring.
-  sequence:
+      Updating firmware for household sensors.
+  sequence: &sequence
   - condition: template
     value_template: "{{ entities | length > 0 }}"
   - service: script.notify
@@ -16,3 +16,13 @@ update_esphome:
   - service: update.install
     target:
       entity_id: "{{ entities }}"
+
+update_zigbee:
+  alias: Update Zigbee Devices
+  mode: single
+  variables:
+    entities: >
+      {{ integration_entities('mqtt') | select('search','^update') | select('is_state','on') | list }}
+    message: >
+      Updating firmware for household hue lights.  Lights will not work for 1 hour.
+  sequence: *sequence
