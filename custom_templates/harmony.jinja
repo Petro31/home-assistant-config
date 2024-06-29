@@ -1,0 +1,47 @@
+{# Functions to make activities persistent #}
+
+{%- macro activity_on(target, entity='remote.living_room') -%}
+{%- set current = state_attr(entity, 'current_activity') -%}
+{%- if current is none and this is defined -%}
+  {{- this.state | default(none) }}
+{%- elif current is not none %}
+  {{- current == target -}}
+{%- else -%}
+  {{- this.state if this is defined and this.state is defined else none -}}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro switch() -%}
+{{- activity_on('Switch') -}}
+{%- endmacro -%}
+
+{%- macro roku() -%}
+{{- activity_on('Roku') -}}
+{%- endmacro -%}
+
+{%- macro playstation() -%}
+{{- activity_on('Playstation') -}}
+{%- endmacro -%}
+
+{%- macro xbox_one() -%}
+{{- activity_on('Xbox One') -}}
+{%- endmacro -%}
+
+{%- macro chromecast() -%}
+{{- activity_on('Chromecast') -}}
+{%- endmacro -%}
+
+{%- macro tv() -%}
+{{- activity_on('TV') -}}
+{%- endmacro -%}
+
+{%- macro power_off(target='PowerOff', entity='remote.living_room') -%}
+{%- set current = state_attr(entity, 'current_activity') -%}
+{%- if current is none and this is defined -%}
+  {{- this.state | default(none) }}
+{%- elif current is not none %}
+  {{- current != target -}}
+{%- else -%}
+  {{- this.state if this is defined and this.state is defined else none -}}
+{%- endif -%}
+{%- endmacro -%}

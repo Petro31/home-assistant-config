@@ -104,7 +104,8 @@
       xbox_one:
         unique_id: 2bb5c91b-5ff2-41d5-b1fa-7fa603c54fee
         friendly_name: Xbox One
-        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Xbox One') }}"
+        value_template: >
+          {%- from 'harmony.jinja' import xbox_one as f -%}{{- f() -}}
         turn_on:
         - service: script.harmony_activity_on
           data:
@@ -116,7 +117,8 @@
       playstation:
         unique_id: 8b9bae0f-2eb8-4af3-bb54-3d0252437ad6
         friendly_name: Playstation
-        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Playstation') }}"
+        value_template: >
+          {%- from 'harmony.jinja' import playstation as f -%}{{- f() -}}
         turn_on:
         - service: script.harmony_activity_on
           data:
@@ -127,7 +129,8 @@
       switch:
         unique_id: 9c1d6eab-6652-4531-b8d3-30662b4fb928
         friendly_name: Switch
-        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Switch') }}"
+        value_template: >
+          {%- from 'harmony.jinja' import switch as f -%}{{- f() -}}
         turn_on:
         - service: script.harmony_activity_on
           data:
@@ -138,7 +141,8 @@
       tv:
         unique_id: ec14504b-9b62-4b44-bcf1-5d0218e4504d
         friendly_name: TV
-        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'TV') }}"
+        value_template: >
+          {%- from 'harmony.jinja' import tv as f -%}{{- f() -}}
         turn_on:
         - service: script.harmony_activity_on
           data:
@@ -149,7 +153,8 @@
       chromecast:
         unique_id: c27197a0-e746-4873-ae62-737784541cf5
         friendly_name: Chromecast
-        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Chromecast') }}"
+        value_template: >
+          {%- from 'harmony.jinja' import chromecast as f -%}{{- f() -}}
         turn_on:
         - service: script.harmony_activity_on
           data:
@@ -162,7 +167,8 @@
       poweroff:
         unique_id: ab55c1de-77f1-49f6-9b70-2237e96847be
         friendly_name: Power Off
-        value_template: "{{ not is_state_attr('remote.living_room', 'current_activity', 'PowerOff') }}"
+        value_template: >
+          {%- from 'harmony.jinja' import power_off as f -%}{{- f() -}}
         turn_on: &harmony_all_off
           - service: script.harmony_all_off
         turn_off: *harmony_all_off
@@ -171,7 +177,8 @@
       roku:
         unique_id: 9b436b75-1a7e-4d5f-a2ad-016308a8cbef
         friendly_name: Roku
-        value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'Roku') }}"
+        value_template: >
+          {%- from 'harmony.jinja' import roku as f -%}{{- f() -}}
         turn_on:
         - service: script.harmony_activity_on
           data:
