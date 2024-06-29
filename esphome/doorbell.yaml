@@ -18,6 +18,7 @@ api:
 
 # Enable over-the-air updates.
 ota:
+- platform: esphome
 
 # Enable Web server.
 web_server:

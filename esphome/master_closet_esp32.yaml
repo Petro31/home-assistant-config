@@ -19,6 +19,7 @@ logger:
 api:
 
 ota:
+- platform: esphome
 
 bluetooth_proxy:
 

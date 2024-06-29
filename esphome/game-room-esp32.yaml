@@ -11,6 +11,7 @@ logger:
 api:
 
 ota:
+- platform: esphome
   password: !secret game_room_ota_password
 
 wifi:
