@@ -71,3 +71,23 @@
         Please do not turn off living room lamps, turn the lamp back on.  If you want to turn on this lamp in the future, say: Turn on {{ name }}.  
       announce: False
       entities: media_player.living_room_echo_dot
+
+- alias: Alexa Media Player Startup
+  id: e0bd3754-7045-4b63-a396-83845637e010
+  description: Reloads alexa media player if the integration does not come online. 
+  mode: single
+  trigger:
+  - platform: homeassistant
+    event: start
+  action:
+  - delay:
+      seconds: 15
+  - service: homeassistant.reload_config_entry
+    target:
+      entity_id: media_player.living_room_echo_dot
+    data: {}
+  - service: script.notify
+    data:
+      notify: notify.mobile_app_petro
+      message: >
+        Reloading Alexa Media Player Integration
