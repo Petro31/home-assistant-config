@@ -66,6 +66,8 @@ get_light_endpoints:
       {%- set value = zwave_pct > 0 %}
       {{- value }}
 
+    targeted_state: o{{ 'ff' if value else 'n' }}
+
     # This is done for now because parallel cannot be auto generated.
     # Add a new domain, and add a new parallel call for zwave and non zwave
     # service calls.
@@ -121,9 +123,9 @@ get_light_endpoints:
             if epname == 'endpoint_0' else
             label_entities(epname) | select('match', '^({0}).'.format(domain)) | list
           ) -%}
-          {%- set sub.non_zwave = sub.non_zwave + in_area | select('match', '^({0}).'.format(domain)) | reject('in', zwave_integration) | list %}
+          {%- set sub.non_zwave = sub.non_zwave + in_area | select('match', '^({0}).'.format(domain)) | reject('in', zwave_integration) | select('is_state', targeted_state) | list %}
           {#- Filter down to entities that are selected by the areas #}
-          {%- set zwave_entities = entities | select('in', in_area) | list %}
+          {%- set zwave_entities = entities | select('in', in_area) | select('is_state', targeted_state) | list %}
           {%- set data = dict.from_keys(attributes + eps) %}
           {%- set sub.items = sub.items + [(epname, dict(data=data, entities=zwave_entities))] %}
         {%- endfor %}
