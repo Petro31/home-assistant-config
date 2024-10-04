@@ -1,0 +1,6 @@
+{
+    "diffEditor.ignoreTrimWhitespace": false,
+    "[yaml]": {
+        "diffEditor.ignoreTrimWhitespace": false
+    }
+}
