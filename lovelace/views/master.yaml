@@ -708,6 +708,12 @@
     'type': '../templates/summary/overview.yaml',
     'view': '../views/irrigation.yaml',
   },{
+    'name': 'Laundry',
+    'icon': 'mdi:calendar-outline',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'type': '../templates/summary/overview.yaml',
+    'view': '../views/laundry.yaml',
+  },{
     'name': 'sensor.holiday_lighting',
     'icon': 'mdi:string-lights',
     'image': '/local/images/tree.png',
