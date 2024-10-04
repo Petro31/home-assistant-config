@@ -1,24 +1,16 @@
 reset_washer:
-  # You're feeling lazy right now, you'll need to add a way to actually reset this in the future
-  # To do this, set an on/off sequence that matches the test_washer's configuration.  You'll
-  # need to setup a loop of services to run to reset it based on the current state
-  # of the actual washer.  Again, you can only be mad at yourself when you do this in the future
-  # because you were a lazy ass and didn't feel like doing it today.
-  alias: Washer - Reset the washer state
+  alias: Reset the state
   mode: single
-  variables:
-    current: "{{ states('input_number.test_washer') | int }}"
-    filtered: "{{ range(80) | reject('eq', current) | list }}"
-    next_value: "{{ filtered | random }}"
   sequence:
-  - service: input_number.set_value
-    target:
-      entity_id: input_number.test_washer
+  - service: script.calculate_washer_cycle
     data:
-      value: "{{ next_value }}"
+      reset: true
+      source: binary_sensor.washer_status
+      next_phase: "off"
+      prefix: washer_dryer_
 
 calculate_washer_cycle:
-  alias: Washer - Calculate Current Cycle
+  alias: Calculate Current Cycle
   mode: parallel
   fields:
     prefix:
