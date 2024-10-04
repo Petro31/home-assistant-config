@@ -184,7 +184,22 @@
           data:
             activity: Roku
         turn_off: *harmony_activity_off
-            
+
+      # APPLE TV
+      apple_tv:
+        unique_id: 7aa5614a-9bea-4088-b950-e22f3d8e1061 
+        friendly_name: Apple TV
+        value_template: >
+          {{ is_state('switch.roku', 'on') and 
+             is_state_attr('media_player.roku_living_room', 'source', 'Apple TV') }}
+        turn_on:
+        - service: script.roku_source_on
+          data:
+            source: Apple TV
+        turn_off: &turn_off_roku
+        - service: switch.turn_off
+          entity_id: switch.roku
+
       # NETFLIX
       netflix:
         unique_id: b289f6f7-ab1b-4c58-9f78-7044b1e33457
@@ -196,9 +211,7 @@
         - service: script.roku_source_on
           data:
             source: Netflix
-        turn_off: &turn_off_roku
-        - service: switch.turn_off
-          entity_id: switch.roku
+        turn_off: *turn_off_roku
             
       # HBO
       hbo:
