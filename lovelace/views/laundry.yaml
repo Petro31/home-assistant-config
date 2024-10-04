@@ -1,0 +1,66 @@
+title: Laundry
+icon: mdi:washing-machine
+path: laundry
+visible: false
+type: sections
+sections:
+  - type: grid
+    cards:
+      - type: tile
+        entity: binary_sensor.washer
+      - type: tile
+        entity: sensor.washer_power
+      - type: tile
+        entity: binary_sensor.washer_status
+      - type: tile
+        name: Reset Cycles
+        entity: script.reset_washer
+      - type: history-graph
+        entities:
+          - entity: binary_sensor.washer
+          - entity: sensor.washer_power
+        hours_to_show: 3
+      - type: custom:auto-entities
+        filter:
+          template: |-
+            {% from 'easy_time.jinja' import easy_relative_time %}
+            {% set cycles = state_attr('binary_sensor.washer', 'cycles') %}
+            {% if cycles | length > 0 %}
+              [{% for e in state_attr('binary_sensor.washer', 'cycles') %}
+                {% set icon = 'mdi:' ~ ('motion-play-outline' if e.action == 'spinning' else 'motion-pause-outline') %}
+                {% set color = 'blue' if e.action == 'spinning' else 'grey' %}
+                {% set dt = easy_relative_time(e.start) | title %}
+                {{ 
+                  dict(
+                    type='custom:mushroom-template-card',
+                    primary=e.action | title,
+                    secondary=dt,
+                    icon=icon,
+                    icon_color=color,
+                  )
+                }},
+              {% endfor %}]
+            {% else %}
+              [{{ dict(
+                    type='custom:mushroom-template-card',
+                    primary='idle' | title,
+                    icon='mdi:motion-pause-outline',
+                    icon_color='grey',
+                  ) }}]
+            {% endif %}
+        card_param: cards
+        card:
+          type: vertical-stack
+    title: Washer
+  - type: grid
+    cards:
+      - type: tile
+        entity: sensor.dryer_power
+      - type: tile
+        entity: binary_sensor.dryer_status
+      - type: history-graph
+        entities:
+          - entity: binary_sensor.dryer_status
+          - entity: sensor.dryer_power
+        hours_to_show: 3
+    title: Dryer
