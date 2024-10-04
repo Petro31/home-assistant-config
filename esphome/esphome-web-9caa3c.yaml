@@ -45,11 +45,14 @@ sensor:
   - platform: bme280_i2c
     temperature:
       name: "BME280 Temperature"
-      oversampling: 16x
+      filters:
+      - lambda: return (x + 2.7218) / 1.1342;
     pressure:
       name: "BME280 Pressure"
     humidity:
       name: "BME280 Humidity"
+      filters:
+      - lambda: return (x + 10.584) / 1.1124;
     address: 0x76
     update_interval: 30s
 
