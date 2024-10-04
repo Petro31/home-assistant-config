@@ -1,0 +1,34 @@
+- alias: MSR 2 Testing
+  id: d0be7b52-30f2-4947-a8de-a20a15df8849
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id: &entities
+    - binary_sensor.apollo_msr_2_8935e0_radar_zone_1_occupancy
+    - binary_sensor.apollo_msr_2_8935e0_radar_zone_2_occupancy
+    - binary_sensor.apollo_msr_2_8935e0_radar_zone_3_occupancy
+  variables:
+    entities: *entities
+    colors:
+      'on': [0, 255, 0]
+      'off': [255, 0, 0]
+      unknown: [255, 255, 255]
+      unavailable: [0, 0, 255]
+    color: >
+      {{ colors.get(trigger.to_state.state, colors.unavailable) }}
+    index: >
+      {{ entities.index(trigger.to_state.entity_id) }}
+    target: light.test_segment_{{ index + 1 }}
+  action:
+  - if: "{{ is_state('light.test_main', 'off') }}"
+    then:
+    - service: light.turn_on
+      target:
+        entity_id: light.test_main
+      data:
+        brightness: 255
+  - service: light.turn_on
+    target:
+      entity_id: "{{ target }}"
+    data:
+      rgb_color: "{{ color }}"
