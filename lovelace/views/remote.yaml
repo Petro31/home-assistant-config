@@ -2,13 +2,14 @@
 
 {%- set activity_cols = 6 %}
 {%- set activity_rows = 2 %}
+{# {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)'}, #}
 {%- set activities = [
-  {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)'},
   {'entity':'switch.playstation', 'color': 'rgba(102, 92, 190)'},
   {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)'},
   {'entity':'switch.tv', 'color': 'var(--button-card-light-color)'},
   {'entity':'switch.chromecast', 'color': 'rgba(66,133,244)'},
   {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'icon': 'fapro:plex'},
+  {'entity':'switch.apple_tv', 'color': 'rgba(56, 196, 200)'},
   {'entity':'switch.peacock', 'color': 'rgba(81, 105, 170)', 'image': '/local/images/peacock.png', 'template': '../templates/remote_image_button.yaml'},
   {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'icon': 'fapro:netflix'},
   {'entity':'switch.hbo', 'color': 'rgba(255, 255, 255)', 'icon': 'fapro:hbo'},
