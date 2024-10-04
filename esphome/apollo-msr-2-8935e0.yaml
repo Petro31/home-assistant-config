@@ -1,0 +1,17 @@
+substitutions:
+  name: apollo-msr-2-8935e0
+  friendly_name: Apollo MSR-2 8935e0
+packages:
+  ApolloAutomation.MSR-2: github://ApolloAutomation/MSR-2/Integrations/ESPHome/MSR-2.yaml
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+api:
+  encryption:
+    key: YjAkaV+gAIsBxsM60hvGBQsO0la/KmxPcZ7MVHoTpfk=
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
