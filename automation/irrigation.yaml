@@ -153,7 +153,7 @@
       {%- endfor %}
       {{ ns.items }}
     event: >
-      {{ events | selectattr('when', 'in', target_dates) | list | first | default }}
+      {{ events | selectattr('when', 'in', target_dates) | list | first | default(None) }}
   condition:
   - condition: template
     value_template: "{{ event is not none }}"
