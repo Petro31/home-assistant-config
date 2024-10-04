@@ -1,0 +1,27 @@
+- alias: Calibration Helper
+  id: 467417d9-fe47-4fb8-a0fd-2764c92e099a
+  mode: parallel
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.basement_bme280_temperature
+    - sensor.basement_bme280_humidity
+  variables:
+    config:
+      sensor.basement_bme280_temperature:
+        notify: notify.basement_temperature
+        sensor: sensor.apollo_air_1_1ecac0_sen55_temperature
+      sensor.basement_bme280_humidity:
+        notify: notify.basement_humidity
+        sensor: sensor.apollo_air_1_1ecac0_sen55_humidity
+    which: "{{ config.get(trigger.to_state.entity_id) }}"
+  condition:
+  - condition: template
+    value_template: "{{ which is not none }}"
+  action:
+  - service: notify.send_message
+    target:
+      entity_id: "{{ which.notify }}"
+    data:
+      message: > 
+        {{ now().isoformat() }},{{ trigger.to_state.state }},{{ states(which.sensor) }}

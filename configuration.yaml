@@ -1,7 +1,8 @@
 homeassistant:
+  allowlist_external_dirs:
+  - /config/calibrations
   customize: !include customize.yaml
 
-alexa: !include alexa.yaml
 analytics:
 automation: !include automations.yaml
 automation directory: !include_dir_merge_list automation
