@@ -158,6 +158,10 @@ entities:
   - binary_sensor.rain_bird_controller_rainsensor
   - sensor.rain_bird_controller_raindelay
 
+  - sensor.apollo_air_1_1ecac0_co2
+  - sensor.apollo_air_1_1ecac0_sen55_humidity
+  - sensor.apollo_air_1_1ecac0_sen55_temperature
+
 domains:
   - light
   - switch
