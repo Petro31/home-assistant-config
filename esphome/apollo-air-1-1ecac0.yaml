@@ -15,3 +15,16 @@ api:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+
+sensor:
+  - id: !extend sen55
+    humidity:
+      name: Humidity
+      id: humidity
+      filters:
+        - lambda: return 1.048 * x + 6.7969;
+    temperature:
+      name: Temperature
+      id: temperature
+      filters:
+        - lambda: return 0.7733 * x + 5.9699;
