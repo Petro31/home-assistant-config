@@ -22,6 +22,10 @@
     - platform: state
       entity_id:
       - input_datetime.irrigation_program_start
+      - switch.back_yard_status
+      - switch.front_yard_status
+      - number.back_yard_day_cycle
+      - number.front_yard_day_cycle
       - switch.rain_bird_sprinkler_1_status
       - switch.rain_bird_sprinkler_2_status
       - switch.rain_bird_sprinkler_3_status
@@ -29,8 +33,6 @@
       - switch.rain_bird_sprinkler_6_status
       - switch.rain_bird_sprinkler_7_status
       - switch.rain_bird_sprinkler_8_status
-      - switch.back_yard_status
-      - switch.front_yard_status
       - number.rain_bird_sprinkler_1_program_duration
       - number.rain_bird_sprinkler_2_program_duration
       - number.rain_bird_sprinkler_3_program_duration
@@ -38,35 +40,26 @@
       - number.rain_bird_sprinkler_6_program_duration
       - number.rain_bird_sprinkler_7_program_duration
       - number.rain_bird_sprinkler_8_program_duration
-  variables:
-    sprinklers: >
-      {# maps timestamp entity_id to the unique_id created in script.irrigation_mqtt_discovery #}
-      {%- set ns = namespace(items=[]) %}
-      {%- for e in integration_entities('rainbird') | select('match', '^switch.') %}
-        {%- set identifier = device_attr(e, 'identifiers') | list | first | last %}
-        {%- set ns.items = ns.items + [ (e | replace('switch', 'sensor') ~ '_start', identifier | slugify | replace('_', '') ~ 'ts') ] %}
-      {%- endfor %}
-      {{- dict.from_keys(ns.items) }}
+      - sensor.rain_bird_sprinkler_1_last_run
+      - sensor.rain_bird_sprinkler_2_last_run
+      - sensor.rain_bird_sprinkler_3_last_run
+      - sensor.rain_bird_sprinkler_5_last_run
+      - sensor.rain_bird_sprinkler_6_last_run
+      - sensor.rain_bird_sprinkler_7_last_run
+      - sensor.rain_bird_sprinkler_8_last_run
   action: 
   - service: script.get_next_irrigations
     response_variable: irrigations
+  - condition: template
+    value_template: "{{ irrigations.zones | count > 0 }}"
   - repeat:
-      for_each: "{{ irrigations.irrigations }}"
+      for_each: "{{ irrigations.zones }}"
       sequence:
-      - service: script.get_irrigation_program
+      - service: script.mqtt_automated_states
         data:
-          time: "{{ states('input_datetime.irrigation_program_start') }}"
-          date: "{{ repeat.item.date }}"
-          switches: "{{ repeat.item.entity_id }}"
-        response_variable: zones
-      - repeat:
-          for_each: "{{ zones.zones }}"
-          sequence:
-          - service: script.mqtt_automated_states
-            data:
-              domain: sensor
-              unique_id: "{{ sprinklers[repeat.item.entity_id] }}"
-              state: "{{ repeat.item.datetime }}"
+          domain: sensor
+          unique_id: "{{ repeat.item.zone_next_run_id }}"
+          state: "{{ repeat.item.zone_next_run }}"
 
 - alias: Start Irrigation Cycle
   id: 1c67152d-d153-41a9-b5a7-78ce036fecbf
@@ -96,6 +89,11 @@
 
     switch: switch.{{ object_id }}
     number: number.{{ object_id }}_program_duration
+    last_run_unique_id: >
+      {% set identifier = device_attr('sensor.{0}_last_run'.format(object_id), 'identifiers') | list | first | last %}
+      {{ identifier | slugify | replace('_', '') ~ 'lr' }}
+    last_run_attributes: >
+      {{ dict(by='irrigation' if is_state('binary_sensor.rain_bird_controller_rainsensor', 'off') else 'rain') }}
 
     # Default to zero for if checks when failing
     duration: >
@@ -104,14 +102,44 @@
   condition:
   - condition: template
     value_template: "{{ duration > 0 }}"
+  action:
+  - service: script.mqtt_automated_states
+    data:
+      domain: sensor
+      unique_id: "{{ last_run_unique_id }}"
+      state: "{{ trigger_time }}"
+      attributes: "{{ last_run_attributes }}"
+  - if: "{{ is_state('binary_sensor.rain_bird_controller_rainsensor', 'off') }}"
+    then:
+    - service: rainbird.start_irrigation
+      data:
+        entity_id: "{{ switch }}"
+        duration: "{{ duration }}"
+
+- alias: Check Rain Today
+  id: a9040111-cd2f-4dd4-9a6b-518bfa2e90e9
+  mode: restart
+  triggers:
+    - trigger: time
+      at: input_datetime.irrigation_program_start
+  variables:
+    trigger_time: >
+      {{ trigger.now.astimezone(utcnow().tzinfo).replace(second=0, microsecond=0).isoformat() }}
+  conditions:
   - condition: state
     entity_id: binary_sensor.rain_bird_controller_rainsensor
-    state: 'off'
-  action:
-  - service: rainbird.start_irrigation
+    state: 'on'
+  - condition: state
+    entity_id: binary_sensor.irrigation_season
+    state: 'on'
+  actions:
+  - action: script.set_last_irrigation
     data:
-      entity_id: "{{ switch }}"
-      duration: "{{ duration }}"
+      time: "{{ (trigger_time | as_datetime).time() }}"
+      date: "{{ (trigger_time | as_datetime).date() }}"
+      switches: "{{ integration_entities('rainbird') | select('match', '^switch.') | list }}"
+      reason: rain
+
 
 - alias: Valve Reminders
   id: 33596fc1-7dbf-4837-a589-953f2d5d072a

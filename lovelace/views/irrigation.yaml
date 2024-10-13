@@ -20,8 +20,7 @@ cards:
           action: none
         double_tap_action:
           action: none
-        content_info: name
-        name: Edit
+        content_info: None
         icon: mdi:pencil
         icon_color: primary
       - type: entity
@@ -38,15 +37,24 @@ cards:
         entity: sensor.irrigation_season_start
         icon_color: primary
         icon: mdi:calendar-start
+        name: Start
+        content_info: name
       - type: entity
         entity: sensor.irrigation_season_end
         icon: mdi:calendar-end
         icon_color: primary
+        name: End
+        content_info: name
+      - type: entity
+        entity: binary_sensor.rain_bird_controller_rainsensor
+        icon_color: primary
+        content_info: none
+        name: Rain
   - type: custom:auto-entities
     card_param: entities
     card:
       type: entities
-      title: Program
+      title: Area Schedules
     filter:
       template: >
          {% raw %}
@@ -86,7 +94,7 @@ cards:
              type='custom:layout-card',
              layout_type='custom:grid-layout',
              layout={
-               "grid-template-columns": "60% 40%",
+               "grid-template-columns": "50% 50%",
                "grid-template-rows": (["auto"] * entities | count) | join(' '),
                "grid-template-areas": ns.grids | join(' '),
              },
@@ -96,10 +104,9 @@ cards:
          {% endraw %}
 
   - type: custom:auto-entities
-    card_param: entities
+    card_param: cards
     card:
-      type: entities
-      title: Zones
+      type: vertical-stack
     filter:
       template: >
          {% raw %}
@@ -112,41 +119,72 @@ cards:
            {%- set status = 'switch.' ~ object_id ~ '_status' %}
            {%- set start = 'sensor.' ~ object_id ~ '_start' %}
            {%- set area_status = 'switch.' ~ e | area_id ~ '_status' %}
+           {%- set last_run = 'sensor.' ~ object_id ~ '_last_run' %}
+           {%- set state_template = "{{ 'Off' if is_state('" ~ status ~ "', 'off') or is_state('" ~ area_status ~ "', 'off') else 'On' }}" %}
            {%- set icon_template = "mdi:water{{ '-off' if is_state('" ~ status ~ "', 'off') or is_state('" ~ area_status ~ "', 'off') }}" %}
            {%- set icon_color_template = "{{ 'primary' if is_state('" ~ status ~ "', 'on') and is_state('" ~ area_status ~ "', 'on') }}" %}
-           {%- set secondary_template = "{% set sw = '" ~ e ~ "' %}{% set ts = '" ~ start ~ "' %}{% set st = '" ~ status ~ "' %}{% from 'easy_time.jinja' import speak_the_days %}{% set ast = 'switch.' ~ sw | area_id ~ '_status' %}{% if is_state(st, 'on') and is_state(ast, 'on') %}{{ speak_the_days(ts) | capitalize }} at {{ (states(ts) | as_datetime | as_local).strftime('%-I:%M %p') }}{% else %}Off{% endif %}" %}
-           {%- set ns.grids = ns.grids + [ '"' ~ 'display' ~ idx ~ ' control' ~ idx ~ '"' ] %}
-           {%- set ns.items = ns.items + [ dict(
-             type='custom:mushroom-template-card',
-             view_layout={'grid-area': 'display' ~ idx},
-             primary='Zone ' ~ idx,
-             secondary=secondary_template,
-             icon=icon_template,
-             icon_color=icon_color_template,
-             tap_action=dict(action='call-service',service='switch.toggle', target=dict(entity_id=status)),
-             card_mod=dict(style='ha-card { background: none; padding-left: 0px !important; margin: 0px !important;}')
-           ) ] %}
-           {%- set ns.items = ns.items + [ dict(
-             type='custom:mushroom-number-card',
-             view_layout={'grid-area': 'control' ~ idx},
-             primary_info='none',
-             secondary_info='none',
-             icon_type='none',
-             display_mode='buttons',
-             entity=number,
-             card_mod=dict(style='ha-card { background: none; padding-right: 0px !important; margin: 0px !important;}')
-           ) ] %}
+           {%- set next_run_template = "{% set sw = '" ~ e ~ "' %}{% set ts = '" ~ start ~ "' %}{% set du = '" ~ number ~ "' %}{% set st = '" ~ status ~ "' %}{% from 'easy_time.jinja' import speak_the_days %}{% set ast = 'switch.' ~ sw | area_id ~ '_status' %}{% if is_state(st, 'on') and is_state(ast, 'on') %}{{ speak_the_days(ts) | capitalize }} at {{ (states(ts) | as_datetime | as_local).strftime('%-I:%M %p') }} for {{ states(du) }} minutes{% else %}No Run Scheduled{% endif %}" %}
+           {%- set last_run_template = "{% set ts = '" ~ last_run ~ "' %}{% set r = state_attr(ts, 'by') %}{% from 'easy_time.jinja' import speak_the_days %}Last Watering - {{ speak_the_days(ts) | capitalize }} - {{ r | capitalize }}" %}
+           {%- set ns.grids = ns.grids + [ '"title{0} title{0}"'.format(idx) ] %}
+           {%- set ns.grids = ns.grids + [ '"display{0} control{0}"'.format(idx) ] %}
+           {%- set ns.grids = ns.grids + [ '"last_run{0} last_run{0}"'.format(idx) ] %}
+           {%- set cards = [
+            dict(
+              type='custom:mushroom-title-card',
+              view_layout={'grid-area': 'title' ~ idx},
+              title='Zone ' ~ idx ~ ' Schedule',
+              subtitle=last_run_template,
+              icon=icon_template,
+              icon_color=icon_color_template,
+              tap_action=dict(action='call-service',service='switch.toggle', target=dict(entity_id=status)),
+              card_mod=dict(style='ha-card { background: none; padding-left: 0px !important; margin: 0px !important;}')
+            ), dict(
+              type='custom:mushroom-template-card',
+              view_layout={'grid-area': 'display' ~ idx},
+              primary="Status",
+              secondary=state_template,
+              icon=icon_template,
+              icon_color=icon_color_template,
+              tap_action=dict(action='call-service',service='switch.toggle', target=dict(entity_id=status)),
+              card_mod=dict(style='ha-card { background: none; padding-left: 0px !important; margin: 0px !important;}')
+            ), dict(
+              type='custom:mushroom-number-card',
+              view_layout={'grid-area': 'control' ~ idx},
+              primary_info='none',
+              secondary_info='none',
+              icon_type='none',
+              display_mode='buttons',
+              entity=number,
+              card_mod=dict(style='ha-card { background: none; padding-right: 0px !important; margin: 0px !important;}')
+            ), dict(
+              entity=last_run,
+              type='custom:mushroom-template-card',
+              view_layout={'grid-area': 'last_run' ~ idx},
+              primary="Next Run",
+              secondary=next_run_template,
+              icon='mdi:timer-play',
+              icon_color=icon_color_template,
+              tap_action='more-info',
+              card_mod=dict(style='ha-card { background: none; padding-left: 0px !important; margin: 0px !important;}')
+            ) 
+           ] %}
+           {%- set ns.items = ns.items + [
+             dict(
+               type='entities',
+               entities=[
+                 dict(
+                   type='custom:layout-card',
+                   layout_type='custom:grid-layout',
+                   layout={
+                     "grid-template-columns": "40% 60%",
+                     "grid-template-rows": (["auto"] * cards | count) | join(' '),
+                     "grid-template-areas": ns.grids | join(' '),
+                   },
+                   cards=cards
+                 )
+               ]
+             )
+           ]%}
          {%- endfor %}
-         [{{ 
-           dict(
-             type='custom:layout-card',
-             layout_type='custom:grid-layout',
-             layout={
-               "grid-template-columns": "60% 40%",
-               "grid-template-rows": (["auto"] * entities | count) | join(' '),
-               "grid-template-areas": ns.grids | join(' '),
-             },
-             cards=ns.items
-           )
-         }}]
+         {{ ns.items }}
          {% endraw %}

@@ -51,7 +51,7 @@ irrigation_mqtt_discovery:
                     'command_topic': topic ~ 'state',
                     'command_template': "{{ value }}",
                     'min': 1,
-                    'max': 5,
+                    'max': 10,
                     'unit_of_measurement': 'days',
                     'device': device,
                     'retain': True,
@@ -92,13 +92,23 @@ irrigation_mqtt_discovery:
               - "{{ repeat.item.identifier }}"
               manufacturer: Petro
 
-        # Create Program Timestamp sensors
+        # Create Program Next Start Timestamp sensors
         - service: script.mqtt_automated_config
           data:
             name: Start
             domain: sensor
             object_id: "{{ object_id }}_start"
             unique_id: "{{ unique_id }}ts"
+            device_class: timestamp
+            device: "{{ device }}"
+
+        # Create Program Last Ran Timestamp sensors
+        - service: script.mqtt_automated_config
+          data:
+            name: Last Run
+            domain: sensor
+            object_id: "{{ object_id }}_last_run"
+            unique_id: "{{ unique_id }}lr"
             device_class: timestamp
             device: "{{ device }}"
 
@@ -147,10 +157,74 @@ irrigation_mqtt_discovery:
             } }}
 
 
-get_irrigation_program:
-  alias: Get Program Times
+get_next_irrigations:
+  alias: Get Next Irrigation
   mode: single
-  fields: &irrigation_fields
+  variables:
+    schedule: >
+      {%- set season_start = (states('sensor.irrigation_season_start') | as_datetime | as_local).date() | string %}
+      {%- set season_end = (states('sensor.irrigation_season_end') | as_datetime | as_local).date() | string %}
+      {%- set this_date = now().date() | string %}
+      {%- set ns = namespace(items=[], programs=[], next_runs=[]) %}
+      {%- set start = states('input_datetime.irrigation_program_start') %}
+      {%- for e in integration_entities('rainbird') | select('match', '^switch.') | sort %}
+        
+        {# program #}
+        {%- set program_area = e | area_id %}
+        {%- set program_cycle = states('number.{0}_day_cycle'.format(program_area)) | int %}
+        {%- set program_status = is_state('switch.{0}_status'.format(program_area), 'on') %}
+
+        {# zones #}
+        {%- set object_id = e.split('.')[-1] %}
+        {%- set zone_duration = states('number.{0}_program_duration'.format(object_id)) | int %}
+        {%- set zone_last_run = (states('sensor.{0}_last_run'.format(object_id)) | as_datetime | as_local).date() | string %}
+        {%- set zone_status = is_state('switch.{0}_status'.format(object_id), 'on') %}
+        {%- set zone_identifier = device_attr('sensor.{0}_start'.format(object_id), 'identifiers') | list | first | last %}
+
+        {# Add cycle days to last_run date, then attach the time of day if the switch is enabled. #}
+
+        {# Create a list of namespaces to increment minutes for each date #}
+        {%- set next_run_day = (zone_last_run | as_datetime + timedelta(days=program_cycle)).date() | string %}
+        {%- if next_run_day < this_date %}
+          {%- set next_run_day = this_date %}
+        {%- endif %}
+        
+        {%- set next_runs = ns.next_runs | selectattr('date', 'eq', next_run_day) | first | default(None) %}
+        {%- if next_runs is none %}
+          {%- set next_runs = namespace(date=next_run_day, minutes=0) %}
+          {%- set ns.next_runs = ns.next_runs + [next_runs] %}
+        {%- endif %}
+
+        {%- set next_runs.minutes = ns.items | selectattr('date', 'eq', next_run_day) | selectattr('program_status', 'eq', True) | selectattr('zone_status', 'eq', True) | map(attribute='zone_duration') | sum %}
+        {%- set next_run = (next_run_day ~ ' ' ~ start) | as_datetime | as_local %}
+
+        {%- set ns.items = ns.items + [
+          dict(
+            area_id=program_area,
+            object_id=object_id,
+            program_cycle=program_cycle,
+            program_status=program_status,
+            zone_duration=zone_duration,
+            zone_last_run=zone_last_run,
+            zone_next_run_id=zone_identifier | slugify | replace('_', '') ~ 'ts',
+            zone_next_run=(next_run + timedelta(minutes=next_runs.minutes)).isoformat(),
+            zone_status=zone_status,
+            date=next_run_day
+          )
+        ] %}
+      {%- endfor %}
+      {{- dict(
+          zones=ns.items | rejectattr('date', '<', season_start) | rejectattr('date', '>=', season_end) | list
+      ) -}}
+  sequence:
+  - stop: "Stop"
+    response_variable: schedule
+
+
+set_last_irrigation:
+  alias: Set Last Irrigation
+  mode: queued
+  fields: 
     time:
       description: Time when the irrigation will start.
       required: True
@@ -170,105 +244,40 @@ get_irrigation_program:
           filter:
           - integration: rainbird
             domain: switch
-  variables:
-    output: >
-      {%- set t = time | default("00:00:00") %}
-      {%- set d = date | default(today_at().date() | string) %}
-      {%- set dt = today_at(t) %}
-      {%- set ns = namespace(items=[], idx=0, duration=timedelta()) %}
-      {%- for e in switches %}
-        {%- set aid = area_id(e) %}
-        {%- set domain, object_id = e.split('.') %}
-        {%- set active = is_state('switch.' ~ aid ~ '_status', 'on') and is_state('switch.' ~ object_id ~ '_status', 'on') %}
-        {%- if active %}
-          {%- set ns.idx = ns.idx + 1 %}
-          {%- set duration = states('number.' ~ object_id ~ '_program_duration') | int %}
-          {%- set ns.items = ns.items + [dict(
-            entity_id='sensor.' ~ object_id ~ '_start',
-            datetime=((d ~ 'T' ~ (dt+ns.duration).time() | string) | as_datetime | as_local).isoformat(),
-          )] %}
-          {%- set ns.duration = ns.duration + timedelta(minutes=duration) %}
-        {%- endif %}
-      {%- endfor %}
-      {{- dict(zones=ns.items) }}
-  sequence:
-  - stop: "Stop"
-    response_variable: output
-
-
-get_irrigation_dates:
-  alias: Get Program Dates
-  mode: single
-  variables:
-    output: >
-      {%- set start = states('sensor.irrigation_season_start') | as_datetime | as_local %}
-      {%- set end = states('sensor.irrigation_season_end') | as_datetime | as_local %}
-      {%- set t = now().date() | string %}
-      {%- set ns = namespace(items=[]) %}
-      {%- for aid in integration_entities('rainbird') | select('match', '^switch.') | map('area_id') | unique %}
-        {%- set day_cycle = states('number.' ~ aid ~ '_day_cycle') | int %}
-        {%- set ns.current = [] %}
-        {%- for i in range(0, (end-start).days) %}
-          {%- if not i % day_cycle %}
-          {%- set ns.current = ns.current + [(start + timedelta(days=i)).date() | string] %}
-          {%- endif %}
-        {%- endfor %}
-        {%- set ns.items = ns.items + [ (aid, dict(dates=ns.current, next=ns.current|select('>=', t)|first)) ] %}
-      {%- endfor %}
-      {{ dict.from_keys(ns.items) }}
-  sequence:
-  - stop: "Stop"
-    response_variable: output
-
-
-get_next_irrigations:
-  alias: Get Next Irrigation
-  mode: single
-  sequence:
-  - service: script.get_irrigation_dates
-    response_variable: irrigation
-  - variables:
-      schedule: >
-        {%- set ns = namespace(items=[], ret=[]) %}
-        {%- for e in integration_entities('rainbird') | select('match', '^switch.') | sort %}
-          {%- set ns.items = ns.items + [
-            dict(date=irrigation[e | area_id].next, entity_id=e)
-          ] %}
-        {%- endfor %}
-        {%- for date, items in ns.items | groupby(attribute='date') %}
-          {%- set ns.ret = ns.ret + [dict(date=date, entity_id=items | map(attribute='entity_id') | list)] %}
-        {%- endfor %}
-        {{ dict(irrigations=ns.ret) }}
-  - stop: "Stop"
-    response_variable: schedule
-
-
-set_next_irrigation:
-  alias: Set Next Irrigation
-  mode: queued
-  fields: 
-    <<: *irrigation_fields
+    reason:
+      description: Did it rain or did we water?
+      required: True
+      selector:
+        select:
+          options:
+          - label: Rain
+            value: rain
+          - label: Irrigation
+            value: irrigation
   variables:
     sprinklers: >
       {# maps timestamp entity_id to the unique_id created in script.irrigation_mqtt_discovery #}
+      {% set t = (date ~ ' ' ~ time) | as_datetime | as_local %}
       {%- set ns = namespace(items=[]) %}
-      {%- for e in integration_entities('rainbird') | select('match', '^switch.') %}
+      {%- for e in switches %}
         {%- set identifier = device_attr(e, 'identifiers') | list | first | last %}
-        {%- set ns.items = ns.items + [ (e | replace('switch', 'sensor') ~ '_start', identifier | slugify | replace('_', '') ~ 'ts') ] %}
+        {%- set object_id = e.split('.') | last %}
+        {%- set minutes = ns.items | map(attribute='duration') | sum %}
+        {%- set data = dict(
+          id=identifier | slugify | replace('_', '') ~ 'lr',
+          duration=states('number.{0}_program_duration'.format(object_id)) | float(0),
+          datetime=(t + timedelta(minutes=minutes)).isoformat(),
+        ) -%}
+        {%- set ns.items = ns.items + [ data ] %}
       {%- endfor %}
-      {{- dict.from_keys(ns.items) }}
+      {{- ns.items }}
   sequence:
-  - service: script.get_irrigation_program
-    data:
-      time: "{{ time }}"
-      date: "{{ date }}"
-      switches: "{{ switches }}"
-    response_variable: zones
   - repeat:
-      for_each: "{{ zones.zones }}"
+      for_each: "{{ sprinklers }}"
       sequence:
       - service: script.mqtt_automated_states
         data:
           domain: sensor
-          unique_id: "{{ sprinklers[repeat.item.entity_id] }}"
+          unique_id: "{{ repeat.item.id }}"
           state: "{{ repeat.item.datetime }}"
+          attributes: "{{ dict(by=reason) }}"
