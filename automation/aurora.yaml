@@ -1,0 +1,18 @@
+
+
+- alias: Notify Aurora
+  id: 1d19d3a4-4ce1-433e-b27a-bc5fa8364153
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.aurora_visibility_visibility_alert
+      from: 'off'
+      to: 'on'
+  conditions:
+    - condition: numeric_state
+      entity_id: sensor.aurora_visibility_visibility
+      above: 0
+  actions:
+    - service: script.notify
+      data:
+        title: Snapshot Status
+        message: "There's a {{ states('sensor.aurora_visibility_visibility') }}% chance that Aurora Borealis may be visible."
