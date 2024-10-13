@@ -248,8 +248,6 @@
       'sensor.server_room_switch_uptime',
       'sensor.server_room_switch_temperature',
       'device_tracker.server_room_16_port_poe_switch',
-      'sensor.bonus_server_room_temperature',
-      'sensor.bonus_server_room_humidity',
     ],
   },{
     'name': 'Bonus Room Switch',
@@ -258,6 +256,8 @@
     'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
     'dashboard': dashboard, 
     'entities': [
+      'sensor.bonus_server_room_temperature',
+      'sensor.bonus_server_room_humidity',
       'sensor.bonus_room_switch_uptime',
       'sensor.bonus_room_switch_temperature',
       'device_tracker.bonus_room_16_port_poe_switch',
