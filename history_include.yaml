@@ -159,8 +159,8 @@ entities:
   - sensor.rain_bird_controller_raindelay
 
   - sensor.apollo_air_1_1ecac0_co2
-  - sensor.apollo_air_1_1ecac0_sen55_humidity
-  - sensor.apollo_air_1_1ecac0_sen55_temperature
+  - sensor.apollo_air_1_1ecac0_humidity
+  - sensor.apollo_air_1_1ecac0_temperature
 
 domains:
   - light
