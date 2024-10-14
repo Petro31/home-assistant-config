@@ -54,7 +54,6 @@ cards:
     card_param: entities
     card:
       type: entities
-      title: Area Schedules
     filter:
       template: >
          {% raw %}
@@ -65,14 +64,23 @@ cards:
            {%- set status = 'switch.' ~ a ~ '_status' %}
            {%- set number = 'number.' ~ a ~ '_day_cycle' %}
            {%- set icon_template = "mdi:water{{ '-off' if is_state('" ~ status ~ "', 'off') }}" %}
+           {%- set state_template = "{{ 'Off' if is_state('" ~ status ~ "', 'off') else 'On' }}" %}
            {%- set icon_color_template = "{{ 'primary' if is_state('" ~ status ~ "', 'on') }}" %}
            {%- set secondary_template = "{% set sw = '" ~ status ~ "' %}{% set nu = '" ~ number ~ "' %}{% set cnt = states(nu) | int(0) %}{% if is_state(sw, 'on') %}Every {{ cnt }} day{{ 's' if cnt > 1 or cnt == 0 }}{% else %}Off{% endif %}" %}
+           {%- set ns.grids = ns.grids + [ '"' ~ 'title' ~ idx ~ ' title' ~ idx ~ '"' ] %}
            {%- set ns.grids = ns.grids + [ '"' ~ 'display' ~ idx ~ ' control' ~ idx ~ '"' ] %}
+           {%- set ns.items = ns.items + [ dict(
+              type='custom:mushroom-title-card',
+              view_layout={'grid-area': 'title' ~ idx},
+              title=area_name(a) ~ ' Schedule',
+              subtitle="Water " ~ area_name(a) | lower ~ " " ~ secondary_template | lower,
+              card_mod=dict(style='ha-card { background: none; padding-left: 0px !important; padding-top: 0px !important; margin: 0px !important;}')
+           ) ] %}
            {%- set ns.items = ns.items + [ dict(
              type='custom:mushroom-template-card',
              view_layout={'grid-area': 'display' ~ idx},
-             primary=area_name(a),
-             secondary=secondary_template,
+             primary="Status",
+             secondary=state_template,
              icon=icon_template,
              icon_color=icon_color_template,
              tap_action=dict(action='call-service',service='switch.toggle', target=dict(entity_id=status)),
@@ -94,7 +102,7 @@ cards:
              type='custom:layout-card',
              layout_type='custom:grid-layout',
              layout={
-               "grid-template-columns": "50% 50%",
+               "grid-template-columns": "40% 60%",
                "grid-template-rows": (["auto"] * entities | count) | join(' '),
                "grid-template-areas": ns.grids | join(' '),
              },
@@ -137,7 +145,7 @@ cards:
               icon=icon_template,
               icon_color=icon_color_template,
               tap_action=dict(action='call-service',service='switch.toggle', target=dict(entity_id=status)),
-              card_mod=dict(style='ha-card { background: none; padding-left: 0px !important; margin: 0px !important;}')
+              card_mod=dict(style='ha-card { background: none; padding-left: 0px !important; padding-top: 0px !important; margin: 0px !important;}')
             ), dict(
               type='custom:mushroom-template-card',
               view_layout={'grid-area': 'display' ~ idx},
@@ -171,6 +179,7 @@ cards:
            {%- set ns.items = ns.items + [
              dict(
                type='entities',
+               card_mod=dict(style='ha-card { padding: 0px !important; margin: 0px !important;}'),
                entities=[
                  dict(
                    type='custom:layout-card',
@@ -180,7 +189,8 @@ cards:
                      "grid-template-rows": (["auto"] * cards | count) | join(' '),
                      "grid-template-areas": ns.grids | join(' '),
                    },
-                   cards=cards
+                   cards=cards,
+                   card_mod=dict(style='ha-card { margin: 0px !important;}'),
                  )
                ]
              )
