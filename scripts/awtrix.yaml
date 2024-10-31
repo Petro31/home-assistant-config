@@ -1,0 +1,95 @@
+awtrix_announce:
+  alias: AWTRIX Announce
+  mode: single
+  fields:
+    repeat:
+      description: The number of times you wish to repeat the message.
+      example: 1
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 10
+      
+    text:
+      description: Message to be sent/annouced.
+      example: "Hello"
+      required: true
+      selector:
+        text:
+          type: text
+    effect: &quick_effect_field
+      description: The desired effect
+      example: rainbow-character
+      required: true
+      default: solid
+      selector:
+        select:
+          options:
+          - label: Solid
+            value: solid
+          - label: "Rainbow Words"
+            value: "rainbow-words"
+          - label: "Rainbow Characters"
+            value: "rainbow-characters"
+    color:
+      description: The desired color (Solid only)
+      example: rainbow-character
+      default: solid
+      selector:
+        select:
+          options: &colors
+          - label: Red
+            value: "e81416"
+          - label: Orange
+            value: "ffa500"
+          - label: Yellow
+            value: "faeb36"
+          - label: Green
+            value: "79c314"
+          - label: Blue
+            value: "487de7"
+          - label: Indigo
+            value: "4b369d"
+          - label: Violet
+            value: "70369d"
+  variables:
+    colors: *colors
+    _repeat: >
+      {{ repeat | default(1) }}
+    _color: >
+      {% if color is defined %}
+        {% set chosen = colors | selectattr('label', 'eq', color) | map(attribute='value') | first | default %}
+        {{ chosen if chosen else color }}
+      {% else %}
+        {{ colors | selectattr('label', 'eq', 'Red') | map(attribute='value') | first }}
+      {% endif %}
+    sequence: >
+      {% set _colors = colors | map(attribute='value') | list %}
+      {% set ns = namespace(text=[], cnt=0) %}
+      {% if effect == 'rainbow-characters' %}
+        {% for char in text %}
+          {% if char == ' ' %}
+            {% set c = _colors[0] %}
+          {% else %}
+            {% set c = _colors[ns.cnt % _colors | length] %}
+            {% set ns.cnt = ns.cnt + 1 %}
+          {% endif %}
+          {% set ns.text = ns.text + [{'t':char, 'c': c}] %}
+        {% endfor %}
+      {% elif effect == 'rainbow-words' %}
+        {% for word in text.split(' ') %}
+          {% set c = _colors[ns.cnt % _colors | length] %}
+          {% set ns.cnt = ns.cnt + 1 %}
+          {% set ns.text = ns.text + [{'t':word, 'c': c}] %}
+        {% endfor %}
+      {% else %}
+        {% set ns.text = ns.text + [{'t':text, 'c': _color}] %}
+      {% endif %}
+      {{ {'text': ns.text, 'repeat': _repeat} }}
+      
+  sequence:
+  - action: mqtt.publish
+    data:
+      topic: awtrix_bb2ff0/custom/petro
+      payload: "{{ sequence | to_json }}"
