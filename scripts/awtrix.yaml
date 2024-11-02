@@ -32,6 +32,12 @@ awtrix_announce:
             value: "rainbow-words"
           - label: "Rainbow Characters"
             value: "rainbow-characters"
+    colors:
+      description: A set of colors to apply, in order.
+      example: "['e81416', 'ffa500']"
+      default:
+      selector:
+        object:
     color:
       description: The desired color (Solid only)
       example: rainbow-character
@@ -53,19 +59,56 @@ awtrix_announce:
             value: "4b369d"
           - label: Violet
             value: "70369d"
+    app:
+      description: Notify the device or create an app
+      example: true
+      default:
+      selector:
+        text: 
+    topic_root:
+      description: Notify the device or create an app
+      example: true
+      default: awtrix_bb2ff0
+      selector:
+        text: 
   variables:
-    colors: *colors
+    root: "{{ topic_root | default('awtrix_bb2ff0') }}"
+    topic: >
+      {{ root }}/{{ 'notify' if app is not defined else ('custom/' ~ app) }}
+    _colors_config: *colors
+    supplied_colors: >
+      {% set color_names = _colors_config | map(attribute='label') | list %}
+      {% if colors is defined and colors is list and colors | count > 0 %}
+        {% set ns = namespace(colors=[]) %}
+        {% for c in colors %}
+          {% set color_name = c.title() %}
+          {% if color_name in color_names %}
+            {% set ns.colors = ns.colors + [ (_colors_config | selectattr('label', 'eq', color_name) | first).value ] %}
+          {% elif c | regex_match('([0-9a-fA-F]{6})') %}
+            {% set ns.colors = ns.colors + [ c ] %}
+          {% endif %}
+        {% endfor %}
+        {{ ns.colors }}
+      {% else %}
+        {{ _colors_config | map(attribute='value') | list }}
+      {% endif %}
     _repeat: >
       {{ repeat | default(1) }}
     _color: >
       {% if color is defined %}
-        {% set chosen = colors | selectattr('label', 'eq', color) | map(attribute='value') | first | default %}
-        {{ chosen if chosen else color }}
+        {% set chosen = _colors_config | selectattr('label', 'eq', color.title()) | map(attribute='value') | first | default(None) %}
+        {% if chosen is not none %}
+          {{ chosen }}
+        {% elif color | regex_match('([0-9a-fA-F]{6})') %}
+          {{ color }}
+        {% else %}
+          {{ supplied_colors[0] }}
+        {% endif %}
       {% else %}
-        {{ colors | selectattr('label', 'eq', 'Red') | map(attribute='value') | first }}
+        {{ supplied_colors[0] }}
       {% endif %}
     sequence: >
-      {% set _colors = colors | map(attribute='value') | list %}
+      {% set _colors = supplied_colors %}
       {% set ns = namespace(text=[], cnt=0) %}
       {% if effect == 'rainbow-characters' %}
         {% for char in text %}
@@ -91,5 +134,5 @@ awtrix_announce:
   sequence:
   - action: mqtt.publish
     data:
-      topic: awtrix_bb2ff0/custom/petro
+      topic: "{{ topic }}"
       payload: "{{ sequence | to_json }}"
