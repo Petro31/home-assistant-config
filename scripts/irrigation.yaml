@@ -160,62 +160,88 @@ irrigation_mqtt_discovery:
 get_next_irrigations:
   alias: Get Next Irrigation
   mode: single
+  trace:
+    stored_traces: 15
   variables:
-    schedule: >
-      {%- set season_start = (states('sensor.irrigation_season_start') | as_datetime | as_local).date() | string %}
-      {%- set season_end = (states('sensor.irrigation_season_end') | as_datetime | as_local).date() | string %}
-      {%- set this_date = now().date() | string %}
-      {%- set ns = namespace(items=[], programs=[], next_runs=[]) %}
-      {%- set start = states('input_datetime.irrigation_program_start') %}
-      {%- for e in integration_entities('rainbird') | select('match', '^switch.') | sort %}
-        
-        {# program #}
-        {%- set program_area = e | area_id %}
-        {%- set program_cycle = states('number.{0}_day_cycle'.format(program_area)) | int %}
-        {%- set program_status = is_state('switch.{0}_status'.format(program_area), 'on') %}
-
-        {# zones #}
+    targets: >
+      {#- Generate a list of targets for the schedule #}
+      {%- set ns = namespace(items=[]) %}
+      {%- set entities = integration_entities('rainbird') | select('match', '^switch.') | sort %}
+      {%- for e in entities %}
         {%- set object_id = e.split('.')[-1] %}
-        {%- set zone_duration = states('number.{0}_program_duration'.format(object_id)) | int %}
-        {%- set zone_last_run = (states('sensor.{0}_last_run'.format(object_id)) | as_datetime | as_local).date() | string %}
-        {%- set zone_status = is_state('switch.{0}_status'.format(object_id), 'on') %}
-        {%- set zone_identifier = device_attr('sensor.{0}_start'.format(object_id), 'identifiers') | list | first | last %}
-
-        {# Add cycle days to last_run date, then attach the time of day if the switch is enabled. #}
-
-        {# Create a list of namespaces to increment minutes for each date #}
-        {%- set next_run_day = (zone_last_run | as_datetime + timedelta(days=program_cycle)).date() | string %}
-        {%- if next_run_day < this_date %}
-          {%- set next_run_day = this_date %}
+        {%- if states('sensor.{0}_last_run'.format(object_id)) | as_datetime(None) is not none %}
+          {%- set ns.items = ns.items + [e] %}
         {%- endif %}
-        
-        {%- set next_runs = ns.next_runs | selectattr('date', 'eq', next_run_day) | first | default(None) %}
-        {%- if next_runs is none %}
-          {%- set next_runs = namespace(date=next_run_day, minutes=0) %}
-          {%- set ns.next_runs = ns.next_runs + [next_runs] %}
-        {%- endif %}
-
-        {%- set next_runs.minutes = ns.items | selectattr('date', 'eq', next_run_day) | selectattr('program_status', 'eq', True) | selectattr('zone_status', 'eq', True) | map(attribute='zone_duration') | sum %}
-        {%- set next_run = (next_run_day ~ ' ' ~ start) | as_datetime | as_local %}
-
-        {%- set ns.items = ns.items + [
-          dict(
-            area_id=program_area,
-            object_id=object_id,
-            program_cycle=program_cycle,
-            program_status=program_status,
-            zone_duration=zone_duration,
-            zone_last_run=zone_last_run,
-            zone_next_run_id=zone_identifier | slugify | replace('_', '') ~ 'ts',
-            zone_next_run=(next_run + timedelta(minutes=next_runs.minutes)).isoformat(),
-            zone_status=zone_status,
-            date=next_run_day
-          )
-        ] %}
       {%- endfor %}
-      {{- dict(
-          zones=ns.items | rejectattr('date', '<', season_start) | rejectattr('date', '>=', season_end) | list
-      ) -}}
+      {#- if they are all available, output them all.  Otherwise output nothing. #}
+      {#- This was done because at startup, we would execute this many times when each switch from MQTT would go from unavailable to available. #}
+      {%- if entities | count == ns.items | count %}
+        {{ ns.items }}
+      {%- else %}
+        {{ [] }}
+      {%- endif %}
+
+    schedule: >
+      {%- set season_start = states('sensor.irrigation_season_start') | as_datetime(None) %}
+      {%- set end_entity = states('sensor.irrigation_season_end') | as_datetime(None) %}
+      {%- if targets and start_entity is not none and end_entity is not none %}
+        {%- set season_start = (season_start | as_local).date() | string %}
+        {%- set season_end = (end_entity | as_local).date() | string %}
+        {%- set this_date = now().date() | string %}
+        {%- set ns = namespace(items=[], programs=[], next_runs=[]) %}
+        {%- set start = states('input_datetime.irrigation_program_start') %}
+        {%- for e in targets %}
+
+          {# program #}
+          {%- set program_area = e | area_id %}
+          {%- set program_cycle = states('number.{0}_day_cycle'.format(program_area)) | int %}
+          {%- set program_status = is_state('switch.{0}_status'.format(program_area), 'on') %}
+
+          {# zones #}
+          {%- set object_id = e.split('.')[-1] %}
+          {%- set zone_duration = states('number.{0}_program_duration'.format(object_id)) | int %}
+          {%- set zone_last_run = (states('sensor.{0}_last_run'.format(object_id)) | as_datetime | as_local).date() | string %}
+          {%- set zone_status = is_state('switch.{0}_status'.format(object_id), 'on') %}
+          {%- set zone_identifier = device_attr('sensor.{0}_start'.format(object_id), 'identifiers') | list | first | last %}
+
+          {# Add cycle days to last_run date, then attach the time of day if the switch is enabled. #}
+
+          {# Create a list of namespaces to increment minutes for each date #}
+          {%- set next_run_day = (zone_last_run | as_datetime + timedelta(days=program_cycle)).date() | string %}
+          {%- if next_run_day < this_date %}
+            {%- set next_run_day = this_date %}
+          {%- endif %}
+          
+          {%- set next_runs = ns.next_runs | selectattr('date', 'eq', next_run_day) | first | default(None) %}
+          {%- if next_runs is none %}
+            {%- set next_runs = namespace(date=next_run_day, minutes=0) %}
+            {%- set ns.next_runs = ns.next_runs + [next_runs] %}
+          {%- endif %}
+
+          {%- set next_runs.minutes = ns.items | selectattr('date', 'eq', next_run_day) | selectattr('program_status', 'eq', True) | selectattr('zone_status', 'eq', True) | map(attribute='zone_duration') | sum %}
+          {%- set next_run = (next_run_day ~ ' ' ~ start) | as_datetime | as_local %}
+
+          {%- set ns.items = ns.items + [
+            dict(
+              area_id=program_area,
+              object_id=object_id,
+              program_cycle=program_cycle,
+              program_status=program_status,
+              zone_duration=zone_duration,
+              zone_last_run=zone_last_run,
+              zone_next_run_id=zone_identifier | slugify | replace('_', '') ~ 'ts',
+              zone_next_run=(next_run + timedelta(minutes=next_runs.minutes)).isoformat(),
+              zone_status=zone_status,
+              date=next_run_day
+            )
+          ] %}
+        {%- endfor %}
+        {{- dict(
+            zones=ns.items | rejectattr('date', '<', season_start) | rejectattr('date', '>=', season_end) | list
+        ) -}}
+      {%- else %}
+        {{ dict(zones=[]) }}
+      {%- endif %}
   sequence:
   - stop: "Stop"
     response_variable: schedule
