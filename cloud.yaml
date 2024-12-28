@@ -115,6 +115,8 @@ alexa:
     - switch.master_bathroom_fan
     - switch.master_nightstand_left
     - switch.master_nightstand_right
+    - switch.master_door_outlet
+    - switch.master_wall_outlet
     - switch.movie_time
     - switch.netflix
     - switch.outside_porch
@@ -347,6 +349,10 @@ alexa:
       name: Mikes Nightstand
     switch.master_nightstand_right:
       name: Lindsays Nightstand
+    switch.master_door_outlet:
+      name: Mikes Dresser
+    switch.master_wall_outlet:
+      name: Lindsays Dresser
     switch.movie_time:
       name: Movie
     switch.netflix:

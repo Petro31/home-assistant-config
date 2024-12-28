@@ -401,6 +401,8 @@
       'light.master_fixture',
       'switch.master_nightstand_left',
       'switch.master_nightstand_right',
+      'switch.master_door_outlet',
+      'switch.master_wall_outlet',
       'sensor.master_bedroom_temperature',
       'sensor.master_bedroom_humidity',
     ],
