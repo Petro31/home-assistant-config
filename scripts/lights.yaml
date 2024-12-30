@@ -61,6 +61,10 @@ get_light_endpoints:
       {#- Convert 0-99 to 0-100 #}
       {%- set brightness_pct = (zwave_pct / 99 * 100) | round | int %}
       {{- brightness_pct }}
+    brightness_pot: >
+      {#- Convert 0-99 to 0-255 #}
+      {%- set brightness_pct = (zwave_pct / 99 * 255) | round | int %}
+      {{- brightness_pct }}
     value: >
       {#- 0 == False, anything > 0 == True #}
       {%- set value = zwave_pct > 0 %}
@@ -123,9 +127,31 @@ get_light_endpoints:
             if epname == 'endpoint_0' else
             label_entities(epname) | select('match', '^({0}).'.format(domain)) | list
           ) -%}
-          {%- set sub.non_zwave = sub.non_zwave + in_area | select('match', '^({0}).'.format(domain)) | reject('in', zwave_integration) | select('is_state', targeted_state) | list %}
+          {%- set non_zwave_targets = sub.non_zwave + in_area | select('match', '^({0}).'.format(domain)) | reject('in', zwave_integration) | list %}
           {#- Filter down to entities that are selected by the areas #}
-          {%- set zwave_entities = entities | select('in', in_area) | select('is_state', targeted_state) | list %}
+          {%- set zwave_targets = entities | select('in', in_area) | list %}
+          {# if we are on lights, we need to check the brightness for targeted states #}
+          {%- if domain == 'light' and targeted_state == 'off' %}
+            {# Check non-zwave entities for matching brightness #}
+            {%- set target_check = non_zwave_targets | reject('is_state_attr', 'brightness', brightness_pot) | list %}
+            {%- if target_check | count > 0 %}
+              {%- set sub.non_zwave = target_check %}
+            {%- else %}
+              {%- set sub.non_zwave = non_zwave_targets | select('is_state', targeted_state) | list %}
+            {%- endif %}
+
+            {# Check zwave entities for matching brightness #}
+            {%- set target_check = zwave_targets | reject('is_state_attr', 'brightness', brightness_pot) | list %}
+            {%- if target_check | count > 0 %}
+              {%- set zwave_entities = target_check %}
+            {%- else %}
+              {%- set zwave_entities = zwave_targets | select('is_state', targeted_state) | list %}
+            {%- endif %}
+          {%- else %}
+            {%- set sub.non_zwave = non_zwave_targets | select('is_state', targeted_state) | list %}
+            {#- Filter down to entities that are selected by the areas #}
+            {%- set zwave_entities = zwave_targets | select('is_state', targeted_state) | list %}
+          {%- endif %}
           {%- set data = dict.from_keys(attributes + eps) %}
           {%- set sub.items = sub.items + [(epname, dict(data=data, entities=zwave_entities))] %}
         {%- endfor %}
