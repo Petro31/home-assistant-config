@@ -1,0 +1,134 @@
+set_run_schedule:
+  alias: Set a run schedule on a todo list
+  mode: single
+  fields:
+    program:
+      required: True
+      description: Run program name or id.
+      selector:
+        text:
+          type: text
+
+    week:
+      required: True
+      description: The week number in the schedule
+      selector:
+        number:
+          min: 1
+          max: 10
+
+    weekly_todo:
+      required: True
+      description: The Todo List
+      selector:
+        entity:
+          domain: todo
+
+    daily_todo:
+      required: True
+      description: The Todo List
+      selector:
+        entity:
+          domain: todo
+
+    max_heart_rate:
+      required: True
+      description: Your max heart rate.
+      selector:
+        number:
+          min: 100
+          max: 250
+
+  variables:
+    heart_rates: >
+      {%- set ns = namespace(items=[]) %}
+      {%- for i in range(20, 101, 5) %}
+        {%- set ns.items = ns.items + [('hr{0}'.format(i), (max_heart_rate * i / 100) | int) ] %}
+      {%- endfor %}
+      {{- dict.from_keys(ns.items) }}
+    this_week: >
+      {%- from 'easy_time.jinja' import big_time_between %}
+      {%- set programs = state_attr('sensor.running_programs', 'programs') %}
+      {%- set _program = programs | selectattr('name', 'eq', program) | first | default(None) or programs | selectattr('id', 'in', program) | first | default(None) %}
+      {%- set ns = namespace(items=[], total=timedelta(0)) %}
+      {%- set t = today_at() - timedelta(days=now().weekday()) %}
+      {%- if program %}
+        {%- for day, value in _program.weeks[week - 1].items() %}
+          {%- set item = day | title ~ ' Run' %}
+          {%- set dt = (t + timedelta(days=loop.index - 1) + timedelta(hours=18)).isoformat() %}
+          {%- if value is not none %}
+            {%- set duration = value.duration | default('00:00:00') %}
+            {%- if value.count is defined and duration.count(":") == 1 %}
+              {%- set duration = "00:" + duration %}
+            {%- elif duration.count(":") == 1 %}
+              {%- set duration = duration ~ ":00" %}
+            {%- endif %}
+            {%- set ns.total = ns.total + duration | as_timedelta %}
+            {%- set duration = big_time_between(today_at(), today_at() + duration | as_timedelta) %}
+            {%- set description = value.key.format(**heart_rates) %}
+            {%- if value.count is defined %}
+              {%- if 'hill' in description %}
+                {%- set duration = ' Hills' %}
+              {%- elif 'repeat' in description %}
+                {%- set duration = ' Repeats' %}
+              {%- elif 'intervals' in description %}
+                {%- set duration = ' Intervals' %}
+              {%- else %}
+                {%- set duration = 'x ' ~ duration %}
+              {%- endif %}
+              {% set description = value.count ~ duration ~ ' - ' ~ description.strip() %}
+            {%- else %}
+              {%- set duration = duration if duration != 'now' else 'Intervals' %}
+              {%- set description = duration ~ ' - ' ~ description.strip() %}
+            {%- endif %}
+            {% set ns.items = ns.items + [dict(item=item, description=description, due_datetime=dt)] %}
+          {% else %}
+            {% set ns.items = ns.items + [dict(item=item, description='Rest.', due_datetime=dt)] %}
+          {% endif %}
+        {%- endfor %}
+      {%- endif %}
+      {%- set dt = (t + timedelta(days=6) + timedelta(hours=18)).isoformat() %}
+      {{ [dict(item='Run Program', description=_program.name ~ " Week " ~ week, due_datetime=dt)] + ns.items }}
+
+    today: >
+      {%- set today = this_week[1:] | selectattr('due_datetime', '>=', today_at().isoformat()) | first | default(None) %}
+      {% if today is not none %}
+        {{ dict(item="Run", description=today.description, due_datetime=today.due_datetime) }}
+      {% else %}None{% endif %}
+  sequence:
+
+  # Update weekly
+  - if: "{{ weekly_todo is defined and this_week | count > 0 }}"
+    then:
+    - action: todo.get_items
+      <<: &weekly
+        target: 
+          entity_id: "{{ weekly_todo }}"
+      response_variable: weekly
+
+    - variables:
+        current: "{{ weekly.get(weekly_todo, {}).get('items', []) | map(attribute='summary') | list }}"
+
+    - repeat:
+        for_each: "{{ this_week }}"
+        sequence:
+        - variables:
+            action: todo.{{ 'update_item' if repeat.item.item in current else 'add_item' }}
+        - action: "{{ action }}"
+          <<: *weekly
+          data: "{{ repeat.item }}"
+
+  # Update daily
+  - if: "{{ daily_todo is defined and today is not none }}"
+    then:
+    - action: todo.get_items
+      <<: &daily
+        target: 
+          entity_id: "{{ daily_todo }}"
+      response_variable: daily
+    - variables:
+        current: "{{ daily.get(daily_todo, {}).get('items', []) | map(attribute='summary') | list }}"
+        action: todo.{{ 'update_item' if today.item in current else 'add_item' }}
+    - action: "{{ action }}"
+      <<: *daily
+      data: "{{ today }}"

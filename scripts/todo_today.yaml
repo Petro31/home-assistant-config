@@ -1,0 +1,68 @@
+set_mikes_daily_list:
+  alias: Set Mikes Daily Todo List
+  mode: single
+  fields:
+    date:
+      description: Choose a day, omit to use today.
+      selector:
+        date:
+  variables:
+    _date: "{{ date | default(today_at().date() | string) }}"
+    start: "{{ (_date | as_datetime).isoformat() }}"
+    daily_todo: todo.mike_today
+    calendars:
+      calendar.dinner_club_2_0: Dinner Club
+      calendar.hvac: Change Filters
+      calendar.mosby: Mosby
+      calendar.waste_management: Waste Management
+      calendar.holidays_in_united_states: Holiday
+
+  sequence:
+  - action: calendar.get_events
+    data:
+      start_date_time: "{{ start }}"
+      duration:
+        hours: 24
+    target:
+      entity_id: "{{ calendars.keys() | list }}"
+    response_variable: events
+
+  - action: todo.get_items
+    <<: &daily
+      target: 
+        entity_id: "{{ daily_todo }}"
+    response_variable: daily
+
+  - variables:
+      current: "{{ daily.get(daily_todo, {}).get('items', []) | map(attribute='summary') | list }}"
+      todo: >
+        {%- set ns = namespace(items=[]) %}
+        {%- for entity, name in calendars.items() %}
+          {%- set event = events.get(entity, {}).get('events',[]) | first | default({}) %}
+          {%- set ns.items = ns.items + [dict(item=name, description=event.summary | default(None))] %}
+        {%- endfor %}
+        {{- ns.items }}
+
+  - condition: "{{ todo | count > 0 }}"
+  - repeat:
+      for_each: "{{ todo }}"
+      sequence:
+      - choose:
+        - conditions: "{{ repeat.item.description is none and repeat.item.item in current }}"
+          sequence:
+          - action: todo.remove_item
+            <<: *daily
+            data:
+              item: "{{ repeat.item.item }}"
+
+        - conditions: "{{ repeat.item.description is not none and repeat.item.item in current }}"
+          sequence:
+          - action: todo.update_item
+            <<: *daily
+            data: "{{ repeat.item }}"
+
+        - conditions: "{{ repeat.item.description is not none and repeat.item.item not in current }}"
+          sequence:
+          - action: todo.add_item
+            <<: *daily
+            data: "{{ repeat.item }}"

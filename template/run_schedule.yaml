@@ -1,0 +1,225 @@
+- trigger:
+  - trigger: homeassistant
+    event: start
+  - platform: event
+    event_type: event_template_reloaded
+  action:
+  - variables:
+      programs:
+      - name: Level 3 Half Marathon
+        id: 718485f4-3031-46a3-bce5-990189a6e06c
+        weeks:
+        # Week 1
+        - monday:
+            duration: "00:25"
+            key: &A >
+              Easy effort at {hr65}-{hr70} heart rate.
+          tuesday: ~
+          wednesday:
+            duration: "00:40"
+            key: *A
+          thursday:
+            duration: "00:30"
+            key: *A
+          friday: ~
+          saturday:
+            duration: "00:35"
+            key: *A
+          sunday:
+            duration: "01:00"
+            key: &B >
+              Long run at {hr60}-{hr75} heart rate.
+        # Week 2
+        - monday: ~
+          tuesday: 
+            duration: "00:35"
+            key: *A
+          wednesday:
+            duration: "00:40"
+            key: &C >
+              Moderate effort, steady pace at {hr75}-{hr80} heart rate.
+          thursday: ~
+          friday: 
+            duration: "00:20"
+            key: &E >
+              Moderate effort, tempo running at anaerobic threshold (AT), {hr80}-{hr85} heart rate.
+          saturday:
+            duration: "01:00"
+            key: *A
+          sunday:
+            duration: "01:45"
+            key: *B
+        # Week 3
+        - monday: ~
+          tuesday:
+            count: 8
+            duration: "00:01:45"
+            key: &K >
+              Very fast-effort intervals at {hr90}-{hr95} heart rate with recovery job until heart rate drops below {hr60}.
+          wednesday:
+            duration: "00:40"
+            key: *A
+          thursday:
+            count: 4
+            key: &H >
+              Fast uphill effort at {hr85}-{hr90} heart rate.
+          friday: 
+            duration: "01:00"
+            key: *A
+          saturday: ~
+          sunday:
+            duration: "01:30"
+            key: *B
+        # Week 4
+        - monday: 
+            duration: "00:35"
+            key: *C
+          tuesday:
+            duration: "00:30"
+            key: *A
+          wednesday:
+            duration: "00:45"
+            key: *A
+          thursday: ~
+          friday: 
+            duration: "00:40"
+            key: *C
+          saturday: 
+            duration: "00:20"
+            key: &F >
+              Very easy effort at {hr60}-{hr65} heart rate.
+          sunday:
+            duration: "02:10"
+            key: *B
+        # Week 5
+        - monday: ~
+          tuesday:
+            count: 10
+            duration: "00:01:45"
+            key: *K
+          wednesday:
+            duration: "00:55"
+            key: *A
+          thursday: ~
+          friday: 
+            count: 6
+            key: *H
+          saturday: 
+            duration: "00:40"
+            key: *A
+          sunday:
+            duration: "01:40"
+            key: *B
+        # Week 6
+        - monday: 
+            duration: "00:30"
+            key: *A
+          tuesday:
+            count: 6
+            key: &D >
+              Number of 7:00 repeats at {hr80}-{hr85} heart rate with recovery intervals of slow jogging until heart rate drops below {hr65}.
+          wednesday:
+            duration: "00:25"
+            key: *A
+          thursday: 
+            duration: "01:15"
+            key: *C
+          friday: ~
+          saturday: 
+            duration: "00:45"
+            key: *F
+          sunday:
+            duration: "02:30"
+            key: *B
+        # Week 7
+        - monday: 
+            duration: "00:25"
+            key: *A
+          tuesday:
+            key: &I >
+              Fast-effort intervals at {hr80}-{hr95} heart rate.
+                1 x 7:00 at {hr80}-{hr85} heart rate with recovery jog to {hr70} heart rate.
+                2 x 3:30 at {hr85}-{hr90} heart rate with recovery jog to {hr65} heart rate.
+                4 x 1:45 at {hr90}-{hr95} heart rate with recovery jog to {hr60} heart rate.
+          wednesday: ~
+          thursday: 
+            duration: "00:45"
+            key: *A
+          friday:
+            count: 12
+            key: &J >
+              Very fast-effort intervals at {hr90}-{hr95} heart rate with recovery jog until heart rate drops below {hr60} plus another 30 seconds of walking.
+          saturday: 
+            duration: "00:25"
+            key: *F
+          sunday:
+            duration: "02:10"
+            key: *B
+        # Week 8
+        - monday: ~
+          tuesday:
+            count: 8
+            duration: "00:03:30"
+            key: &G >
+              Fast-effort intervals at {hr85}-{hr90} heart rate.
+          wednesday: 
+            duration: "00:50"
+            key: *A
+          thursday: 
+            duration: "00:40"
+            key: *A
+          friday:
+            duration: "01:15"
+            key: *C
+          saturday: 
+            duration: "00:30"
+            key: *A
+          sunday:
+            duration: "01:50"
+            key: *B
+        # Week 9
+        - monday: ~
+          tuesday:
+            duration: "00:20"
+            key: *E
+          wednesday: 
+            duration: "00:30"
+            key: *A
+          thursday: 
+            duration: "01:00"
+            key: *C
+          friday: ~
+          saturday: 
+            duration: "00:30"
+            key: *A
+          sunday:
+            duration: "01:00"
+            key: *F
+        # Week 9
+        - monday: 
+            duration: "00:35"
+            key: *A
+          tuesday:
+            duration: "00:30"
+            key: *A
+          wednesday: 
+            count: 3
+            key: *D
+          thursday: 
+            duration: "00:20"
+            key: *A
+          friday: 
+            duration: "00:30"
+            key: *A
+          saturday: 
+            duration: "00:20"
+            key: *F
+          sunday:
+            key: Half Marathon
+
+  sensor:
+  - unique_id: 0b5b04a9-7962-42ab-9323-25f24ea320d7
+    name: Runing Programs
+    state: OK
+    attributes:
+      programs: "{{ programs }}"

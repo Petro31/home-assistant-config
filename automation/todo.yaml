@@ -1,0 +1,27 @@
+- alias: Setup Mike's Todo Lists
+  id: d11bb907-e656-4a0b-8f03-ecbbf3e40a3a
+  mode: single
+  triggers:
+  - trigger: time
+    at: "00:00:00"
+  variables:
+    day: >
+      {% from 'easy_time.jinja' import count_the_days %}
+      {# Assumes monday is always selected #}
+      {{ count_the_days('input_datetime.mike_run_program') }}
+    week: >
+      {{ (day / 7 + 1) | int }}
+  action:
+  # Setup runs.
+  - if: "{{ week <= 10 }}"
+    then:
+    - action: script.set_run_schedule
+      data:
+        program: 718485f4-3031-46a3-bce5-990189a6e06c
+        week: "{{ week }}"
+        weekly_todo: todo.mike_this_week
+        daily_todo: todo.mike_today
+        max_heart_rate: 200
+
+  # Setup Events.
+  - action: script.set_mikes_daily_list
