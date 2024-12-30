@@ -13,7 +13,7 @@
     range: 20
     config:
       - person: person.petro
-        initial: 190
+        initial: 200
       - person: person.lambo
         initial: 145
     people: >
