@@ -1,3 +1,27 @@
+- trigger:
+  - trigger: event
+    event_type: announce_energy
+    event_data:
+      machine: washer
+  binary_sensor:
+  - unique_id: announce_washer
+    name: Announce Washer
+    device_class: door
+    state: "{{ True }}"
+    auto_off: 0.1
+
+- trigger:
+  - trigger: event
+    event_type: announce_energy
+    event_data:
+      machine: dryer
+  binary_sensor:
+  - unique_id: announce_dryer
+    name: Announce Dryer
+    device_class: door
+    auto_off: 0.1
+    state: "{{ True }}"
+
 - binary_sensor:
   - unique_id: washer_status
     name: Washer Status
@@ -7,27 +31,11 @@
     attributes:
       template: energy
 
-  - unique_id: announce_washer
-    name: Announce Washer
-    device_class: door
-    state: >
-      {{ is_state('switch.announce_washer', 'on') }}
-    attributes:
-      template: energy
-
   - unique_id: dryer_status
     name: Dryer Status
     device_class: door
     state: >
       {{ is_state('input_boolean.dryer', 'on') }}
-    attributes:
-      template: energy
-
-  - unique_id: announce_dryer
-    name: Announce Dryer
-    device_class: door
-    state: >
-      {{ is_state('switch.announce_dryer', 'on') }}
     attributes:
       template: energy
 

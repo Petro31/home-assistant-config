@@ -1,11 +1,3 @@
-# Momentary Switches
-
-- platform: momentary
-  name: Announce Dryer
-
-- platform: momentary
-  name: Announce Washer
-
 # Template Switches
 
 - platform: template

@@ -21,15 +21,14 @@
       {{ trigger.to_state.name.split(' ')[0] if valid else 'Unknown' }}
     announce: >
       {{ name.lower() if name != 'Unkonwn' else none }}
-    switch: >
-      switch.announce_{{ announce }}
+      
   condition:
   - condition: template
     value_template: "{{ continue and announce is not none }}"
   action:
-  - service: switch.turn_on
-    target:
-      entity_id: "{{ switch }}"
+  - event: announce_energy
+    event_data: 
+      machine: "{{ announce }}"
   - service: script.notify
     data:
       title: "{{ name }} is finished!"
