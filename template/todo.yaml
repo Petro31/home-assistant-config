@@ -1,0 +1,57 @@
+- trigger:
+  - trigger: event
+    event_type: roll_up_todo
+  - trigger: event
+    event_type: event_template_reloaded
+  action:
+  - action: todo.get_items
+    target:
+      entity_id:
+      - todo.mike_this_week
+      - todo.mike_today
+    response_variable: todo
+  - variables:
+      base:
+        type: custom:mushroom-template-card
+        multiline_secondary: True
+      defaults:
+        icon: mdi:calendar-star
+        icon_color: '#9119b3' #9119b3
+      settings:
+      - find: Waste Management
+        icon: mdi:delete
+        icon_color: '#026928' #026928
+      - find: Dinner Club
+        icon: mdi:food-steak
+        icon_color: '#a16868' #a16868
+      - find: Mosby
+        icon: mdi:dog
+        icon_color: '#cecdb6' #cecdb6
+      - find: Change Filters
+        icon: mdi:air-filter
+        icon_color: '#808080' #808080
+      - find: Run
+        icon: mdi:run-fast
+        icon_color: '#FDB813' #FDB813
+      rollup: >
+        {%- set ns = namespace(daily=[], weekly=[]) %}
+        {%- for entity, obj in todo.items() %}
+          {%- for item in obj.get('items', []) %}
+            {% set current = settings | selectattr('find', 'in', item.summary) | first | default(defaults) %}
+            {% set base_settings = dict.from_keys(base.items() | list + current.items() | list) %}
+            {% set base_settings = dict(primary=item.summary, secondary=item.description, **base_settings) %}
+            {% if 'today' in entity %}
+              {% set ns.daily = ns.daily + [base_settings] %}
+            {% else %}
+              {% set ns.weekly = ns.weekly + [base_settings] %}
+            {% endif %}
+          {%- endfor %}
+        {%- endfor %}
+        {{ dict(today=ns.daily, this_week=ns.weekly) }}
+  sensor:
+  - name: Mikes Todo Overview
+    unique_id: 6efa435d-f541-467e-99b8-ac15e3d94603
+    state: "{{ rollup.items() | map(attribute='1') | sum(start=[]) | count }}"
+    attributes:
+      today: "{{ rollup.today }}"
+      this_week: "{{ rollup.this_week }}"

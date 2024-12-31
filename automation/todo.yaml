@@ -10,10 +10,10 @@
       {# Assumes monday is always selected #}
       {{ count_the_days('input_datetime.mike_run_program') }}
     week: >
-      {{ (day / 7 + 1) | int }}
+      {{ (day | abs / 7 + 1) | int }}
   action:
   # Setup runs.
-  - if: "{{ week <= 10 }}"
+  - if: "{{ 1 <= week <= 10 }}"
     then:
     - action: script.set_run_schedule
       data:
@@ -25,3 +25,5 @@
 
   # Setup Events.
   - action: script.set_mikes_daily_list
+
+  - event: roll_up_todo

@@ -1,0 +1,32 @@
+title: This Week
+icon: mdi:calendar-star
+path: this_week
+visible: false
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/headers/navigator.yaml'
+        - name: This Week
+      - !include '../templates/buttons/edge.yaml'
+
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+      title: Today
+    card_param: cards
+    filter:
+      template: >
+        {{ state_attr('sensor.mikes_todo_overview', 'today') | list or [] }}
+
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+      title: This Week
+    card_param: cards
+    filter:
+      template: >
+        {{ state_attr('sensor.mikes_todo_overview', 'this_week') | list or [] }}
