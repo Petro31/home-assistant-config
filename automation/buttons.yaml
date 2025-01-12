@@ -4,19 +4,19 @@
   trigger:
   - platform: state
     entity_id:
-    - sensor.workshop_button_action
-    - sensor.mikes_button_action
-    - sensor.jims_button_action
-    - sensor.lindsays_button_action
+    - event.workshop_button_action
+    - event.mikes_button_action
+    - event.jims_button_action
+    - event.lindsays_button_action
   variables:
     continue: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
     event: >
-      {{ trigger.to_state.state | default('') if continue else '' }}
+      {{ trigger.to_state.attributes.event_type | default('') if continue else '' }}
     source: >
       {{ trigger.entity_id }}
     config:
-      sensor.workshop_button_action:
+      event.workshop_button_action:
         single:
         - light.workshop_desk
         double:
@@ -27,21 +27,21 @@
         - light.workshop_dome
         - switch.floating_double_plug_left
         - light.workshop_bench_strip
-      sensor.mikes_button_action:
+      event.mikes_button_action:
         single:
         - light.mikes_lamp
         double:
         - light.living_room
         hold:
         - switch.movie_time
-      sensor.jims_button_action:
+      event.jims_button_action:
         single:
         - light.jims_lamp
         double:
         - light.all_living_room
         hold:
         - light.all_living_room
-      sensor.lindsays_button_action:
+      event.lindsays_button_action:
         single:
         - light.lindsays_lamp
         double:

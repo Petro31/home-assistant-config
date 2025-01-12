@@ -3,10 +3,12 @@
   mode: parallel
   trigger:
     - platform: state
-      entity_id: sensor.mikes_cube_action
+      entity_id: event.mikes_cube_action
       from: ~
   variables:
-    event: "{{ trigger.to_state.state }}"
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    event: "{{ trigger.to_state.attributes.event_type | default(None) if continue else None }}"
     player: media_player.yamaha_rx_v6a
     volume: "{{ state_attr(player, 'volume_level') }}"
   condition:
