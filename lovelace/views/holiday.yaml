@@ -15,20 +15,22 @@ cards:
         - name: {{ name }}
       - !include '../templates/buttons/edge.yaml'
 
-  - type: custom:auto-entities
-    card:
-      type: vertical-stack
-      title: Today
-    card_param: cards
-    filter:
-      template: >
-        {% raw %}
-        [
-          {%- for entity in state_attr('sensor.seasonal_accent_lights', 'ui') %}
-            {{ dict(
-              type='tile',
-              entity=entity
-            ) }},
-          {%- endfor %}
-        ]
-        {% endraw %}
+- type: custom:auto-entities
+  card: 
+    type: grid
+    square: False
+    columns: 2
+  card_param: cards
+  filter:
+    template: >
+      {% raw %}
+      [
+        {%- for entity in state_attr('sensor.seasonal_accent_lights', 'ui') %}
+          {{ dict(
+            type='tile',
+            name=state_attr(entity, 'friendly_name').replace('Great Room ', ''),
+            entity=entity,
+          ) }},
+        {%- endfor %}
+      ]
+      {% endraw %}

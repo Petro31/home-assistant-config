@@ -1,9 +1,20 @@
+# lovelace_gen
+
 title: Laundry
 icon: mdi:washing-machine
 path: laundry
 visible: false
 type: sections
 sections:
+  - type: grid
+    cards:
+    - type: vertical-stack
+      cards:
+        - !include '../templates/buttons/edge.yaml'
+        - !include 
+          - '../templates/headers/navigator.yaml'
+          - name: Laundry
+        - !include '../templates/buttons/edge.yaml'
   - type: grid
     cards:
       - type: tile
@@ -23,6 +34,7 @@ sections:
       - type: custom:auto-entities
         filter:
           template: |-
+            {% raw %}
             {% from 'easy_time.jinja' import easy_relative_time %}
             {% set cycles = state_attr('binary_sensor.washer', 'cycles') %}
             {% if cycles | length > 0 %}
@@ -48,6 +60,7 @@ sections:
                     icon_color='grey',
                   ) }}]
             {% endif %}
+            {% endraw %}
         card_param: cards
         card:
           type: vertical-stack

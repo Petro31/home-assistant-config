@@ -638,6 +638,11 @@
     ],
     'type': '../templates/summary/overview.yaml',
   },{
+    'name': 'sensor.holiday_lighting',
+    'icon': 'mdi:string-lights',
+    'type': '../templates/summary/holiday_overview.yaml',
+    'view': '../views/holiday.yaml',
+  },{
     'name': 'Music',
     'icon': 'mdi:mdi:music-box',
     'image': '/local/images/music.png',
@@ -692,11 +697,6 @@
     'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'type': '../templates/summary/overview.yaml',
     'view': '../views/laundry.yaml',
-  },{
-    'name': 'sensor.holiday_lighting',
-    'icon': 'mdi:string-lights',
-    'type': '../templates/summary/holiday_overview.yaml',
-    'view': '../views/holiday.yaml',
   },
 ] %}
 
