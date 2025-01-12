@@ -80,7 +80,8 @@ name: >
           }
         );
       }
-      return toTitleCase(states['{{ name }}'].state.replace('_', ' '));
+      var name = states['{{ name }}'].state;
+      return name === 'no_holiday'? 'Accent Lights' : name.replace('_', ' '); 
     ]]]
 icon: {{ icon }}
 entity_picture: >

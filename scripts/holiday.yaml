@@ -21,7 +21,7 @@ indoor_holiday_colors:
           multiple: True
           filter:
             domain: light
-    holiday:
+    holiday: &holidays
       description: Override the input holiday for testing purposes
       example: valentines
       required: False
@@ -51,7 +51,7 @@ indoor_holiday_colors:
           - label: Thanksgiving
             value: thanksgiving
   variables:
-    config: >
+    config: &colors >
       {% from 'holiday.jinja' import color_configuration %}
       {{ color_configuration }}
     found: >
@@ -67,3 +67,139 @@ indoor_holiday_colors:
       entity_id: "{{ targets }}"
     data:
       rgb_color: "{{ color.value[:3] }}"
+
+get_indoor_holiday:
+  alias: Get Indoor Holiday Accent Lights
+  mode: single
+  description: >
+    This gets all holiday lights for the accent lights.
+  fields:
+    holiday: *holidays
+  variables:
+    <<: &holiday_variables
+      # This purposely maintains an order.
+      accents:
+        - light.living_room_uplight
+        - light.dining_room_uplight_1
+        - light.hutch_uplight
+        - light.dining_room_uplight_2
+        - light.cabinet_master
+        - light.cabinet_slave
+      target_holiday: >
+        {{ holiday | default(states('sensor.holiday_lighting')) }}
+
+      config:
+        christmas:
+          exclude_lights:
+          - light.cabinet_slave
+  
+          # TODO: Add blinking lights here when they are complete.
+          include_actions:
+          - action: switch.turn_on
+            target:
+              entity_id:
+              - switch.living_room_window
+              - switch.front_trees
+
+      exclude_lights: >
+        {{ config.get(target_holiday, {}).get('exclude_lights', []) }}
+      include_actions: >
+        {{ config.get(target_holiday, {}).get('include_actions', []) }}
+
+      targets: >
+        {{ accents | reject('in', exclude_lights) | list }}
+      
+      colors: >
+        {%- from 'holiday.jinja' import color_configuration as cfg %}
+        {%- set colors = cfg.get(target_holiday, cfg['no_holiday']) %}
+        {%- set ns = namespace(colors=[]) %}
+        {%- for color_name, item in colors.items() %}
+          {%- if item is list %}
+            {%- set ns.colors = ns.colors + [dict(rgbw_color=item)] %}
+          {%- else %}
+            {%- set ns.colors = ns.colors + [dict(kelvin=(1000000 / item.color_temp) | int)] %}
+          {%- endif %}
+        {%- endfor %}
+        {{- ns.colors }}
+
+      actions: >
+        {%- set ns = namespace(lights=[], actions=[]) %}
+        {%- for light in accents %}
+          {%- set i = (loop.index - 1) % colors | length %}
+          {%- set ns.lights = ns.lights + [(i, light)] %}
+        {%- endfor %}
+  
+        {%- for color in colors %}
+          {%- set entity_id = ns.lights | selectattr('0', 'eq', loop.index - 1) | map(attribute='1') | list %}
+          {%- set ns.actions = ns.actions + [dict(entity_id=entity_id, data=color)] %}
+        {%- endfor %}
+        {{- ns.actions }}
+
+    _actions: >
+      {%- set ns = namespace(actions=[]) %}
+      {%- for action in include_actions %}
+        {%- set ns.actions = ns.actions + [dict(entity_id=action.target.entity_id, data={})] %}
+      {%- endfor %}
+      {{ actions + ns.actions }}
+    response:
+      lights: "{{ _actions }}"
+  sequence:
+  - stop: Finished
+    response_variable: response
+
+set_indoor_holiday:
+  alias: Set Indoor Holiday Accent Lights
+  mode: single
+  description: >
+    This handles all holiday lights for the accent lights.
+
+  fields:
+    transition:
+      description: Transition
+      selector:
+        number:
+          min: 0
+          max: 20
+    brightness: 
+      description: Brightness
+      selector:
+        number:
+          min: 0
+          max: 255
+    holiday: *holidays
+  variables:
+    <<: *holiday_variables
+    _transition: >
+      {{ transition | default(3) }}
+    _brightness: >
+      {{ brightness | default(255) }}
+  sequence:
+  - parallel:
+    - if: "{{ actions | length >= 1 }}"
+      then:
+      - variables: {idx: 0}
+      - <<: &light_action
+          action: light.turn_on
+          target: 
+            entity_id: "{{ actions[idx].entity_id }}"
+          data: "{{ dict(transition=_transition, brightness=_brightness, **actions[idx].data) }}"
+    - if: "{{ actions | length >= 2 }}"
+      then:
+      - variables: {idx: 1}
+      - <<: *light_action
+    - if: "{{ actions | length >= 3 }}"
+      then:
+      - variables: {idx: 2}
+      - <<: *light_action
+    - if: "{{ include_actions | length > 0 }}"
+      then:
+        repeat:
+          for_each: "{{ include_actions }}"
+          sequence:
+          - action: "{{ repeat.item.action }}"
+            target: "{{ repeat.item.target }}"    
+
+
+# Make a UI that allows you to change all these colors and conditionally displays the right lights.
+#   make a UI to select the front tree's christmas only.
+#   make accent light conditional for any holiday.

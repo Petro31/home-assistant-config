@@ -597,35 +597,6 @@
   },
 ] %}
 
-{%- set holidays = [
-  {
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.living_room_window',
-    'icon': 'mdi:pine-tree', 
-    'name': 'Christmas Tree'
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.front_trees',
-    'icon': 'mdi:pine-tree', 
-    'name': 'Front Tree'
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.hutch_holiday',
-    'icon': 'mdi:dresser', 
-    'name': 'Hutch'
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.cabinet_holiday',
-    'icon': 'mdi:home-group', 
-    'name': 'Cabinets'
-  },{
-    'type':  '../templates/buttons/toggle2.yaml',
-    'entity': 'switch.uplight_holiday',
-    'icon': 'mdi:light-flood-up', 
-    'name': 'Uplights'
-  },
-]%}
-
 {%- set main_buttons = [
   {
     'name': 'Areas',
@@ -724,22 +695,8 @@
   },{
     'name': 'sensor.holiday_lighting',
     'icon': 'mdi:string-lights',
-    'header': [ 
-      { 
-        'type': '../templates/headers/multicast.yaml',
-        'entity': 'switch.indoor_holiday',
-        'on_icon': 'mdi:string-lights',
-        'off_icon': 'mdi:string-lights-off',
-      },
-    ],
-    'entities': holidays,
-    'triggers_update': holidays | map(attribute='entity') | list | sort,
     'type': '../templates/summary/holiday_overview.yaml',
-    'display': [
-      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
-      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
-      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
-    ],
+    'view': '../views/holiday.yaml',
   },
 ] %}
 

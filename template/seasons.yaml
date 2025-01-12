@@ -8,7 +8,6 @@
       {% set e = today_at(states('input_datetime.indoor_holiday_lights_end')) %}
       {{ s <= t <= e and not is_state('sensor.holiday_lighting', 'no_holiday') }}
     attributes:
-      template: seasons
       entity_id: >      
         {%- set holiday = states('sensor.holiday_lighting') %}
         {%- set entities = [
@@ -25,10 +24,48 @@
               'switch.cabinet_holiday',
             ]} %}
         {{ holidays.get(holiday, entities) }}
-      colors: >
-        {% from 'holiday.jinja' import color_configuration %}
-        {%- set holiday = states('sensor.holiday_lighting') %}
-        {{ color_configuration.get(holiday, {}) }}
+
+- trigger:
+  - platform: time
+    at: "00:00:00"
+  - platform: homeassistant
+    event: start
+  - platform: event
+    event_type: templates_reloaded
+  action:
+  - action: script.get_indoor_holiday
+    response_variable: response
+  - variables:
+      entities: >
+        {%- set ns = namespace(items=[]) %}
+        {%- for section in response.lights %}
+          {%- for light in section.entity_id %}
+            {%- set extra = {} if not section.data else dict(attributes=section.data) %}
+            {%- set ns.items = ns.items + [dict(entity_id=light, **extra)] %}
+          {%- endfor %}
+        {%- endfor %}
+        {{ ns.items }}
+  sensor:
+  - unique_id: 87f4f2b9-f15c-4948-a4fe-6316ecd0d98e
+    name: Seasonal Accent Lights
+    state: "{{ entities | length }}"
+    attributes:
+      settings: "{{ entities }}"
+      ui: >
+        {% set ambiance_entity = 'light.great_room_ambiance' %}
+        {% set accent_entity = 'light.great_room_accent' %}
+        {% set ambiance = set(state_attr(ambiance_entity, 'entity_id')) %}
+        {% set accent = set(state_attr(accent_entity, 'entity_id')) %}
+        {% set seasonal = set(state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list) %}
+        {% set extra = seasonal - ambiance %}
+        {% set guess = seasonal - extra %}
+        {% if ambiance == guess %}
+          {{ [ambiance_entity] + extra | list }}
+        {% elif accent == guess %}
+          {{ [accent_entity] + extra | list }}
+        {% else %}
+          {{ [ambiance_entity] }}
+        {% endif %}
 
 - sensor:
   - unique_id: seasonal_lights
@@ -47,8 +84,6 @@
       ) %}
       {%- set holiday = states('sensor.holiday_lighting') %}
       {{ scenes.get(holiday, "scene.holiday_bulbs_soft_white") }}
-    attributes:
-      template: seasons
 
 - trigger:
   - platform: time
@@ -195,5 +230,3 @@
   - unique_id: indoor_holiday_lighting
     name: Holiday Lighting
     state: "{{ event }}"
-    attributes:
-      template: seasons

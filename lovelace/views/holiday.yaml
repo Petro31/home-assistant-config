@@ -1,0 +1,34 @@
+# lovelace_gen
+
+title: Holiday
+icon: mdi:calendar-star
+path: {{ name }}
+visible: false
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/headers/dynamic_name_navigator.yaml'
+        - name: {{ name }}
+      - !include '../templates/buttons/edge.yaml'
+
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+      title: Today
+    card_param: cards
+    filter:
+      template: >
+        {% raw %}
+        [
+          {%- for entity in state_attr('sensor.seasonal_accent_lights', 'ui') %}
+            {{ dict(
+              type='tile',
+              entity=entity
+            ) }},
+          {%- endfor %}
+        ]
+        {% endraw %}

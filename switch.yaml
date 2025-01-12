@@ -985,83 +985,69 @@
       # WLED #
       ########
 
-      # WLED Kitchen Cabinet Lights
-      
-      wled_all_cabinets:
-        unique_id: wled_all_cabinets
-        value_template: >
-          {%- set lights = ['light.cabinet_wled_master', 'light.wled_microwave_uplight', 'light.wled_refrigerator_uplight', 'light.wled_refrigerator_surface'] %}
-          {{ lights | select('is_state', 'on') | list | count == lights | count }}
-        turn_on:
-        - if: "{{ is_state('switch.indoor_holiday', 'on') }}"
-          then:
-          - service: script.wled_cabinet_segment_handler
-            <<: &wled_script_on
-              data:
-                to_state: 'on'
-          else:
-          - <<: &wled_all_cabinets
-              service: select.select_option
-              target:
-                entity_id: select.cabinet_wled_preset
-            <<: &wled_match
-              data:
-                option: Match
-        turn_off:
-        - if: "{{ is_state('switch.indoor_holiday', 'on') }}"
-          then:
-          - service: script.wled_cabinet_segment_handler
-            <<: &wled_script_off
-              data:
-                to_state: 'off'
-          else:
-          - <<: *wled_all_cabinets
-            <<: &wled_off
-              data:
-                option: 'Off'
+      # WLED Kitchen Cabinet 2, matches switch.kitchen_cabinet (zwave)
 
-      # WLED Hutch Lights
+      kitchen_cabinet_2:
+        unique_id: 84c17669-2405-4aae-9e4d-06bd58f42964
+        value_template: >
+          {% set rgbw = (255, 199, 125, 0) %}
+          {% set brightness = 217 %}
+          {% set entities = ['light.cabinet_surface'] %}
+          {% set matching = entities | select('is_state', 'on') | select('is_state_attr', 'rgbw_color', rgbw) | select('is_state_attr', 'brightness', brightness) | list %}
+          {{ entities | length == matching | length }}
+        turn_on:
+        - action: light.turn_on
+          target: &wled_match_downlight
+            entity_id: light.cabinet_surface
+          data: &wled_match_on_data
+            transition: 0
+            rgbw_color: [255, 199, 125, 0]
+            brightness: 217
+        turn_off:
+        - action: light.turn_off
+          target: *wled_match_downlight
+          data: &wled_match_off_data
+            transition: 0
+
+      kitchen_uplight:
+        unique_id: b72a41c4-9fb8-4b5d-8559-d09a0cac143d
+        friendly_name: Kitchen Uplights
+        value_template: >
+          {% set rgbw = (255, 199, 125, 0) %}
+          {% set brightness = 217 %}
+          {% set entities = ['light.cabinet_master', 'light.cabinet_slave'] %}
+          {% set matching = entities | select('is_state', 'on') | select('is_state_attr', 'rgbw_color', rgbw) | select('is_state_attr', 'brightness', brightness) | list %}
+          {{ entities | length == matching | length }}
+        turn_on:
+        - action: light.turn_on
+          target: &wled_match_uplight
+            entity_id:
+            - light.cabinet_master
+            - light.cabinet_slave
+          data: *wled_match_on_data
+        turn_off:
+        - action: light.turn_off
+          target: *wled_match_uplight
+          data: *wled_match_off_data
+
+      # WLED Hutch Lights, matches kitchen cabinets
       wled_hutch:
         unique_id: wled_hutch
         value_template: >
-          {%- set lights = ['light.hutch_master', 'light.hutch_uplight'] %}
-          {{ lights | select('is_state', 'on') | list | count == lights | count }}
+          {% set rgbw = (255, 199, 125, 0) %}
+          {% set brightness = 217 %}
+          {% set entities = ['light.hutch_uplight'] %}
+          {% set matching = entities | select('is_state', 'on') | select('is_state_attr', 'rgbw_color', rgbw) | select('is_state_attr', 'brightness', brightness) | list %}
+          {{ entities | length == matching | length }}
         turn_on:
-        - if: "{{ is_state('switch.indoor_holiday', 'on') }}"
-          then:
-          - service: script.wled_hutch_segment_handler
-            <<: *wled_script_on
-          else:
-          - <<: &wled_hutch
-              service: select.select_option
-              target:
-                entity_id: select.hutch_preset
-            <<: *wled_match
+        - action: light.turn_on
+          target: &wled_match_hutch
+            entity_id: light.hutch_uplight
+          data: *wled_match_on_data
         turn_off:
-        - if: "{{ is_state('switch.indoor_holiday', 'on') }}"
-          then:
-          - service: script.wled_hutch_segment_handler
-            <<: *wled_script_off
-          else:
-          - <<: *wled_hutch
-            <<: *wled_off
-
-      # Indoor Holiday Lights
-      indoor_holiday:
-        unique_id: indoor_holiday
-        friendly_name: Indoor Holiday
-        value_template: >
-          {% set entity =  'binary_sensor.indoor_holiday' %}
-          {{ is_state(entity, 'on') and state_attr(entity, 'entity_id') | select('is_state', 'on') | list | length > 0 }}
-        turn_on:
-        - service: switch.turn_on
-          <<: &indoor_holiday
-            target: 
-              entity_id: >
-                {{ state_attr('binary_sensor.indoor_holiday', 'entity_id') }}
-        turn_off:
-        - service: switch.turn_off
-          <<: *indoor_holiday
+        - action: light.turn_on
+          target: *wled_match_hutch
+          data: *wled_match_off_data
 
       # Front Trees
       front_trees:
@@ -1078,82 +1064,51 @@
             option: "{{ state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list | random }}"
         turn_off:
         - service: select.select_option
-          <<: *wled_off
+          data:
+            option: 'Off'
           <<: *front_trees
 
-      # Hutch Holiday
-      hutch_holiday:
-        unique_id: hutch_holiday
-        friendly_name: Hutch Holiday
-        value_template: >
-          {%- set preset = states('select.hutch_preset') %}
-          {%- set playlist = states['select.hutch_playlist'] %}
-          {%- set holiday = states('sensor.holiday_lighting') %}
-          {%- set is_holiday = holiday != 'no_holiday' %}
-          {%- if is_holiday %}
-            {%- if preset == 'unknown' %}
-            {#- We have a holiday, but we aren't using a preset or playlist, therefore we must be on #}
-              {{- is_state('light.hutch_master', 'on') and ['light.hutch_uplight'] | select('is_state', 'on') | list | count > 0 }}
-            {%- elif playlist.state is not none and playlist.state in playlist.attributes.options %}True
-            {%- else %}False
-            {%- endif %}
-          {%- else %}False
-          {%- endif %}
-        turn_on:
-        - service: script.wled_hutch_segment_handler
-          <<: *wled_script_on
-        turn_off:
-        - <<: *wled_hutch
-          <<: *wled_off
+      # You attempted to use this, however you could not find a good equation
+      # to match rgbw to rgb
 
-      # Cabinet Holiday
-      cabinet_holiday:
-        unique_id: cabinet_holiday
-        friendly_name: Cabinet Holiday
-        value_template: >
-          {%- set preset = states('select.cabinet_wled_preset') %}
-          {%- set holiday = states('sensor.holiday_lighting') %}
-          {%- set is_holiday = holiday != 'no_holiday' %}
-          {%- if is_holiday %}
-            {%- if preset == 'unknown' %}
-            {#- We have a holiday, but we aren't using a preset, therefore we must be on #}
-              {{- is_state('light.cabinet_wled_master', 'on') and ['light.wled_microwave_uplight', 'light.wled_refrigerator_uplight', 'light.wled_refrigerator_surface'] | select('is_state', 'on') | list | count > 0 }}
-            {%- else %}
-              {%- set reject_state = 'Off' if preset == 'Match' else 'On' %}
-              {%- set options = state_attr('select.cabinet_wled_preset', 'options') | select('search', 'Christmas') | reject('search', reject_state) | list %}
-              {{- preset in options }}
-            {%- endif %}
-          {%- else %}False
-          {%- endif %}
-        turn_on:
-        - service: script.wled_cabinet_segment_handler
-          <<: *wled_script_on
-        turn_off:
-        - <<: *wled_all_cabinets
-          <<: *wled_off
+      # {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
+      # {%- set ns = namespace(items=[], current=False, rollup=[]) %}
+      # {%- for setting in settings %}
+      #   {%- set ns.current = False %}
+      #   {%- set ns.rollup = [] %}
+      #   {%- if is_state(setting.entity_id, 'on') %}
+      #     {%- if setting.attributes is defined %}
+      #       {%- for key, value in setting.attributes.items() %}
+      #         {%- set ns.rollup = ns.rollup + [is_state_attr(setting.entity_id, key, value)] %}
+      #       {%- endfor %}
+      #       {%- set ns.current = ns.rollup | select('true') | list | length == setting.attributes | length %}
+      #     {%- else %}
+      #       {%- set ns.current = True %}
+      #     {%- endif %}
+      #   {%- endif %}
+      #   {%- set ns.items = ns.items + [ ns.current ] %}
+      # {%- endfor %}
+      # {{- ns.items | select('true') | list | length == settings | length }}
 
-      # Uplighting Holiday
-      uplight_holiday:
-        unique_id: uplight_holiday
-        friendly_name: Uplight Holiday
+      indoor_holiday:
+        unique_id: 2954ff2b-3e2e-47e4-9a5a-f2cc6c226bdc
+        friendly_name: Indoor Holiday
         value_template: >
-          {%- set lights = [
-              "light.living_room_uplight",
-              "light.dining_room_uplight_1",
-              "light.dining_room_uplight_2"
-            ] %}
-          {{ lights | select('is_state', 'on') | select('is_state_attr', 'color_mode', 'xy') | list | count > 0 }}
+          {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
+          {{ settings | map(attribute='entity_id') | select('is_state', 'on') | list | length == settings | length }}
+
+        availability_template: >
+          {{ state_attr('sensor.seasonal_accent_lights', 'settings') is not none }}
         turn_on:
-          service: script.indoor_holiday_colors
+        - action: script.set_indoor_holiday
           data:
-            targets: &uplight_holiday
-            - light.living_room_uplight
-            - light.dining_room_uplight_1
-            - light.dining_room_uplight_2
+            transition: 3
+            brightness: 255
         turn_off:
-          service: light.turn_off
+        - action: homeassistant.turn_off
           target:
-            entity_id: *uplight_holiday
+            entity_id: >
+              {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
 
       #################################################
       # Event Radios - Selectors for Events Front End #
@@ -1256,25 +1211,32 @@
         unique_id: movie_time
         friendly_name: Movie Time
         value_template: >
+          {% set seasonal = state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list + ['switch.kitchen_cabinet'] %}
+          {% set seasonal_on = seasonal | map(attribute='entity_id') | select('is_state', 'on') | list | length == seasonal | length %}
           {{
             is_state('switch.hyperion_usb_capture', 'on')
-            and is_state('light.downstairs_ambiance', 'on')
-            and is_state('switch.wled_hutch', 'on')
-            and is_state('switch.wled_all_cabinets', 'on')
+            and seasonal_on
             and is_state('light.dining_room_chandelier', 'off')
             and is_state('light.kitchen_cans', 'off')
             and is_state('light.kitchen_island', 'off')
             and is_state('switch.kitchen_pantry', 'off')
           }}
         turn_on:
+        - variables:
+            cabinet:
+            seasonal: >
+              {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
+            extra:
+            - switch.kitchen_cabinet
+            - switch.hyperion_usb_capture
+            entities: >
+              {{ seasonal + extra }}
         - parallel:
-          - service: homeassistant.turn_on
-            target:
-              entity_id: 
-              - switch.hyperion_usb_capture
-              - switch.wled_hutch
-              - switch.wled_all_cabinets
-              - light.downstairs_ambiance
+          - if: "{{ 1 == 1 }}"
+            then:
+            - service: homeassistant.turn_on
+              target: &movie_entities
+                entity_id: "{{ entities }}"
           - service: homeassistant.turn_off
             target:
               entity_id: 
@@ -1285,13 +1247,4 @@
               - switch.kitchen_pantry
         turn_off:
         - service: homeassistant.turn_off
-          target:
-            entity_id: 
-            - switch.hyperion_usb_capture
-            - switch.wled_hutch
-            - switch.wled_all_cabinets
-            - light.downstairs_ambiance
-            - light.dining_room_chandelier
-            - light.kitchen_cans
-            - light.kitchen_island
-            - switch.kitchen_pantry
+          target: *movie_entities

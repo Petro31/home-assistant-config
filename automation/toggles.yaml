@@ -65,29 +65,30 @@
     target:
       entity_id: "{{ targets }}"
 
-- alias: Cabinet String Lights
+- alias: Uplight & Downlight Cabinet from Switch
   id: toggle_cabinet_string_lights
-  mode: parallel
+  mode: single
   trigger:
   - platform: state
-    entity_id: &cabinet_string_entities
-    - switch.kitchen_cabinet
-    - switch.wled_all_cabinets
+    entity_id: switch.kitchen_cabinet
   variables:
-    entities: *cabinet_string_entities
+    entities:
+    - switch.kitchen_cabinet_2
+    - switch.kitchen_uplight
+    in_season: >
+      {% set remove = ['switch.kitchen_uplight'] if is_state('binary_sensor.indoor_holiday', 'on') else [] %}
+      {{ entities | reject('in', remove) | list }}
     state_list:
     - 'on'
     - 'off'
     continue: >
-      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
-    to_state: >
-      {{ trigger.to_state.state | default(none) if continue else none }}
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined and trigger.to_state.state in state_list }}
     targets: >
-      {{ expand(entities) | rejectattr('entity_id', 'eq', trigger.entity_id) | rejectattr('state', 'eq', to_state) | map(attribute='entity_id') | list if continue else [] }}
+      {{ in_season | reject('is_state', trigger.to_state.state) | list if continue else [] }}
   condition:
   - condition: template
-    value_template: "{{ continue and to_state in state_list and targets | count > 0 }}"
+    value_template: "{{ targets | count > 0 }}"
   action:
-  - service: switch.turn_{{ to_state }}
+  - service: switch.turn_{{ trigger.to_state.state }}
     target:
       entity_id: "{{ targets }}"
