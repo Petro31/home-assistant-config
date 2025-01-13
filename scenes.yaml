@@ -200,23 +200,23 @@
     light.main_door_left_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 370
+      color_temp_kelvin: 2700
     light.main_door_right_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 370
+      color_temp_kelvin: 2700
     light.passenger_door_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 370
+      color_temp_kelvin: 2700
     light.garage_sconce_left_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 370
+      color_temp_kelvin: 2700
     light.garage_sconce_right_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 370
+      color_temp_kelvin: 2700
       
 - name: Holiday Bulbs DayLight
   icon: mdi:white-balance-sunny
@@ -224,21 +224,21 @@
     light.main_door_left_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 153
+      color_temp_kelvin: 6535
     light.main_door_right_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 153
+      color_temp_kelvin: 6535
     light.passenger_door_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 153
+      color_temp_kelvin: 6535
     light.garage_sconce_left_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 153
+      color_temp_kelvin: 6535
     light.garage_sconce_right_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 153
+      color_temp_kelvin: 6535
       
