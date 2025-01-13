@@ -128,8 +128,8 @@
     'entities': [
       'switch.basement_stairs',
       'switch.basement_cans',
-      'sensor.basement_bme280_temperature',
-      'sensor.basement_bme280_humidity',
+      'sensor.apollo_air_1_1ecac0_temperature',
+      'sensor.apollo_air_1_1ecac0_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
