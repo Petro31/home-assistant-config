@@ -1212,7 +1212,7 @@
         friendly_name: Movie Time
         value_template: >
           {% set seasonal = state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list + ['switch.kitchen_cabinet'] %}
-          {% set seasonal_on = seasonal | map(attribute='entity_id') | select('is_state', 'on') | list | length == seasonal | length %}
+          {% set seasonal_on = seasonal | select('is_state', 'on') | list | length == seasonal | length %}
           {{
             is_state('switch.hyperion_usb_capture', 'on')
             and seasonal_on
