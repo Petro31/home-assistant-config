@@ -1,0 +1,38 @@
+- trigger:
+  - trigger: event
+    event_type: system_log_event
+    event_data:
+      name: homeassistant.core
+  action:
+  - variables:
+      targets: >
+        {% set find = '(?!.+__)(?!_)[\\da-z_]+(?<!_)\\.(?!_)[\\da-z_]+(?<!_)' %}
+        {{ trigger.event.data | regex_findall(find) | list }}
+      action: >
+        {{ targets | select('search', 'turn_o(ff|n)') | list | first | default(none) }}
+      entity_id: >
+        {{ targets | select('reject', 'turn_o(ff|n)') | list }}
+  sensor:
+  - name: Multicast Error
+    unique_id: e9236ec7-1af0-4da8-8b27-255807e459b3
+    device_class: timestamp
+    state: >
+      {{ trigger.event.time_fired }}
+    attributes:
+      data: "{{ trigger.event.data }}"
+      action: "{{ action }}"
+      entity_id: "{{ entity_id }}"
+
+- trigger:
+  - trigger: event
+    event_type: system_log_event
+    event_data:
+      name: homeassistant.helpers.script.kitchen_uplights
+  sensor:
+  - name: Wled API Error
+    unique_id: ac1a7249-511c-4754-8097-b05f6c3164fb
+    device_class: timestamp
+    state: >
+      {{ trigger.event.time_fired }}
+    attributes:
+      data: "{{ trigger.event.data }}"

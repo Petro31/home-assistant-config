@@ -30,7 +30,6 @@ get_light_endpoints:
     level:
       description: (Optional) The brightness level, switches will be on if the level is greater than 0.
       example: 99
-      required: True
       selector:
         number:
           min: 0
@@ -53,7 +52,7 @@ get_light_endpoints:
     zwave_pct: >
       {#- Zwave max percentage is 99 for some reason. #}
       {%- set maximum = 99 %}
-      {%- set zwave_pct = (level | int(0) / 255 * maximum) | int %}
+      {%- set zwave_pct = (level | default(0) | int(0) / 255 * maximum) | int %}
       {%- set zwave_pct = [ 0, zwave_pct ] | max %}
       {%- set zwave_pct = [ maximum, zwave_pct] | min %}
       {{- zwave_pct }}
@@ -162,6 +161,89 @@ get_light_endpoints:
   sequence:
   - stop: Stopping
     response_variable: endpoints
+
+get_light_entities:
+  mode: parallel
+  alias: Generate a list of light entities
+  fields: *fields
+  variables: 
+    <<: *variables
+    response: >
+      {{ dict(entity_id=in_area) }}
+  sequence:
+  - stop: Stopping
+    response_variable: response
+
+get_entities_from_light_group:
+  mode: parallel
+  alias: Generate a list of light entities from target lights
+  fields:
+    light:
+      description: The entity to get entities from
+      required: true
+      selector:
+        entity:
+          filter:
+          - domain: light
+            integration: template
+    
+  variables:
+    config:
+      bonus_room: ['bonus_room', 'office', 'bonus_room_server_closet']
+      master_suite: ['master_bathroom', 'master_bedroom', 'master_closet']
+      great_room: ['79f87f3673464e84a683466dd6f7220d', 'dining_room', 'living_room']
+      all: ['attached', 'basement', 'downstairs', 'upstairs', 'garage']
+      inside: ['basement', 'downstairs', 'upstairs', 'garage']
+      outside: ['attached']
+    targets: "{{ light.split('.')[-1].split('_') }}"
+    key: "{{ targets | first }}"
+    slug: "{{ targets[1:] | join('_') }}"
+    target: "{{ targets[1:] | map('title') | join(' ') }}"
+    value: >
+      {% set _target = config.get(slug) %}
+      {% if _target is not none %}
+        {{ _target }}
+      {% else %}
+        {{ area_id(target) }}
+      {% endif %}
+    data: >
+      {% set items = [
+        (key, value), ('include', 'target_light')
+      ] %}
+      {% if slug == 'great_room' %}
+        {% set items = items + [('exclude', 'indoor_ambiance')] %}
+      {% endif %}
+      {{ dict.from_keys(items) }}
+  sequence:
+  - action: script.get_light_entities
+    data: "{{ data }}"
+    response_variable: response
+  - stop: Stopping
+    response_variable: response
+
+get_zwave_entities_from_light_group:
+  mode: parallel
+  alias: Generate a list of light entities from target lights
+  fields:
+    light:
+      description: The entity to get entities from
+      required: true
+      selector:
+        entity:
+          filter:
+          - domain: light
+            integration: template
+  sequence:
+  - action: script.get_entities_from_light_group
+    data:
+      light: "{{ light }}"
+    response_variable: lights
+  - variables:
+      response:
+        entity_id: >
+          {{ lights.entity_id | select('in', integration_entities('zwave_js')) | list }}
+  - stop: Stopping
+    response_variable: response
 
 light_handler:
   mode: parallel

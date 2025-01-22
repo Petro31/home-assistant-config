@@ -91,3 +91,37 @@
       notify: notify.mobile_app_petro
       message: >
         Reloading Alexa Media Player Integration
+
+- alias: Fix Zwave Multicast Errors
+  id: 6c4bb70c-e8a7-40c8-9c78-bb077023e3b9
+  description: Refreshes a zwave multicast light and attempts to fix it.
+  mode: single
+  triggers:
+  - trigger: state
+    entity_id: sensor.multicast_error
+  variables:
+    action: "{{ trigger.to_state.attributes.action | default(None) }}"
+    entity_id: "{{ trigger.to_state.attributes.entity_id | default(None) }}"
+    continue: "{{ action is not none and entity_id is not none }}"
+  conditions:
+  - condition: template
+    value_template: "{{ continue }}"
+  action:
+  - action: script.notify
+    data:
+      notify: notify.mobile_app_petro
+      title: Multicast Error
+      message: Refreshing {{ state_attr(entity_id, 'friendly_name') }}
+
+  - action: script.get_zwave_entities_from_light_group
+    data:
+      light: "{{ entity_id }}"
+    response_variable: response
+
+  - action: zwave_js.refresh_value
+    target:
+      entity_id: "{{ response.entity_id }}"
+    
+  - action: "{{ action }}"
+    target:
+      entity_id: "{{ entity_id }}"
