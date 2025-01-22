@@ -1222,7 +1222,7 @@
             and is_state('switch.kitchen_pantry', 'off')
           }}
         turn_on:
-        - variables:
+        - variables: &movie_variables
             cabinet:
             seasonal: >
               {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
@@ -1246,5 +1246,6 @@
               - light.kitchen_island
               - switch.kitchen_pantry
         turn_off:
+        - variables: *movie_variables
         - service: homeassistant.turn_off
           target: *movie_entities
