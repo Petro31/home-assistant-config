@@ -4,17 +4,9 @@ logs:
   frontend.js.latest: critical
   py.warnings: critical
   homeassistant.components.analytics: info
-  homeassistant.components.automation.frigate_notifications_lambo_driveway: error
-  homeassistant.components.automation.frigate_notifications_petro_driveway: error
-  homeassistant.components.automation.frigate_notifications_lambo_backyard: error
-  homeassistant.components.automation.frigate_notifications_petro_backyard: error
-  homeassistant.components.automation.frigate_notifications_lambo_deck_1: error
-  homeassistant.components.automation.frigate_notifications_petro_deck_1: error
-  homeassistant.components.automation.frigate_notifications_lambo_deck_2: error
-  homeassistant.components.automation.frigate_notifications_petro_deck_2: error
-  homeassistant.components.script.frigate_notification_petro: error
-  homeassistant.components.script.frigate_notification_lambo: error
-  homeassistant.components.script.notify_frigate: error
+  alexapy.helpers: error
+  #alexapy: debug
+  #homeassistant.components.ssdp: debug
   #homeassistant.components.mqtt: debug
   #homeassistant.components.mqtt.discovery: debug
   #homeassistant.components.waze_travel_time: debug
@@ -22,11 +14,10 @@ logs:
   #haffmpeg.core: debug
 filters:
   homeassistant.components.automation:
-  - "Already running$"
+    - "Already running$"
   homeassistant.components.script:
-  - "Already running$"
+    - "Already running$"
   homeassistant.components.zwave_js:
-  - "^Passing the zwave_js.multicast_set_value service call to the zwave_js.set_value service since only one node was targeted$"
+    - "^Passing the zwave_js.multicast_set_value service call to the zwave_js.set_value service since only one node was targeted$"
   homeassistant.components.compensation.sensor:
-  - "attribute volume_level is not numerical$"
-    
+    - "attribute volume_level is not numerical$"
