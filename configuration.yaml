@@ -34,3 +34,4 @@ sensor: !include sensor.yaml
 switch: !include switch.yaml
 system_health:
 template: !include_dir_merge_list template
+system_log: !include system_log.yaml
