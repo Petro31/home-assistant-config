@@ -118,10 +118,43 @@
       light: "{{ entity_id }}"
     response_variable: response
 
+  - delay: 1
+
   - action: zwave_js.refresh_value
     target:
       entity_id: "{{ response.entity_id }}"
-    
+
   - action: "{{ action }}"
     target:
       entity_id: "{{ entity_id }}"
+
+- alias: Fix Wled Errors
+  id: 06cfa18a-fa57-406d-94dc-5037e6096b87
+  description: Refreshes a zwave multicast light and attempts to fix it.
+  mode: single
+  triggers:
+  - trigger: state
+    entity_id: sensor.multicast_error
+  variables:
+    entities:
+    - light.kitchen_cabinet_2
+    - light.cabinet_master
+    - light.cabinet_slave
+    to_state: "{{ states('switch.kitchen_cabinet') }}"
+    filtered: >
+      {{ entities | reject('is_state', to_state) | list }}
+  conditions:
+  - condition: template
+    value_template: "{{ filtered | length > 0 }}"
+  action:
+  - action: script.notify
+    data:
+      notify: notify.mobile_app_petro
+      title: WLED Error
+      message: Refreshing {{ filtered | map('state_attr', 'friendly_name') | list | join(', ') }}
+
+  - delay: 1
+
+  - action: homeassistant.turn_{{ to_state }}
+    target:
+      entity_id: "{{ filtered }}"
