@@ -158,3 +158,43 @@
   - action: homeassistant.turn_{{ to_state }}
     target:
       entity_id: "{{ filtered }}"
+
+- alias: Fix Doorbell Chime Status
+  id: 3f1c8cab-0151-4961-854e-80fdb956fcae
+  description: Checks to see if the doorbell chime is on periodically.
+  triggers:
+  - id: turn_on
+    trigger: state
+    entity_id: switch.doorbell_chime_active
+    to: 'off'
+    for:
+      minutes: 5
+  - id: turn_on
+    trigger: template
+    value_template: "{{ states('sensor.doorbell_chime_off') | float(0) == 5 }}"
+  - id: check
+    trigger: time
+    at: '8:00:00'
+  variables:
+    message: >
+      {% if trigger.id == 'turn_on' %}
+        Doorbell chime has been off for at least 5 minutes.  Turning Back on.
+      {% elif is_state('sensor.doorbell_chime_off', 'off') %}
+        Doorbell chime was found to be off at 8am, turning back on.
+      {% else%}
+        None
+      {% endif %}
+    continue: "{{ message is not none }}"
+  conditions:
+  - condition: template
+    value_template: "{{ continue }}"
+  action:
+  - action: script.notify
+    data:
+      notify: notify.mobile_app_petro
+      title: Fixing Doorbell Chime
+      message: "{{ message }}"
+
+  - action: switch.turn_on
+    target:
+      entity_id: switch.doorbell_chime_active
