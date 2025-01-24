@@ -13,7 +13,6 @@ entities:
   - switch.dining_room_hutch_lighth
   - switch.disney_plus
   - switch.doorbell_chime
-  - switch.doorbell_chime_active
   - switch.doorbell_restart
   - switch.downstairs
   - switch.driveway_camera
