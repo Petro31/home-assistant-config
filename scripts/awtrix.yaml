@@ -5,7 +5,7 @@ awtrix_announce:
     repeat:
       description: The number of times you wish to repeat the message.
       example: 1
-      default: 1
+      default: 
       selector:
         number:
           min: 0
@@ -14,7 +14,7 @@ awtrix_announce:
     text:
       description: Message to be sent/annouced.
       example: "Hello"
-      required: true
+      default: 
       selector:
         text:
           type: text
@@ -28,37 +28,53 @@ awtrix_announce:
           options:
           - label: Solid
             value: solid
-          - label: "Rainbow Words"
+          - label: "Colored Words"
             value: "rainbow-words"
-          - label: "Rainbow Characters"
+          - label: "Colored Characters"
             value: "rainbow-characters"
     colors:
-      description: A set of colors to apply, in order.
+      description: A set of colors to apply, in order.  Defaults to a rainbow - `'Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Teal', 'Purple'`
       example: "['e81416', 'ffa500']"
       default:
       selector:
         object:
     color:
       description: The desired color (Solid only)
-      example: rainbow-character
-      default: solid
+      example: White or FFFFFF
+      default: FFFFFF
       selector:
         select:
           options: &colors
-          - label: Red
-            value: "e81416"
-          - label: Orange
-            value: "ffa500"
-          - label: Yellow
-            value: "faeb36"
-          - label: Green
-            value: "79c314"
-          - label: Blue
-            value: "487de7"
-          - label: Indigo
-            value: "4b369d"
-          - label: Violet
-            value: "70369d"
+          - value: "FFFFFF"
+            label: White
+          - value: "FF0000"
+            label: Red
+          - value: "00FF00"
+            label: Green
+          - value: "0000FF"
+            label: Blue
+          - value: "FFFF00"
+            label: Yellow
+          - value: "FF00FF"
+            label: Magenta
+          - value: "00FFFF"
+            label: Cyan
+          - value: "FFA500"
+            label: Orange
+          - value: "800080"
+            label: Purple
+          - value: "008080"
+            label: Teal
+          - value: "808000"
+            label: Olive
+          - value: "800000"
+            label: Maroon
+          - value: "008000"
+            label: Dark Green
+          - value: "000080"
+            label: Navy
+          - value: "808080"
+            label: Gray
     app:
       description: Notify the device or create an app
       example: true
@@ -76,6 +92,13 @@ awtrix_announce:
     topic: >
       {{ root }}/{{ 'notify' if app is not defined else ('custom/' ~ app) }}
     _colors_config: *colors
+    _ranbow_colors: >
+      {% set targets = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Teal', 'Purple'] %}
+      {% set ns = namespace(colors=[]) %}
+      {% for c in ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Teal', 'Purple']  %}
+        {% set ns.colors = ns.colors + [_colors_config[c]] %}
+      {% endfor %}
+      {{ ns.colors }}
     supplied_colors: >
       {% set color_names = _colors_config | map(attribute='label') | list %}
       {% if colors is defined and colors is list and colors | count > 0 %}
@@ -107,26 +130,25 @@ awtrix_announce:
       {% else %}
         {{ supplied_colors[0] }}
       {% endif %}
-    sequence: >
-      {% set _colors = supplied_colors %}
-      {% set ns = namespace(text=[], cnt=0) %}
-      {% if effect == 'rainbow-characters' %}
+    payload: >
+      {% set ns = namespace(items=[], text=[], cnt=0) %}
+      {% if effect == 'rainbow-characters' and text | default %}
         {% for char in text %}
           {% if char == ' ' %}
-            {% set c = _colors[0] %}
+            {% set c = _ranbow_colors[0] %}
           {% else %}
-            {% set c = _colors[ns.cnt % _colors | length] %}
+            {% set c = _ranbow_colors[ns.cnt % _ranbow_colors | length] %}
             {% set ns.cnt = ns.cnt + 1 %}
           {% endif %}
           {% set ns.text = ns.text + [{'t':char, 'c': c}] %}
         {% endfor %}
-      {% elif effect == 'rainbow-words' %}
+      {% elif effect == 'rainbow-words' and text | default %}
         {% for word in text.split(' ') %}
-          {% set c = _colors[ns.cnt % _colors | length] %}
+          {% set c = _ranbow_colors[ns.cnt % _ranbow_colors | length] %}
           {% set ns.cnt = ns.cnt + 1 %}
           {% set ns.text = ns.text + [{'t':word, 'c': c}] %}
         {% endfor %}
-      {% else %}
+      {% elif text %}
         {% set ns.text = ns.text + [{'t':text, 'c': _color}] %}
       {% endif %}
       {{ {'text': ns.text, 'repeat': _repeat} }}
@@ -135,4 +157,4 @@ awtrix_announce:
   - action: mqtt.publish
     data:
       topic: "{{ topic }}"
-      payload: "{{ sequence | to_json }}"
+      payload: "{{ payload | to_json }}"
