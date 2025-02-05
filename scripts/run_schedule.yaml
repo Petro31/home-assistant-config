@@ -50,45 +50,55 @@ set_run_schedule:
       {%- from 'easy_time.jinja' import big_time_between %}
       {%- set programs = state_attr('sensor.running_programs', 'programs') %}
       {%- set _program = programs | selectattr('name', 'eq', program) | first | default(None) or programs | selectattr('id', 'in', program) | first | default(None) %}
-      {%- set ns = namespace(items=[], total=timedelta(0)) %}
+      {%- set ns = namespace(items=[], weekly_items=[], total=timedelta(0)) %}
       {%- set t = today_at() - timedelta(days=now().weekday()) %}
       {%- if program %}
-        {%- for day, value in _program.weeks[week - 1].items() %}
-          {%- set item = day | title ~ ' Run' %}
-          {%- set dt = (t + timedelta(days=loop.index - 1) + timedelta(hours=18)).isoformat() %}
-          {%- if value is not none %}
-            {%- set duration = value.duration | default('00:00:00') %}
-            {%- if value.count is defined and duration.count(":") == 1 %}
-              {%- set duration = "00:" + duration %}
-            {%- elif duration.count(":") == 1 %}
-              {%- set duration = duration ~ ":00" %}
-            {%- endif %}
-            {%- set ns.total = ns.total + duration | as_timedelta %}
-            {%- set duration = big_time_between(today_at(), today_at() + duration | as_timedelta) %}
-            {%- set description = value.key.format(**heart_rates) %}
-            {%- if value.count is defined %}
-              {%- if 'hill' in description %}
-                {%- set duration = ' Hills' %}
-              {%- elif 'repeat' in description %}
-                {%- set duration = ' Repeats' %}
-              {%- elif 'intervals' in description %}
-                {%- set duration = ' Intervals' %}
-              {%- else %}
-                {%- set duration = 'x ' ~ duration %}
+        {%- for pgram in _program.weeks[week - 1: week + 1] %}
+          {%- set ns.weekly_items = [] %}
+          {%- set ns.total = timedelta(0) %}
+          {%- set weekname = '' if loop.index == 1 else "Next " %}
+          {%- set padded_days = 0 if loop.index == 1 else 7 %}
+          {%- for day, value in pgram.items() %}
+            {%- set item = weekname ~ day | title ~ ' Run' %}
+            {%- set dt = (t + timedelta(days=loop.index - 1 + padded_days) + timedelta(hours=18)).isoformat() %}
+            {%- if value is not none %}
+              {%- set duration = value.duration | default('00:00:00') %}
+              {%- if value.count is defined and duration.count(":") == 1 %}
+                {%- set duration = "00:" + duration %}
+              {%- elif duration.count(":") == 1 %}
+                {%- set duration = duration ~ ":00" %}
               {%- endif %}
-              {% set description = value.count ~ duration ~ ' - ' ~ description.strip() %}
-            {%- else %}
-              {%- set duration = duration if duration != 'now' else 'Intervals' %}
-              {%- set description = duration ~ ' - ' ~ description.strip() %}
-            {%- endif %}
-            {% set ns.items = ns.items + [dict(item=item, description=description, due_datetime=dt)] %}
-          {% else %}
-            {% set ns.items = ns.items + [dict(item=item, description='Rest.', due_datetime=dt)] %}
-          {% endif %}
+              {%- set ns.total = ns.total + duration | as_timedelta %}
+              {%- set duration = big_time_between(today_at(), today_at() + duration | as_timedelta) %}
+              {%- set description = value.key.format(**heart_rates) %}
+              {%- if value.count is defined %}
+                {%- set count_time = 'x' if duration == 'now' else 'x ' ~ duration %}
+                {%- if 'hill' in description %}
+                  {%- set duration = count_time ~ ' Hills' %}
+                {%- elif 'repeat' in description %}
+                  {%- set duration = count_time ~ ' Repeats' %}
+                {%- elif 'intervals' in description %}
+                  {%- set duration = count_time ~ ' Intervals' %}
+                {%- else %}
+                  {%- set duration = 'x ' ~ duration %}
+                {%- endif %}
+                {% set description = value.count ~ duration ~ ' - ' ~ description.strip() %}
+              {%- else %}
+                {%- set duration = duration if duration != 'now' else 'Intervals' %}
+                {%- set description = duration ~ ' - ' ~ description.strip() %}
+              {%- endif %}
+              {% set ns.weekly_items = ns.weekly_items + [dict(item=item, description=description, due_datetime=dt)] %}
+            {% else %}
+              {% set ns.weekly_items = ns.weekly_items + [dict(item=item, description='Rest.', due_datetime=dt)] %}
+            {% endif %}
+          {%- endfor %}
+          {%- set dt = (t + timedelta(days=6 + padded_days) + timedelta(hours=18)).isoformat() %}
+          {%- set duration = big_time_between(today_at(), today_at() + ns.total) ~ ' - ' %}
+          {%- set ns.weekly_items = [dict(item=weekname ~ 'Run Program', description=duration ~ _program.name ~ " Week " ~ (week + loop.index - 1), due_datetime=dt)] + ns.weekly_items %}
+          {%- set ns.items = ns.items + ns.weekly_items %}
         {%- endfor %}
       {%- endif %}
-      {%- set dt = (t + timedelta(days=6) + timedelta(hours=18)).isoformat() %}
-      {{ [dict(item='Run Program', description=_program.name ~ " Week " ~ week, due_datetime=dt)] + ns.items }}
+      {{ ns.items }}
 
     today: >
       {%- set today = this_week[1:] | selectattr('due_datetime', '>=', today_at().isoformat()) | first | default(None) %}

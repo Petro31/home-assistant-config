@@ -4,6 +4,8 @@
   triggers:
   - trigger: time
     at: "00:00:00"
+  - trigger: event
+    event_type: run_manual_schedule_update
   variables:
     day: >
       {% from 'easy_time.jinja' import count_the_days %}
