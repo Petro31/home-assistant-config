@@ -25,6 +25,22 @@ cards:
     template: >
       {% raw %}
       [
+        {%- if not is_state('sensor.holiday_lighting', 'no_holiday') %}
+          {%- from 'holiday.jinja' import color_configuration %}
+          {%- set holiday = states('sensor.holiday_lighting') %}
+          {%- set color = color_configuration.get(holiday, color_configuration['no_holiday']).values() | list | first %}
+          {%- set color = 'rgb({0}, {1}, {2})'.format(*color[:-1]) %}
+          {%- set action = dict(action='perform-action', perform_action='script.set_indoor_holiday', data=dict(transition=3, brightness=255)) %}
+          {{ dict(
+            type='tile',
+            entity=states('sensor.seasonal_lights'),
+            name=states('sensor.holiday_lighting').replace('_', ' ') | title ~ ' Scene',
+            color=color,
+            hide_state=true,
+            tap_action=action,
+            icon_tap_action=action,
+          )}},
+        {%- endif %}
         {%- for entity in state_attr('sensor.seasonal_accent_lights', 'ui') %}
           {{ dict(
             type='tile',

@@ -61,7 +61,7 @@
       rgb_color: [138, 151,  72]
 
 - name: Holiday Bulbs Easter
-  icon: mdi:rabbit
+  icon: mdi:egg-easter
   entities:
     light.main_door_left_bulb:
       state: 'on'
@@ -147,7 +147,7 @@
       rgb_color: [  9, 148,  65]
 
 - name: Holiday Bulbs Patriotic
-  icon: mdi:flag-variant
+  icon: fas:flag-usa
   entities:
     light.main_door_left_bulb:
       state: 'on'
