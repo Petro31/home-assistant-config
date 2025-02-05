@@ -11,7 +11,7 @@
       action: >
         {{ targets | select('search', 'turn_o(ff|n)') | list | first | default(none) }}
       entity_id: >
-        {{ targets | select('reject', 'turn_o(ff|n)') | list }}
+        {{ targets | reject('search', 'turn_o(ff|n)') | list }}
   sensor:
   - name: Multicast Error
     unique_id: e9236ec7-1af0-4da8-8b27-255807e459b3
