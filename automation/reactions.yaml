@@ -99,10 +99,22 @@
   triggers:
   - trigger: state
     entity_id: sensor.multicast_error
+    <<: &unavailable
+      not_from:
+      - unknown
+      - unavailable
+      not_to:
+      - unknown
+      - unavailable
   variables:
     action: "{{ trigger.to_state.attributes.action | default(None) }}"
     entity_id: "{{ trigger.to_state.attributes.entity_id | default(None) }}"
-    continue: "{{ action is not none and entity_id is not none }}"
+    new: &new >
+      {# Stops reload template from triggering. #}
+      {%- set t = now() %}
+      {%- set yesterday = t - timedelta(hours=24) %}
+      {{ t - trigger.to_state.state | as_datetime(yesterday) | as_local < timedelta(seconds=10) }}
+    continue: "{{ action is not none and entity_id is not none and new }}"
   conditions:
   - condition: template
     value_template: "{{ continue }}"
@@ -134,7 +146,8 @@
   mode: single
   triggers:
   - trigger: state
-    entity_id: sensor.multicast_error
+    entity_id: sensor.wled_api_error
+    <<: *unavailable
   variables:
     entities:
     - light.kitchen_cabinet_2
@@ -143,9 +156,12 @@
     to_state: "{{ states('switch.kitchen_cabinet') }}"
     filtered: >
       {{ entities | reject('is_state', to_state) | list }}
+    new: *new
+    continue: >
+      {{ filtered | length > 0 and new }}
   conditions:
   - condition: template
-    value_template: "{{ filtered | length > 0 }}"
+    value_template: "{{ continue }}"
   action:
   - action: script.notify
     data:
@@ -198,3 +214,42 @@
   - action: switch.turn_on
     target:
       entity_id: switch.doorbell_chime_active
+
+- alias: Play/Pause lighting in living room
+  id: 0c371ea2-c700-476b-9c3d-b36bd3c9a662
+  description: Turn on lighting when paused, turn off lighting when playing.
+  triggers:
+  - trigger: state
+    entity_id: media_player.roku_living_room
+    to:
+    - playing
+    - paused
+    not_from:
+    - unavailable
+    - unknown
+  variables:
+    light: light.living_room
+    media_state: "{{ trigger.to_state.state }}"
+    light_state: "{{ 'on' if media_state == 'paused' else 'off' }}"
+    movie_time: "{{ is_state('switch.movie_time', 'on') }}"
+    turned_on_by_this: >
+      {% if this.context.parent_id is not none %}
+        {{ light | expand | selectattr('state', 'eq', 'on') | selectattr('context.parent_id', 'eq', this.context.parent_id) | map(attribute='entity_id') | list }}
+      {% else %}
+        []
+      {% endif %}
+    living_room_lights: >
+      {% if movie_time and media_state == 'paused' and is_state(light, 'off') %}
+        {{ state_attr(light, 'entity_id') }}
+      {% elif movie_time and media_state == 'playing' and is_state(light, 'on') %}
+        {{ turned_on_by_this }}
+      {% else %}
+        []
+      {% endif %}
+  conditions:
+  - condition: template
+    value_template: "{{ living_room_lights | length > 0 }}"
+  actions:
+  - action: light.turn_{{ light_state }}
+    target:
+      entity_id: "{{ living_room_lights }}"
