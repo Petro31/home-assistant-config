@@ -14,8 +14,6 @@
                 'switch.driveway_camera', 'switch.backyard_camera') 
                 | selectattr('state', 'in', ['unknown', 'unavailable']) 
                 | list | length == 0 }}
-    attributes:
-      template: counter
 
   - unique_id: camera_turn_on
     name: Camera Resume
@@ -32,5 +30,3 @@
                 'switch.driveway_camera', 'switch.backyard_camera') 
                 | selectattr('state', 'in', ['unknown', 'unavailable']) 
                 | list | length == 0 }}
-    attributes:
-      template: counter

@@ -1,15 +1,26 @@
 - sensor:
   - unique_id: outside_temperature
     name: Outside Temperature
+    device_class: temperature
+    state_class: measurement
     state: > 
-      {{ state_attr('weather.home', 'temperature') }}
+      {{ states('sensor.ambweather_temp1') }}
     unit_of_measurement: '°F'
-    attributes:
-      template: temperature
+
+- sensor:
+  - unique_id: ffc879a1-37ef-4cf7-ad3d-9d32352827f8
+    name: Outside Humidity
+    device_class: humidity
+    state_class: measurement
+    state: > 
+      {{ states('sensor.ambweather_humidity1') }}
+    unit_of_measurement: '%'
 
 - sensor:
   - unique_id: house_temperature
     name: House Temperature
+    device_class: temperature
+    state_class: measurement
     state: > 
       {%- set temps = expand(
         'sensor.kitchen_temperature',
@@ -30,5 +41,3 @@
       ) %}
       {{ temps | map(attribute='state') | map('is_number') | select('eq', true) | list | length > 0 }}
     unit_of_measurement: '°F'
-    attributes:
-      template: temperature

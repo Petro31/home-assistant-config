@@ -172,8 +172,8 @@
       "switch.deck_walkway",
       "switch.deck_mood_lighting",
       "light.deck_wled_master",
-      "sensor.deck_temperature",
-      "sensor.deck_humidity",
+      'sensor.outside_temperature',
+      'sensor.outside_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -455,6 +455,7 @@
       'light.garage_sconce_left_bulb',
       'light.garage_sconce_right_bulb',
       'sensor.outside_temperature',
+      'sensor.outside_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -471,6 +472,8 @@
     ],
     'entities': [
       "switch.patio_string_light",
+      'sensor.outside_temperature',
+      'sensor.outside_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -487,7 +490,9 @@
     ],
     'entities': [
       "switch.outside_porch",
-      "switch.doorbell_chime_active"
+      "switch.doorbell_chime_active",
+      'sensor.outside_temperature',
+      'sensor.outside_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
