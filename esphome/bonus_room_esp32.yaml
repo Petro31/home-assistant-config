@@ -1,6 +1,7 @@
 esphome:
   name: bonus_room_esp32
-  platform: ESP32
+
+esp32:
   board: mhetesp32devkit
 
 wifi:

@@ -1,7 +1,8 @@
 esphome:
   name: game-room-esp32
   friendly_name: Game Room Esp32
-  platform: ESP32
+
+esp32:
   board: esp32dev
 
 # Enable logging
