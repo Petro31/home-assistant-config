@@ -1,0 +1,15 @@
+- switch:
+  - unique_id: garage_temporary_laser
+    name: Garage Temporary Laser
+    state: "{{ is_state('switch.garage_ceiling_outlet', 'on') }}"
+    turn_on:
+    - service: switch.turn_on
+      <<: &garage_temporary_laser
+        target:
+          entity_id: switch.garage_ceiling_outlet
+    - delay: 45
+    - service: switch.turn_off
+      <<: *garage_temporary_laser
+    turn_off:
+    - service: switch.turn_off
+      <<: *garage_temporary_laser

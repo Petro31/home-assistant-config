@@ -1,0 +1,377 @@
+- switch:
+  # drinking board games
+  - unique_id: board_games_party
+    name: Board Games Party
+    state: >
+      {{ is_state('group.party_script_board_games_party', 'on') and is_state('switch.lzw45_mood_lighting', 'on') }}
+    turn_on:
+    - service: script.party_on
+      data:
+        party: board_games_party
+        artist: Empire of the Sun
+        pixel_effect: aurora
+        entities:
+        - switch.hyperion_rainbow_swirl_fast
+    turn_off:
+    - service: script.party_off
+      data:
+        party: board_games_party
+        
+  # 80s party
+  - unique_id: the_80s_party
+    name: 80s Party
+    state: >
+      {{ is_state('group.party_script_the_80s_party', 'on') and is_state('switch.lzw45_mood_lighting', 'on') }}
+    turn_on:
+    - service: script.party_on
+      data:
+        party: the_80s_party
+        artist: I Heart 80s
+        pixel_effect: aurora
+        entities:
+        - switch.hyperion_rainbow_swirl_fast
+    turn_off:
+    - service: script.party_off
+      data:
+        party: the_80s_party
+        
+  # christmas party
+  - unique_id: christmas_party
+    name: Christmas Party
+    state: >
+      {{ is_state('group.party_script_christmas_party', 'on') and is_state('switch.lzw45_mood_lighting', 'on') }}
+    turn_on:
+    - service: script.party_on
+      data:
+        party: christmas_party
+        artist: I Heart Christmas
+        quick_color: 120
+        entities:
+        - switch.hyperion_solid_green
+        - light.christmas_tree
+    turn_off:
+    - service: script.party_off
+      data:
+        party: christmas_party
+  
+  # LZW MOOD LIGHTING
+  - unique_id: lzw45_mood_lighting
+    name: Mood Lighting
+    state: "{{ states('input_text.lzw45_last_effect') != 'off' }}"
+    turn_on:
+    - service: input_number.set_value
+      data:
+        entity_id: input_number.quick_strip_color_temp
+        value: 2700
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.quick_strip_effect
+        option: solid
+    turn_off:
+    - choose:
+      - conditions:
+        - condition: template
+          value_template: "{{ is_state('input_select.quick_strip_effect', 'off') }}"
+        sequence:
+        - service: script.lzw45_ui_quick_effect
+        - service: input_text.set_value
+          data:
+            entity_id: input_text.lzw45_last_effect
+            value: "off"
+      default:
+        service: input_select.select_option
+        data:
+          entity_id: input_select.quick_strip_effect
+          option: 'off'
+  
+  # XBOX HARMONY ACTIVITY
+  - unique_id: 2bb5c91b-5ff2-41d5-b1fa-7fa603c54fee
+    name: Xbox One
+    state: >
+      {%- from 'harmony.jinja' import xbox_one as f -%}{{- f() -}}
+    turn_on:
+    - service: script.harmony_activity_on
+      data:
+        activity: Xbox One
+    turn_off: &harmony_activity_off
+    - service: script.harmony_activity_off
+  
+  # PLAYSTATION HARMONY ACTIVITY
+  - unique_id: 8b9bae0f-2eb8-4af3-bb54-3d0252437ad6
+    name: Playstation
+    state: >
+      {%- from 'harmony.jinja' import playstation as f -%}{{- f() -}}
+    turn_on:
+    - service: script.harmony_activity_on
+      data:
+        activity: Playstation
+    turn_off: *harmony_activity_off
+  
+  # SWITCH HARMONY ACTIVITY
+  - unique_id: 9c1d6eab-6652-4531-b8d3-30662b4fb928
+    name: Switch
+    state: >
+      {%- from 'harmony.jinja' import switch as f -%}{{- f() -}}
+    turn_on:
+    - service: script.harmony_activity_on
+      data:
+        activity: Switch
+    turn_off: *harmony_activity_off
+  
+  # TV HARMONY ACTIVITY
+  - unique_id: ec14504b-9b62-4b44-bcf1-5d0218e4504d
+    name: TV
+    state: >
+      {%- from 'harmony.jinja' import tv as f -%}{{- f() -}}
+    turn_on:
+    - service: script.harmony_activity_on
+      data:
+        activity: TV
+    turn_off: *harmony_activity_off
+  
+  # CHROMECAST HARMONY ACTIVITY
+  - unique_id: c27197a0-e746-4873-ae62-737784541cf5
+    name: Chromecast
+    state: >
+      {%- from 'harmony.jinja' import chromecast as f -%}{{- f() -}}
+    turn_on:
+    - service: script.harmony_activity_on
+      data:
+        activity: Chromecast
+    turn_off:
+    - service: script.harmony_activity_off
+    - service: script.stop_casting
+  
+  # OFF ACTIVITY
+  - unique_id: ab55c1de-77f1-49f6-9b70-2237e96847be
+    name: Power Off
+    state: >
+      {%- from 'harmony.jinja' import power_off as f -%}{{- f() -}}
+    turn_on: &harmony_all_off
+      - service: script.harmony_all_off
+    turn_off: *harmony_all_off
+    
+  # ROKU HARMONY ACTIVITY
+  - unique_id: 9b436b75-1a7e-4d5f-a2ad-016308a8cbef
+    name: Roku
+    state: >
+      {%- from 'harmony.jinja' import roku as f -%}{{- f() -}}
+    turn_on:
+    - service: script.harmony_activity_on
+      data:
+        activity: Roku
+    turn_off: *harmony_activity_off
+  
+  # APPLE TV
+  - unique_id: 7aa5614a-9bea-4088-b950-e22f3d8e1061 
+    name: Apple TV
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Apple TV') }}
+    turn_on:
+    - service: script.roku_source_on
+      data:
+        source: Apple TV
+    turn_off: &turn_off_roku
+    - service: switch.turn_off
+      entity_id: switch.roku
+  
+  # NETFLIX
+  - unique_id: b289f6f7-ab1b-4c58-9f78-7044b1e33457
+    name: Netflix
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Netflix') }}
+    turn_on:
+    - service: script.roku_source_on
+      data:
+        source: Netflix
+    turn_off: *turn_off_roku
+        
+  # HBO
+  - unique_id: c1c2a1f3-a01f-4e58-8ab9-d4fc8bd82832
+    name: HBO
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Max') }}
+    turn_on:
+    - service: script.roku_source_on
+      data:
+        source: Max
+    turn_off: *turn_off_roku
+        
+  # Hulu
+  - unique_id: dbbc7f9c-3737-4e2e-bb81-de71495b1d7e
+    name: Hulu
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Hulu') }}
+    turn_on:
+    - service: script.roku_source_on
+      data:
+        source: Hulu
+    turn_off: *turn_off_roku
+        
+  # Prime Video
+  - unique_id: e93b60fb-9f47-411e-8672-81674a2f9061
+    name: Prime Video
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Prime Video') }}
+    turn_on:
+    - service: script.roku_source_on
+      data:
+        source: Prime Video
+    turn_off: *turn_off_roku
+  
+        
+  # Disney Plus
+  - unique_id: 8971c31c-5529-4fc6-b98b-113b8c38b8a6
+    name: Disney Plus
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Disney Plus') }}
+    turn_on:
+    - service: script.roku_source_on
+      data:
+        source: Disney Plus
+    turn_off: *turn_off_roku
+        
+  # Plex
+  - unique_id: 263a42a3-25e8-43ac-a39b-2eaa07d3711f
+    name: Plex
+    state: >
+      {{ is_state('switch.roku', 'on') and 'plex' in state_attr('media_player.roku_living_room', 'source') | string | lower }}
+    turn_on:
+    - service: script.roku_source_on
+      data:
+        source: >
+          {%- set player = expand('media_player.roku_living_room') | first %}
+          {%- set ns = namespace(ret=[]) %}
+          {%- for source in player.attributes.source_list %}
+            {%- if 'plex' in source.lower() %}
+              {%- set ns.ret = ns.ret + [ source ] %}
+            {%- endif %}
+          {%- endfor %}
+          {{ ns.ret | first | default('Plex - Free Movies & TV') }}
+    turn_off: *turn_off_roku
+  
+  # Peacock
+  - unique_id: 966ded9b-6022-44fb-93f3-3924b35d392f
+    name: Peacock
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Peacock TV') }}
+    turn_on:
+    - service: script.roku_source_on
+      data:
+        source: Peacock TV
+    turn_off: *turn_off_roku
+  
+  
+  #####################
+  # LIVING ROOM MUSIC #
+  #####################
+  
+  # Echo connection to Bluetooth, Great Room
+  - unique_id: a7bcc52e-6cba-459d-9aaf-e67a0b6ca7bc
+    name: Echo
+    state: >
+      {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'Echo')
+         and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Echo')
+         and is_state('switch.floating_outlet_switch', 'on') }}
+    turn_on:
+    - service: script.echo_through_receiver_on
+    turn_off:
+    - service: script.echo_through_receiver_off
+  
+  # Airplay Great Room
+  - unique_id: d5d0e235-776f-4c99-b6dd-127007bb032d
+    name: Airplay
+    state: >
+      {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'AirPlay')
+         and is_state_attr('media_player.yamaha_rx_v6a', 'source', 'AirPlay') }}
+    turn_on:
+    - service: script.airplay_through_receiver_on
+    turn_off:
+    - service: script.echo_through_receiver_off
+  
+  # Echo connection to Bluetooth, Living Room
+  - unique_id: 815d21aa-2822-4f94-a840-9210d82ecb56
+    name: Echo
+    state: >
+      {{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'Echo')
+         and is_state('switch.floating_outlet_switch', 'on') }}
+    turn_on:
+    - service: script.echo_through_media_player
+      data:
+        switch: switch.floating_outlet_switch
+        media_player: media_player.yamaha_rx_v6a
+        desired_state: "on"
+        source: Echo
+      
+    turn_off:
+    - service: script.echo_through_media_player
+      data:
+        switch: switch.floating_outlet_switch
+        media_player: media_player.yamaha_rx_v6a
+        desired_state: "off"
+        source: Echo
+  
+  # Airplay Living Room
+  - unique_id: 9c196f1e-5b2a-4377-9717-e69745d3a93e
+    name: Airplay
+    state: >
+      {{ is_state_attr('media_player.yamaha_rx_v6a', 'source', 'AirPlay') }}
+    turn_on:
+    - service: script.media_player_on
+      data:
+        media_player: media_player.yamaha_rx_v6a
+        volume: 0.7
+        source: AirPlay
+      
+    turn_off:
+    - service: script.media_player_off
+      data:
+        media_player: media_player.yamaha_rx_v6a
+  
+  
+  # Echo connection to Bluetooth, Dining Room
+  - unique_id: f5862f89-1245-42bc-a1c2-0c9476513b5d
+    name: Echo
+    state: >
+      {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'Echo')
+         and is_state('switch.floating_outlet_switch', 'on') }}
+    turn_on:
+    - service: script.echo_through_media_player
+      data:
+        switch: switch.floating_outlet_switch
+        media_player: media_player.yamaha_rx_v6a_zone2
+        desired_state: "on"
+        source: Echo
+      
+    turn_off:
+    - service: script.echo_through_media_player
+      data:
+        switch: switch.floating_outlet_switch
+        media_player: media_player.yamaha_rx_v6a_zone2
+        desired_state: "off"
+        source: Echo
+  
+  
+  # Airplay Dining Room
+  - unique_id: 7f266638-f0b9-4cc5-bfd9-3243a5433e81
+    name: Airplay
+    state: >
+      {{ is_state_attr('media_player.yamaha_rx_v6a_zone2', 'source', 'AirPlay') }}
+    turn_on:
+    - service: script.media_player_on
+      data:
+        media_player: media_player.yamaha_rx_v6a_zone2
+        volume: 0.7
+        source: AirPlay
+      
+    turn_off:
+    - service: script.media_player_off
+      data:
+        media_player: media_player.yamaha_rx_v6a_zone2

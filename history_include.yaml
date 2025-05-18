@@ -1,4 +1,5 @@
 entities:
+  - binary_sensor.deck_motion_sensor_occupancy
   - binary_sensor.dryer_status
   - binary_sensor.garage_door_tilt
   - binary_sensor.garage_entry_door
@@ -38,6 +39,8 @@ entities:
   - sensor.deck_temperature
   - sensor.deck_temperature_sensor_battery_level
   - sensor.disk_free_home
+  - sensor.deck_motion_sensor_illuminance
+  - sensor.deck_motion_sensor_temperature
   - sensor.disk_use_home
   - sensor.disk_use_percent_home
   - sensor.disk_use_total

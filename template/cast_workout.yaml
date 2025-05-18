@@ -1,0 +1,53 @@
+
+- switch:
+  - unique_id: cast_workout_core
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Core') }}
+    turn_on: &cast_workout_core
+    - service: script.cast_workout_video
+      data:
+        workout: Core
+    turn_off: &chromecast_off
+    - service: script.harmony_activity_off
+    - service: script.stop_casting
+    
+  - unique_id: cast_workout_cardio_kickboxing
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Cardio Kickboxing') }}
+    turn_on: &cast_workout_cardio_kickboxing
+    - service: script.cast_workout_video
+      data:
+        workout: Cardio Kickboxing
+    turn_off: *chromecast_off
+  
+  - unique_id: cast_workout_lower_body
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Lower Body') }}
+    turn_on: &cast_workout_lower_body
+    - service: script.cast_workout_video
+      data:
+        workout: Lower Body
+    turn_off: *chromecast_off
+  
+  - unique_id: cast_workout_total_body
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Total Body') }}
+    turn_on: &cast_workout_total_body
+    - service: script.cast_workout_video
+      data:
+        workout: Total Body
+    turn_off: *chromecast_off
+  
+  - unique_id: cast_workout_upper_body
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Upper Body') }}
+    turn_on: &cast_workout_upper_body
+    - service: script.cast_workout_video
+      data:
+        workout: Upper Body
+    turn_off: *chromecast_off

@@ -1,0 +1,168 @@
+- switch:
+  
+  # WLED Kitchen Cabinet 2, matches switch.kitchen_cabinet (zwave)
+  
+  - unique_id: 84c17669-2405-4aae-9e4d-06bd58f42964
+    state: >
+      {% set rgbw = (255, 199, 125, 0) %}
+      {% set brightness = 217 %}
+      {% set entities = ['light.cabinet_surface'] %}
+      {% set matching = entities | select('is_state', 'on') | select('is_state_attr', 'rgbw_color', rgbw) | select('is_state_attr', 'brightness', brightness) | list %}
+      {{ entities | length == matching | length }}
+    turn_on:
+    - action: light.turn_on
+      target: &wled_match_downlight
+        entity_id: light.cabinet_surface
+      data: &wled_match_on_data
+        transition: 0
+        rgbw_color: [255, 199, 125, 0]
+        brightness: 217
+    turn_off:
+    - action: light.turn_off
+      target: *wled_match_downlight
+      data: &wled_match_off_data
+        transition: 0
+  
+  - unique_id: b72a41c4-9fb8-4b5d-8559-d09a0cac143d
+    name: Kitchen Uplights
+    state: >
+      {% set rgbw = (255, 199, 125, 0) %}
+      {% set brightness = 217 %}
+      {% set entities = ['light.cabinet_master', 'light.cabinet_slave'] %}
+      {% set matching = entities | select('is_state', 'on') | select('is_state_attr', 'rgbw_color', rgbw) | select('is_state_attr', 'brightness', brightness) | list %}
+      {{ entities | length == matching | length }}
+    turn_on:
+    - action: light.turn_on
+      target: &wled_match_uplight
+        entity_id:
+        - light.cabinet_master
+        - light.cabinet_slave
+      data: *wled_match_on_data
+    turn_off:
+    - action: light.turn_off
+      target: *wled_match_uplight
+      data: *wled_match_off_data
+  
+  # WLED Hutch Lights, matches kitchen cabinets
+  - unique_id: wled_hutch
+    state: >
+      {% set rgbw = (255, 199, 125, 0) %}
+      {% set brightness = 217 %}
+      {% set entities = ['light.hutch_uplight'] %}
+      {% set matching = entities | select('is_state', 'on') | select('is_state_attr', 'rgbw_color', rgbw) | select('is_state_attr', 'brightness', brightness) | list %}
+      {{ entities | length == matching | length }}
+    turn_on:
+    - action: light.turn_on
+      target: &wled_match_hutch
+        entity_id: light.hutch_uplight
+      data: *wled_match_on_data
+    turn_off:
+    - action: light.turn_on
+      target: *wled_match_hutch
+      data: *wled_match_off_data
+  
+  # Front Trees
+  - unique_id: front_trees
+    name: Front Trees
+    state: >
+      {{ states('select.front_tree_preset') in state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list }}
+    turn_on:
+    - service: select.select_option
+      <<: &front_trees
+        target:
+          entity_id: select.front_tree_preset
+      data:
+        option: "{{ state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list | random }}"
+    turn_off:
+    - service: select.select_option
+      data:
+        option: 'Off'
+      <<: *front_trees
+  
+  # You attempted to use this, however you could not find a good equation
+  # to match rgbw to rgb
+  
+  # {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
+  # {%- set ns = namespace(items=[], current=False, rollup=[]) %}
+  # {%- for setting in settings %}
+  #   {%- set ns.current = False %}
+  #   {%- set ns.rollup = [] %}
+  #   {%- if is_state(setting.entity_id, 'on') %}
+  #     {%- if setting.attributes is defined %}
+  #       {%- for key, value in setting.attributes.items() %}
+  #         {%- set ns.rollup = ns.rollup + [is_state_attr(setting.entity_id, key, value)] %}
+  #       {%- endfor %}
+  #       {%- set ns.current = ns.rollup | select('true') | list | length == setting.attributes | length %}
+  #     {%- else %}
+  #       {%- set ns.current = True %}
+  #     {%- endif %}
+  #   {%- endif %}
+  #   {%- set ns.items = ns.items + [ ns.current ] %}
+  # {%- endfor %}
+  # {{- ns.items | select('true') | list | length == settings | length }}
+  
+  - unique_id: 2954ff2b-3e2e-47e4-9a5a-f2cc6c226bdc
+    name: Indoor Holiday
+    state: >
+      {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
+      {{ settings | map(attribute='entity_id') | select('is_state', 'on') | list | length == settings | length }}
+  
+    availability: >
+      {{ state_attr('sensor.seasonal_accent_lights', 'settings') is not none }}
+    turn_on:
+    - action: script.set_indoor_holiday
+      data:
+        transition: 3
+        brightness: 255
+    turn_off:
+    - action: homeassistant.turn_off
+      target:
+        entity_id: >
+          {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
+  
+  
+  ######################
+  # Movie / TV viewing #
+  ######################
+  
+  - unique_id: movie_time
+    name: Movie Time
+    state: >
+      {% set seasonal = state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list + ['switch.kitchen_cabinet'] %}
+      {% set seasonal_on = seasonal | select('is_state', 'on') | list | length == seasonal | length %}
+      {{
+        is_state('switch.hyperion_usb_capture', 'on')
+        and seasonal_on
+        and is_state('light.dining_room_chandelier', 'off')
+        and is_state('light.kitchen_cans', 'off')
+        and is_state('light.kitchen_island', 'off')
+        and is_state('switch.kitchen_pantry', 'off')
+      }}
+    turn_on:
+    - variables: &movie_variables
+        cabinet:
+        seasonal: >
+          {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
+        extra:
+        - switch.kitchen_cabinet
+        - switch.hyperion_usb_capture
+        entities: >
+          {{ seasonal + extra }}
+    - parallel:
+      - if: "{{ 1 == 1 }}"
+        then:
+        - service: homeassistant.turn_on
+          target: &movie_entities
+            entity_id: "{{ entities }}"
+      - service: homeassistant.turn_off
+        target:
+          entity_id: 
+          - light.all_living_room
+          - light.dining_room_chandelier
+          - light.kitchen_cans
+          - light.kitchen_island
+          - switch.kitchen_pantry
+    turn_off:
+    - variables: *movie_variables
+    - service: homeassistant.turn_off
+      target: *movie_entities

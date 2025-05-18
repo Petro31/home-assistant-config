@@ -12,6 +12,7 @@ logs:
   #homeassistant.components.waze_travel_time: debug
   #homeassistant.components.zwave_js: debug
   #haffmpeg.core: debug
+  custom_components.harmony_helper: debug
 filters:
   homeassistant.components.automation:
     - "Already running$"

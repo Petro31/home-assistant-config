@@ -1,0 +1,88 @@
+- switch:
+
+  ##############
+  # DECK MUSIC #
+  ##############
+  
+  # Bluetooth to Echo
+  - unique_id: a0040da5-1837-495a-a7e6-880dac87985a
+    name: Echo
+    state: >
+      {{ is_state_attr('media_player.yamaha_receiver', 'source', 'Echo')
+         and is_state('switch.basement_bluetooth', 'on') }}
+    turn_on:
+    - service: script.echo_through_media_player
+      data:
+        switch: switch.basement_bluetooth
+        media_player: media_player.yamaha_receiver
+        desired_state: "on"
+        source: Echo
+      
+    turn_off:
+    - service: script.echo_through_media_player
+      data:
+        switch: switch.basement_bluetooth
+        media_player: media_player.yamaha_receiver
+        desired_state: "off"
+        source: Echo
+  
+  # Airplay
+  - unique_id: 168dea92-5fd4-4888-b5d7-7b97393bdd16
+    name: Airplay
+    state: >
+      {{ is_state_attr('media_player.yamaha_receiver', 'source', 'AirPlay') }}
+    turn_on:
+    - service: script.media_player_on
+      data:
+        media_player: media_player.yamaha_receiver
+        volume: 0.7
+        source: AirPlay
+      
+    turn_off:
+    - service: script.media_player_off
+      data:
+        media_player: media_player.yamaha_receiver
+  
+  ##################
+  # BASEMENT MUSIC #
+  ##################
+  
+  # Bluetooth to Echo
+  - unique_id: fde6c03a-07c5-4ad0-9dc6-742214a59d7b
+    name: Echo
+    state: >
+      {{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'Echo')
+         and is_state('switch.basement_bluetooth', 'on') }}
+    turn_on:
+    - service: script.echo_through_media_player
+      data:
+        switch: switch.basement_bluetooth
+        media_player: media_player.yamaha_receiver_zone_2
+        desired_state: "on"
+        source: Echo
+  
+    turn_off:
+    - service: script.echo_through_media_player
+      data:
+        switch: switch.basement_bluetooth
+        media_player: media_player.yamaha_receiver_zone_2
+        desired_state: "off"
+        source: Echo
+  
+  # Airplay
+  - unique_id: 1e6e1c2f-379d-4937-9d8d-635d9bbb719c
+    name: Airplay
+    state: >
+      {{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'AirPlay') }}
+    turn_on:
+    - service: script.media_player_on
+      data:
+        media_player: media_player.yamaha_receiver_zone_2
+        volume: 0.7
+        source: AirPlay
+      
+    turn_off:
+    - service: script.media_player_off
+      data:
+        media_player: media_player.yamaha_receiver_zone_2
+

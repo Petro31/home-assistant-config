@@ -1,0 +1,118 @@
+# To autogenerate WLED selects as 'radio buttons'
+
+# {%- set select = 'select.cabinet_wled_preset' %}
+# {%- for option in state_attr(select, 'options') | reject('in', ['All Off','Match Microwave Surface']) %}
+# {%- set name = 'christmas_' ~ option | slugify %}
+# {%- set barrier = '#' * 40 %}
+# {%- set banner = '{0}\n    ###{1}###\n    {0}' %}
+# 
+#   {{ banner.format(barrier, option.center(barrier|length - 6)) }}
+#   
+#   - unique_id: {{ name }}
+#     name: {{ option }}
+#     state: >
+#       {%raw%}{{-{%endraw%} is_state('{{ select }}', '{{ option }}') {%raw%}}}{%endraw%}
+#     availability: >
+#       {%raw%}{{-{%endraw%} expand('{{ select }}') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 {%raw%}}}{%endraw%}
+#     turn_on:
+#     - <<: &{{name}}_target
+#         service: select.select_option
+#         target: 
+#           entity_id: {{ select }}
+#       data:
+#         option: {{ option }}
+#     turn_off:
+#     - <<: *{{name}}_target
+#       data:
+#         option: All Off
+# {%- endfor %}
+
+- light:
+
+  ########################################
+  ###         Blinking Houses          ###
+  ########################################
+
+  - unique_id: christmas_blinking_houses
+    name: Blinking Houses
+    state: >
+      {{- is_state('select.cabinet_wled_preset', 'Blinking Houses') }}
+    availability: >
+      {{- expand('select.cabinet_wled_preset') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+    turn_on:
+    - <<: &christmas_blinking_houses_target
+        service: select.select_option
+        target: 
+          entity_id: select.cabinet_wled_preset
+      data:
+        option: Blinking Houses
+    turn_off:
+    - <<: *christmas_blinking_houses_target
+      data:
+        option: All Off
+
+  ########################################
+  ###         Flashing Houses          ###
+  ########################################
+
+  - unique_id: christmas_flashing_houses
+    name: Flashing Houses
+    state: >
+      {{- is_state('select.cabinet_wled_preset', 'Flashing Houses') }}
+    availability: >
+      {{- expand('select.cabinet_wled_preset') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+    turn_on:
+    - <<: &christmas_flashing_houses_target
+        service: select.select_option
+        target: 
+          entity_id: select.cabinet_wled_preset
+      data:
+        option: Flashing Houses
+    turn_off:
+    - <<: *christmas_flashing_houses_target
+      data:
+        option: All Off
+
+  ########################################
+  ###       Red and Green Houses       ###
+  ########################################
+
+  - unique_id: christmas_red_and_green_houses
+    name: Red and Green Houses
+    state: >
+      {{- is_state('select.cabinet_wled_preset', 'Red and Green Houses') }}
+    availability: >
+      {{- expand('select.cabinet_wled_preset') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+    turn_on:
+    - <<: &christmas_red_and_green_houses_target
+        service: select.select_option
+        target: 
+          entity_id: select.cabinet_wled_preset
+      data:
+        option: Red and Green Houses
+    turn_off:
+    - <<: *christmas_red_and_green_houses_target
+      data:
+        option: All Off
+
+  ########################################
+  ###         Town is on Fire          ###
+  ########################################
+
+  - unique_id: christmas_town_is_on_fire
+    name: Town is on Fire
+    state: >
+      {{- is_state('select.cabinet_wled_preset', 'Town is on Fire') }}
+    availability: >
+      {{- expand('select.cabinet_wled_preset') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+    turn_on:
+    - <<: &christmas_town_is_on_fire_target
+        service: select.select_option
+        target: 
+          entity_id: select.cabinet_wled_preset
+      data:
+        option: Town is on Fire
+    turn_off:
+    - <<: *christmas_town_is_on_fire_target
+      data:
+        option: All Off

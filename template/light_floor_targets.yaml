@@ -1,0 +1,205 @@
+#
+# Label floors's with target_light area.  This script will auto generate the template
+# light entities that are in target_light areas.
+#
+
+# The follow code is meant to be copied & paste into the template editor.
+# Paste the results below the code chunk
+
+# COPY & Uncomment, paste into template editor.
+# ---------------------------------------------
+
+# {% set label = 'target_light' %}
+# {% set groups = floors() | reject('in', ['attached', 'basement']) | map('floor_name') | sort %}
+# {% set fmat = """
+#   #################################
+#   ### {1:^25} ###
+#   #################################
+# 
+#   - unique_id: floor_{0}
+#     name: {1}
+#     state: >
+#       {{{{ floor_areas('{2}')
+#         | map('area_entities') | sum(start=[])
+#         | select('in', label_entities('{3}')) 
+#         | select('is_state','on') 
+#         | list | count > 0 }}}}
+#     level: >
+#       {{%- set entities = floor_areas('{2}')
+#         | map('area_entities') | sum(start=[])
+#         | select('in', label_entities('{3}')) 
+#         | select('is_state','on') | list %}}
+#       {{%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}}
+#       {{{{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}}}
+#     availability: >
+#       {{{{ floor_areas('{2}')
+#         | map('area_entities') | sum(start=[])
+#         | select('in', label_entities('{3}')) 
+#         | map('has_value')
+#         | select('eq', False)
+#         | list | count == 0 }}}}
+#     turn_on:
+#     - service: script.light_handler
+#       data:
+#         <<: &{0}_args
+#           floor: {2}
+#           include: {3}
+#         level: 255
+#     turn_off:
+#     - service: script.light_handler
+#       data:
+#         <<: *{0}_args
+#         level: 0
+#     set_level:
+#     - service: script.light_handler
+#       data:
+#         <<: *{0}_args
+#         level: >
+#           {{{{- brightness }}}}""" %}
+# 
+# - light:
+# {%- for floor in groups %}
+# {{ fmat.format(floor | slugify, floor, floor_id(floor), label) }}
+# {%- endfor %}
+
+# ---------------------------------------------
+# END COPY
+# ---------------------------------------------
+# PASTE RESULTS BELOW THIS HEADER
+
+- light:
+
+  #################################
+  ###        Downstairs         ###
+  #################################
+
+  - unique_id: floor_downstairs
+    name: Downstairs
+    state: >
+      {{ floor_areas('downstairs')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = floor_areas('downstairs')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ floor_areas('downstairs')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &downstairs_args
+          floor: downstairs
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *downstairs_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *downstairs_args
+        level: >
+          {{- brightness }}
+
+  #################################
+  ###          Garage           ###
+  #################################
+
+  - unique_id: floor_garage
+    name: Garage
+    state: >
+      {{ floor_areas('garage')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = floor_areas('garage')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ floor_areas('garage')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &garage_args
+          floor: garage
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *garage_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *garage_args
+        level: >
+          {{- brightness }}
+
+  #################################
+  ###         Upstairs          ###
+  #################################
+
+  - unique_id: floor_upstairs
+    name: Upstairs
+    state: >
+      {{ floor_areas('upstairs')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = floor_areas('upstairs')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ floor_areas('upstairs')
+        | map('area_entities') | sum(start=[])
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &upstairs_args
+          floor: upstairs
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *upstairs_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *upstairs_args
+        level: >
+          {{- brightness }}

@@ -18,7 +18,6 @@ harmony_helper: !include harmony_helper.yaml
 homekit: !include homekit.yaml
 http: !include http.yaml
 intent_script: !include intent_script.yaml
-light: !include_dir_merge_list light
 logger: !include logger.yaml
 lovelace: !include lovelace.yaml
 lovelace_gen:
@@ -31,7 +30,6 @@ recorder: !include recorder.yaml
 scene: !include scenes.yaml
 script: !include_dir_merge_named scripts/
 sensor: !include sensor.yaml
-switch: !include switch.yaml
 system_health:
 template: !include_dir_merge_list template
 system_log: !include system_log.yaml

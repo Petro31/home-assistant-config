@@ -1,0 +1,865 @@
+#
+# Label area's with target_light area.  This script will auto generate the template
+# light entities that are in target_light areas.
+#
+
+# The follow code is meant to be copied & paste into the template editor.
+# Paste the results below the code chunk
+
+# COPY & Uncomment, paste into template editor.
+# ---------------------------------------------
+
+# {% set label = 'target_light' %}
+# {% set groups = areas() | select('in', label_areas(label)) | map('area_name') | sort %}
+# {% set fmat = """
+#   #################################
+#   ### {1:^25} ###
+#   #################################
+#   
+#   - unique_id: area_{0}
+#     name: {1}
+#     state: >
+#       {{{{ area_entities('{2}') 
+#         | select('in', label_entities('{3}')) 
+#         | select('is_state','on') 
+#         | list | count > 0 }}}}
+#     level: >
+#       {{%- set entities = area_entities('{2}') 
+#         | select('in', label_entities('{3}')) 
+#         | select('is_state','on') | list %}}
+#       {{%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}}
+#       {{{{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}}}
+#     availability: >
+#       {{{{ area_entities('{2}') 
+#         | select('in', label_entities('{3}')) 
+#         | map('has_value')
+#         | select('eq', False)
+#         | list | count == 0 }}}}
+#     turn_on:
+#     - service: script.light_handler
+#       data:
+#         <<: &{0}_args
+#           area: {2}
+#           include: {3}
+#         level: 255
+#     turn_off:
+#     - service: script.light_handler
+#       data:
+#         <<: *{0}_args
+#         level: 0
+#     set_level:
+#     - service: script.light_handler
+#       data:
+#         <<: *{0}_args
+#         level: >
+#             {{{{- brightness }}}}""" %}
+# 
+# - light:
+# {%- for area in groups %}
+# {{ fmat.format(area | slugify, area, area_id(area), label) }}
+# {%- endfor %}
+
+# ---------------------------------------------
+# END COPY
+# ---------------------------------------------
+# PASTE RESULTS BELOW THIS HEADER
+
+- light:
+
+  #################################
+  ###         Basement          ###
+  #################################
+  
+  - unique_id: area_basement
+    name: Basement
+    state: >
+      {{ area_entities('basement') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('basement') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('basement') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &basement_args
+          area: basement
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *basement_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *basement_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###       Bonus Bedroom       ###
+  #################################
+  
+  - unique_id: area_bonus_bedroom
+    name: Bonus Bedroom
+    state: >
+      {{ area_entities('bonus_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('bonus_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('bonus_room') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &bonus_bedroom_args
+          area: bonus_room
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *bonus_bedroom_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *bonus_bedroom_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###         Car Bays          ###
+  #################################
+  
+  - unique_id: area_car_bays
+    name: Car Bays
+    state: >
+      {{ area_entities('garage') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('garage') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('garage') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &car_bays_args
+          area: garage
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *car_bays_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *car_bays_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###           Deck            ###
+  #################################
+  
+  - unique_id: area_deck
+    name: Deck
+    state: >
+      {{ area_entities('deck') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('deck') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('deck') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &deck_args
+          area: deck
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *deck_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *deck_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###        Dining Room        ###
+  #################################
+  
+  - unique_id: area_dining_room
+    name: Dining Room
+    state: >
+      {{ area_entities('dining_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('dining_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('dining_room') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &dining_room_args
+          area: dining_room
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *dining_room_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *dining_room_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###           Foyer           ###
+  #################################
+  
+  - unique_id: area_foyer
+    name: Foyer
+    state: >
+      {{ area_entities('foyer') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('foyer') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('foyer') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &foyer_args
+          area: foyer
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *foyer_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *foyer_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###         Game Room         ###
+  #################################
+  
+  - unique_id: area_game_room
+    name: Game Room
+    state: >
+      {{ area_entities('game_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('game_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('game_room') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &game_room_args
+          area: game_room
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *game_room_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *game_room_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###          Hallway          ###
+  #################################
+  
+  - unique_id: area_hallway
+    name: Hallway
+    state: >
+      {{ area_entities('upstairs_hallway') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('upstairs_hallway') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('upstairs_hallway') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &hallway_args
+          area: upstairs_hallway
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *hallway_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *hallway_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###          Kitchen          ###
+  #################################
+  
+  - unique_id: area_kitchen
+    name: Kitchen
+    state: >
+      {{ area_entities('79f87f3673464e84a683466dd6f7220d') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('79f87f3673464e84a683466dd6f7220d') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('79f87f3673464e84a683466dd6f7220d') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &kitchen_args
+          area: 79f87f3673464e84a683466dd6f7220d
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *kitchen_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *kitchen_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###       Laundry Room        ###
+  #################################
+  
+  - unique_id: area_laundry_room
+    name: Laundry Room
+    state: >
+      {{ area_entities('laundry_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('laundry_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('laundry_room') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &laundry_room_args
+          area: laundry_room
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *laundry_room_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *laundry_room_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###        Living Room        ###
+  #################################
+  
+  - unique_id: area_living_room
+    name: Living Room
+    state: >
+      {{ area_entities('living_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('living_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('living_room') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &living_room_args
+          area: living_room
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *living_room_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *living_room_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###      Master Bathroom      ###
+  #################################
+  
+  - unique_id: area_master_bathroom
+    name: Master Bathroom
+    state: >
+      {{ area_entities('master_bathroom') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('master_bathroom') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('master_bathroom') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &master_bathroom_args
+          area: master_bathroom
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *master_bathroom_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *master_bathroom_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###      Master Bedroom       ###
+  #################################
+  
+  - unique_id: area_master_bedroom
+    name: Master Bedroom
+    state: >
+      {{ area_entities('master_bedroom') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('master_bedroom') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('master_bedroom') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &master_bedroom_args
+          area: master_bedroom
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *master_bedroom_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *master_bedroom_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###       Master Closet       ###
+  #################################
+  
+  - unique_id: area_master_closet
+    name: Master Closet
+    state: >
+      {{ area_entities('master_closet') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('master_closet') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('master_closet') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &master_closet_args
+          area: master_closet
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *master_closet_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *master_closet_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###         Mud Room          ###
+  #################################
+  
+  - unique_id: area_mud_room
+    name: Mud Room
+    state: >
+      {{ area_entities('mud_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('mud_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('mud_room') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &mud_room_args
+          area: mud_room
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *mud_room_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *mud_room_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###          Office           ###
+  #################################
+  
+  - unique_id: area_office
+    name: Office
+    state: >
+      {{ area_entities('office') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('office') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('office') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &office_args
+          area: office
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *office_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *office_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###           Patio           ###
+  #################################
+  
+  - unique_id: area_patio
+    name: Patio
+    state: >
+      {{ area_entities('patio') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('patio') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('patio') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &patio_args
+          area: patio
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *patio_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *patio_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###        Work Bench         ###
+  #################################
+  
+  - unique_id: area_work_bench
+    name: Work Bench
+    state: >
+      {{ area_entities('work_bench') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('work_bench') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('work_bench') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &work_bench_args
+          area: work_bench
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *work_bench_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *work_bench_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###         Workshop          ###
+  #################################
+  
+  - unique_id: area_workshop
+    name: Workshop
+    state: >
+      {{ area_entities('workshop') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('workshop') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('workshop') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &workshop_args
+          area: workshop
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *workshop_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *workshop_args
+        level: >
+            {{- brightness }}
