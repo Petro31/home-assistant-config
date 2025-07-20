@@ -3,6 +3,3 @@
   services:
     - service: mobile_app_petro
     - service: mobile_app_lindsays_iphone
-    
-- platform: alexa_media
-  name: alexa
