@@ -140,7 +140,7 @@ cards:
             dict(
               type='custom:mushroom-title-card',
               view_layout={'grid-area': 'title' ~ idx},
-              title='Zone ' ~ idx ~ ' Schedule',
+              title='Zone ' ~ idx ~ ' Schedule' ~ ' - ' ~ area_name(e),
               subtitle=last_run_template,
               icon=icon_template,
               icon_color=icon_color_template,
