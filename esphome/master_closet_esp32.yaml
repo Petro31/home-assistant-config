@@ -3,6 +3,8 @@ esphome:
 
 esp32:
   board: mhetesp32devkit
+  framework: 
+    type: esp-idf
 
 wifi:
   ssid: !secret wifi_iot_server_ssid
