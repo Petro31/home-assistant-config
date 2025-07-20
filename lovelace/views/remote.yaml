@@ -372,14 +372,3 @@ cards:
           icon: mdi:volume-mute
           use_entity: true
       - !include '../templates/buttons/edge.yaml'
-  - type: conditional
-    conditions:
-    - entity: media_player.living_room_echo_dot
-      state: playing
-    card:
-      type: horizontal-stack
-      cards:
-        - !include '../templates/buttons/edge.yaml'
-        - type: media-control
-          entity: media_player.living_room_echo_dot
-        - !include '../templates/buttons/edge.yaml'

@@ -23,11 +23,11 @@
       title: "Sunset Switch Turned Off"
       message: >
         {{ state_attr(trigger.entity_id, 'friendly_name') }} door sconce switch was turned off, turning back on.
-  - service: script.notify_alexa
+  - service: script.notify_area
     data:
       message: Jim counter action initiative in affect. Turning on {{ state_attr(trigger.entity_id, 'friendly_name') }} door sconces.
       announce: False
-      entities: media_player.living_room_echo_dot
+      area: living_room
   - condition: sun
     after: sunrise
     before: sunset
@@ -65,32 +65,12 @@
     data:
       message: >
         {{ name.capitalize() }} went unavailable!  Notifying living room.
-  - service: script.notify_alexa
+  - service: script.notify_area
     data:
       message: >
         Please do not turn off living room lamps, turn the lamp back on.  If you want to turn on this lamp in the future, say: Turn on {{ name }}.  
       announce: False
-      entities: media_player.living_room_echo_dot
-
-- alias: Alexa Media Player Startup
-  id: e0bd3754-7045-4b63-a396-83845637e010
-  description: Reloads alexa media player if the integration does not come online. 
-  mode: single
-  trigger:
-  - platform: homeassistant
-    event: start
-  action:
-  - delay:
-      seconds: 15
-  - service: homeassistant.reload_config_entry
-    target:
-      entity_id: media_player.living_room_echo_dot
-    data: {}
-  - service: script.notify
-    data:
-      notify: notify.mobile_app_petro
-      message: >
-        Reloading Alexa Media Player Integration
+      area: living_room
 
 - alias: Fix Zwave Multicast Errors
   id: 6c4bb70c-e8a7-40c8-9c78-bb077023e3b9
