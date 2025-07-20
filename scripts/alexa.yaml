@@ -1,5 +1,5 @@
 notify_alexa_ui:
-  alias: Announce or TTS
+  alias: Button Helper
   mode: parallel
   fields:
     announce:
@@ -14,34 +14,35 @@ notify_alexa_ui:
         text:
           type: text
   variables:
-    config: >
-      {%- set ns = namespace(ret=[]) %}
-      {%- for entity_id in states.media_player 
-          | selectattr('attributes.last_called','defined') 
-          | rejectattr('object_id', 'search', 'echo_dots') 
-          | map(attribute='entity_id') %}
-        {%- set boolean = entity_id.replace('_echo_dot', '').replace('media_player', 'input_boolean') %}
-        {%- set ns.ret = ns.ret + [dict(boolean=boolean, player=entity_id)] %}
-      {%- endfor %}
-      {{ ns.ret }}
-    service_data:
-      entities: >
-        {%- set ns = namespace(ret=[]) %}
-        {%- for item in config if is_state(item.boolean,'on') %}
-          {% set ns.ret = ns.ret + [ item.player ] %}
-        {%- endfor %}
-        {{ ns.ret }}
-      announce: >
-        {{ announce | default(false) }}
-      message: >
-        {{ states('input_text.alexa_say') }}
-      user_id: "{{ user_id | default(none) }}"
+
+    # This configuration only holds differences between the input booleans
+    # and the resulting areas.  Currently that is only master_bedroom to master.
+    config:
+      input_boolean.master_bedroom: master
+    areas: >
+      {% set entities = label_entities('echo_tts') %}
+      {% set ns = namespace(items=[]) %}
+      {% for boolean in entities | select('is_state', 'on') %}
+        {% set area = config.get(boolean, boolean.split('.')[-1]) %}
+        {% set ns.items = ns.items + [area] %}
+      {% endfor %}
+      {{ ns.items }}
+    announce: >
+      {{ announce | default(false) }}
+    message: >
+      {{ states('input_text.alexa_say') }}
+    user_id: "{{ user_id | default(none) }}"
   sequence:
-  - service: script.notify_alexa
-    data: "{{ service_data }}"
+  - service: script.notify_area
+    data:
+      area: "{{ areas }}"
+      message: "{{ message }}"
+      announce: "{{ announce }}"
+      user_id: "{{ user_id }}"
+
 
 alexa_announce:
-  alias: Alexa UI - Announce
+  alias: Announce Button
   mode: single
   sequence:
   - service: script.turn_on
@@ -55,7 +56,7 @@ alexa_announce:
   - delay: "00:00:01"
 
 alexa_tts:
-  alias: Text to Speech
+  alias: TTS Button
   mode: single
   sequence:
   - service: script.turn_on
@@ -68,18 +69,38 @@ alexa_tts:
           {{ context.user_id }}
   - delay: "00:00:01"
 
-notify_alexa:
-  alias: Notify - Alexa
+
+notify_area:
+  alias: Area
   mode: parallel
   fields:
-    entities:
-      description: List of entities
-      example: media_player.xyz
+    area:
+      description: List of areas to notify
+      example: Living Room
       selector:
-        entity:
-          domain: media_player
+        select:
           multiple: true
-          integration: alexa_media
+          options:
+            - label: Basement
+              value: basement
+            - label: Bonus Room
+              value: bonus_room
+            - label: Downstairs
+              value: downstairs
+            - label: Everywhere
+              value: everywhere
+            - label: Game Room
+              value: game_room
+            - label: Garage
+              value: garage
+            - label: Great Room
+              value: great_room
+            - label: Kitchen
+              value: kitchen
+            - label: Living Room
+              value: living_room
+            - label: Master
+              value: master
     message:
       description: Message to send
       example: "Hello"
@@ -98,6 +119,37 @@ notify_alexa:
         text:
           type: text
   variables:
+    areas:
+    - area: basement
+      announce: notify.basement_echo_dot_announce
+      speak: notify.basement_echo_dot_speak
+    - area: bonus_room
+      announce: notify.bonus_room_echo_dot_announce
+      speak: notify.bonus_room_echo_dot_speak
+    - area: downstairs
+      announce: notify.downstairs_announce
+      speak: notify.downstairs_speak
+    - area: everywhere
+      announce: notify.everywhere_announce
+      speak: notify.everywhere_speak
+    - area: game_room
+      announce: notify.game_room_echo_dot_announce
+      speak: notify.game_room_echo_dot_speak
+    - area: garage
+      announce: notify.garage_echo_dot_announce
+      speak: notify.garage_echo_dot_speak
+    - area: great_room
+      announce: notify.great_room_announce
+      speak: notify.great_room_speak
+    - area: kitchen
+      announce: notify.kitchen_echo_dot_announce
+      speak: notify.kitchen_echo_dot_speak
+    - area: living_room
+      announce: notify.living_room_echo_dot_announce
+      speak: notify.living_room_echo_dot_speak
+    - area: master
+      announce: notify.master_echo_dot_announce
+      speak: notify.master_echo_dot_speak
     timestamp: >
       {{ (datetime | default(now())).isoformat() }}
     input: >
@@ -118,20 +170,26 @@ notify_alexa:
       {%- else %}none
       {%- endif %}
     method: >
-      {{ {'type':'announce', 'method': 'all'} if should_announce else {'type':'tts'} }}
+      {{ 'announce' if should_announce else 'speak' }}
+    formatted_area: >
+      {{ area if area is list else [area] }}
+    entities: >
+      {{ areas | selectattr('area', 'in', formatted_area) | map(attribute=method) | list }}
     should_continue: >
-      {{ text is not none and entities is defined }}
+      {{ text is not none and entities | length > 0 }}
+    devices: >
+      {{ entities | map('device_name') | map('replace', ' Echo Dot', '') | list }}
     attrs: >
-      {%- set names = expand(entities or []) | map(attribute='name') | list | join(', ') | replace(' Echo Dot','') %}
+      {%- set names = devices | join(', ') %}
       {{ { 'person': found_person, 'type': 'announce' if should_announce else 'tts','text': input, 'targets': names} }}
   sequence:
   - condition: template
     value_template: "{{ should_continue }}"
-  - service: notify.alexa_media
+  - service: notify.send_message
+    target:
+      entity_id: "{{ entities | first }}"
     data:
       message: "{{ text }}"
-      data: "{{ method }}"
-      target: "{{ entities }}"
   - service: script.mqtt_automated_states
     data:
       domain: sensor

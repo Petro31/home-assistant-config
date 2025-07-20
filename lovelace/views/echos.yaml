@@ -1,10 +1,12 @@
 # lovelace_gen
 
 {%- set columns = 2 %}
-{%- set rows = 4 %}
+{%- set rows = 5 %}
 {%- set booleans = [
   {'entity':'input_boolean.basement'},
   {'entity':'input_boolean.bonus_room'},
+  {'entity':'input_boolean.downstairs'},
+  {'entity':'input_boolean.everywhere'},
   {'entity':'input_boolean.game_room'},
   {'entity':'input_boolean.garage'},
   {'entity':'input_boolean.kitchen'},
