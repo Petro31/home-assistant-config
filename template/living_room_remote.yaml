@@ -193,11 +193,11 @@
     name: HBO
     state: >
       {{ is_state('switch.roku', 'on') and 
-         is_state_attr('media_player.roku_living_room', 'source', 'Max') }}
+         is_state_attr('media_player.roku_living_room', 'source', 'HBO Max') }}
     turn_on:
     - service: script.roku_source_on
       data:
-        source: Max
+        source: HBO Max
     turn_off: *turn_off_roku
         
   # Hulu
