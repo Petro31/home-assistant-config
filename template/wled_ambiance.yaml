@@ -3,6 +3,7 @@
   # WLED Kitchen Cabinet 2, matches switch.kitchen_cabinet (zwave)
   
   - unique_id: 84c17669-2405-4aae-9e4d-06bd58f42964
+    name: Kitchen Cabinet 2
     state: >
       {% set rgbw = (255, 199, 125, 0) %}
       {% set brightness = 217 %}
@@ -24,7 +25,7 @@
         transition: 0
   
   - unique_id: b72a41c4-9fb8-4b5d-8559-d09a0cac143d
-    name: Kitchen Uplights
+    name: Kitchen Uplight
     state: >
       {% set rgbw = (255, 199, 125, 0) %}
       {% set brightness = 217 %}
@@ -42,9 +43,10 @@
     - action: light.turn_off
       target: *wled_match_uplight
       data: *wled_match_off_data
-  
+
   # WLED Hutch Lights, matches kitchen cabinets
   - unique_id: wled_hutch
+    name: WLED Hutch
     state: >
       {% set rgbw = (255, 199, 125, 0) %}
       {% set brightness = 217 %}

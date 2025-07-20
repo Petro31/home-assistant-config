@@ -149,11 +149,22 @@
     entity_id: sensor.wled_api_error
     <<: *unavailable
   variables:
-    entities:
-    - light.kitchen_cabinet_2
-    - light.cabinet_master
-    - light.cabinet_slave
-    to_state: "{{ states('switch.kitchen_cabinet') }}"
+    config:
+      wled_hutch:
+      - light.hutch_uplight
+      kitchen_uplight:
+      - light.cabinet_master
+      - light.cabinet_slave
+      kitchen_cabinet_2:
+      - light.cabinet_surface
+    source: >
+      {{ trigger.to_state.attributes.source | default(None) }}
+    action: >
+      {{ trigger.to_state.attributes.action | default(None) }}
+    entities: >
+      {{ config.get(trigger.to_state.attributes.source, []) }}
+    to_state: >
+      {{ action.split('_') | last if action else None }}
     filtered: >
       {{ entities | reject('is_state', to_state) | list }}
     new: *new

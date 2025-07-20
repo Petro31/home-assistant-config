@@ -1,20 +1,19 @@
-- trigger:
+- triggers:
     - trigger: event
       event_type: system_log_event
       event_data:
         name: homeassistant.core
-  action:
-    - variables:
-        is_multicast: >
-          {{ 'Unable to set value via multicast' in trigger.event.data.exception }}
-        targets: >
-          {% set find = '(?!.+__)(?!_)[\\da-z_]+(?<!_)\\.(?!_)[\\da-z_]+(?<!_)' %}
-          {{ trigger.event.data.message | regex_findall(find) | list }}
-        action: >
-          {{ targets | select('search', 'turn_o(ff|n)') | list | first | default(none) }}
-        entity_id: >
-          {{ targets | reject('search', 'turn_o(ff|n)') | list }}
-  condition:
+  variables:
+    is_multicast: >
+      {{ 'Unable to set value via multicast' in trigger.event.data.exception }}
+    targets: >
+      {% set find = '(?!.+__)(?!_)[\\da-z_]+(?<!_)\\.(?!_)[\\da-z_]+(?<!_)' %}
+      {{ trigger.event.data.message | regex_findall(find) | list }}
+    action: >
+      {{ targets | select('search', 'turn_o(ff|n)') | list | first | default(none) }}
+    entity_id: >
+      {{ targets | reject('search', 'turn_o(ff|n)') | list }}
+  conditions:
     - condition: template
       value_template: "{{ is_multicast }}"
   sensor:
@@ -28,11 +27,29 @@
         action: "{{ action }}"
         entity_id: "{{ entity_id }}"
 
-- trigger:
+- triggers:
     - trigger: event
       event_type: system_log_event
       event_data:
-        name: homeassistant.helpers.script.kitchen_uplights
+        level: ERROR
+  variables:
+    is_script: >
+      {{ trigger.event.data.name is search('^(homeassistant\.helpers\.script\.)(.*)(turn_on|turn_off)$') }}
+    is_wled: >
+      {{ 'Invalid response from WLED API' in trigger.event.data.message }}
+    is_target: >
+      {{ trigger.event.data.name.split('.') | last | default('') is search('^(kitchen_cabinet_2|kitchen_uplight|wled_hutch)') }}
+    is_wled_event: >
+      {{ is_script and is_wled and is_target }}
+  conditions:
+    - condition: template
+      value_template: "{{ is_wled_event }}"
+  actions:
+  - variables:
+      source: >
+        {{ _source | first }}
+      action: >
+        {{ _source | last }}
   sensor:
     - name: Wled API Error
       unique_id: ac1a7249-511c-4754-8097-b05f6c3164fb
@@ -41,3 +58,5 @@
         {{ trigger.event.time_fired }}
       attributes:
         data: "{{ trigger.event.data }}"
+        source: "{{ source }}"
+        action: "{{ action }}"
