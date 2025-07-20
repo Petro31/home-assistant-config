@@ -12,7 +12,8 @@ entity: {{ entity|default('person.petro') }}
 label: |
   [[[
     var event = states['{{ weight }}'].state;
-    return `${event} lbs`
+    var weight = Math.round(event * 10) / 10;
+    return `${weight} lbs`
   ]]]
 state_display: |
   [[[
