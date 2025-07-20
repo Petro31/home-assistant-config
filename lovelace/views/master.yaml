@@ -397,6 +397,7 @@
     ],
     'entities': [
       'fan.master_fixture',
+      'fan.core_300s',
       'light.master_closet',
       'light.master_fixture',
       'switch.master_nightstand_left',
@@ -405,6 +406,7 @@
       'switch.master_wall_outlet',
       'sensor.master_bedroom_temperature',
       'sensor.master_bedroom_humidity',
+      'sensor.core_300s_air_quality',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [

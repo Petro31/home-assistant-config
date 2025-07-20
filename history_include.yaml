@@ -26,6 +26,7 @@ entities:
   - sensor.bonus_server_room_temperature
   - sensor.bonus_server_room_temperature_sensor_battery_level
   - sensor.cgdk2_1_battery_level
+  - sensor.core_300s_air_quality
   - sensor.cpu_temperature
   - sensor.cyberpower_battery_charge
   - sensor.cyberpower_battery_runtime

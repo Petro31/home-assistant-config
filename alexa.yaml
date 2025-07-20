@@ -10,6 +10,7 @@ smart_home:
 
     - fan.bonus_room_bedroom
     - fan.bonus_room_office
+    - fan.core_300s
     - fan.deck_fan_1
     - fan.deck_fan_2
     - fan.master_fixture
@@ -150,6 +151,8 @@ smart_home:
       name: Bonus Room Fan
     fan.bonus_room_office:
       name: Office Fan
+    fan.core_300s:
+      name: Air Purifier
     fan.deck_fan_1:
       name: Deck Fan 1
     fan.deck_fan_2:
