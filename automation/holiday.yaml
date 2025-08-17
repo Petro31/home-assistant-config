@@ -5,9 +5,9 @@
     - id: indoor
       platform: state
       entity_id: binary_sensor.indoor_holiday
-      not_from: 
-      - unknown
-      - unavailable
+      not_from:
+        - unknown
+        - unavailable
     - id: outdoor_on
       platform: sun
       event: sunset
@@ -27,11 +27,14 @@
       {% else %}
         {{ trigger.id.split('_')[-1] }}
       {% endif %}
-    target: > 
-      {{ 'switch.indoor_holiday' if trigger.id == 'indoor' else 'switch.outside_porch' }}
+    indoor:
+      - switch.indoor_holiday
+    outdoor: []
+    target: >
+      {{ indoor if trigger.id == 'indoor' else outdoor }}
   condition:
-  - condition: template
-    value_template: "{{ continue and to_state in ['on','off'] }}"
+    - condition: template
+      value_template: "{{ target | count > 0 and continue and to_state in ['on','off'] }}"
   action:
     - service: switch.turn_{{ to_state }}
       target:
