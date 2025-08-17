@@ -136,18 +136,27 @@ card:
         - width: 100%%
         - color: var(--paper-item-icon-color)
 
-  - type: custom:mushroom-cover-card
+  - type: tile
+    entity: lock.smart_lock_ultra
+    name: Mudroom Door
+    features_position: inline
+    features:
+    - type: lock-commands
+  - type: tile
     entity: cover.front_garage_door
     name: Front Garage
-    show_position_control: false
-    show_buttons_control: true
-    layout: horizontal
-  - type: custom:mushroom-cover-card
+    features_position: inline
+    features:
+    - type: cover-open-close
+  - type: tile
     entity: cover.rear_garage_door
-    fill_container: true
-    show_position_control: false
-    show_buttons_control: true
-    layout: horizontal
     name: Rear Garage
+    features_position: inline
+    features:
+    - type: cover-open-close
   - type: tile
     entity: switch.garage_temporary_laser
+    features_position: inline
+    name: Laser
+    features:
+    - type: toggle

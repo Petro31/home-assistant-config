@@ -130,12 +130,14 @@
       'switch.basement_cans',
       'sensor.apollo_air_1_1ecac0_temperature',
       'sensor.apollo_air_1_1ecac0_humidity',
+      'binary_sensor.water_heater_water_leak_detected',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
       {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+      {'domain': ['binary_sensor'], 'state': ['on'], 'icon': 'mdi:water', 'units': 'leak' },
     ],
   },{
     'name': 'Bonus Room',
@@ -267,9 +269,11 @@
     ],
     'entities': [
       'switch.garage_entry',
+      'lock.smart_lock_ultra',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
+      {'domain': ['lock'], 'state': ['unlocked'], 'icon': 'mdi:lock-open', 'units': 'unlocked' },
       {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
@@ -381,12 +385,15 @@
       'switch.master_bathroom_fan',
       'sensor.master_bathroom_temperature',
       'sensor.master_bathroom_humidity',
+      'binary_sensor.left_sink_water_leak_detected',
+      'binary_sensor.right_sink_water_leak_detected',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
       {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+      {'domain': ['binary_sensor'], 'state': ['on'], 'icon': 'mdi:water', 'units': 'leak' },
     ],
   },{
     'name': 'Master Bedroom',
@@ -616,6 +623,7 @@
     'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
     'triggers_update': areas | sum(attribute='entities', start=[]) | sort,
     'display': [
+      {'domain': ['lock'], 'state': ['unlocked', 'open'], 'icon': 'mdi:lock-open', 'units': 'unlocked' },
       {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
@@ -631,10 +639,11 @@
     'entities': doors,
     'image': '/local/images/door_4.png',
     'header': [  { 'type': '../templates/headers/door_navigator.yaml', }, ],
-    'triggers_update': doors | map(attribute='entity') | list | sort,
+    'triggers_update': doors | map(attribute='entity') | list | sort + ['lock.smart_lock_ultra'],
     'display': [
       {'domain': ['sensor','binary_sensor'] , 'state': ['on', 'open'], 'icon': 'mdi:door-open', 'units': 'doors' },
       {'domain': ['switch'], 'state': ['on'], 'icon': 'fapro:laser', 'units': 'lasers' },
+      {'domain': ['lock'], 'state': ['unlocked', 'open'], 'icon': 'mdi:lock-open', 'units': 'unlocked' },
     ],
     'type': '../templates/summary/overview.yaml',
   },{
