@@ -1,0 +1,204 @@
+# lovelace_gen
+
+{% set color = color|default('var(--paper-item-icon-active-color)') %}
+{% set ratio = ratio|default('1/1') %}
+{% set imgratio = 'transparent_' ~ 'to'.join(ratio.split('/')) ~ '.png' %}
+{% set name = name | default(none) %}
+
+type: custom:button-card
+aspect_ratio: {{ ratio }}
+entity: {{ entity }}
+icon: {{ icon }}
+{%- if name is not none %}
+name: {{ name }}
+{%- endif %}
+color: var(--paper-item-icon-color)
+show_name: true
+show_label: true
+show_icon: true
+show_last_changed: true
+size: 70%
+tap_action:
+  action: more-info
+styles:
+  icon:
+  - opacity: 0.3
+  - width: 100%
+  img_cell:
+  - top: 0%
+  - left: 30%
+  - position: absolute
+  - z-index: 1
+  grid:
+  - grid-template-areas: '"info" "n" "l"'
+  - grid-template-columns: 100%
+  - grid-template-rows: 1fr min-content min-content
+  - position: relative
+  card:
+  - padding: 10px
+  - border-radius: 15px
+  name:
+  - z-index: 2
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  label:
+  - z-index: 2
+  - justify-self: start
+  - align-self: end
+  - font-weight: bold
+  - font-family: Helvetica 
+  - font-size: 12px
+  - text-align: start
+  - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
+  - -webkit-background-clip: text
+  - -webkit-text-fill-color: transparent
+  - position: relative
+  - display: inline-block
+  - width: 100%
+  - align-content: start
+  - text-align: start
+  - text-overflow: unset
+  custom_fields:
+    info:
+    - align-self: start
+    - width: 50%
+custom_fields:
+  info: 
+    card:
+      type: custom:button-card
+      entity: {{ entity }}
+      show_name: false
+      show_label: false
+      show_icon: false
+      show_last_changed: false
+      aspect_ratio: 1/1
+      tap_action:
+        action: toggle
+        haptic: light
+      styles:
+        card:
+        - overflow: visible
+        grid:
+        - grid-template-areas: '"info"'
+        - grid-template-columns: 100%
+        - grid-template-rows: 100%
+      custom_fields:
+        info: |
+          [[[
+            function capitalizeFirstLetter(string) {
+              return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+            }
+            
+            const length = 50;
+            const width = 3;
+            if (entity.attributes.brightness) {
+              const radius = (length - width) / 2;
+              const brightness = Math.round(entity.attributes.brightness / 2.54);
+              const circumference = radius * 2 * Math.PI;
+              console.log(entity.attributes.rgb_color)
+              color = "{{ color }}";
+              if (entity.attributes.rgb_color){
+                var [r, g, b] = entity.attributes.rgb_color;
+                color = `rgba(${r}, ${g}, ${b})`;
+              }
+              return `
+                <svg viewBox="0 0 50 50">
+                  <circle cx="25" cy="25" r="${radius}" fill="none" stroke="${color}" opacity="0.5" stroke-width="${width}" />
+                  <circle style="
+                      transform: rotate(-90deg);
+                      transform-origin: 50% 50%;
+                      stroke-dasharray: ${circumference};
+                      stroke-dashoffset: ${circumference - brightness / 100 * circumference};
+                    "
+                    id="c_brightness" cx="25" cy="25" r="${radius}" stroke="${color}" stroke-width="${width}" fill="none" stroke-linecap="round" />
+                  <text x="50%" y="54%" fill="var(--primary-text-color)" font-weight="bold" font-size="14" text-anchor="middle" alignment-baseline="middle">${brightness}<tspan font-size="10">%</tspan>
+                  </text>
+                </svg>
+                `;
+              }
+            else if (entity.attributes.speed && entity.attributes.speed_list)  {
+              const text = capitalizeFirstLetter(entity.attributes.speed);
+              const gap = 5;
+              const fontsize = 14;
+              const edge = width / 2;
+              const y = (length + fontsize) / 2 + 6;
+              var items = entity.attributes.speed_list;
+              if (items.indexOf('off') !== -1){
+                items.splice(items.indexOf('off'), 1);
+              }
+              const current = items.indexOf(entity.attributes.speed)
+              var i;
+              var x1 = edge;
+              var ret = `<svg  viewBox="0 0 50 50">`;
+              var l = (length - gap * (items.length - 1) - edge * 2) / items.length;
+              for (i = 0; i < items.length; i++) {
+                var x2 = x1 + l;
+                var color = (i <= current) ? "var(--paper-item-icon-active-color)" : "var(--paper-item-icon-color)";
+                var opacity = (i <= current) ? "1.0" : "0.5";
+                ret += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="${width}" opacity="${opacity}" stroke-linecap="round" />`;
+                x1 = x2 + gap;
+              }
+              ret += `<text x="50%" y="54%" fill="var(--primary-text-color)" font-weight="bold" font-size="${fontsize}" text-anchor="middle" alignment-baseline="middle">${text}</text></svg>`
+              return ret;
+            }
+            else {
+              const radius = (length - width) / 2;
+              return `
+                <svg viewBox="0 0 50 50" overflow="visible">
+                  <circle cx="25" cy="25" r="${radius}" fill="{{ color }}"/>
+                  <text x="50%" y="51%" fill="var(--paper-card-background-color)" font-weight="bold" font-size="14" text-anchor="middle" alignment-baseline="middle">${capitalizeFirstLetter(entity.state)}
+                  </text>
+                </svg>
+                `;
+            }
+          ]]]
+state:
+- value: 'unlocked'
+  styles:
+    card:
+    - opacity: 1.0
+    name:
+      - color: white
+    state:
+      - color: gray
+    lock:
+      - color: white 
+    label:
+      - color: gray
+- value: 'locked'
+  styles:
+    card:
+    - opacity: 0.5
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: var(--primary-text-color)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)
+- value: "unavailable"
+  styles:
+    card:
+    - opacity: 0.2
+    name:
+    - color: var(--primary-text-color)
+    state:
+    - color: hsl(0, 100%, 50%)
+    label:
+    - color: var(--primary-text-color)
+    lock:
+    - color: var(--paper-item-icon-color)
