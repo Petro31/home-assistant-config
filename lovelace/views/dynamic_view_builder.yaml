@@ -35,6 +35,7 @@
     'input_select': '/templates/buttons/empty.yaml',
     'input_text': '/templates/buttons/empty.yaml',
     'light': '/templates/buttons/toggle2.yaml',
+    'lock': '/templates/buttons/lock.yaml',
     'media_player': '/templates/buttons/empty.yaml',
     'person': '/templates/buttons/empty.yaml',
     'remote': '/templates/buttons/empty.yaml',
