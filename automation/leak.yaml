@@ -1,0 +1,37 @@
+- alias: Leak Warning
+  id: 0705a3d3-e7e4-475f-9063-70e7c6107c83
+  description: Notify if there's a leak
+  triggers:
+  - trigger: state
+    entity_id: 
+    - binary_sensor.leak
+    to: 'on'
+  actions:
+  - action: script.notify
+    data:
+      title: Leak Detected!
+      message: "{{ state_attr('binary_sensor.leak', 'message') }}"
+  - <<: &set_datetime
+      action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.leak_annoy
+      data:
+        datetime: >
+          {{ now() + timedelta(minutes=15) }}
+
+- alias: Leak Persistence
+  id: 391d15c8-d9de-4937-94e9-c6367690ea4a
+  description: Keep notifying if there's a leak.
+  triggers:
+  - trigger: time
+    at: input_datetime.leak_annoy
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.leak
+    state: 'on'
+  actions:
+  - action: script.notify
+    data:
+      title: Leak Detected!
+      message: "{{ message }}"
+  - <<: *set_datetime

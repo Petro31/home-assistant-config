@@ -1,0 +1,34 @@
+- triggers:
+  - trigger: state
+    entity_id: &entities
+    - binary_sensor.water_heater_water_leak_detected
+    - binary_sensor.right_sink_water_leak_detected
+    - binary_sensor.left_sink_water_leak_detected
+    - binary_sensor.sink_water_leak_detected
+    to:
+    - 'on'
+    - 'off'
+    not_from:
+    - unavailable
+    - unknown
+  variables:
+    entities: *entities
+    next_state: >
+      {{ entities | select('is_state', 'on') | list | count > 0 }}
+    what: >
+      {{ trigger.to_state.name | lower }}
+    area: >
+      {{ trigger.entity_id | area_name | lower }}
+  binary_sensor:
+  - unique_id: c25ba0eb-0ab1-4005-b35e-15bc91e58479
+    name: Leak
+    device_class: moisture
+    state: "{{ next_state }}"
+    attributes:
+      entity_id: "{{ entities }}"
+      message: >
+        {%- if next_state %}
+          Liquid detected below the {{ area }} {{ what }}
+        {%- else %}
+          No leak detected
+        {%- endif %}
