@@ -106,31 +106,30 @@ zwave_multicast_group:
     total: >
       {{ items | length if execute else 0 }}
   sequence:
-  - condition: template
-    value_template: "{{ execute }}"
-  - if:
     - condition: template
-      value_template: "{{ multicast }}"
-    then:
-    - repeat:
-        count: "{{ total }}"
-        sequence:
-        - service: zwave_js.multicast_set_value
-          target:
-            entity_id: "{{ items[repeat.index - 1].entity_id }}"
-          data:
-            command_class: "{{ items[repeat.index - 1].command_class }}"
-            property: "{{ items[repeat.index - 1].property }}"
-            endpoint: "{{ items[repeat.index - 1].endpoint }}"
-            value: "{{ items[repeat.index - 1].value }}"
-    else:
-    - repeat:
-        count: "{{ total }}"
-        sequence:
-        - service: "{{ items[repeat.index - 1].domain }}.turn_o{{ 'n' if items[repeat.index - 1].value else 'ff' }}"
-          target:
-            entity_id: "{{ items[repeat.index - 1].entity_id }}"
-
+      value_template: "{{ execute }}"
+    - if:
+        - condition: template
+          value_template: "{{ multicast }}"
+      then:
+        - repeat:
+            count: "{{ total }}"
+            sequence:
+              - service: zwave_js.multicast_set_value
+                target:
+                  entity_id: "{{ items[repeat.index - 1].entity_id }}"
+                data:
+                  command_class: "{{ items[repeat.index - 1].command_class }}"
+                  property: "{{ items[repeat.index - 1].property }}"
+                  endpoint: "{{ items[repeat.index - 1].endpoint }}"
+                  value: "{{ items[repeat.index - 1].value }}"
+      else:
+        - repeat:
+            count: "{{ total }}"
+            sequence:
+              - service: "{{ items[repeat.index - 1].domain }}.turn_o{{ 'n' if items[repeat.index - 1].value else 'ff' }}"
+                target:
+                  entity_id: "{{ items[repeat.index - 1].entity_id }}"
 
 zwave_ping:
   mode: parallel
@@ -143,8 +142,8 @@ zwave_ping:
         entity:
           integration: zwave_js
           domain:
-          - light
-          - switch
+            - light
+            - switch
           multiple: True
     delay:
       description: (Optional) How long from now you'll ping the nodes.
@@ -154,13 +153,45 @@ zwave_ping:
           min: 0
           max: 300
   sequence:
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: "{{ delay is defined }}"
-      sequence:
-      - delay:
-          seconds: "{{ delay }}"
-  - service: zwave_js.ping
-    target:
-      entity_id: "{{ entities }}"
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ delay is defined }}"
+          sequence:
+            - delay:
+                seconds: "{{ delay }}"
+    - action: zwave_js.ping
+      target:
+        entity_id: "{{ entities }}"
+
+update_zwave:
+  alias: Update Zwave devices in order
+  mode: single
+  variables:
+    _integration: zwave_js
+    message_title: "{{ _integration | replace('_', ' ') | title }}"
+    entities: >
+      {{ integration_entities(_integration) | select('search','^update') | select('is_state','on') | list }}
+    message: >
+      Updating firmware for household zwave sensors.
+
+  sequence:
+    - condition: template
+      value_template: "{{ entities | length > 0 }}"
+    - action: script.notify
+      data:
+        title: >
+          {{ message_title }} Firmware Update
+        message: "{{ message }}"
+    - repeat:
+        for_each: "{{ entities }}"
+        sequence:
+          - action: script.notify
+            data:
+              title: >
+                {{ message_title }} Firmware Status
+              message: Installing update for {{ device_name(repeat.item) }}
+              notify: notify.mobile_app_petro
+          - action: update.install
+            target:
+              entity_id: "{{ repeat.item }}"
