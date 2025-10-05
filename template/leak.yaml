@@ -5,6 +5,7 @@
     - binary_sensor.right_sink_water_leak_detected
     - binary_sensor.left_sink_water_leak_detected
     - binary_sensor.sink_water_leak_detected
+    - binary_sensor.sink_water_leak_detected_2
     to:
     - 'on'
     - 'off'
