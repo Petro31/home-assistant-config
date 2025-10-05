@@ -11,6 +11,12 @@
       state: 'off'
     light.garage_sconce_right_bulb:
       state: 'off'
+    light.front_yard_uplight_left:
+      state: 'off'
+    light.front_yard_uplight_middle:
+      state: 'off'
+    light.front_yard_uplight_right:
+      state: 'off'
 
 - name: Holiday Bulbs Christmas
   icon: mdi:string-lights
@@ -35,6 +41,18 @@
       state: 'on'
       brightness: 255
       rgb_color: [179,   0,  12]
+    light.front_yard_uplight_left:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
+    light.front_yard_uplight_middle:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  0, 179,  44]
+    light.front_yard_uplight_right:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
 
 - name: Holiday Bulbs Thanksgiving
   icon: mdi:turkey
@@ -46,37 +64,66 @@
     light.main_door_right_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [158, 104,  42]
+      rgb_color: [241, 185,  48]
     light.passenger_door_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [241, 185,  48]
+      rgb_color: [181,  71,  48]
     light.garage_sconce_left_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [181,  71,  48]
+      rgb_color: [241, 185,  48]
     light.garage_sconce_right_bulb:
       state: 'on'
       brightness: 255
-      rgb_color: [138, 151,  72]
+      rgb_color: [108,  47,   0]
+    light.front_yard_uplight_left:
+      state: 'on'
+      brightness: 255
+      rgb_color: [241, 185,  48]
+    light.front_yard_uplight_middle:
+      state: 'on'
+      brightness: 255
+      rgb_color: [108,  47,   0]
+    light.front_yard_uplight_right:
+      state: 'on'
+      brightness: 255
+      rgb_color: [181,  71,  48]
 
 - name: Holiday Bulbs Easter
   icon: mdi:egg-easter
   entities:
     light.main_door_left_bulb:
       state: 'on'
+      brightness: 255
       rgb_color: [255, 0, 192]
     light.main_door_right_bulb:
       state: 'on'
+      brightness: 255
       rgb_color: [192, 3, 255]
     light.passenger_door_bulb:
       state: 'on'
+      brightness: 255
       rgb_color: [0, 255, 254]
     light.garage_sconce_left_bulb:
       state: 'on'
+      brightness: 255
       rgb_color: [192, 3, 255]
     light.garage_sconce_right_bulb:
       state: 'on'
+      brightness: 255
+      rgb_color: [255, 0, 192]
+    light.front_yard_uplight_left:
+      state: 'on'
+      brightness: 255
+      rgb_color: [192, 3, 255]
+    light.front_yard_uplight_middle:
+      state: 'on'
+      brightness: 255
+      rgb_color: [0, 255, 254]
+    light.front_yard_uplight_right:
+      state: 'on'
+      brightness: 255
       rgb_color: [255, 0, 192]
 
 #
@@ -108,6 +155,18 @@
       brightness: 255
       rgb_color: [228, 131, 151]
     light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 94,   8,  30]
+    light.front_yard_uplight_left:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 94,   8,  30]
+    light.front_yard_uplight_middle:
+      state: 'on'
+      brightness: 255
+      rgb_color: [228, 131, 151]
+    light.front_yard_uplight_right:
       state: 'on'
       brightness: 255
       rgb_color: [ 94,   8,  30]
@@ -145,6 +204,18 @@
       state: 'on'
       brightness: 255
       rgb_color: [  9, 148,  65]
+    light.front_yard_uplight_left:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  9, 148,  65]
+    light.front_yard_uplight_middle:
+      state: 'on'
+      brightness: 255
+      rgb_color: [217, 223,  29]
+    light.front_yard_uplight_right:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  9, 148,  65]
 
 - name: Holiday Bulbs Patriotic
   icon: fas:flag-usa
@@ -169,6 +240,18 @@
       state: 'on'
       brightness: 255
       rgb_color: [0,  0,  255] 
+    light.front_yard_uplight_left:
+      state: 'on'
+      brightness: 255
+      rgb_color: [0,  0,  255] 
+    light.front_yard_uplight_middle:
+      state: 'on'
+      brightness: 255
+      color_temp: 260
+    light.front_yard_uplight_right:
+      state: 'on'
+      brightness: 255
+      rgb_color: [ 255,  0,  0]
       
 - name: Holiday Bulbs Halloween
   icon: mdi:halloween
@@ -190,6 +273,18 @@
       brightness: 255
       rgb_color: [136, 30, 228]
     light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [247,95,28]
+    light.front_yard_uplight_left:
+      state: 'on'
+      brightness: 255
+      rgb_color: [247,95,28]
+    light.front_yard_uplight_middle:
+      state: 'on'
+      brightness: 255
+      rgb_color: [136, 30, 228]
+    light.front_yard_uplight_right:
       state: 'on'
       brightness: 255
       rgb_color: [247,95,28]
@@ -217,6 +312,13 @@
       state: 'on'
       brightness: 255
       color_temp_kelvin: 2700
+    light.front_yard_uplight_left:
+      state: 'off'
+    light.front_yard_uplight_middle:
+      state: 'off'
+    light.front_yard_uplight_right:
+      state: 'off'
+
       
 - name: Holiday Bulbs DayLight
   icon: mdi:white-balance-sunny
@@ -241,4 +343,11 @@
       state: 'on'
       brightness: 255
       color_temp_kelvin: 6535
+    light.front_yard_uplight_left:
+      state: 'off'
+    light.front_yard_uplight_middle:
+      state: 'off'
+    light.front_yard_uplight_right:
+      state: 'off'
+
       

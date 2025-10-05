@@ -1,5 +1,0 @@
-
-  ## https://home-assistant.io/components/frontend/
-  ## https://home-assistant.io/developers/frontend_creating_custom_ui/
-
-  themes: !include frontend_themes.yaml
