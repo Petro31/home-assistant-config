@@ -136,6 +136,13 @@
       {{ trigger.calendar_event.summary.lower() }}
     temperature: >
       {{ config.get(event) }}
+    service_data: >
+      {%- if is_state('climate.living_room_thermostat', 'heat_cool') %}
+        {# Because we are using 70 and 66, this should just flip flop between 66-70 when 'cool' and 70-74 when 'heat' #}
+        {{ dict(target_temp_low=temperature, target_temp_high=temperature + 4) }}
+      {%- else %}
+        {{ dict(temperature=temperature) }}
+      {%- endif %}
   condition:
     - condition: template
       value_template: "{{ temperature is not none }}"
@@ -143,5 +150,4 @@
     - service: climate.set_temperature
       target:
         entity_id: climate.living_room_thermostat
-      data:
-        temperature: "{{ temperature }}"
+      data: "{{ service_data }}"
