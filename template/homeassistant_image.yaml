@@ -3,6 +3,6 @@
       unique_id: d25697e5-534f-4d55-8360-7221576f904e
       url: >
         {% set major, minor = state_attr('update.home_assistant_core_update', 'installed_version').split('.')[:2] | map('int') %}
-        https://www.home-assistant.io/images/blog/{{ major }}-{{ '{0:02d}'.format(minor) }}/social.jpg
+        https://www.home-assistant.io/images/blog/{{ major }}-{{ '{0:02d}'.format(minor) }}/social.png
       availability: >
         {{ state_attr('update.home_assistant_core_update', 'installed_version') is not none }}
