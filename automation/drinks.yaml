@@ -148,7 +148,7 @@
               'payload': {
                   'name': 'Drink',
                   'unique_id': 'drink_selector',
-                  'object_id': 'drink',
+                  'default_entity_id': 'select.drink',
                   'state_topic': root ~ '/select/drinks/state',
                   'value_template': '{{ value_json.name }}',
                   'command_topic': root ~ '/select/drinks/state',

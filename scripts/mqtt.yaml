@@ -68,11 +68,15 @@ mqtt_automated_config:
         Unknown Entity
       {% endif %}
     <<: *mqtt-variables
+    _object_id: >
+      {{ object_id | default(none) }}
+    default_entity_id: >
+      {{ domain ~ '.' ~ _object_id if domain is not none and _object_id is not none else none }}
     service_data: >
       {%- set items = [
         ("name", name),
         ("unique_id", unique_id | default(none)),
-        ("object_id", object_id | default(none)),
+        ("default_entity_id", default_entity_id),
         ("state_topic", topic_root ~ "/state"),
         ("value_template", "{{ value_json.state }}"),
         ("json_attributes_topic", topic_root ~ "/state"),

@@ -46,7 +46,7 @@ irrigation_mqtt_discovery:
                 'payload': {
                     'name': 'Day Cycle',
                     'unique_id': unique_id ~ this_id,
-                    'object_id': object_id ~ '_day_cycle',
+                    'default_entity_id': domain ~ '.' ~ object_id ~ '_day_cycle',
                     'state_topic': topic ~ 'state',
                     'command_topic': topic ~ 'state',
                     'command_template': "{{ value }}",
@@ -70,7 +70,7 @@ irrigation_mqtt_discovery:
                 'payload': {
                     'name': 'Status',
                     'unique_id': unique_id ~ this_id,
-                    'object_id': object_id ~ '_status',
+                    'default_entity_id': domain ~ '.' ~ object_id ~ '_status',
                     'state_topic': topic ~ 'state',
                     'command_topic': topic ~ 'state',
                     'device': device,
@@ -123,7 +123,7 @@ irrigation_mqtt_discovery:
                 'payload': {
                     'name': 'Program Duration',
                     'unique_id': unique_id ~ this_id,
-                    'object_id': object_id ~ '_program_duration',
+                    'default_entity_id': domain ~ '.' ~  object_id ~ '_program_duration',
                     'state_topic': topic ~ 'state',
                     'command_topic': topic ~ 'state',
                     'command_template': "{{ value }}",
@@ -147,7 +147,7 @@ irrigation_mqtt_discovery:
                 'payload': {
                     'name': 'Status',
                     'unique_id': unique_id ~ this_id,
-                    'object_id': object_id ~ '_status',
+                    'default_entity_id': domain ~ '.' ~ object_id ~ '_status',
                     'state_topic': topic ~ 'state',
                     'command_topic': topic ~ 'state',
                     'device': device,
