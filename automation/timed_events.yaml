@@ -2,22 +2,23 @@
   id: snapshot_status
   trigger:
     - platform: state
-      entity_id: sensor.samba_backup
+      entity_id: event.backup_automatic_backup
+      not_from:
+      - unknown
+      - unavailable
   variables:
     valid: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}"
     status: >
-      {{ trigger.to_state.state | default | lower }}
-    not_idle: >
-      {{ status != 'idle' }}
+      {{ trigger.to_state.attributes.event_type | replace('_', ' ') }}
   condition:
     - condition: template
-      value_template: "{{ valid and not_idle }}"
+      value_template: "{{ valid }}"
   action:
     - service: script.notify
       data:
-        title: Snapshot Status
-        message: "Samba backup {{ status }}."
+        title: Backup Status
+        message: "Backup {{ status }}."
 
 - alias: Notify Garbage Day Message
   id: garbage_day_message
