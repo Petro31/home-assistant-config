@@ -302,6 +302,13 @@
       'device_tracker.unifi_cloudkey',
     ],
   },{
+    'name': 'Leak Sensors',
+    'icon': 'mdi:water',
+    'header': [  { 'type': '../templates/headers/navigator.yaml', }, ],
+    'type': '../templates/summary/overview.yaml',
+    'dashboard': dashboard, 
+    'view': '../views/leak_sensors.yaml',
+  },{
     'name': 'Batteries',
     'icon': 'mdi:string-lights',
     'image': '/local/images/batteries.png',

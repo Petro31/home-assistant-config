@@ -1,0 +1,36 @@
+title: Leak Sensors
+icon: mdi:water
+path: leak_sensors
+visible: false
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+      - !include '../templates/buttons/edge.yaml'
+      - !include 
+        - '../templates/headers/navigator.yaml'
+        - name: Leak Sensors
+      - !include '../templates/buttons/edge.yaml'
+
+  - type: custom:auto-entities
+    card:
+      type: history-graph
+      title: History
+    card_param: entities
+    filter:
+      template: >
+        {{ state_attr('binary_sensor.leak', 'entity_id') | list or [] }}
+
+    options:
+      hours_to_show: 24
+
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    card_param: cards
+    filter:
+      template: >
+        [{%- for e in state_attr('binary_sensor.leak', 'entity_id') | list or [] %}
+          {{ dict(type='tile', entity=e) }},
+        {%- endfor %}]

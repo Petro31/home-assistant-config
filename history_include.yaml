@@ -12,6 +12,11 @@ entities:
   - binary_sensor.sliding_door
   - binary_sensor.washer_status
   - binary_sensor.washer
+  - binary_sensor.water_heater_water_leak_detected
+  - binary_sensor.right_sink_water_leak_detected
+  - binary_sensor.left_sink_water_leak_detected
+  - binary_sensor.kitchen_sink_water_leak_detected
+  - binary_sensor.powder_room_sink_water_leak_detected
   - climate.living_room_thermostat
   - device_tracker.lambo
   - device_tracker.petro

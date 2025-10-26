@@ -1,11 +1,13 @@
 - triggers:
+  - trigger: event
+    event_type: event_template_reloaded
   - trigger: state
     entity_id: &entities
     - binary_sensor.water_heater_water_leak_detected
     - binary_sensor.right_sink_water_leak_detected
     - binary_sensor.left_sink_water_leak_detected
-    - binary_sensor.sink_water_leak_detected
-    - binary_sensor.sink_water_leak_detected_2
+    - binary_sensor.kitchen_sink_water_leak_detected
+    - binary_sensor.powder_room_sink_water_leak_detected
     to:
     - 'on'
     - 'off'
@@ -16,10 +18,10 @@
     entities: *entities
     next_state: >
       {{ entities | select('is_state', 'on') | list | count > 0 }}
-    what: >
-      {{ trigger.to_state.name | lower }}
     area: >
       {{ trigger.entity_id | area_name | lower }}
+    what: >
+      {{ trigger.to_state.name | lower | replace(area + ' ', '') }}
   binary_sensor:
   - unique_id: c25ba0eb-0ab1-4005-b35e-15bc91e58479
     name: Leak
