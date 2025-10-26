@@ -182,6 +182,19 @@
           after:
             days: 1
 
+        thanksgiving:
+          start:
+            macro: month_day
+            kwargs:
+              month: 11
+              day: 2
+          end:
+            macro: month_week_day
+            kwargs:
+              month: 11
+              week: 4
+              weekday: 6
+
         christmas:
           start:
             macro: month_week_day
