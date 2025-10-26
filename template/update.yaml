@@ -2,18 +2,20 @@
   - unique_id: e45a7111-a31c-423a-aa71-e7590d7e3d03
     name: Esphome Entities
     picture: >
-      {{ integration_entities('esphome') | select('search','^update') | map('state_attr', 'entity_picture') | first }}
+      {{ state_attr('update.esphome_update', 'entity_picture') }}
     installed_version: >
+      {% set default_version = state_attr('update.esphome_update', 'installed_version') %}
       {% set ns = namespace(versions=[]) %}
       {% for ver in integration_entities('esphome') | select('search','^update') | select('is_state','on') | map('state_attr', 'installed_version') | unique %}
         {% set ns.versions = ns.versions + [version(ver)] %}
       {% endfor %}
-      {{ ns.versions | sort | first }}
+      {{ ns.versions | sort | first | default(default_version) }}
     latest_version: >
+      {% set default_version = state_attr('update.esphome_update', 'latest_version') %}
       {% set ns = namespace(versions=[]) %}
       {% for ver in integration_entities('esphome') | select('search','^update') | select('is_state','on') | map('state_attr', 'latest_version') | unique %}
         {% set ns.versions = ns.versions + [version(ver)] %}
       {% endfor %}
-      {{ ns.versions | sort(reverse=true) | first }}
+      {{ ns.versions | sort(reverse=true) | first | default(default_version) }}
     install:
     - action: script.update_esphome
