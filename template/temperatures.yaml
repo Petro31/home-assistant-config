@@ -5,6 +5,8 @@
     state_class: measurement
     state: > 
       {{ states('sensor.ambweather_temp1') }}
+    availability: > 
+      {{ has_value('sensor.ambweather_temp1') }}
     unit_of_measurement: '°F'
 
 - sensor:
@@ -14,6 +16,8 @@
     state_class: measurement
     state: > 
       {{ states('sensor.ambweather_humidity1') }}
+    availability: >
+      {{ has_value('sensor.ambweather_humidity1') }}
     unit_of_measurement: '%'
 
 - sensor:
