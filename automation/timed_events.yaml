@@ -8,7 +8,7 @@
       - unavailable
   variables:
     valid: >
-      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}"
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
     status: >
       {{ trigger.to_state.attributes.event_type | replace('_', ' ') }}
   condition:
