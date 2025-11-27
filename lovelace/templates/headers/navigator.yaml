@@ -50,15 +50,20 @@ anchors:
       - border-radius: 18%
 
 type: custom:mod-card
-style: 
-  layout-card:
-    $:
-      grid-layout:
-        $: |
-          div {
-              margin: 0px !important;
-              --masonry-view-card-margin: 0px;
-            }
+card_mod:
+  style:
+    .: |
+      ha-card {
+        background: none;
+        box-shadow: none;
+        border: none;
+        transition: none;
+      }
+    layout-card $ grid-layout $: |
+      div {
+          margin: 0px !important;
+          --masonry-view-card-margin: 0px;
+        }
 
 card:
   type: custom:layout-card

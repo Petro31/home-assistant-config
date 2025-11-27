@@ -49,21 +49,19 @@ anchors:
       - padding: 0px
       - border-radius: 18%
 
-type: custom:mod-card
-style: 
-  layout-card:
-    $:
-      grid-layout:
-        $: |
-          div {
-              margin: 0px !important;
-              --masonry-view-card-margin: 0px;
-            }
 
-card:
-  type: vertical-stack
-  cards:
-  - type: custom:layout-card
+type: vertical-stack
+cards:
+- type: custom:mod-card
+  card_mod:
+    style:
+      layout-card $ grid-layout $: |
+        div {
+            margin: 0px !important;
+            --masonry-view-card-margin: 0px;
+          }
+  card:
+    type: custom:layout-card
     layout_type: custom:grid-layout
     layout:
       grid-template-columns: {{ template_cols }}
@@ -136,27 +134,27 @@ card:
         - width: 100%%
         - color: var(--paper-item-icon-color)
 
-  - type: tile
-    entity: lock.smart_lock_ultra
-    name: Mudroom Door
-    features_position: inline
-    features:
-    - type: lock-commands
-  - type: tile
-    entity: cover.front_garage_door
-    name: Front Garage
-    features_position: inline
-    features:
-    - type: cover-open-close
-  - type: tile
-    entity: cover.rear_garage_door
-    name: Rear Garage
-    features_position: inline
-    features:
-    - type: cover-open-close
-  - type: tile
-    entity: switch.garage_temporary_laser
-    features_position: inline
-    name: Laser
-    features:
-    - type: toggle
+- type: tile
+  entity: lock.smart_lock_ultra
+  name: Mudroom Door
+  features_position: inline
+  features:
+  - type: lock-commands
+- type: tile
+  entity: cover.front_garage_door
+  name: Front Garage
+  features_position: inline
+  features:
+  - type: cover-open-close
+- type: tile
+  entity: cover.rear_garage_door
+  name: Rear Garage
+  features_position: inline
+  features:
+  - type: cover-open-close
+- type: tile
+  entity: switch.garage_temporary_laser
+  features_position: inline
+  name: Laser
+  features:
+  - type: toggle
