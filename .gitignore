@@ -197,3 +197,4 @@ esphome/master_closet_esp32/
 blueprints/
 
 www/images/home_transparent_6.png
+.ha_run.lock
