@@ -29,7 +29,8 @@
       {% endif %}
     indoor:
       - switch.indoor_holiday
-    outdoor: []
+    outdoor: >
+      {{ ['switch.outdoor_receptacle'] if states('sensor.seasonal_lights') == 'scene.holiday_bulbs_christmas' else [] }}
     target: >
       {{ indoor if trigger.id == 'indoor' else outdoor }}
   condition:
