@@ -47,10 +47,12 @@ alexa:
     - light.area_bonus_bedroom
     - light.area_bonus_room
     - light.area_car_bays
+    - light.area_craft_room
     - light.area_deck
     - light.area_dining_room
     - light.area_game_room
     - light.area_great_room
+    - light.area_guest_bathroom
     - light.area_kitchen
     - light.area_master_bathroom
     - light.area_master_bedroom
@@ -219,6 +221,8 @@ alexa:
       name: Target Bonus Room
     light.area_car_bays:
       name: Car Bays
+    light.area_craft_room:
+      name: Craft Room
     light.area_deck:
       name: Target Deck
     light.area_dining_room:
@@ -227,6 +231,8 @@ alexa:
       name: Target Game Room
     light.area_great_room:
       name: Target Great Room
+    light.area_guest_bathroom:
+      name: Guest Bathroom
     light.area_kitchen:
       name: Target Kitchen
     light.area_master_bathroom:
@@ -320,6 +326,12 @@ alexa:
       name: Garage Recessed
     switch.garage_workbench:
       name: Workbench
+    switch.guest_fan:
+      name: Guest Fan
+    switch.guest_toilet:
+      name: Guest Toilet
+    switch.guest_vanity:
+      name: Guest Vanity
     switch.hbo:
       name: HBO
     switch.hulu:
@@ -352,10 +364,6 @@ alexa:
       name: Mikes Nightstand
     switch.master_nightstand_right:
       name: Lindsays Nightstand
-    switch.master_door_outlet:
-      name: Mikes Dresser
-    switch.master_wall_outlet:
-      name: Lindsays Dresser
     switch.movie_time:
       name: Movie
     switch.netflix:
