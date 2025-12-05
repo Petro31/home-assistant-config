@@ -161,6 +161,22 @@
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
     ],
   },{
+    'name': 'Craft Room',
+    'icon': 'fas:envelopes-bulk',
+    'image': '',
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
+    'entities': [
+      "switch.craft_room_switch",
+    ],
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+  },{
     'name': 'Deck',
     'icon': 'fapro:tan',
     'image': '',
@@ -289,6 +305,24 @@
       'light.downstairs_ambiance',
       'light.all_living_room',
       'light.great_room_hue',
+    ],
+    'type': '../templates/summary/overview.yaml',
+    'display': [
+      {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
+      {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
+      {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+    ],
+  },{
+    'name': 'Guest Bathoom',
+    'icon': 'mdi:paper-roll',
+    'image': '',
+    'header': [ 
+      { 'type': '../templates/headers/navigator.yaml', }, 
+    ],
+    'entities': [
+      "switch.guest_vanity",
+      "switch.guest_toilet",
+      "switch.guest_fan",
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
