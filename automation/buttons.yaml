@@ -215,6 +215,7 @@
 - alias: Living Room Scene Controller LEDs
   id: button_living_room_scene_controller_leds
   mode: queued
+  max: 25
   trigger:
   - platform: state
     entity_id:

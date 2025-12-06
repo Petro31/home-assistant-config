@@ -34,48 +34,6 @@
       title: "{{ name }} is finished!"
       message: "{{ name }} is finished!"
 
-- alias: Booleans
-  id: washer_and_dryer_booleans
-  mode: parallel
-  trigger:
-  - platform: state
-    entity_id: 
-    - sensor.dryer_power
-    - sensor.washer_power
-  variables:
-    config:
-      sensor.washer_power: 
-        input_boolean: input_boolean.washer
-        threshold: 80
-      sensor.dryer_power: 
-        input_boolean: input_boolean.dryer
-        threshold: 150
-    valid: >
-      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
-    current: >
-      {{ config.get(trigger.entity_id) }}
-    have_current: >
-      {{ current is not none }}
-    number: >
-      {{ trigger.to_state.state if valid and is_number(trigger.to_state.state) else none }}
-    have_number: >
-      {{ number is not none }}
-    disposition: >
-      {{ number > current.threshold if have_current and have_number else none }}
-    service_target: >
-      {{ current.input_boolean if have_current else none }}
-    service_call: >
-      homeassistant.turn_o{{ 'n' if disposition else 'ff' }}
-    continue: >
-      {{ valid and disposition is not none }}
-  condition:
-  - condition: template
-    value_template: "{{ continue }}"
-  action:
-  - service: "{{ service_call }}"
-    target:
-      entity_id: "{{ service_target }}"
-
 - alias: Cycle Counter
   id: washer_and_dryer_cycle_counter
   mode: parallel

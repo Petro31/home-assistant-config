@@ -22,20 +22,34 @@
     auto_off: 0.1
     state: "{{ True }}"
 
-- binary_sensor:
+- triggers:
+  - entity_id: sensor.washer_power
+    <<: &my_trigga
+      trigger: state
+      not_to:
+      - unknown
+      - unavailable
+      not_from:
+      - unknown
+      - unavailable
+  binary_sensor:
   - unique_id: washer_status
     name: Washer Status
     device_class: power
     state: >
-      {{ is_state('input_boolean.washer', 'on') }}
+      {{ trigger.to_state.state | float > 80 }}
     attributes:
       template: energy
 
+- triggers:
+  - entity_id: sensor.dryer_power
+    <<: *my_trigga
+  binary_sensor:
   - unique_id: dryer_status
     name: Dryer Status
     device_class: door
     state: >
-      {{ is_state('input_boolean.dryer', 'on') }}
+      {{ trigger.to_state.state | float > 150 }}
     attributes:
       template: energy
 
