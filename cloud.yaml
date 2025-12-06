@@ -103,6 +103,9 @@ alexa:
     - switch.game_room_window
     - switch.garage_cans
     - switch.garage_workbench
+    - switch.guest_fan
+    - switch.guest_toilet
+    - switch.guest_vanity
     - switch.hbo
     - switch.hulu
     - switch.hyperion_cinema
@@ -118,8 +121,6 @@ alexa:
     - switch.master_bathroom_fan
     - switch.master_nightstand_left
     - switch.master_nightstand_right
-    - switch.master_door_outlet
-    - switch.master_wall_outlet
     - switch.movie_time
     - switch.netflix
     - switch.outside_porch
