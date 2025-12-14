@@ -15,7 +15,7 @@
 #   #################################
 #   ### {1:^25} ###
 #   #################################
-#   
+  
 #   - unique_id: area_{0}
 #     name: {1}
 #     state: >
@@ -53,7 +53,7 @@
 #         <<: *{0}_args
 #         level: >
 #             {{{{- brightness }}}}""" %}
-# 
+
 # - light:
 # {%- for area in groups %}
 # {{ fmat.format(area | slugify, area, area_id(area), label) }}
@@ -861,6 +861,90 @@
     - service: script.light_handler
       data:
         <<: *patio_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###        Powder Room        ###
+  #################################
+  
+  - unique_id: area_powder_room
+    name: Powder Room
+    state: >
+      {{ area_entities('powder_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('powder_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('powder_room') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &powder_room_args
+          area: powder_room
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *powder_room_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *powder_room_args
+        level: >
+            {{- brightness }}
+
+  #################################
+  ###  Vacation Planning Room   ###
+  #################################
+  
+  - unique_id: area_vacation_planning_room
+    name: Vacation Planning Room
+    state: >
+      {{ area_entities('vacation_planning_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') 
+        | list | count > 0 }}
+    level: >
+      {%- set entities = area_entities('vacation_planning_room') 
+        | select('in', label_entities('target_light')) 
+        | select('is_state','on') | list %}
+      {%- set levels = entities | map('state_attr', 'brightness') | reject('none') | list %}
+      {{- levels | average | int if levels else 255 if entities | length > 0 else 0 }}
+    availability: >
+      {{ area_entities('vacation_planning_room') 
+        | select('in', label_entities('target_light')) 
+        | map('has_value')
+        | select('eq', False)
+        | list | count == 0 }}
+    turn_on:
+    - service: script.light_handler
+      data:
+        <<: &vacation_planning_room_args
+          area: vacation_planning_room
+          include: target_light
+        level: 255
+    turn_off:
+    - service: script.light_handler
+      data:
+        <<: *vacation_planning_room_args
+        level: 0
+    set_level:
+    - service: script.light_handler
+      data:
+        <<: *vacation_planning_room_args
         level: >
             {{- brightness }}
 

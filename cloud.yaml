@@ -59,6 +59,8 @@ alexa:
     - light.area_master_suite
     - light.area_mud_room
     - light.area_office
+    - light.area_powder_room
+    - light.area_vacation_planning_room
     - light.area_work_bench
     - light.area_workshop
     - light.floor_downstairs
@@ -246,6 +248,10 @@ alexa:
       name: Mud Room
     light.area_office:
       name: Target Office
+    light.area_powder_room:
+      name: Powder Room
+    light.area_vacation_planning_room:
+      name: Vacation Planning Room
     light.area_work_bench:
       name: Work Bench
     light.area_workshop:
