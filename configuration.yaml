@@ -3,7 +3,9 @@ homeassistant:
   - /config/calibrations
   customize: !include customize.yaml
 
+a_file_logger:
 analytics:
+  snapshots_url: # use default
 automation: !include automations.yaml
 automation directory: !include_dir_merge_list automation
 cloud: !include cloud.yaml
@@ -28,7 +30,8 @@ plant: !include plants.yaml
 python_script:
 recorder: !include recorder.yaml
 scene: !include scenes.yaml
-script: !include_dir_merge_named scripts/
+script: !include scripts.yaml
+script directory: !include_dir_merge_named scripts/
 sensor: !include sensor.yaml
 system_health:
 template: !include_dir_merge_list template
