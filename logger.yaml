@@ -1,18 +1,11 @@
-default: warning
-logs:
-  requests.packages.urllib3.connectionpool: critical
-  frontend.js.latest: critical
-  py.warnings: critical
-  homeassistant.components.analytics: info
-  alexapy.helpers: error
-  #alexapy: debug
-  #homeassistant.components.ssdp: debug
-  #homeassistant.components.mqtt: debug
-  #homeassistant.components.mqtt.discovery: debug
-  #homeassistant.components.waze_travel_time: debug
-  #homeassistant.components.zwave_js: debug
-  #haffmpeg.core: debug
-  custom_components.harmony_helper: debug
+default: info
+# logs:
+  # requests.packages.urllib3.connectionpool: critical
+  # frontend.js.latest: critical
+  # py.warnings: critical
+  # homeassistant.components.analytics: info
+  # alexapy.helpers: error
+  # custom_components.harmony_helper: debug
 filters:
   homeassistant.components.automation:
     - "Already running$"
@@ -20,5 +13,7 @@ filters:
     - "Already running$"
   homeassistant.components.zwave_js:
     - "^Passing the zwave_js.multicast_set_value service call to the zwave_js.set_value service since only one node was targeted$"
-  homeassistant.components.compensation.sensor:
-    - "attribute volume_level is not numerical$"
+  # homeassistant.components.compensation.sensor:
+    # - "attribute volume_level is not numerical$"
+  aioamazondevices:
+    - "Failed to obtain notification data.  Timers and alarms have not been updated"

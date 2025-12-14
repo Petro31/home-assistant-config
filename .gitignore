@@ -198,3 +198,4 @@ blueprints/
 
 www/images/home_transparent_6.png
 .ha_run.lock
+home-assistant.log.old
