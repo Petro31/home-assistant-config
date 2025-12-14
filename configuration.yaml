@@ -1,7 +1,7 @@
 homeassistant:
   allowlist_external_dirs:
   - /config/calibrations
-  customize: !include customize.yaml
+  packages: !include_dir_named packages
 
 a_file_logger:
 analytics:

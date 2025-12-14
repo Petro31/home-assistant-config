@@ -215,7 +215,7 @@
     'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
     'dashboard': dashboard, 
     'entities': [
-      'sensor.synology_uptime',
+      'sensor.orion_last_boot',
       'sensor.synology_volume_used_volume_1',
       'sensor.synology_memory_usage_real',
       'sensor.synology_cpu_load_total',

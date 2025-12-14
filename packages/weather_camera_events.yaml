@@ -1,0 +1,86 @@
+# This package manages cameras that need to turn off before hitting 14ºF.
+
+# Trend sensors (UI):
+# - binary_sensor.outside_temperature_falling
+# - binary_sensor.outside_temperature_rising
+
+# Camera POE Port switches
+# - switch.driveway_camera_port
+# - switch.patio_camera_port
+
+template:
+- switch:
+  - variables:
+      cameras:
+        - switch.driveway_camera_port
+        - switch.patio_camera_port
+    unique_id: f9bb5dab-c35a-481b-8ba7-779188c0520b
+    name: Outside Cameras
+    state: >
+      {{ cameras | select('is_state', 'on') | list | count > 0 }}
+    availability: >
+      {{ cameras | select('has_value') | list | count == 2 }}
+    turn_on:
+    - action: switch.turn_on
+      target:
+        entity_id: "{{ cameras }}"
+    turn_off:
+    - action: switch.turn_off
+      target:
+        entity_id: "{{ cameras }}"
+
+- binary_sensor:
+  - unique_id: camera_shutoff
+    name: Camera Shutoff
+    device_class: cold
+    state: >
+      {% set temperature = states('sensor.outside_temperature') | float%}
+      {% set falling = is_state('binary_sensor.outside_temperature_falling', 'on') %}
+      {% set are_on = is_state('switch.outside_cameras', 'on') %}
+      {{ are_on and temperature < 16 and falling }}
+    availability: >
+      {{ ['sensor.outside_temperature', 'binary_sensor.outside_temperature_falling', 'switch.outside_cameras'] | select('has_value') | list | count == 3 }}
+
+  - unique_id: camera_turn_on
+    name: Camera Resume
+    device_class: heat
+    state: >
+      {% set temperature = states('sensor.outside_temperature') | float %}
+      {% set rising = is_state('binary_sensor.outside_temperature_rising', 'on') %}
+      {% set are_off = is_state('switch.outside_cameras', 'off') %}
+      {{ are_off and temperature > 20 and rising }}
+    availability: >
+      {{ ['sensor.outside_temperature', 'binary_sensor.outside_temperature_rising', 'switch.outside_cameras'] | select('has_value') | list | count == 3 }}
+
+automation:
+- alias: Turn off Outside Cameras based on temperature
+  id: turn_off_outside_cameras_based_on_temperature
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.camera_shutoff
+    from: 'off'
+    to: 'on'
+  action:
+  - service: script.notify
+    data:
+      message: >
+        [{{ now().strftime('%-I:%M:%S %p') }}] Temperature is moving below 16°F, turning off the driveway and backyard camera.
+  - service: switch.turn_off
+    data:
+      entity_id: switch.outside_cameras
+
+- alias: Turn on Outside Cameras based on temperature
+  id: turn_on_outside_cameras_based_on_temperature
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.camera_turn_on
+    from: 'off'
+    to: 'on'
+  action:
+  - service: script.notify
+    data:
+      message: >
+        [{{ now().strftime('%-I:%M:%S %p') }}] Temperature is moving above 20°F, turning on the driveway and backyard camera.
+  - service: switch.turn_on
+    data:
+      entity_id: switch.outside_cameras

@@ -1,2 +1,0 @@
-sensor.synology_uptime:
-  device_class: timestamp
