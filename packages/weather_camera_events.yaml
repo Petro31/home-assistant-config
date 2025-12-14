@@ -53,34 +53,33 @@ template:
       {{ ['sensor.outside_temperature', 'binary_sensor.outside_temperature_rising', 'switch.outside_cameras'] | select('has_value') | list | count == 3 }}
 
 automation:
-- alias: Turn off Outside Cameras based on temperature
-  id: turn_off_outside_cameras_based_on_temperature
+- alias: Manage outside camera power based on temperature
+  id: b5d5ca16-83ca-4fc7-93eb-2bce122071c4
   trigger:
+
+  # Turn off the cameras
   - platform: state
     entity_id: binary_sensor.camera_shutoff
     from: 'off'
     to: 'on'
-  action:
-  - service: script.notify
-    data:
-      message: >
-        [{{ now().strftime('%-I:%M:%S %p') }}] Temperature is moving below 16°F, turning off the driveway and backyard camera.
-  - service: switch.turn_off
-    data:
-      entity_id: switch.outside_cameras
+    variables:
+      action: 'off'
+      phrase: below 16°F
 
-- alias: Turn on Outside Cameras based on temperature
-  id: turn_on_outside_cameras_based_on_temperature
-  trigger:
+  # Turn on the cameras
   - platform: state
     entity_id: binary_sensor.camera_turn_on
     from: 'off'
     to: 'on'
+    variables:
+      action: 'on'
+      phrase: above 20°F
+
   action:
   - service: script.notify
     data:
       message: >
-        [{{ now().strftime('%-I:%M:%S %p') }}] Temperature is moving above 20°F, turning on the driveway and backyard camera.
-  - service: switch.turn_on
+        Temperature is moving {{ phrase }}, turning {{ action }} the driveway and backyard camera.
+  - service: switch.turn_{{ action }}
     data:
       entity_id: switch.outside_cameras
