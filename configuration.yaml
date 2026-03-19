@@ -3,7 +3,6 @@ homeassistant:
   - /config/calibrations
   packages: !include_dir_named packages
 
-a_file_logger:
 analytics:
   snapshots_url: # use default
 automation: !include automations.yaml
