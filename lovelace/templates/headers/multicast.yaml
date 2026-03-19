@@ -4,7 +4,7 @@
 {%- set name = name | default("Home") | title %}
 {%- set back_path = back_path | default("/home") %}
 {%- set icon = icon | default("mdi:home") %}
-{%- set dashboard = dashboard | default("lovelace") %}
+{%- set dashboard = dashboard | default("ui-home") %}
 {%- set on_icon = on_icon | default("mdi:lightbulb-multiple") %}
 {%- set off_icon = off_icon | default("mdi:lightbulb-multiple-off") %}
 {%- set domain = entity.split('.')[0] %}

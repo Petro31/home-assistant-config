@@ -11,7 +11,7 @@ show_name: false
 show_label: false
 tap_action:
   action: navigate
-  navigation_path: /lovelace/{{ path }}
+  navigation_path: /ui-home/{{ path }}
   haptic: light
 styles:
   card:

@@ -1,0 +1,4 @@
+title: Home
+# Exclude entities from "Unused entities" view
+
+views: !include lovelace/views/master.yaml

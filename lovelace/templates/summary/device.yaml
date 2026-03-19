@@ -6,7 +6,7 @@
 {%- set max_display = max_display | default(-1) %}
 {%- set triggers_update = triggers_update | default('') %}
 {%- set imgratio = 'transparent_' ~ 'to'.join(aspect_ratio.split('/')) ~ '.png' %}
-{%- set dashboard = dashboard | default("lovelace") %}
+{%- set dashboard = dashboard | default("ui-home") %}
 
 {%- set found = namespace(sensor='', entities=[]) %}
 {%- for entity in entities %}

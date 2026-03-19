@@ -190,6 +190,8 @@
       "switch.deck_walkway",
       "switch.deck_mood_lighting",
       "light.deck_wled_master",
+      "switch.sliding_door_sconce",
+      "switch.flood_light",
       'sensor.outside_temperature',
       'sensor.outside_humidity',
     ],

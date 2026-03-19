@@ -1,6 +1,6 @@
 # lovelace_gen
 
-{%- set dashboard = dashboard | default("lovelace") %}
+{%- set dashboard = dashboard | default("ui-home") %}
 
 {%- macro fixstate(state) %}
 {%- if state in [True, False] %}{{- 'on' if state else 'off' -}}

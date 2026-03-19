@@ -1,7 +1,7 @@
 # lovelace_gen
 
 {%- set color = color|default('var(--paper-item-icon-active-color)') %}
-{%- set dashboard = dashboard | default("lovelace") %}
+{%- set dashboard = dashboard | default("ui-home") %}
 {%- set back_path = back_path | default("/home") %}
 {%- set icon = icon | default("mdi:home") %}
 {%- set entities = entities | default([]) %}

@@ -1,56 +1,73 @@
-mode: yaml
-resources:
-# Button Card (Most of the interface)
+# resource_mode: yaml
+# resources:
+# # Button Card (Most of the interface)
 
-- url: /hacsfiles/button-card/button-card.js?
-  type: module
+# - url: /hacsfiles/button-card/button-card.js?
+#   type: module
 
-# Card Tools
+# # Card Tools
 
-- url: /hacsfiles/lovelace-card-tools/card-tools.js?
-  type: module
+# - url: /hacsfiles/lovelace-card-tools/card-tools.js?
+#   type: module
 
-# Config Template Card
+# # Config Template Card
 
-- url: /hacsfiles/config-template-card/config-template-card.js?
-  type: module
+# - url: /hacsfiles/config-template-card/config-template-card.js?
+#   type: module
 
-# Mini Graph Card
+# # Mini Graph Card
 
-- url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js?
-  type: module
+# - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js?
+#   type: module
 
-# Card Mod
+# # Card Mod
 
-- url: /hacsfiles/lovelace-card-mod/card-mod.js?
-  type: module
+# - url: /hacsfiles/lovelace-card-mod/card-mod.js?
+#   type: module
 
-# Layout Card
+# # Layout Card
 
-- url: /hacsfiles/lovelace-layout-card/layout-card.js
-  type: module
+# - url: /hacsfiles/lovelace-layout-card/layout-card.js
+#   type: module
 
-# Plant Card
+# # Plant Card
 
-- url: /local/lovelace-flower-card/flower-card.js?
-  type: module
+# - url: /local/lovelace-flower-card/flower-card.js?
+#   type: module
 
-# lovelace-slider-entity-row
+# # lovelace-slider-entity-row
 
-- url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js
-  type: module
+# - url: /hacsfiles/lovelace-slider-entity-row/slider-entity-row.js
+#   type: module
 
-# auto-entities
+# # auto-entities
 
-- url: /hacsfiles/lovelace-auto-entities/auto-entities.js
-  type: module
+# - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+#   type: module
 
-# mushroom-cards
+# # mushroom-cards
 
-- url: /hacsfiles/lovelace-mushroom/mushroom.js
-  type: module
+# - url: /hacsfiles/lovelace-mushroom/mushroom.js
+#   type: module
+
+# # TEMP CARDS
+
+# - url: /hacsfiles/lovelace-plotly-graph-card/plotly-graph-card.js
+#   type: module
+                
+# - url: /hacsfiles/streamline-card/streamline-card.js
+#   type: module
+                
+
 
 dashboards:
+  ui-home:
+    mode: yaml
+    title: Home
+    icon: mdi:home
+    show_in_sidebar: true
+    filename: ui-home.yaml
+
   ui-status:
     mode: yaml
     title: Status
