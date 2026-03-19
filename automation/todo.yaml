@@ -7,6 +7,8 @@
   - trigger: event
     event_type: run_manual_schedule_update
   variables:
+    program: >
+      {{ states('input_text.mike_run_program') }}
     day: >
       {% from 'easy_time.jinja' import count_the_days %}
       {# Assumes monday is always selected #}
@@ -19,11 +21,11 @@
     then:
     - action: script.set_run_schedule
       data:
-        program: 718485f4-3031-46a3-bce5-990189a6e06c
+        program: "{{ program }}"
         week: "{{ week }}"
         weekly_todo: todo.mike_this_week
         daily_todo: todo.mike_today
-        max_heart_rate: 200
+        max_heart_rate: 195
 
   # Setup Events.
   - action: script.set_mikes_daily_list
