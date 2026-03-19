@@ -217,9 +217,242 @@
           sunday:
             key: Half Marathon
 
+      - name: Naked Bavarian Program
+        id: e80ab45f-6b1e-47cf-931a-5544323d2813
+        weeks:
+        # Week 1
+        - monday:
+            duration: "00:30"
+            key: *A
+          tuesday: 
+            duration: "00:35"
+            key: *A
+          wednesday: ~
+          thursday:
+            duration: "00:40"
+            key: *A
+          friday: 
+            duration: "00:30"
+            key: *A
+          saturday: ~
+          sunday:
+            duration: "00:55"
+            key: *A
+        # Week 2
+        - monday: 
+            duration: "00:40"
+            key: *A
+          tuesday: 
+            duration: "00:25"
+            key: *C
+          wednesday:
+            duration: "00:45"
+            key: *A
+          thursday: 
+            duration: "00:45"
+            key: *A
+          friday: 
+            duration: "00:30"
+            key: *A
+          saturday:
+            duration: "00:35"
+            key: *A
+          sunday:
+            duration: "01:55"
+            key: *B
+        # Week 3
+        - monday: 
+            duration: "00:45"
+            key: *C
+          tuesday: 
+            duration: "00:45"
+            key: *C
+          wednesday:
+            duration: "01:15"
+            key: *A
+          thursday: ~
+          friday: 
+            duration: "00:55"
+            key: *C
+          saturday:
+            duration: "01:00"
+            key: *F
+          sunday: ~
+        # Week 4
+        - monday: 
+            duration: "00:50"
+            key: *A
+          tuesday: 
+            duration: "00:35"
+            key: *C
+          wednesday:
+            duration: "01:05"
+            key: *A
+          thursday: 
+            duration: "00:50"
+            key: *A
+          friday: 
+            duration: "01:05"
+            key: *C
+          saturday:
+            duration: "01:00"
+            key: *F
+          sunday:
+            duration: "02:40"
+            key: *B
+        # Week 5
+        - monday: 
+            duration: "00:45"
+            key: *A
+          tuesday: 
+            duration: "00:25"
+            key: *E
+          wednesday: ~
+          thursday: 
+            duration: "00:55"
+            key: *A
+          friday: 
+            count: 5
+            key: *D
+          saturday:
+            duration: "00:35"
+            key: *F
+          sunday:
+            duration: "01:40"
+            key: *B
+        # Week 6
+        - monday: 
+            duration: "00:45"
+            key: *A
+          tuesday: 
+            count: 6
+            key: *D
+          wednesday: 
+            duration: "01:20"
+            key: *A
+          thursday: 
+            duration: "01:05"
+            key: *A
+          friday: 
+            duration: "01:10"
+            key: *C
+          saturday:
+            duration: "01:00"
+            key: *F
+          sunday:
+            duration: "02:50"
+            key: *B
+        # Week 7
+        - monday: ~
+          tuesday: 
+            duration: "00:45"
+            key: *A
+          wednesday: 
+            duration: "00:30"
+            key: *E
+          thursday: 
+            duration: "01:00"
+            key: *A
+          friday: 
+            count: 6
+            key: *D
+          saturday:
+            duration: "00:50"
+            key: *F
+          sunday:
+            duration: "01:50"
+            key: *B
+        # Week 8
+        - monday: 
+            duration: "00:45"
+            key: *A
+          tuesday: 
+            duration: "00:55"
+            key: *C
+          wednesday: 
+            duration: "01:15"
+            key: *A
+          thursday: 
+            duration: "01:15"
+            key: *C
+          friday: 
+            duration: "01:05"
+            key: *A
+          saturday:
+            duration: "00:50"
+            key: *F
+          sunday:
+            duration: "03:00"
+            key: *B
+        # Week 9
+        - monday: ~
+          tuesday: 
+            duration: "00:45"
+            key: *A
+          wednesday: 
+            duration: "00:35"
+            key: *E
+          thursday: 
+            duration: "01:00"
+            key: *A
+          friday: 
+            count: 7
+            key: *D
+          saturday:
+            duration: "00:25"
+            key: *F
+          sunday:
+            duration: "02:00"
+            key: *B
+        # Week 10
+        - monday: 
+            duration: "00:40"
+            key: *C
+          tuesday: 
+            duration: "00:45"
+            key: *C
+          wednesday: 
+            duration: "00:30"
+            key: *A
+          thursday: ~
+          friday: 
+            duration: "00:40"
+            key: *C
+          saturday:
+            duration: "00:30"
+            key: *F
+          sunday:
+            duration: "01:15"
+            key: *B
+        # Week 11
+        - monday: 
+            duration: "00:40"
+            key: *A
+          tuesday: 
+            count: 3
+            key: *D
+          wednesday: 
+            duration: "00:25"
+            key: *A
+          thursday: 
+            duration: "00:40"
+            key: *C
+          friday: 
+            duration: "00:25"
+            key: *A
+          saturday:
+            key: Naked Bavarian
+          sunday: ~
+
   sensor:
   - unique_id: 0b5b04a9-7962-42ab-9323-25f24ea320d7
     name: Runing Programs
     state: OK
     attributes:
       programs: "{{ programs }}"
+
+- button:
+  - unique_id: b52fb631-270f-4147-8802-20f9b198d87c
+    name: Recalculate Run Program
+    press:
+    - event: run_manual_schedule_update
