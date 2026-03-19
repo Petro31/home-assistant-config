@@ -7,7 +7,7 @@
       event: start
     - id: new
       platform: state
-      entity_id: sensor.master_scale_weight
+      entity_id: sensor.mi_body_composition_scale_6e52_mass
   variables:
     root: "homeassistant"
     range: 20

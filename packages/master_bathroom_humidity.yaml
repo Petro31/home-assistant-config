@@ -1,0 +1,132 @@
+# The UI has 2 trend sensors
+#   binary_sensor.master_bathroom_humidity_rising
+#   binary_sensor.master_bathroom_humidity_falling
+
+# Xiaomi sensor
+#   Device: Master Bathroom LYWSDCGQ
+#   sensor.master_bathroom_lywsdcgq_humidity
+
+sensor:
+
+  # sensor.master_bathroom_filtered_humidity
+- platform: filter
+  name: Master Bathroom Filtered Humidity
+  unique_id: e3ad361d-a3f7-4edd-a236-6b0ff839baa0
+  entity_id: sensor.master_bathroom_lywsdcgq_humidity
+  filters:
+    - filter: lowpass
+      time_constant: 10
+      precision: 2
+
+  # sensor.master_bathroom_filtered_humidity_statistics
+- platform: statistics
+  name: Master Bathroom Filtered Humidity Statistics
+  unique_id: 48f6ebd3-6181-4d9a-be8a-83d101de394d
+  entity_id: sensor.master_bathroom_filtered_humidity
+  sampling_size: 172800
+  state_characteristic: mean
+  max_age:
+    days: 1
+
+# Template sensors used for calculating humitidy changes
+
+template:
+
+- sensor:
+  - unique_id: master_bathroom_average_humidity
+    name: Master Bathroom Average Humidity
+    state: > 
+      {{ state_attr('sensor.master_bathroom_filtered_humidity_statistics', 'mean') }}
+    unit_of_measurement: '%'
+    attributes:
+      template: humidity
+
+
+- binary_sensor:
+  - unique_id: master_bathroom_humidity_high
+    name: Master Bathroom Humidity High
+    state: >
+      {%- set humidity = states('sensor.master_bathroom_filtered_humidity') | float(none) %}
+      {%- set average = states('sensor.master_bathroom_average_humidity') | float(none) %}
+      {% if humidity is not none and average is not none %}
+        {{ humidity >= average + 3.5 }}
+      {% endif %}
+    device_class: moisture
+
+- trigger:
+  - id: rising
+    platform: template
+    value_template: >
+      {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
+      {{ change is not none and change > 200 }}
+  - id: falling
+    platform: template
+    value_template: >
+      {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
+      {{ change is not none and change < -150 }}
+  - id: constant
+    platform: template
+    value_template: >
+      {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
+      {{ change is not none and -100 <= change <= 125 }}
+  - id: start
+    platform: homeassistant
+    event: start
+  - platform: state
+    entity_id: binary_sensor.templates_reloaded
+    to: 'off'
+  binary_sensor:
+  - unique_id: master_bathroom_humidity_status
+    name: Master Bathroom Humidity Status
+    state: >
+      {%- if trigger.id == 'rising' %}
+        True
+      {%- elif trigger.id == 'falling' %}
+        False
+      {%- else %}
+        {%- set entity_id = 'binary_sensor.master_bathroom_humidity_status' %}
+        {%- if states(entity_id) in ['on', 'off'] %}
+          {{ is_state(entity_id, 'on') }}
+        {%- else %}
+          False
+        {%- endif %}
+      {%- endif %}
+    auto_off:
+      minutes: 40
+    device_class: moisture
+
+# Automation that handles humidity
+
+automation:
+- alias: Toggle bathroom fan using humidity
+  id: bathroom_turn_on_fan_when_humidity_is_high
+  mode: restart
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.master_bathroom_humidity_status
+  variables:
+    check: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    continue: >
+      {%- set valid = ['on', 'off'] %}
+      {{ check and trigger.to_state.state in valid and trigger.from_state.state in valid }}
+    service: >
+      switch.turn_{{ trigger.to_state.state if continue else none }}
+    add_delay: >
+      {{ trigger.to_state.state == 'off' if continue else False }}
+  condition:
+  - condition: template
+    value_template: "{{ continue }}"
+  action:
+  
+  - choose:
+    - conditions: "{{ add_delay }}"
+      sequence:
+      - delay: "00:20:00"
+
+  - service: "{{ service }}"
+    target:
+      entity_id: switch.master_bathroom_fan
+
+  - delay:
+      seconds: 1
