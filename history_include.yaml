@@ -174,6 +174,13 @@ entities:
   - sensor.apollo_air_1_1ecac0_humidity
   - sensor.apollo_air_1_1ecac0_temperature
 
+  - binary_sensor.apollo_msr_2_8935e0_radar_zone_1_occupancy
+  - binary_sensor.apollo_msr_2_8935e0_radar_zone_2_occupancy
+  - binary_sensor.apollo_msr_2_8935e0_radar_zone_3_occupancy
+  - binary_sensor.apollo_msr_2_8935e0_radar_target
+  - binary_sensor.apollo_msr_2_8935e0_radar_moving_target
+  - binary_sensor.apollo_msr_2_8935e0_radar_still_target
+
 domains:
   - light
   - switch
