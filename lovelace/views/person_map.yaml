@@ -20,9 +20,9 @@ cards:
   - zone.cobbs_hill
   - zone.home
   - zone.lambs_lakehouse
-  - zone.lambs_springville
   - zone.petros_lakehouse
-  - zone.rit_gym
   - zone.ruckhouse
   - zone.tops
   - zone.wegmans
+  - zone.lambo_work
+  - zone.petro_work
