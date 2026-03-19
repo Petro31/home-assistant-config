@@ -1,0 +1,29 @@
+# A toggle for the lock
+garage_door_toggle:
+  alias: Toggle Garage Door
+  description: >
+    Toggle the garage door and notify the homeowners
+  sequence:
+  - variables:
+      user_id: >
+        {{ context.user_id }}
+      who: >
+        {{ states.person | selectattr('attributes.user_id', 'eq', user_id) | map(attribute='entity_id') | first | default }}
+      next_state: >
+        {# The nuki lock reports stupid states through matter, you must account for that.  open == unlocked #}
+        {# You are abusing filters.  if locked and unlocked are before open, the first state should always be locked or unlocked #}
+        {%- set filtered_states = ['locked', 'unlocked', 'open'] | reject('eq', states('lock.smart_lock_ultra')) | list %}
+        {%- set next_state = filtered_states | first | default(None) %}
+        {%- if next_state is none or filtered_states | count > 2 %}
+          None
+        {%- else %}
+          {{ next_state }}
+        {%- endif %}
+  - condition: template
+    value_template: "{{ who is not none and next_state is not none }}"
+  - action: script.notify
+    data:
+      message: "{{ state_attr(who, 'friendly_name') }} {{ next_state }} the garage door."
+  - action: lock.{{ next_state.replace('ed', '') }}
+    data:
+      entity_id: lock.smart_lock_ultra
