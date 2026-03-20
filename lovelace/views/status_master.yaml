@@ -59,44 +59,40 @@
 {% set batteries = [
   {
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.basement_cgdk2_battery_level',
-    'name': 'Basement Sensor',
+    'entity': 'sensor.bonus_room_cgdk2_battery',
+    'name': 'Bonus Room CGDK2',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.bonus_room_battery_level',
-    'name': 'Bonus Room Sensor',
+    'entity': 'sensor.upstairs_server_room_lywsdcgq_battery',
+    'name': 'Bonus Server Room LYWSDCGQ',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.bonus_server_room_temperature_sensor_battery_level',
-    'name': 'Bonus Server Room Sensor',
-  },{
-    'type':  '../templates/buttons/battery.yaml',
-    'entity': 'binary_sensor.garage_entrance_battery',
+    'entity': 'sensor.garage_door_entrance_sensor_battery_level',
     'name': 'Garage Door Entrance Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.deck_temperature_sensor_battery_level',
-    'name': 'Garage Sensor',
+    'entity': 'sensor.garage_refrigerator_lywsdcgq_battery',
+    'name': 'Garage Refrigerator LYWSDCGQ',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.kitchen_temperature_sensor_battery_level',
-    'name': 'Kitchen Sensor',
+    'entity': 'sensor.kitchen_lywsdcgq_battery',
+    'name': 'Kitchen LYWSDCGQ',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'binary_sensor.main_entrance_battery',
+    'entity': 'sensor.main_entrance_door_sensor_battery_level',
     'name': 'Main Door Entrance Sensor',
   },{
     'type':  '../templates/buttons/battery.yaml',
     'entity': 'sensor.master_bathroom_lywsdcgq_battery',
-    'name': 'Master Bathroom Sensor',
+    'name': 'Master Bathroom LYWSDCGQ',
   },{
     'type':  '../templates/buttons/battery.yaml',
     'entity': 'sensor.master_bedroom_lywsdcgq_battery',
-    'name': 'Master Bedroom Sensor',
+    'name': 'Master Bedroom LYWSDCGQ',
   },{
     'type':  '../templates/buttons/battery.yaml',
-    'entity': 'sensor.server_room_battery_level',
-    'name': 'Server Room Sensor',
+    'entity': 'sensor.server_room_cgdk2_battery',
+    'name': 'Server Room CGDK2',
   },{
     'type':  '../templates/buttons/battery.yaml',
     'entity': 'binary_sensor.sliding_door_battery',
@@ -243,8 +239,8 @@
     'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
     'dashboard': dashboard, 
     'entities': [
-      'sensor.server_room_temperature',
-      'sensor.server_room_humidity',
+      'sensor.server_room_cgdk2_temperature',
+      'sensor.server_room_cgdk2_humidity',
       'sensor.server_room_switch_uptime',
       'sensor.server_room_switch_temperature',
       'device_tracker.server_room_16_port_poe_switch',
@@ -256,8 +252,8 @@
     'header': [  { 'type': '../templates/headers/navigator.yaml',  'dashboard': dashboard, }, ],
     'dashboard': dashboard, 
     'entities': [
-      'sensor.bonus_server_room_temperature',
-      'sensor.bonus_server_room_humidity',
+      'sensor.upstairs_server_room_lywsdcgq_temperature',
+      'sensor.upstairs_server_room_lywsdcgq_humidity',
       'sensor.bonus_room_switch_uptime',
       'sensor.bonus_room_switch_temperature',
       'device_tracker.bonus_room_16_port_poe_switch',

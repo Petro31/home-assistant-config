@@ -24,12 +24,7 @@ entities:
   - person.petro
   - sensor.basement_humidity
   - sensor.basement_temperature
-  - sensor.bonus_room_battery_level
   - sensor.bonus_room_switch_temperature
-  - sensor.bonus_room_temperature
-  - sensor.bonus_server_room_humidity
-  - sensor.bonus_server_room_temperature
-  - sensor.bonus_server_room_temperature_sensor_battery_level
   - sensor.cgdk2_1_battery_level
   - sensor.core_300s_air_quality
   - sensor.cpu_temperature
@@ -41,9 +36,6 @@ entities:
   - sensor.cyberpower_status
   - sensor.cyberpower_status_data
   - sensor.database_size
-  - sensor.deck_humidity
-  - sensor.deck_temperature
-  - sensor.deck_temperature_sensor_battery_level
   - sensor.disk_free_home
   - sensor.deck_motion_sensor_illuminance
   - sensor.deck_motion_sensor_temperature
@@ -60,9 +52,6 @@ entities:
   - sensor.house_temperature
   - sensor.house_power_status
   - sensor.house_voltage_status
-  - sensor.kitchen_humidity
-  - sensor.kitchen_temperature
-  - sensor.kitchen_temperature_sensor_battery_level
   - sensor.lambo_weight
   - sensor.markus_temperature
   - sensor.master_bathroom_filtered_humidity_statistics
@@ -89,10 +78,7 @@ entities:
   - sensor.plant_sensor_3_temperature
   - sensor.processor_use
   - sensor.roomba_battery_level
-  - sensor.server_room_battery_level
-  - sensor.server_room_humidity
   - sensor.server_room_switch_temperature
-  - sensor.server_room_temperature
   - sensor.shelly_em3_channel_a_energy
   - sensor.shelly_em3_channel_a_power
   - sensor.shelly_em3_channel_a_energy_cost
@@ -121,10 +107,11 @@ entities:
   - sensor.bonus_room_cgdk2_humidity
   - sensor.bonus_room_cgdk2_temperature
 
-  - sensor.deck_lywsdcgq_battery
-  - sensor.deck_lywsdcgq_humidity
-  - sensor.deck_lywsdcgq_temperature
+  - sensor.garage_refrigerator_lywsdcgq_battery
+  - sensor.garage_refrigerator_lywsdcgq_humidity
+  - sensor.garage_refrigerator_lywsdcgq_temperature
 
+  - sensor.kitchen_lywsdcgq_battery
   - sensor.kitchen_lywsdcgq_humidity
   - sensor.kitchen_lywsdcgq_temperature
 

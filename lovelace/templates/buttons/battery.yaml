@@ -39,6 +39,9 @@ icon: |
         var parsed = parseFloat(battery);
         end = (!isNaN(parsed)) ? end = Math.floor(parsed / 10) * 10 : "unknown";
     }
+    if (end === 100) {
+        end = null;
+    }
     return (end !== null) ? `${icon}-${end}` : icon;
   ]]]
 label: |

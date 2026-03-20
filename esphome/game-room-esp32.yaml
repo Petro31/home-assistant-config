@@ -37,17 +37,6 @@ switch:
     name: "Game Room ESP32 Restart"
 
 sensor:
-
-  - platform: xiaomi_cgdk2
-    mac_address: !secret xiaomi_cgdk2_3_mac
-    bindkey: !secret xiaomi_cgdk2_3_bindkey
-    temperature:
-      name: Server Room Temperature
-    humidity:
-      name: Server Room Humidity
-    battery_level:
-      name: Server Room Battery Level
-
   - platform: uptime
     name: Ethernet Uptime
 

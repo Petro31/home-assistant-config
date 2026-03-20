@@ -151,8 +151,8 @@
       'light.bonus_room_bedroom_fixture',
       'fan.bonus_room_bedroom',
       'light.bonus_room_bedroom_recessed',
-      'sensor.bonus_room_temperature',
-      'sensor.bonus_room_humidity',
+      'sensor.bonus_room_cgdk2_temperature',
+      'sensor.bonus_room_cgdk2_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
@@ -360,8 +360,8 @@
       'light.kitchen_cans',
       'switch.kitchen_cabinet',
       'switch.kitchen_pantry',
-      'sensor.kitchen_temperature',
-      'sensor.kitchen_humidity',
+      'sensor.kitchen_lywsdcgq_temperature',
+      'sensor.kitchen_lywsdcgq_humidity',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [

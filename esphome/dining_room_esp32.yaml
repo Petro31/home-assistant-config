@@ -32,26 +32,7 @@ switch:
   - platform: restart
     name: "Dining Room ESP32 Restart"
 
-sensor:      
-  - platform: xiaomi_lywsdcgq
-    mac_address: !secret mijia_ble_temperature_4
-    temperature:
-      name: "Deck Temperature"
-      device_class: "temperature"
-      state_class: "measurement"
-    humidity:
-      name: "Deck Humidity"
-      device_class: "humidity"
-      state_class: "measurement"
-    battery_level:
-      name: "Deck Temperature Sensor Battery Level"
-      
-  - platform: template
-    name: Deck Temperature Sensor Number
-    lambda: |-
-      return 4;
-    update_interval: 86400s
-
+sensor:
   - platform: uptime
     name: Dining Room ESP32 Ethernet Uptime
 
