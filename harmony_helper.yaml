@@ -119,7 +119,6 @@ living_room:
       
   - command: TopButton
     name: Search
-    activities:
     links:
     - link: playstation
       device_command: Triangle

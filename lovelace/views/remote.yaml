@@ -19,10 +19,10 @@
 ] %}
 
 {%- set controls = [
-  {'entity': 'binary_sensor.remote_living_room_homebutton' },
-  {'entity': 'binary_sensor.remote_living_room_menubutton' },
-  {'entity': 'binary_sensor.remote_living_room_lowerleft' },
-  {'entity': 'binary_sensor.remote_living_room_lowerright' },
+  {'entity': 'button.remote_living_room_homebutton' },
+  {'entity': 'button.remote_living_room_menubutton' },
+  {'entity': 'button.remote_living_room_lowerleft' },
+  {'entity': 'button.remote_living_room_lowerright' },
 ] %}
 
 title: Remote
@@ -107,28 +107,28 @@ cards:
         - !include '../templates/buttons/edge.yaml'
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_back
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_back
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_home
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_home
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_menu
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_menu
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_lowerleft
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_lowerleft
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_lowerright
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_lowerright
+            service: button.press
             use_entity: true
         - !include '../templates/buttons/edge.yaml'
       - type: custom:mod-card
@@ -184,34 +184,34 @@ cards:
                 - !include '../templates/buttons/spacer.yaml'
                 - !include
                   - '../templates/remote/harmony/control.yaml'
-                  - entity: binary_sensor.remote_living_room_directionup
-                    service: harmony_helper.send_command
+                  - entity: button.remote_living_room_directionup
+                    service: button.press
                     use_entity: true
                 - !include '../templates/buttons/spacer.yaml'
               - type: horizontal-stack
                 cards:
                 - !include
                   - '../templates/remote/harmony/control.yaml'
-                  - entity: binary_sensor.remote_living_room_directionleft
-                    service: harmony_helper.send_command
+                  - entity: button.remote_living_room_directionleft
+                    service: button.press
                     use_entity: true
                 - !include
                   - '../templates/remote/harmony/control.yaml'
-                  - entity: binary_sensor.remote_living_room_ok
-                    service: harmony_helper.send_command
+                  - entity: button.remote_living_room_ok
+                    service: button.press
                     use_entity: true
                 - !include
                   - '../templates/remote/harmony/control.yaml'
-                  - entity: binary_sensor.remote_living_room_directionright
-                    service: harmony_helper.send_command
+                  - entity: button.remote_living_room_directionright
+                    service: button.press
                     use_entity: true
               - type: horizontal-stack
                 cards:
                 - !include '../templates/buttons/spacer.yaml'
                 - !include
                   - '../templates/remote/harmony/control.yaml'
-                  - entity: binary_sensor.remote_living_room_directiondown
-                    service: harmony_helper.send_command
+                  - entity: button.remote_living_room_directiondown
+                    service: button.press
                     use_entity: true
                 - !include '../templates/buttons/spacer.yaml'
           - !include '../templates/buttons/edge.yaml'
@@ -221,23 +221,23 @@ cards:
         - !include '../templates/buttons/spacer.yaml'
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_rewind
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_rewind
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_play
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_play
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_pause
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_pause
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_fastforward
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_fastforward
+            service: button.press
             use_entity: true
         - !include '../templates/buttons/edge.yaml'
   - type: conditional
@@ -252,24 +252,24 @@ cards:
         - !include '../templates/buttons/edge.yaml'
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_channelprev
+          - entity: button.remote_living_room_channelprev
             icon: mdi:chevron-left-circle
-            service: harmony_helper.send_command
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_7
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_7
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_8
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_8
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_9
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_9
+            service: button.press
             use_entity: true
         - !include '../templates/buttons/edge.yaml'
       - type: horizontal-stack
@@ -277,24 +277,24 @@ cards:
         - !include '../templates/buttons/edge.yaml'
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_channelup
+          - entity: button.remote_living_room_channelup
             icon: mdi:chevron-up-circle
-            service: harmony_helper.send_command
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_4
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_4
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_5
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_5
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_6
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_6
+            service: button.press
             use_entity: true
         - !include '../templates/buttons/edge.yaml'
       - type: horizontal-stack
@@ -306,18 +306,18 @@ cards:
             icon: mdi:chevron-down-circle
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_1
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_1
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_2
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_2
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_3
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_3
+            service: button.press
             use_entity: true
         - !include '../templates/buttons/edge.yaml'
       - type: horizontal-stack
@@ -326,14 +326,14 @@ cards:
         - !include '../templates/buttons/spacer.yaml'
         - !include
           - '../templates/remote/harmony/control.yaml'
-          - entity: binary_sensor.remote_living_room_0
-            service: harmony_helper.send_command
+          - entity: button.remote_living_room_0
+            service: button.press
             use_entity: true
         - !include
           - '../templates/remote/harmony/control.yaml'
           - entity: script.remote_living_room_period
             icon: mdi:circle-small
-            service: harmony_helper.send_command
+            service: button.press
             use_entity: true
         - !include '../templates/buttons/spacer.yaml'
         - !include '../templates/buttons/edge.yaml'
