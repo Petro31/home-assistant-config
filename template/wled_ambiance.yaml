@@ -59,7 +59,7 @@
         entity_id: light.hutch_uplight
       data: *wled_match_on_data
     turn_off:
-    - action: light.turn_on
+    - action: light.turn_off
       target: *wled_match_hutch
       data: *wled_match_off_data
   
