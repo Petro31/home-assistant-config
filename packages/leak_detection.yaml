@@ -29,7 +29,7 @@ template:
     area: >
       {{ trigger.entity_id | area_name | lower }}
     what: >
-      {{ trigger.to_state.name | lower | replace(area + ' ', '') }}
+      {{ trigger.entity_id | entity_name | lower | replace(area + ' ', '') }}
   binary_sensor:
   - unique_id: c25ba0eb-0ab1-4005-b35e-15bc91e58479
     name: Leak

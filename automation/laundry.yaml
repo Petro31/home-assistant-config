@@ -18,7 +18,7 @@
     continue: >
       {{ timeout and timeout > 15 }}
     name: >
-      {{ trigger.to_state.name.split(' ')[0] if valid else 'Unknown' }}
+      {{ entity_name(trigger.entity_id).split(' ')[0] if valid else 'Unknown' }}
     announce: >
       {{ name.lower() if name != 'Unkonwn' else none }}
       
