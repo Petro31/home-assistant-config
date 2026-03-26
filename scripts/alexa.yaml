@@ -159,7 +159,7 @@ notify_area:
     found_person: >
       {{ states.person | selectattr('attributes.user_id', 'eq', target_person) | map(attribute='entity_id') | first | default }}
     found_user: >
-      {{ state_attr(found_person, 'friendly_name') if found_person is not none else none }}
+      {{ found_person | entity_name if found_person is not none else none }}
     user: >
       {{ found_user or 'unknown' }}
     should_announce: >

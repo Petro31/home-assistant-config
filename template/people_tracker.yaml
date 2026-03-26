@@ -16,28 +16,28 @@
     attributes:
       template: people_tracker
       people: > 
-        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
-        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('entity_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('entity_name') | list %}
         {%- set people = people + company %}
         {{ people }}
       and: >
-        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
-        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('entity_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('entity_name') | list %}
         {%- set people = people + company %}
         {%- if people | count > 0 %}
           {{- [people[:-1] | join(', '), 'and', people[-1]] | join(' ') if people | count > 1 else people[0] }}
         {%- else %}unknown
         {%- endif %}
       or: >
-        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
-        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('entity_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('entity_name') | list %}
         {%- set people = people + company %}
         {%- if people | count > 0 %}
           {{- [people[:-1] | join(', '), 'or', people[-1]] | join(' ') if people | count > 1 else people[0] }}
         {%- else %}unknown
         {%- endif %}
       count: >
-        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('state_attr','friendly_name') | list %}
-        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('state_attr','friendly_name') | list %}
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('entity_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('entity_name') | list %}
         {%- set people = people + company %}
         {{ people | count }}

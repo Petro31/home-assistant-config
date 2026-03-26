@@ -123,7 +123,7 @@
     who: >
       {{ state_attr('sensor.people_at_home', 'or') }}
     what: >
-      {{ state_attr(trigger.entity_id, 'friendly_name') }}
+      {{ trigger.entity_id | entity_name }}
 
   condition: &door_condition
   - condition: template
@@ -221,7 +221,7 @@
         300
       {%- endif %}
     door_name: >
-      {{ state_attr(trigger.entity_id, 'friendly_name') }}
+      {{ trigger.entity_id | entity_name }}
 
   condition: *door_condition
 

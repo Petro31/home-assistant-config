@@ -162,7 +162,7 @@
       {%- for e in entities %}
         {%- set dt = states(e) | as_datetime %}
         {%- set date = dt.date() | string %}
-        {%- set name = state_attr(e, 'friendly_name') %}
+        {%- set name = e | entity_name %}
         {%- set p = 'n' if 'Start' in name else 'ff' %}
         {%- set f = speak_the_days(dt) %}
         {%- set m = ' ' if 'in' in f else ' before ' %}

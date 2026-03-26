@@ -22,10 +22,10 @@
     data:
       title: "Sunset Switch Turned Off"
       message: >
-        {{ state_attr(trigger.entity_id, 'friendly_name') }} door sconce switch was turned off, turning back on.
+        {{ trigger.entity_id | entity_name }} door sconce switch was turned off, turning back on.
   - service: script.notify_area
     data:
-      message: Jim counter action initiative in affect. Turning on {{ state_attr(trigger.entity_id, 'friendly_name') }} door sconces.
+      message: Jim counter action initiative in affect. Turning on {{ trigger.entity_id | entity_name }} door sconces.
       announce: False
       area: living_room
   - condition: sun
@@ -56,7 +56,7 @@
     only_triggering_light: >
       {{ expand(entities) | rejectattr('entity_id', 'eq', triggering) | map(attribute='state') | select('eq', 'unavailable') | list | length == 0 }}
     name: >
-      {{ state_attr(triggering, 'friendly_name') or 'unknown' }}
+      {{ triggering | entity_name or 'unknown' }}
   condition:
   - condition: template
     value_template: "{{ continue and only_triggering_light }}"
@@ -103,7 +103,7 @@
     data:
       notify: notify.mobile_app_petro
       title: Multicast Error
-      message: Refreshing {{ state_attr(entity_id, 'friendly_name') }}
+      message: Refreshing {{ entity_id  | entity_name }}
 
   - action: script.get_zwave_entities_from_light_group
     data:
@@ -158,7 +158,7 @@
     data:
       notify: notify.mobile_app_petro
       title: WLED Error
-      message: Refreshing {{ filtered | map('state_attr', 'friendly_name') | list | join(', ') }}
+      message: Refreshing {{ filtered | map('entity_name') | list | join(', ') }}
 
   - delay: 1
 

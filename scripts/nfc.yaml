@@ -23,7 +23,7 @@ garage_door_toggle:
     value_template: "{{ who is not none and next_state is not none }}"
   - action: script.notify
     data:
-      message: "{{ state_attr(who, 'friendly_name') }} {{ next_state }} the garage door."
+      message: "{{ who | entity_name }} {{ next_state }} the garage door."
   - action: lock.{{ next_state.replace('ed', '') }}
     data:
       entity_id: lock.smart_lock_ultra
