@@ -18,6 +18,7 @@ styles:
   - border-radius: 18%
   - --ha-card-background: var(--primary-background-color)
   - opacity: {{ opacity|default(1.0) }}
+  - --ha-card-border-width: 0px
   entity_picture:
     - height: 100%
     - width: 100%

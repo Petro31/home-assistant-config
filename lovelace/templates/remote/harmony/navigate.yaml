@@ -18,3 +18,4 @@ styles:
   - border-radius: 18%
   - padding: 0px
   - --ha-card-background: var(--primary-background-color)
+  - --ha-card-border-width: 0px

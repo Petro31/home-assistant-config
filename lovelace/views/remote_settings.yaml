@@ -75,9 +75,11 @@ cards:
       - !include '../templates/buttons/edge.yaml'
       - type: entities
         title: Effects
-        style: |
-          ha-card {
-            border-radius: 15px;
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: 15px;
+              border-width: 0px
             }
         entities:
         - entity: input_number.hyperion_brightness

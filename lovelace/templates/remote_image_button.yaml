@@ -23,6 +23,7 @@ styles:
   card:
   - border-radius: 10px
   - --ha-card-background: var(--primary-background-color)
+  - --ha-card-border-width: 0px
   entity_picture:
     - height: 100%
     - width: 100%

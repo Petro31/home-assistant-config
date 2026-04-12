@@ -30,6 +30,7 @@ styles:
   - --ha-card-background: none
   - box-shadow: none
   - padding: 0px
+  - --ha-card-border-width: 0px
 {%- if svg is defined and svg != None %}
   grid:
   - grid-template-areas: '"custom_icon"'

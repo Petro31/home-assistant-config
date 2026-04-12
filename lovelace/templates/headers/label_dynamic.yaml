@@ -21,5 +21,6 @@ card:
       background: none;
       padding: 0px 11px;
       color: var(--header-color);
+      ha-card-border-width: 0px
     }
   content: "${ '#### ' + {{ content }} }"

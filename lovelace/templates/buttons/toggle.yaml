@@ -41,6 +41,7 @@ styles:
   card:
   - padding: 10px
   - border-radius: 15px
+  - border-width: 0px
   name:
   - z-index: 2
   - justify-self: start

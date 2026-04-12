@@ -100,6 +100,7 @@ card:
       - --ha-card-background: rgba(0,0,0,0)
       - box-shadow: none
       - pointer-events: none
+      - --ha-card-border-width: 0px
       label:
       - align-self: start
       - justify-self: end

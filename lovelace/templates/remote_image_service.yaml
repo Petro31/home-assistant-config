@@ -18,6 +18,7 @@ styles:
   card:
   - border-radius: 18%
   - --ha-card-background: var(--primary-background-color)
+  - --ha-card-border-width: 0px
   - opacity: {{ opacity|default(1.0) }}
   - box-shadow: >
       [[[

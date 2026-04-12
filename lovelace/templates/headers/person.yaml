@@ -43,6 +43,7 @@ styles:
     - background-size: 100% 100%
     - border-radius: 15px
     - padding: 0px
+    - --ha-card-border-width: 0px
   entity_picture:
     - width: 100%
     - padding-bottom: 0%

@@ -2,12 +2,14 @@
 
 # card
 type: markdown
-style: |
-  ha-card {
-    box-shadow: none;
-    height: 33px;
-    background: none;
-    padding: 0px 11px;
-    color: var(--header-color);
-  }
+card_mod:
+  style: |
+      ha-card {
+        box-shadow: none;
+        background: none;
+        padding: 0px 11px;
+        color: var(--header-color);
+        border-width: 0px;
+        font-size: 20px;
+      }
 content: '{{ content }}'

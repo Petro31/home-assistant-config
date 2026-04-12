@@ -91,6 +91,7 @@ custom_fields:
       styles:
         card:
         - overflow: visible
+        - border-width: 0px
         grid:
         - grid-template-areas: '"info"'
         - grid-template-columns: 100%

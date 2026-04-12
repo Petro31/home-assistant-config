@@ -110,6 +110,7 @@ custom_fields:
         labels_secondary: false
         name_adaptive_color: false
         icon_adaptive_color: false
+        loading_indicator: false
   info: >
     [[[
       var entity_id = (entity === undefined) ? 'Invalid Entity' : entity.entity_id;
