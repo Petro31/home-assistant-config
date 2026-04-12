@@ -589,19 +589,19 @@
 {%- set doors = [
   {
     'entity': 'binary_sensor.main_door',
-    'name': 'Main',
+    'name': 'Main Door',
     'last_opened': 'sensor.main_door_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
   },{
     'entity': 'binary_sensor.garage_entry_door',
-    'name': 'Entry',
-    'last_opened': 'sensor.garage_entry_door_last_opened',
+    'name': 'Mudroom Door',
+    'last_opened': 'sensor.garage_entrance_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
   },{
     'entity': 'binary_sensor.sliding_door',
-    'name': 'Patio',
+    'name': 'Sliding Door',
     'last_opened': 'sensor.sliding_door_last_opened',
     'type': '../templates/buttons/door.yaml',
     'door_type': 'door',
@@ -619,10 +619,10 @@
     'door_type': 'garage',
   },{
     'entity': 'binary_sensor.passenger_door',
-    'name': 'Passenger',
-    'last_opened': 'binary_sensor.passenger_door_last_opened',
+    'name': 'Passenger Door',
+    'last_opened': 'sensor.passenger_door_last_opened',
     'type': '../templates/buttons/door.yaml',
-    'door_type': 'garage',
+    'door_type': 'door',
   }
 ] %}
 

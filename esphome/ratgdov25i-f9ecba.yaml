@@ -1,0 +1,17 @@
+substitutions:
+  name: ratgdov25i-f9ecba
+  friendly_name: Rear Garage Door
+packages:
+  ratgdo.v25iboard_secplus2: github://ratgdo/esphome-ratgdo/v25iboard.yaml@main
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+api:
+  encryption:
+    key: zaImqZkOQexQyD6WKK+LEWQcobVzFB+iesgcYXkNaf4=
+
+
+wifi:
+  ssid: !secret wifi_iot_garage_ssid
+  password: !secret wifi_iot_password

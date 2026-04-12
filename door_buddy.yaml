@@ -1,0 +1,95 @@
+main_door:
+  name: Main Door
+  source: binary_sensor.main_door
+  unique_id: eb762336-a7ce-4c57-8fdf-13e05bf89997
+  <<: &entrance
+    lux_threshold: 500
+    lux_sensor: sensor.deck_motion_sensor_illuminance
+    people_tracker: sensor.people_at_home
+    use_sun: yes
+    notify: on
+  on_duration:
+    seconds: 120
+  open_too_long_duration:
+    seconds: 90
+  quiet_window:
+    seconds: 120
+  turn_on:
+  - switch.foyer
+
+garage_entrance:
+  name: Garage Entrance
+  source: binary_sensor.garage_entry_door
+  unique_id: 30edf98f-b119-4728-a343-1cac2ef3af28
+  <<: *entrance
+  on_duration:
+    seconds: 120
+  open_too_long_duration:
+    seconds: 90
+  quiet_window:
+    seconds: 120
+  turn_on:
+  - switch.garage_entry
+  - switch.garage_cans
+
+sliding_door:
+  name: Sliding Door
+  source: binary_sensor.sliding_door
+  unique_id: eb256a1b-b7b7-4b3b-9420-149febabd027
+  <<: *entrance
+  on_duration:
+    seconds: 30
+  open_too_long_duration:
+    seconds: 240
+  quiet_window:
+    seconds: 120
+  turn_on:
+  - light.dining_room_chandelier
+  - switch.flood_light
+  - switch.sliding_door_sconce
+
+# mosby_door:
+#   name: Mosby Door
+#   source: binary_sensor.sliding_door
+#   unique_id: 34d95b04-dde2-45ba-801b-ecc46bd5e3f7
+#   lux_threshold: 500
+#   lux_sensor: sensor.deck_motion_sensor_illuminance
+#   on_duration:
+#     seconds: 30
+#   turn_on:
+#   - switch.flood_light
+#   - switch.sliding_door_sconce
+
+front_garage_door:
+  name: Front Garage Door
+  source: cover.front_garage_door
+  unique_id: 0659ff4d-4e90-428d-ba60-1f09c58fa7eb
+  <<: &garage_door
+    people_tracker: sensor.people_at_home
+    notify: on
+    open_too_long_duration:
+      seconds: 300
+
+rear_garage_door:
+  name: Rear Garage Door
+  source: cover.rear_garage_door
+  unique_id: 49bcd1ce-dc64-4448-be16-67023dcf3981
+  <<: *garage_door
+
+passenger_door:
+  name: Passenger Door
+  source: binary_sensor.passenger_door
+  unique_id: af17f25c-ba55-407c-9e0f-47edff24a175
+  people_tracker: sensor.people_at_home
+  notify: on
+  open_too_long_duration:
+    seconds: 120
+  quiet_window:
+    seconds: 120
+
+server_room_door:
+  name: Server Room Door
+  source: binary_sensor.server_room_door_contact
+  unique_id: 7f41ec35-9a92-4cf0-9b32-17f5feef116d
+  turn_on:
+  - switch.server_room_switch
