@@ -27,36 +27,39 @@
         action: "{{ action }}"
         entity_id: "{{ entity_id }}"
 
-- triggers:
-    - trigger: event
-      event_type: system_log_event
-      event_data:
-        level: ERROR
-  variables:
-    is_script: >
-      {{ trigger.event.data.name is search('^(homeassistant\.helpers\.script\.)(.*)(turn_on|turn_off)$') }}
-    is_wled: >
-      {{ 'Invalid response from WLED API' in trigger.event.data.message }}
-    is_target: >
-      {{ trigger.event.data.name.split('.') | last | default('') is search('^(kitchen_cabinet_2|kitchen_uplight|wled_hutch)') }}
-    is_wled_event: >
-      {{ is_script and is_wled and is_target }}
-  conditions:
-    - condition: template
-      value_template: "{{ is_wled_event }}"
-  actions:
-  - variables:
-      source: >
-        {{ _source | first }}
-      action: >
-        {{ _source | last }}
-  sensor:
-    - name: Wled API Error
-      unique_id: ac1a7249-511c-4754-8097-b05f6c3164fb
-      device_class: timestamp
-      state: >
-        {{ trigger.event.time_fired }}
-      attributes:
-        data: "{{ trigger.event.data }}"
-        source: "{{ source }}"
-        action: "{{ action }}"
+
+# This has been commented out because it causes runaway template renders.
+
+# - triggers:
+#     - trigger: event
+#       event_type: system_log_event
+#       event_data:
+#         level: ERROR
+#   variables:
+#     is_script: >
+#       {{ trigger.event.data.name is search('^(homeassistant\.helpers\.script\.)(.*)(turn_on|turn_off)$') }}
+#     is_wled: >
+#       {{ 'Invalid response from WLED API' in trigger.event.data.message }}
+#     is_target: >
+#       {{ trigger.event.data.name.split('.') | last | default('') is search('^(kitchen_cabinet_2|kitchen_uplight|wled_hutch)') }}
+#     is_wled_event: >
+#       {{ is_script and is_wled and is_target }}
+#   conditions:
+#     - condition: template
+#       value_template: "{{ is_wled_event }}"
+#   actions:
+#   - variables:
+#       source: >
+#         {{ _source | first }}
+#       action: >
+#         {{ _source | last }}
+#   sensor:
+#     - name: Wled API Error
+#       unique_id: ac1a7249-511c-4754-8097-b05f6c3164fb
+#       device_class: timestamp
+#       state: >
+#         {{ trigger.event.time_fired }}
+#       attributes:
+#         data: "{{ trigger.event.data }}"
+#         source: "{{ source }}"
+#         action: "{{ action }}"
