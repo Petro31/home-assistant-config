@@ -142,7 +142,7 @@
             macro: last_day_in_month
             kwargs:
               month: 5
-              weekday: 0
+              weekday: 1
           before:
             days: 6
           after:
