@@ -1,5 +1,8 @@
 - alias: Notify Snapshot status
   id: snapshot_status
+  mode: parallel
+  trace:
+    stored_traces: 20
   trigger:
     - platform: state
       entity_id: event.backup_automatic_backup
@@ -9,11 +12,21 @@
   variables:
     valid: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    event_type: >
+      {{ trigger.to_state.attributes.event_type }}
+    event_stage: >
+      {{ trigger.to_state.attributes.backup_stage }}
     status: >
-      {{ trigger.to_state.attributes.event_type | replace('_', ' ') }}
+      {% if event_type == "completed" or (event_type == "in_progress" and event_stage == "home_assistant") %}
+        {{ event_type | replace('_', ' ') }}
+      {% elif event_type == "failed" %}
+        {{ event_type }}: {{ trigger.to_state.attributes.failed_reason }}
+      {% else %}
+        None
+      {% endif %}
   condition:
     - condition: template
-      value_template: "{{ valid }}"
+      value_template: "{{ valid and status is not none }}"
   action:
     - service: script.notify
       data:
