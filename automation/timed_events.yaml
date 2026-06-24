@@ -20,32 +20,6 @@
         title: Backup Status
         message: "Backup {{ status }}."
 
-- alias: Notify Garbage Day Message
-  id: garbage_day_message
-  trigger:
-    - platform: time
-      at: "10:00:00"
-    - platform: time
-      at: "15:30:00"
-    - platform: time
-      at: "19:00:00"
-  variables:
-    recycling: >
-      {% set recycling_origin = strptime(states('input_datetime.recycling'), '%Y-%m-%d') | as_local %}
-      {% set tomorrow = (today_at() + timedelta(days=1)) %}
-      {% set days = (tomorrow - recycling_origin).days %}
-      {{ (days // 7) % 2 == 0 }}
-    what: >
-      Trash {{ 'and Recycling ' if recycling else '' }}day tomorrow!
-  condition:
-    - condition: time
-      weekday:
-        - mon
-  action:
-    - service: script.notify
-      data:
-        message: "{{ what }}"
-
 - alias: Notify Change Filters Message
   id: change_filters_message
   trigger:
