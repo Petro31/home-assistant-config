@@ -1,0 +1,99 @@
+# Basically input booleans, but in the switch domain.
+template:
+- switch:
+  - name: Petro charging
+    default_entity_id: switch.petro_charging
+    unique_id: 402254c6-86af-4017-83cb-3a39d6c95f3a
+    turn_on: []
+    turn_off: []
+
+  - name: Lambo charging
+    default_entity_id: switch.lambo_charging
+    unique_id: b5d6c433-60a1-4575-91fc-b6d2edd7fe81
+    turn_on: []
+    turn_off: []
+
+script:
+  mobile_app_turn_on:
+    alias: Mobile App - Turn On
+    description: >
+      Turn on mobile app charging indicator.
+    sequence:
+    - <<: &variables
+        variables:
+          user_id: >
+            {{ context.user_id }}
+          who: >
+            {{ states.person | selectattr('attributes.user_id', 'eq', user_id) | map(attribute='entity_id') | first | default }}
+          mobile_app:
+            "7d4eefa8059f4e1fa99401b87506dcb6": switch.petro_charging
+            "f1454dc04dfe4f168b29a7809009e49f": switch.lambo_charging
+          which: >
+            {{ mobile_app.get(user_id) }}
+    - <<: &condition
+        condition: template
+        value_template: "{{ who is not none and next_state is not none and which is not none }}"
+    - action: switch.turn_on
+      target:
+        entity_id: "{{ which }}"
+
+  mobile_app_turn_off:
+    alias: Mobile App - Turn Off
+    description: >
+      Turn off mobile app charging indicator.
+    sequence:
+    - <<: *variables
+    - <<: *condition
+    - action: switch.turn_off
+      target:
+        entity_id: "{{ which }}"
+
+automation:
+- alias: Notify Garbage Day Tomorrow
+  id: garbage_day_message
+  triggers:
+    - trigger: time
+      at: "19:00:00"
+  conditions:
+    - condition: time
+      weekday:
+        - tue
+  actions:
+    - action: script.notify
+      data:
+        message: Trash and recycling day tomorrow!
+
+- alias: Notify Garbage Day Today
+  id: e1ae2a4b-c774-4918-b4c4-59143f87bad9
+  triggers:
+    - platform: state
+      entity_id:
+      - switch.petro_charging
+      - switch.lambo_charging
+      from: 'on'
+      to: 'off'
+  variables:
+    mobile_app:
+      switch.petro_charging: notify.mobile_app_petro
+      switch.lambo_charging: notify.mobile_app_lindsays_iphone
+    people:
+      switch.petro_charging: person.petro
+      switch.lambo_charging: person.lambo
+    notify: >
+      {{ mobile_app.get(trigger.entity_id) }}
+    person: >
+      {{ people.get(trigger.entity_id, "person.not_real") }}
+    is_home: >
+      {{ is_state(person, 'home') }}
+  condition:
+    - condition: time
+      before: "09:00:00"
+      weekday:
+        - wed
+    - condition: template
+      value_template: "{{ is_home }}"
+  action:
+    - service: script.notify
+      data:
+        message: Trash and recycling day today!
+        notify: "{{ notify }}"
