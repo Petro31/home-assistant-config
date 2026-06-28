@@ -17,6 +17,15 @@ api:
   encryption:
     key: "qNpEI9PAInhX4LWoeryFDfw9eds+Lp9QXaHXQI8TVBs="
 
+  actions:
+    - action: play_starter_kit_buzzer
+      variables:
+        sound: string
+      then:
+        - rtttl.play:
+            id: rtttl_player
+            rtttl: !lambda 'return sound;'
+
 ota:
   - platform: esphome
 
