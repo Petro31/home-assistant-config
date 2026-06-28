@@ -1,0 +1,117 @@
+# Board: ESPHome Starter Kit By Apollo (Apollo Automation)
+# Definition: definitions/boards/apollo-esk-1/manifest.yaml
+
+esphome:
+  name: esphome-starter-kit
+  friendly_name: esphome-starter-kit
+
+esp32:
+  variant: esp32c6
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: "qNpEI9PAInhX4LWoeryFDfw9eds+Lp9QXaHXQI8TVBs="
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_iot_garage_ssid
+  password: !secret wifi_iot_password
+  ap:
+    ssid: esphome-starter Fallback Hotspot
+    password: "BYAfSq0qKYCi"
+
+captive_portal:
+
+switch:
+  - platform: gpio
+    id: accessory_power
+    internal: true
+    name: Accessory Power
+    pin: 4
+    restore_mode: ALWAYS_ON
+    setup_priority: 2000
+
+web_server:
+  version: "3"
+
+light:
+  - platform: esp32_rmt_led_strip
+    name: Onboard RGB LED
+    pin: 5
+    id: onboard_rgb_led
+    chipset: WS2812
+    num_leds: 1
+    rgb_order: GRB
+    rmt_symbols: 48
+  - platform: esp32_rmt_led_strip
+    name: RGB LEDs
+    pin: 14
+    id: rgb_leds
+    chipset: WS2812
+    num_leds: 10
+    rgb_order: GRB
+    rmt_symbols: 48
+
+binary_sensor:
+  - platform: gpio
+    name: Button Module
+    pin:
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+      number: 6
+    id: button_module
+    on_click:
+      - then:
+          - light.toggle: onboard_rgb_led
+    on_double_click:
+      - then:
+          - light.toggle: rgb_leds
+output:
+  - platform: ledc
+    pin: 18
+    id: buzzer_output
+
+rtttl:
+  - output: buzzer_output
+    id: rtttl_player
+
+script:
+  - id: play_the_simpsons
+    mode: single
+    then:
+      - rtttl.play:
+          id: rtttl_player
+          rtttl: The Simpsons:d=4,o=5,b=160:c.,e,f#,8a,g.,e,c,8a4,8f#4,8f#4,8f#4,2g4,8p,8p,8f#4,8f#4,8f#4,8g4,a4.,8c,16p,8c,16p,8c,2c
+  - id: play_mario
+    mode: single
+    then:
+      - rtttl.play:
+          id: rtttl_player
+          rtttl: smb:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16c7,16p,16c7,16c7,p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16d#6,8p,16d6,8p,16c6
+  - id: play_cantina
+    mode: single
+    then:
+      - rtttl.play:
+          id: rtttl_player
+          rtttl: Cantina:d=4,o=5,b=250:8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8d6,8p,8a,8p,8g#,a,8a,8g#,8a,g,8f#,8g,8f#,f.,8d.,16p,p.,8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8d6,8p,8a,8p,8g#,8a,8p,8g,8p,g.,8f#,8g,8p,8c6,a#,a,g
+  - id: play_imperial_death_march
+    mode: single
+    then:
+      - rtttl.play:
+          id: rtttl_player
+          rtttl: StarWars/Imp:d=4,o=5,b=112:8d.,16p,8d.,16p,8d.,16p,8a#4,16p,16f,8d.,16p,8a#4,16p,16f,d.,8p,8a.,16p,8a.,16p,8a.,16p,8a#,16p,16f,8c#.,16p,8a#4,16p,16f,d.,8p,8d.6,16p,8d,16p,16d,8d6,8p,8c#6,16p,16c6,16b,16a#,8b,8p,16d#,16p,8g#,8p,8g,16p,16f#,16f,16e,8f,8p,16a#4,16p,2c#
+  - id: play_halloween
+    mode: single
+    then:
+      - rtttl.play:
+          id: rtttl_player
+          rtttl: Halloween:d=8,o=5,b=90:g,g,g,g,16g,16g#,f,f,p,16f,16f,f,16f,16f,f,16f,16g,g#,g,p,g,g,g,16g,16g#,a#,16g#,16g,f,p,f,f,16f,16g,g#,g,d#,d,g,a#,a#,16a#,16a,g,a#,a#,16a#,16a,g,16f#6,16f6,d#6,16f#6,16f6,d#6,16d#6,16d6,c6,16d#6,16d6,c6
