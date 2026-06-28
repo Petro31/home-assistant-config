@@ -69,9 +69,6 @@ binary_sensor:
         pullup: true
       number: 6
     id: button_module
-    on_click:
-      - then:
-          - light.toggle: onboard_rgb_led
     on_double_click:
       - then:
           - light.toggle: rgb_leds
