@@ -18,7 +18,7 @@ api:
     key: "qNpEI9PAInhX4LWoeryFDfw9eds+Lp9QXaHXQI8TVBs="
 
   actions:
-    - action: play_starter_kit_buzzer
+    - action: play_buzzer
       variables:
         sound: string
       then:
