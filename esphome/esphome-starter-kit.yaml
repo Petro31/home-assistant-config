@@ -69,9 +69,6 @@ binary_sensor:
         pullup: true
       number: 6
     id: button_module
-    on_double_click:
-      - then:
-          - light.toggle: rgb_leds
 output:
   - platform: ledc
     pin: 18
