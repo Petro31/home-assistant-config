@@ -268,9 +268,6 @@
       'switch.garage_workbench',
       'switch.garage_ceiling_outlet',
       'light.garage_buffet_strip',
-      'sensor.garage_temperature',
-      'sensor.garage_humidity',
-      'sensor.garage_luminance',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
