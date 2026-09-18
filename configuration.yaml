@@ -17,8 +17,6 @@ frontend:
 group:
 hardware:
 harmony_helper: !include harmony_helper.yaml
-homekit: !include homekit.yaml
-http: !include http.yaml
 intent_script: !include intent_script.yaml
 logger: !include logger.yaml
 lovelace: !include lovelace.yaml
