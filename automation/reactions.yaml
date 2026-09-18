@@ -120,51 +120,51 @@
     target:
       entity_id: "{{ entity_id }}"
 
-- alias: Fix Wled Errors
-  id: 06cfa18a-fa57-406d-94dc-5037e6096b87
-  description: Refreshes a zwave multicast light and attempts to fix it.
-  mode: single
-  triggers:
-  - trigger: state
-    entity_id: sensor.wled_api_error
-    <<: *unavailable
-  variables:
-    config:
-      wled_hutch:
-      - light.hutch_uplight
-      kitchen_uplight:
-      - light.cabinet_master
-      - light.cabinet_slave
-      kitchen_cabinet_2:
-      - light.cabinet_surface
-    source: >
-      {{ trigger.to_state.attributes.source | default(None) }}
-    action: >
-      {{ trigger.to_state.attributes.action | default(None) }}
-    entities: >
-      {{ config.get(trigger.to_state.attributes.source, []) }}
-    to_state: >
-      {{ action.split('_') | last if action else None }}
-    filtered: >
-      {{ entities | reject('is_state', to_state) | list }}
-    new: *new
-    continue: >
-      {{ filtered | length > 0 and new }}
-  conditions:
-  - condition: template
-    value_template: "{{ continue }}"
-  action:
-  - action: script.notify
-    data:
-      notify: notify.mobile_app_petro
-      title: WLED Error
-      message: Refreshing {{ filtered | map('entity_name') | list | join(', ') }}
+# - alias: Fix Wled Errors
+#   id: 06cfa18a-fa57-406d-94dc-5037e6096b87
+#   description: Refreshes a zwave multicast light and attempts to fix it.
+#   mode: single
+#   triggers:
+#   - trigger: state
+#     entity_id: sensor.wled_api_error
+#     <<: *unavailable
+#   variables:
+#     config:
+#       wled_hutch:
+#       - light.hutch_uplight
+#       kitchen_uplight:
+#       - light.cabinet_master
+#       - light.cabinet_slave
+#       kitchen_cabinet_2:
+#       - light.cabinet_surface
+#     source: >
+#       {{ trigger.to_state.attributes.source | default(None) }}
+#     action: >
+#       {{ trigger.to_state.attributes.action | default(None) }}
+#     entities: >
+#       {{ config.get(trigger.to_state.attributes.source, []) }}
+#     to_state: >
+#       {{ action.split('_') | last if action else None }}
+#     filtered: >
+#       {{ entities | reject('is_state', to_state) | list }}
+#     new: *new
+#     continue: >
+#       {{ filtered | length > 0 and new }}
+#   conditions:
+#   - condition: template
+#     value_template: "{{ continue }}"
+#   action:
+#   - action: script.notify
+#     data:
+#       notify: notify.mobile_app_petro
+#       title: WLED Error
+#       message: Refreshing {{ filtered | map('entity_name') | list | join(', ') }}
 
-  - delay: 1
+#   - delay: 1
 
-  - action: homeassistant.turn_{{ to_state }}
-    target:
-      entity_id: "{{ filtered }}"
+#   - action: homeassistant.turn_{{ to_state }}
+#     target:
+#       entity_id: "{{ filtered }}"
 
 - alias: Fix Doorbell Chime Status
   id: 3f1c8cab-0151-4961-854e-80fdb956fcae
