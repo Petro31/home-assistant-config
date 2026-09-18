@@ -47,6 +47,7 @@ sliding_door:
   - light.dining_room_chandelier
   - switch.flood_light
   - switch.sliding_door_sconce
+  - switch.deck_walkway
 
 # mosby_door:
 #   name: Mosby Door
