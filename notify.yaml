@@ -3,3 +3,8 @@
   services:
     - service: mobile_app_petro
     - service: mobile_app_lindsays_iphone
+
+- name: mobile_app_petro
+  platform: group
+  services:
+    - service: mobile_app_iphone
