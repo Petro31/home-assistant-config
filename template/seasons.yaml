@@ -7,23 +7,6 @@
       {% set s = today_at(states('input_datetime.indoor_holiday_lights_start')) %}
       {% set e = today_at(states('input_datetime.indoor_holiday_lights_end')) %}
       {{ s <= t <= e and not is_state('sensor.holiday_lighting', 'no_holiday') }}
-    attributes:
-      entity_id: >      
-        {%- set holiday = states('sensor.holiday_lighting') %}
-        {%- set entities = [
-              'switch.uplight_holiday',
-              'switch.hutch_holiday',
-              'switch.cabinet_holiday',
-            ] %}
-        {%- set holidays = {
-            'christmas': [
-              'switch.front_trees',
-              'switch.living_room_window',
-              'switch.uplight_holiday',
-              'switch.hutch_holiday',
-              'switch.cabinet_holiday',
-            ]} %}
-        {{ holidays.get(holiday, entities) }}
 
 - trigger:
   - platform: time

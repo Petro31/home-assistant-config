@@ -45,7 +45,7 @@ wled_master_segments:
     service_data: "{{ to_on if to_state == 'on' else to_off }}"
     opposite_state: "{{ 'off' if to_state == 'on' else 'on' }}"
     paired_segments: >
-      {% set master_device = device_id('light.cabinet_wled_master') %}
+      {% set master_device = device_id('light.cabinet_master') %}
       {{ segments | select('in', device_entities(master_device)) | list }}
   sequence:
   - condition: template

@@ -171,8 +171,8 @@ lzw45_ui_quick_effect:
   - service: script.lzw45_quick_strip_effect
     data:
       lzw45: &lzw45s
-      - light.light_strip
-      - light.light_strip_2
+      - light.garage_buffet_strip
+      - light.workshop_bench_strip
       endless: true
       color: "{{ 'color_temp' if is_state('input_boolean.hue_color_temp', 'on') else 'hue' }}"
       effect: "{{ states('input_select.quick_strip_effect') | default('slow-fade') }}"

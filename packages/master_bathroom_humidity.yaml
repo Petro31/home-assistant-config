@@ -72,9 +72,10 @@ template:
   - id: start
     platform: homeassistant
     event: start
-  - platform: state
-    entity_id: binary_sensor.templates_reloaded
-    to: 'off'
+  # If you end up here to copy this, it relies on an automation in config\automation\events
+  # named "Events - Forward Reload Templates"
+  - platform: event
+    event_type: templates_reloaded
   binary_sensor:
   - unique_id: master_bathroom_humidity_status
     name: Master Bathroom Humidity Status
