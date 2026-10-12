@@ -133,7 +133,6 @@ card:
       label:
       - align-self: start
       - justify-self: end
-      - font-family: Helvetica
       - font-size: 20px
       - padding-right: 10px
       icon:

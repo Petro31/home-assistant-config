@@ -116,7 +116,7 @@ card:
           );
         }
         var name = states['{{ name }}'].state;
-        return name === 'no_holiday'? 'Accent Lights' : name.replace('_', ' '); 
+        return name === 'no_holiday'? 'Accent Lights' : toTitleCase(name.replace('_', ' ')); 
       ]]]
     aspect_ratio: {{ 6 - ratio + 1 }}/1
     show_name: false
@@ -137,7 +137,6 @@ card:
       label:
       - align-self: start
       - justify-self: end
-      - font-family: Helvetica
       - font-size: 20px
       - padding-right: 10px
       icon:

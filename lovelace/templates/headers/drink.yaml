@@ -30,7 +30,6 @@ styles:
     - opacity: 0.0
   state:
     - font-size: 20px
-    - font-family: Helvetica
     - text-transform: capitalize
     - font-weight: bold
     - align-self: end

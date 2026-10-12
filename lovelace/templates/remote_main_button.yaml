@@ -28,12 +28,10 @@ styles:
   - --ha-card-border-width: 0px
   label:
   - font-size: 12px
-  - font-family: Helvetica
   - font-weight: bold
   - padding: 0px 10px
   state:
   - font-size: 12px
-  - font-family: Helvetica
   - padding-left: 10px
   - justify-self: start
   - text-transform: capitalize
@@ -48,7 +46,6 @@ styles:
   - justify-self: start
   - padding-left: 10px
   - font-weight: bold
-  - font-family: Helvetica 
   - font-size: 13px
   lock:
   - align-items: flex-end

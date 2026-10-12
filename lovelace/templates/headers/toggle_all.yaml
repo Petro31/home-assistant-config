@@ -39,7 +39,6 @@ anchors:
     - justify-self: start
     - padding-left: 10px
     - font-weight: bold
-    - font-family: Helvetica 
     - font-size: 20px
   button_on: &button_on
     icon:

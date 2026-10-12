@@ -50,7 +50,6 @@ styles:
     - opacity: 0.0
   label: &text
     - font-size: 15px
-    - font-family: Helvetica
     - text-transform: capitalize
     - font-weight: bold
     - align-self: end
@@ -61,7 +60,6 @@ styles:
   custom_fields:
     age:
       - font-size: 15px
-      - font-family: Helvetica
       - text-transform: capitalize
       - font-weight: bold
       - align-self: end

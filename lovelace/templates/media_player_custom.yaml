@@ -31,7 +31,6 @@ entities:
     - --ha-card-background: rgba(0, 0, 0, 0.0)
     - box-shadow: none
     name:
-    - font-family: Helvetica
     - padding: 10px
     - text-shadow: 1px 1px 2px black, -1px -1px 2px black, -1px 1px 2px black, 1px -1px 2px black
 - type: custom:hui-horizontal-stack-card

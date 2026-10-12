@@ -32,7 +32,6 @@ styles:
   - align-self: end
   - padding: 10px 10px
   - font-size: 13px
-  - font-family: Helvetica
   - text-transform: capitalize
 tap_action:
   action: call-service

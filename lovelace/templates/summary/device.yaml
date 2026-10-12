@@ -128,7 +128,6 @@ styles:
   - justify-self: start
   - align-self: end
   - font-weight: bold
-  - font-family: Helvetica 
   - font-size: 12px
   - text-align: start
   - background-image: linear-gradient(to right, white 0%, white 80%, rgba(0,0,0,0))
@@ -145,7 +144,6 @@ styles:
   - justify-self: start
   - align-self: end
   - font-weight: bold
-  - font-family: Helvetica 
   - font-size: 12px
   - text-align: start
   - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
@@ -162,7 +160,6 @@ styles:
     - z-index: 2
     - justify-self: start
     - align-self: start
-    - font-family: Helvetica 
     - font-size: 12px
     - text-align: start
     - background-image: linear-gradient(to right, var(--paper-item-icon-color) 0%, var(--paper-item-icon-color) 80%, rgba(0,0,0,0))
