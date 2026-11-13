@@ -117,7 +117,7 @@ get_indoor_holiday:
           {%- if item is list %}
             {%- set ns.colors = ns.colors + [dict(rgbw_color=item)] %}
           {%- else %}
-            {%- set ns.colors = ns.colors + [dict(kelvin=(1000000 / item.color_temp) | int)] %}
+            {%- set ns.colors = ns.colors + [dict(color_temp_kelvin=(1000000 / item.color_temp) | int)] %}
           {%- endif %}
         {%- endfor %}
         {{- ns.colors }}

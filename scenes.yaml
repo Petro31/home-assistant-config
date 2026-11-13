@@ -231,7 +231,7 @@
     light.passenger_door_bulb:
       state: 'on'
       brightness: 255
-      color_temp: 260
+      color_temp_kelvin: 3846
     light.garage_sconce_left_bulb:
       state: 'on'
       brightness: 255
@@ -247,7 +247,7 @@
     light.front_yard_uplight_middle:
       state: 'on'
       brightness: 255
-      color_temp: 260
+      color_temp_kelvin: 3846
     light.front_yard_uplight_right:
       state: 'on'
       brightness: 255
