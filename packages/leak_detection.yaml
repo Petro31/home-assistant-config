@@ -6,6 +6,8 @@
 # - binary_sensor.left_sink_water_leak_detected
 # - binary_sensor.kitchen_sink_water_leak_detected
 # - binary_sensor.powder_room_sink_water_leak_detected
+# - binary_sensor.guest_bathroom_left_sink_water_leak_detected
+# - binary_sensor.guest_bathroom_right_sink_water_leak_detected
 
 template:
 - triggers:
@@ -16,6 +18,8 @@ template:
     - binary_sensor.left_sink_water_leak_detected
     - binary_sensor.kitchen_sink_water_leak_detected
     - binary_sensor.powder_room_sink_water_leak_detected
+    - binary_sensor.guest_bathroom_left_sink_water_leak_detected
+    - binary_sensor.guest_bathroom_right_sink_water_leak_detected
     to:
     - 'on'
     - 'off'

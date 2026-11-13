@@ -322,12 +322,15 @@
       "switch.guest_vanity",
       "switch.guest_toilet",
       "switch.guest_fan",
+      'binary_sensor.guest_bathroom_left_sink_water_leak_detected',
+      'binary_sensor.guest_bathroom_right_sink_water_leak_detected',
     ],
     'type': '../templates/summary/overview.yaml',
     'display': [
       {'domain': ['light'], 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'units': 'lights' },
       {'domain': ['switch'], 'state': ['on'], 'icon': 'mdi:light-switch', 'units': 'switches' },
       {'domain': ['fan'], 'state': ['on'], 'icon': 'mdi:fan', 'units': 'fans' },
+      {'domain': ['binary_sensor'], 'state': ['on'], 'icon': 'mdi:water', 'units': 'leak' },
     ],
   },{
     'name': 'Hall',
