@@ -100,7 +100,7 @@ automation:
         value_template: "{{ choose_service != 0 }}"
       sequence:
       - action: "{{ choose_service }}"
-        data:
+        target:
           entity_id: input_boolean.hue_color_temp
   - action: script.lzw45_ui_quick_effect
 
@@ -122,7 +122,7 @@ automation:
       {{ from_state_trigger_valid and to_state_trigger_valid and trigger.from_state.state != trigger.to_state.state }}
     last_effect: >
       {%- if valid_trigger %}
-        {%- if trigger.to_state.object_id in ('lzw45_ui_pixel_effect', 'lzw45_party_effect') %}
+        {%- if trigger.to_state.object_id == 'lzw45_ui_pixel_effect' %}
           {{ states('input_select.pixel_effect') }}
         {%- elif trigger.to_state.object_id == 'lzw45_ui_custom_effect' %}
           custom
@@ -135,8 +135,9 @@ automation:
     value_template: "{{ valid_trigger }}"
   actions:
   - action: input_text.set_value
-    data:
+    target:
       entity_id: input_text.lzw45_last_effect
+    data:
       value: "{{ last_effect }}"
 
 script:
@@ -689,7 +690,7 @@ script:
         example: "[ 10, 10, 10, 10 ]"
         selector:
           object:
-      finish_behavior:
+      behavior:
         description: (optional) The behavior when the effect reaches the max number of iterations.  Choices are off, previous-color, last-color-in-program.  Default is previous-color.
         example: previous-color
         selector:
@@ -710,8 +711,6 @@ script:
             max: 255
             step: 1
     variables:
-      service: >
-        {{ service | default('ozw.set_config_parameter') }}
       transitions: >
         {%- set ns = namespace(counts=[]) %}
         {%- for item in [ colors, effects, brightness_pcts, durations ] %}
@@ -915,12 +914,14 @@ template:
     state: "{{ states('input_text.lzw45_last_effect') != 'off' }}"
     turn_on:
     - action: input_number.set_value
-      data:
+      target:
         entity_id: input_number.quick_strip_color_temp
+      data:
         value: 2700
     - action: input_select.select_option
-      data:
+      target:
         entity_id: input_select.quick_strip_effect
+      data:
         option: solid
     turn_off:
     - choose:
@@ -930,11 +931,13 @@ template:
         sequence:
         - action: script.lzw45_ui_quick_effect
         - action: input_text.set_value
-          data:
+          target:
             entity_id: input_text.lzw45_last_effect
+          data:
             value: "off"
       default:
         action: input_select.select_option
-        data:
+        target:
           entity_id: input_select.quick_strip_effect
+        data:
           option: 'off'
