@@ -1,13 +1,30 @@
-# This package manages leak dections from Zooz leak sensors
-
-# LeaK sensors (UI):
-# - binary_sensor.water_heater_water_leak_detected
-# - binary_sensor.right_sink_water_leak_detected
-# - binary_sensor.left_sink_water_leak_detected
-# - binary_sensor.kitchen_sink_water_leak_detected
-# - binary_sensor.powder_room_sink_water_leak_detected
-# - binary_sensor.guest_bathroom_left_sink_water_leak_detected
-# - binary_sensor.guest_bathroom_right_sink_water_leak_detected
+# Combines the Zooz leak sensors into a single Leak sensor that names
+# where the leak is. Sends a notification when a leak is detected and
+# repeats it every 15 minutes while the leak continues.
+#
+# External entities used:
+#   Z-Wave JS (zwave_js)
+#     Basement: Water Heater (0893f151a4a002b578d76a71f0b65a1a)
+#       binary_sensor.water_heater_water_leak_detected
+#     Master Bathroom: Lindsay's Sink (33d2f7c4f33987ee6a0ee0d2935f0ce1)
+#       binary_sensor.right_sink_water_leak_detected
+#     Master Bathroom: Mike's Sink (427e0283e67cb9e76e3a1c17cca12c52)
+#       binary_sensor.left_sink_water_leak_detected
+#     Kitchen: Sink (d912ccf04a02835ba39bc1c17518188f)
+#       binary_sensor.kitchen_sink_water_leak_detected
+#     Powder Room: Sink (ca4aad333e2887867d16174b275097e0)
+#       binary_sensor.powder_room_sink_water_leak_detected
+#     Guest Bathroom: Left Sink (94884f51dce0f10dd6e9781c47d058c9)
+#       binary_sensor.guest_bathroom_left_sink_water_leak_detected
+#     Guest Bathroom: Right Sink (673002a58aff94ce51ce5bee63cace81)
+#       binary_sensor.guest_bathroom_right_sink_water_leak_detected
+#   Date/Time helper (input_datetime, UI)
+#     input_datetime.leak_annoy
+#   scripts/notifiers.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   binary_sensor.leak
 
 template:
 - triggers:
