@@ -1,5 +1,158 @@
+# Calendar and milestone events: birthday and anniversary milestones (from
+# custom_templates/dates.jinja) with same-day notifications and 30/14/7-day
+# reminders, and the Lambosino's Random Events calendar turned into dashboard
+# cards (filtered by the Event Category switches) with reminders 183 to 1 days
+# ahead.
+#
+# External entities used:
+#   Google Calendar (google)
+#     calendar.lambosino_s_random_events
+#   Dropdown helper (input_select, UI)
+#     input_select.event_category
+#   scripts/notifiers.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   binary_sensor.personal_events
+#   sensor.lambosino_s_random_events
+#   switch.event_category_all
+#   switch.event_category_vacation
+#   switch.event_category_race
+#   switch.event_category_work
+#   switch.event_category_party
+#   script.event
+#   script.notify_events (called as the script.events action)
+
+automation:
+- alias: Events - Milestone Notifications
+  id: event_milestone_notifications
+  triggers:
+    - trigger: time
+      at: '10:00:00'
+    - trigger: time
+      at: '15:30:00'
+    - trigger: time
+      at: '19:00:00'
+  variables:
+    target_date: >
+      {{ today_at().date() | string }}
+    events: >
+      {{ state_attr('binary_sensor.personal_events', 'events') | selectattr('when', 'eq', target_date) | list }}
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.personal_events
+    state: 'on'
+  actions:
+  - repeat:
+      for_each: "{{ events }}"
+      sequence:
+      - action: script.notify
+        data:
+          message: >
+            Today is {{ repeat.item.who }}s {{ repeat.item.event }}!
+
+- alias: Events - Milestone Reminders
+  id: event_milestone_reminders
+  triggers:
+    - trigger: time
+      at: '10:00:00'
+    - trigger: time
+      at: '15:30:00'
+    - trigger: time
+      at: '19:00:00'
+  variables:
+    target_dates: >
+      {% set ns = namespace(dates=[]) %}
+      {%- for offset in [30, 14, 7] %}
+      {%- set ns.dates = ns.dates + [(today_at() + timedelta(days=offset)).date() | string] %}
+      {%- endfor %}
+      {{ ns.dates }}
+    events: >
+      {{ state_attr('binary_sensor.personal_events', 'events') | selectattr('when', 'in', target_dates) | selectattr('who', 'search', 'Mike|Lindsay') | list }}
+  conditions:
+  - condition: template
+    value_template: "{{ events | count > 0 }}"
+  actions:
+  - repeat:
+      for_each: "{{ events }}"
+      sequence:
+      - action: script.notify
+        data:
+          message: >
+            {{ repeat.item.who }}s {{ repeat.item.event }} is in {{ repeat.item.days_away }} day{{ 's' if repeat.item.days_away > 1 else '' }}!
+
+- alias: Events - Calendar Reminders
+  id: event_calendar_reminders
+  triggers:
+    - trigger: time
+      at: '19:00:00'
+  actions:
+  - action: script.events
+
+script:
+  event:
+    alias: Event
+    fields:
+      card: 
+        description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
+      notify: &notify_homeowners
+        description: Devices to notify.
+        example: notify.mobile_app_petro
+        selector:
+          select:
+            options:
+            - label: Petro
+              value: notify.mobile_app_petro
+            - label: Lambo
+              value: notify.mobile_app_lindsays_iphone
+            - label: Home Owners
+              value: notify.homeowners
+    variables:
+      service_data:
+        format: None
+        title: >
+          {{ card.primary | default('Unknown') }}
+        message: >
+          {{ card.secondary | default('Unknown') }}
+        image: >
+          {{ card.picture | default('local/images/home.jpg') }}
+    sequence:
+    - action: script.notify
+      data: "{{ service_data }}"
+
+  events:
+    alias: Events
+    fields:
+      test: 
+        description: Test days ahead
+        example: 50
+        selector:
+          number:
+            min: 0
+            max: 730
+            mode: box
+      notify: *notify_homeowners
+    variables:
+      days_ahead: [183, 90, 60, 30, 14, 7, 1]
+      targets: >
+        {{ days_ahead + [ test ] if test is defined else days_ahead }}
+      events: >
+        {{ state_attr('sensor.lambosino_s_random_events', 'events') | selectattr('days', 'in', targets) | list }}
+    sequence:
+    - condition: template
+      value_template: "{{ events | count > 0 }}"
+    - repeat:
+        for_each: "{{ events }}"
+        sequence:
+        - action: script.event
+          data: 
+            card: "{{ repeat.item.card }}"
+            notify: "{{ notify | default }}"
+
+template:
 - binary_sensor:
   - name: Personal Events
+    default_entity_id: binary_sensor.personal_events
     unique_id: personal_events
     state: >
       {% from 'dates.jinja' import dates %}
@@ -17,17 +170,17 @@
         {%- endfor %}
         {{- ns.events }}
 
-- trigger:
-  - platform: time
+- triggers:
+  - trigger: time
     at: "00:00:00"
-  - platform: homeassistant
+  - trigger: homeassistant
     event: start
-  - platform: event
+  - trigger: event
     event_type: event_template_reloaded
-  action:
+  actions:
   - variables:
       calendar: calendar.lambosino_s_random_events
-  - service: calendar.get_events
+  - action: calendar.get_events
     data:
       start_date_time: "{{ today_at() }}"
       end_date_time: "{{ today_at().replace(year=now().year + 2, day=1, month=1) }}"
@@ -224,6 +377,7 @@
         {{ ns.items }}
   sensor:
   - name: Lambosino's Random Events
+    default_entity_id: sensor.lambosino_s_random_events
     unique_id: lambosino_s_random_events
     state: "{{ now() }}"
     device_class: timestamp
@@ -233,11 +387,12 @@
 - switch:
   - unique_id: event_category_all
     name: Event Category All
+    default_entity_id: switch.event_category_all
     state: >
       {{ is_state('input_select.event_category', 'All') }}
     turn_on:
     - <<: &event_category
-        service: input_select.select_option
+        action: input_select.select_option
         target:
           entity_id: input_select.event_category
       <<: &event_category_all
@@ -249,6 +404,7 @@
 
   - unique_id: event_category_vacation
     name: Event Category Vacation
+    default_entity_id: switch.event_category_vacation
     state: >
       {{ is_state('input_select.event_category', 'Vacation') }}
     turn_on:
@@ -261,6 +417,7 @@
 
   - unique_id: event_category_race
     name: Event Category Race
+    default_entity_id: switch.event_category_race
     state: >
       {{ is_state('input_select.event_category', 'Race') }}
     turn_on:
@@ -273,6 +430,7 @@
 
   - unique_id: event_category_work
     name: Event Category Work
+    default_entity_id: switch.event_category_work
     state: >
       {{ is_state('input_select.event_category', 'Work') }}
     turn_on:
@@ -285,6 +443,7 @@
 
   - unique_id: event_category_party
     name: Event Category Party
+    default_entity_id: switch.event_category_party
     state: >
       {{ is_state('input_select.event_category', 'Party') }}
     turn_on:
