@@ -1,12 +1,25 @@
-# This package manages cameras that need to turn off before hitting 14ºF.
-
-# Trend sensors (UI):
-# - binary_sensor.outside_temperature_falling
-# - binary_sensor.outside_temperature_rising
-
-# Camera POE Port switches
-# - switch.driveway_camera_port
-# - switch.patio_camera_port
+# Protects the outside cameras, which need to be off before it hits 14ºF.
+# Cuts PoE power to the driveway and patio cameras when the outside
+# temperature is below 16°F and falling. Restores power when it's above
+# 20°F and rising. Sends a notification each time.
+#
+# External entities used:
+#   UniFi Network (unifi)
+#     Server Closet: 16 Port POE Switch (3419568b8da04da98a7e55b9cb5250ba)
+#       switch.driveway_camera_port
+#       switch.patio_camera_port
+#   Trend helper (trend, UI)
+#     binary_sensor.outside_temperature_falling
+#     binary_sensor.outside_temperature_rising
+#   template/temperatures.yaml
+#     sensor.outside_temperature
+#   scripts/notifiers.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   switch.outside_cameras
+#   binary_sensor.camera_shutoff
+#   binary_sensor.camera_turn_on
 
 template:
 - switch:
