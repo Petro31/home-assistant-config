@@ -603,7 +603,7 @@ template:
 
   sensor:
   - unique_id: 0b5b04a9-7962-42ab-9323-25f24ea320d7
-    name: Runing Programs
+    name: Running Programs
     default_entity_id: sensor.running_programs
     state: OK
     attributes:
