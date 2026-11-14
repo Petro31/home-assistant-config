@@ -140,7 +140,6 @@ Goal: over time, move features whose automations, scripts and templates are spli
 ### Candidates
 
 Spread across two folders:
-- [ ] events (automation, template)
 - [ ] plants (automation, template, top-level plants.yaml)
 
 Grouped by name, to check before migrating:
@@ -165,6 +164,7 @@ Done:
 - [x] irrigation (packages/irrigation_scheduler.yaml)
 - [x] harmony (packages/living_room_harmony.yaml, living_room_remote.yaml and living_room_yamaha.yaml; also includes harmony_helper.yaml, scripts/cast.yaml, template/living_room_remote.yaml, template/yamaha.yaml, template/cast_workout.yaml and the Play/Pause lighting automation from automation/reactions.yaml)
 - [x] basement receiver (packages/basement_yamaha.yaml; also includes the yamaha platform and the Deck/Basement Speakers from media_player.yaml, the basement multizone_controller sensor from sensor.yaml, and the Basement Yamaha Receiver sensor from packages/living_room_yamaha.yaml)
+- [x] events (packages/calendar_and_milestone_events.yaml; also includes script.event and script.events from scripts/notifiers.yaml)
 
 ## Known issues
 
