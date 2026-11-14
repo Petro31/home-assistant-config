@@ -83,7 +83,7 @@
 #       switch.rain_bird_sprinkler_8_status
 
 automation:
-- alias: MQTT Discovery
+- alias: Irrigation MQTT Discovery at Startup
   id: aafa91b8-a2e2-4df2-9412-536288327566
   mode: single
   triggers:
@@ -104,6 +104,9 @@ automation:
       event: start
     - trigger: time
       at: "00:00:00"
+    # Zones are listed by hand (triggers can't use integration_entities).
+    # When a Rain Bird zone is enabled or removed, update its _status and
+    # _program_duration here and its _start in Start Irrigation Cycle.
     - trigger: state
       entity_id:
       - input_datetime.irrigation_program_start
@@ -143,6 +146,9 @@ automation:
   id: 1c67152d-d153-41a9-b5a7-78ce036fecbf
   mode: single
   triggers:
+  # Zones are listed by hand (triggers can't use integration_entities).
+  # A zone missing here never waters. When a Rain Bird zone is enabled or
+  # removed, update its _start here and its entities in Set Next Irrigation.
   - trigger: time
     at: &entities
     - sensor.rain_bird_sprinkler_1_start
@@ -190,8 +196,9 @@ automation:
   - if: "{{ is_state('binary_sensor.rain_bird_controller_rainsensor', 'off') }}"
     then:
     - action: rainbird.start_irrigation
-      data:
+      target:
         entity_id: "{{ switch }}"
+      data:
         duration: "{{ duration }}"
 
 - alias: Check Rain Today
@@ -242,7 +249,7 @@ automation:
     - sensor.irrigation_season_end
     events: >
       {%- from 'easy_time.jinja' import speak_the_days %}
-      {%- set phrase = 'Turn o{} the water irrigation shutoff value{}{}' %}
+      {%- set phrase = 'Turn o{} the water irrigation shutoff valve{}{}' %}
       {%- set ns = namespace(items=[]) %}
       {%- for e in entities %}
         {%- set dt = states(e) | as_datetime %}
@@ -273,7 +280,7 @@ automation:
 
 script:
   irrigation_mqtt_discovery:
-    alias: MQTT Discovery
+    alias: Irrigation MQTT Discovery
     mode: single
     variables:
       root: "homeassistant"
@@ -304,7 +311,7 @@ script:
               unique_id: "{{ repeat.item | slugify }}"
               object_id: "{{ unique_id }}"
               device: 
-                name: "{{ area_name(repeat.item) }} Sprinker Cycle"
+                name: "{{ area_name(repeat.item) }} Sprinkler Cycle"
                 identifiers:
                 - "{{ unique_id }}"
                 manufacturer: Petro
@@ -456,10 +463,10 @@ script:
         {%- endif %}
 
       schedule: >
-        {%- set season_start = states('sensor.irrigation_season_start') | as_datetime(None) %}
+        {%- set start_entity = states('sensor.irrigation_season_start') | as_datetime(None) %}
         {%- set end_entity = states('sensor.irrigation_season_end') | as_datetime(None) %}
         {%- if targets and start_entity is not none and end_entity is not none %}
-          {%- set season_start = (season_start | as_local).date() | string %}
+          {%- set season_start = (start_entity | as_local).date() | string %}
           {%- set season_end = (end_entity | as_local).date() | string %}
           {%- set this_date = now().date() | string %}
           {%- set ns = namespace(items=[], programs=[], next_runs=[]) %}
