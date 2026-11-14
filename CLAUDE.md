@@ -146,7 +146,6 @@ Spread across all three folders:
 Spread across two folders:
 - [ ] harmony (automation, scripts)
 - [ ] events (automation, template)
-- [ ] run_schedule (scripts, template)
 - [ ] plants (automation, template, top-level plants.yaml)
 
 Grouped by name, to check before migrating:
@@ -166,6 +165,7 @@ Done:
 - [x] ups (packages/power_outage_shutdown.yaml)
 - [x] todo (packages/daily_todo_lists.yaml)
 - [x] lzw45 (packages/lzw45_led_strips.yaml; also includes the Mood Lighting switch from template/living_room_remote.yaml)
+- [x] run_schedule (packages/running_training_programs.yaml)
 
 ## Known issues
 
