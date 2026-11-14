@@ -153,7 +153,6 @@ Spread across two folders:
 - [ ] hyperion (automation, template)
 - [ ] run_schedule (scripts, template)
 - [ ] plants (automation, template, top-level plants.yaml)
-- [ ] basement humidity (automation/humidity, the Basement Humidity High binary sensor from template/humidity)
 
 Grouped by name, to check before migrating:
 - [ ] house humidity (the House Humidity sensor from template/humidity; maybe a house_climate package with the matching sensor in template/temperatures)
@@ -166,6 +165,7 @@ Done:
 - [x] doorbell (packages/doorbell.yaml)
 - [x] update (packages/device_firmware_updates.yaml)
 - [x] laser (packages/garage_parking_laser.yaml; also includes template/garage.yaml)
+- [x] basement humidity (packages/basement_humidity_alert.yaml)
 
 ## Known issues
 
@@ -178,6 +178,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/doorbell.yaml
 - The notification automation's alias is just `Notify`, which is hard to tell apart from other automations in the UI and logs. Its entity is `automation.announce_and_notify_on_doorbell_press`.
 - "Fix Doorbell Chime Status" in `automation/reactions.yaml` is doorbell-related and probably belongs in this package. It uses `sensor.doorbell_chime_off` and `switch.doorbell_chime_active`. It also mixes syntax: it has `triggers:` and `conditions:`, but a legacy top-level `action:`.
+
+### automation/calibrations.yaml
+- "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`. It also still uses legacy syntax.
 
 ### packages/device_firmware_updates.yaml
 - The "Esphome Entities" template update entity mixes in the ESPHome Device Builder app. It uses the app's own update entity, `update.esphome_update` (from the Supervisor), for its picture and as the fallback `installed_version` / `latest_version`. It should only reference the ESPHome devices, i.e. the `update.*` entities from the `esphome` integration.

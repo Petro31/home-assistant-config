@@ -1,0 +1,46 @@
+# Sends a notification when the basement humidity has been above 60%
+# for 2 hours, and again after 10 hours.
+#
+# External entities used:
+#   ESPHome (esphome)
+#     Basement: Basement Esp32 (9e8c12dd263640ce2a892d9f85ed961a)
+#       sensor.basement_cgdk2_humidity
+#   scripts/notifiers.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   binary_sensor.basement_humidity_high
+
+automation:
+- alias: Notify when basement humidity is high
+  id: basement_notify_when_humidity_is_high
+  mode: parallel
+  triggers:
+  - id: '2 hours'
+    trigger: state
+    entity_id: binary_sensor.basement_humidity_high
+    to: 'on'
+    for:
+      hours: 2
+  - id: '10 hours'
+    trigger: state
+    entity_id: binary_sensor.basement_humidity_high
+    to: 'on'
+    for:
+      hours: 10
+  actions:
+  - action: script.notify
+    data:
+      title: "Basement humidity has been high for {{ trigger.id }}."
+      message: "Basement humidity has been high for {{ trigger.id }}."
+
+template:
+- binary_sensor:
+  - unique_id: basement_humidity_high
+    name: Basement Humidity High
+    default_entity_id: binary_sensor.basement_humidity_high
+    state: >
+      {{ states('sensor.basement_cgdk2_humidity') | float > 60 }}
+    availability: >
+      {{ states('sensor.basement_cgdk2_humidity') | is_number }}
+    device_class: moisture
