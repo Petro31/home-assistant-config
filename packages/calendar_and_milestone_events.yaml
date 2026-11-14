@@ -49,7 +49,7 @@ automation:
       - action: script.notify
         data:
           message: >
-            Today is {{ repeat.item.who }}s {{ repeat.item.event }}!
+            Today is {{ repeat.item.who }}'s {{ repeat.item.event }}!
 
 - alias: Events - Milestone Reminders
   id: event_milestone_reminders
@@ -79,7 +79,7 @@ automation:
       - action: script.notify
         data:
           message: >
-            {{ repeat.item.who }}s {{ repeat.item.event }} is in {{ repeat.item.days_away }} day{{ 's' if repeat.item.days_away > 1 else '' }}!
+            {{ repeat.item.who }}'s {{ repeat.item.event }} is in {{ repeat.item.days_away }} day{{ 's' if repeat.item.days_away > 1 else '' }}!
 
 - alias: Events - Calendar Reminders
   id: event_calendar_reminders
@@ -94,7 +94,7 @@ script:
     alias: Event
     fields:
       card: 
-        description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
+        description: The event card (from sensor.lambosino_s_random_events) to send as a notification.
       notify: &notify_homeowners
         description: Devices to notify.
         example: notify.mobile_app_petro
@@ -314,7 +314,7 @@ template:
             {
                'find': '_halloween_party',
                'category': 'party',
-               'picture': 'local\\images\\christmas_party.png',
+               'picture': 'local\\images\\halloween_party.png',
                'badge_color': '#9119b3',
                'badge_icon': 'mdi:halloween',
                '--icon-color': 'black'
