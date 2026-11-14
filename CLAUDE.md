@@ -97,6 +97,7 @@ Goal: over time, move features whose automations, scripts and templates are spli
   - inside each trigger, including `wait_for_trigger:`, `platform: <type>` → `trigger: <type>`
   - inside action and sequence steps, `service: <domain.service>` → `action: <domain.service>`
   Change only the key names. Values, ordering, comments and indentation stay the same.
+- **Give every template entity a `default_entity_id:`** set to its current `entity_id` from `.storage/core.entity_registry` (look it up by `unique_id`; don't derive it from the name). Put it on the line right after `name:` (see `packages/garbage_notifications.yaml`). This keeps the entity ID tied to the YAML rather than to the name. Template entities that already have one keep it unchanged.
 - **Keep all content and YAML anchors/aliases.** Never drop, inline or merge an anchor. Before merging, list the anchor names in every source file. HA doesn't reject a duplicate anchor name; the later definition silently takes over, so aliases end up pointing at the wrong content. When two source files use the same anchor name, rename one of them and every alias that refers to it. That rename is the only change allowed for anchors.
 - Remove the content from its old file in the same change, or HA sees duplicate IDs and script keys. If an old file ends up empty, delete it rather than leaving it empty under an `!include_dir_merge_*` directory.
 - YAML anchors only work within one file. Make sure every anchor still has its alias in the same file after the move.
