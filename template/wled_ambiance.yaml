@@ -81,48 +81,6 @@
         option: 'Off'
       <<: *front_trees
   
-  # You attempted to use this, however you could not find a good equation
-  # to match rgbw to rgb
-  
-  # {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
-  # {%- set ns = namespace(items=[], current=False, rollup=[]) %}
-  # {%- for setting in settings %}
-  #   {%- set ns.current = False %}
-  #   {%- set ns.rollup = [] %}
-  #   {%- if is_state(setting.entity_id, 'on') %}
-  #     {%- if setting.attributes is defined %}
-  #       {%- for key, value in setting.attributes.items() %}
-  #         {%- set ns.rollup = ns.rollup + [is_state_attr(setting.entity_id, key, value)] %}
-  #       {%- endfor %}
-  #       {%- set ns.current = ns.rollup | select('true') | list | length == setting.attributes | length %}
-  #     {%- else %}
-  #       {%- set ns.current = True %}
-  #     {%- endif %}
-  #   {%- endif %}
-  #   {%- set ns.items = ns.items + [ ns.current ] %}
-  # {%- endfor %}
-  # {{- ns.items | select('true') | list | length == settings | length }}
-  
-  - unique_id: 2954ff2b-3e2e-47e4-9a5a-f2cc6c226bdc
-    name: Indoor Holiday
-    state: >
-      {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
-      {{ settings | map(attribute='entity_id') | select('is_state', 'on') | list | length == settings | length }}
-  
-    availability: >
-      {{ state_attr('sensor.seasonal_accent_lights', 'settings') is not none }}
-    turn_on:
-    - action: script.set_indoor_holiday
-      data:
-        transition: 3
-        brightness: 255
-    turn_off:
-    - action: homeassistant.turn_off
-      target:
-        entity_id: >
-          {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
-  
-  
   ######################
   # Movie / TV viewing #
   ######################

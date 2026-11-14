@@ -1,0 +1,744 @@
+# Holiday lighting: works out the current holiday (or override) and its
+# colors, sets the indoor accent lights and seasonal outdoor bulbs to match
+# during the scheduled window, and provides the Christmas tree and WLED
+# Christmas village lights. Color macros live in custom_templates/holiday.jinja.
+#
+# External entities used:
+#   Group (group, UI)
+#     light.great_room_accent
+#     light.great_room_ambiance
+#     light.living_room
+#   MQTT (mqtt)
+#     Dining Room: Uplight 1 (66c83616fea2480405441e0cc452c13f)
+#       light.dining_room_uplight_1
+#     Dining Room: Uplight 2 (32bd95073fc8774e551bdcc9bed92acb)
+#       light.dining_room_uplight_2
+#     Living Room: Uplight (70d03dbbaaf19027d700b6216decd435)
+#       light.living_room_uplight
+#   WLED (wled)
+#     Dining Room: Hutch Uplight (6b78817bff699c15f49f8c4fdb4aae82)
+#       light.hutch_uplight
+#     Kitchen: Cabinet Master (653d6472075da68e0d450fa01e22dc62)
+#       light.cabinet_master
+#     Kitchen: Cabinet Slave (942dc69d2db63e50bd466240df69fbe2)
+#       light.cabinet_slave
+#     Kitchen: Cabinet Accent (2a5e6cb86ca686b3bfd060de29831aba)
+#       select.cabinet_accent_preset
+#   Z-Wave JS (zwave_js)
+#     Living Room: Window Outlet (a7d9ac16cae4a1e6ae0a7eb5bb9a226c)
+#       switch.living_room_window
+#     Porch: Outdoor Receptacle (ba33e8ffacdb12807b90d8f43a80dc45)
+#       switch.outdoor_receptacle
+#   Date/Time helper (input_datetime, UI)
+#     input_datetime.indoor_holiday_lights_start
+#     input_datetime.indoor_holiday_lights_end
+#   Dropdown helper (input_select, UI)
+#     input_select.holiday_override
+#   scenes.yaml
+#     scene.holiday_bulbs_christmas
+#     scene.holiday_bulbs_easter
+#     scene.holiday_bulbs_halloween
+#     scene.holiday_bulbs_patriotic
+#     scene.holiday_bulbs_soft_white
+#     scene.holiday_bulbs_st_patricks_day
+#     scene.holiday_bulbs_thanksgiving
+#     scene.holiday_bulbs_valentines_day
+#   template/wled_ambiance.yaml
+#     switch.front_trees
+#
+# Entities created by this package:
+#   binary_sensor.indoor_holiday
+#   sensor.seasonal_accent_lights
+#   sensor.seasonal_lights
+#   sensor.holiday_lighting
+#   light.christmas_tree
+#   light.christmas_blinking_houses
+#   light.christmas_flashing_houses
+#   light.christmas_red_and_green_houses
+#   light.christmas_town_is_on_fire
+#   switch.indoor_holiday
+#   script.indoor_ambiance
+#   script.indoor_holiday_colors
+#   script.get_indoor_holiday
+#   script.set_indoor_holiday
+
+automation:
+- alias: Timed Event - Holiday Lights
+  id: indoor_holiday_lights
+  mode: parallel
+  triggers:
+    - id: indoor
+      trigger: state
+      entity_id: binary_sensor.indoor_holiday
+      not_from:
+        - unknown
+        - unavailable
+    - id: outdoor_on
+      trigger: sun
+      event: sunset
+    - id: outdoor_off
+      trigger: sun
+      event: sunrise
+  variables:
+    continue: >
+      {% if trigger.platform == 'state' %}
+        {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+      {% else %}
+        True
+      {% endif %}
+    to_state: >
+      {% if trigger.platform == 'state' %}
+        {{ trigger.to_state.state | default if continue else None }}
+      {% else %}
+        {{ trigger.id.split('_')[-1] }}
+      {% endif %}
+    indoor:
+      - switch.indoor_holiday
+    outdoor: >
+      {{ ['switch.outdoor_receptacle'] if states('sensor.seasonal_lights') == 'scene.holiday_bulbs_christmas' else [] }}
+    target: >
+      {{ indoor if trigger.id == 'indoor' else outdoor }}
+  conditions:
+    - condition: template
+      value_template: "{{ target | count > 0 and continue and to_state in ['on','off'] }}"
+  actions:
+    - action: switch.turn_{{ to_state }}
+      target:
+        entity_id: "{{ target }}"
+
+script:
+  indoor_ambiance:
+    alias: Indoor Ambiance
+    mode: parallel
+    variables:
+      pass: foo
+    sequence:
+    - action: homeassistant.turn_on
+      target:
+        entity_id: light.living_room
+
+
+  indoor_holiday_colors:
+    alias: Indoor Holiday Colors
+    mode: single
+    fields:
+      targets:
+        description: Light entities
+        required: True
+        selector:
+          entity:
+            multiple: True
+            filter:
+              domain: light
+      holiday: &holidays
+        description: Override the input holiday for testing purposes
+        example: valentines
+        required: False
+        selector:
+          select:
+            options:
+            - label: No Holiday
+              value: no_holiday
+            - label: Patriotic
+              value: patriotic
+            - label: Valentines Day
+              value: valentines
+            - label: St Patricks Day
+              value: st_patricks_day
+            - label: Easter
+              value: easter
+            - label: Memorial Day
+              value: memorial_day
+            - label: 4th of July
+              value: independence_day
+            - label: Halloween
+              value: halloween
+            - label: Veterans Day
+              value: veterans_day
+            - label: Christmas
+              value: christmas
+            - label: Thanksgiving
+              value: thanksgiving
+    variables:
+      config: &colors >
+        {% from 'holiday.jinja' import color_configuration %}
+        {{ color_configuration }}
+      found: >
+        {{ holiday if holiday is defined else states('sensor.holiday_lighting') }}
+      colors: >
+        {{ config.get(found, config.no_holiday) }}
+      color: >
+        {% set name, value = colors.items() | list | random %}
+        {{ {'name': name, 'value': value} }}
+    sequence:
+    - action: light.turn_on
+      target:
+        entity_id: "{{ targets }}"
+      data:
+        rgb_color: "{{ color.value[:3] }}"
+
+  get_indoor_holiday:
+    alias: Get Indoor Holiday Accent Lights
+    mode: single
+    description: >
+      This gets all holiday lights for the accent lights.
+    fields:
+      holiday: *holidays
+    variables:
+      <<: &holiday_variables
+        # This purposely maintains an order.
+        accents:
+          - light.living_room_uplight
+          - light.dining_room_uplight_1
+          - light.hutch_uplight
+          - light.dining_room_uplight_2
+          - light.cabinet_master
+          - light.cabinet_slave
+        target_holiday: >
+          {{ holiday | default(states('sensor.holiday_lighting')) }}
+
+        config:
+          christmas:
+            exclude_lights:
+            - light.cabinet_slave
+  
+            # TODO: Add blinking lights here when they are complete.
+            include_actions:
+            - action: switch.turn_on
+              target:
+                entity_id:
+                - switch.living_room_window
+                - switch.front_trees
+
+        exclude_lights: >
+          {{ config.get(target_holiday, {}).get('exclude_lights', []) }}
+        include_actions: >
+          {{ config.get(target_holiday, {}).get('include_actions', []) }}
+
+        targets: >
+          {{ accents | reject('in', exclude_lights) | list }}
+      
+        colors: >
+          {%- from 'holiday.jinja' import color_configuration as cfg %}
+          {%- set colors = cfg.get(target_holiday, cfg['no_holiday']) %}
+          {%- set ns = namespace(colors=[]) %}
+          {%- for color_name, item in colors.items() %}
+            {%- if item is list %}
+              {%- set ns.colors = ns.colors + [dict(rgbw_color=item)] %}
+            {%- else %}
+              {%- set ns.colors = ns.colors + [dict(color_temp_kelvin=(1000000 / item.color_temp) | int)] %}
+            {%- endif %}
+          {%- endfor %}
+          {{- ns.colors }}
+
+        actions: >
+          {%- set ns = namespace(lights=[], actions=[]) %}
+          {%- for light in accents %}
+            {%- set i = (loop.index - 1) % colors | length %}
+            {%- set ns.lights = ns.lights + [(i, light)] %}
+          {%- endfor %}
+  
+          {%- for color in colors %}
+            {%- set entity_id = ns.lights | selectattr('0', 'eq', loop.index - 1) | map(attribute='1') | list %}
+            {%- set ns.actions = ns.actions + [dict(entity_id=entity_id, data=color)] %}
+          {%- endfor %}
+          {{- ns.actions }}
+
+      _actions: >
+        {%- set ns = namespace(actions=[]) %}
+        {%- for action in include_actions %}
+          {%- set ns.actions = ns.actions + [dict(entity_id=action.target.entity_id, data={})] %}
+        {%- endfor %}
+        {{ actions + ns.actions }}
+      response:
+        lights: "{{ _actions }}"
+    sequence:
+    - stop: Finished
+      response_variable: response
+
+  set_indoor_holiday:
+    alias: Set Indoor Holiday Accent Lights
+    mode: single
+    description: >
+      This handles all holiday lights for the accent lights.
+
+    fields:
+      transition:
+        description: Transition
+        selector:
+          number:
+            min: 0
+            max: 20
+      brightness: 
+        description: Brightness
+        selector:
+          number:
+            min: 0
+            max: 255
+      holiday: *holidays
+    variables:
+      <<: *holiday_variables
+      _transition: >
+        {{ transition | default(3) }}
+      _brightness: >
+        {{ brightness | default(255) }}
+    sequence:
+    - parallel:
+      - if: "{{ actions | length >= 1 }}"
+        then:
+        - variables: {idx: 0}
+        - <<: &light_action
+            action: light.turn_on
+            target: 
+              entity_id: "{{ actions[idx].entity_id }}"
+            data: "{{ dict(transition=_transition, brightness=_brightness, **actions[idx].data) }}"
+      - if: "{{ actions | length >= 2 }}"
+        then:
+        - variables: {idx: 1}
+        - <<: *light_action
+      - if: "{{ actions | length >= 3 }}"
+        then:
+        - variables: {idx: 2}
+        - <<: *light_action
+      - if: "{{ include_actions | length > 0 }}"
+        then:
+          repeat:
+            for_each: "{{ include_actions }}"
+            sequence:
+            - action: "{{ repeat.item.action }}"
+              target: "{{ repeat.item.target }}"    
+
+
+  # Make a UI that allows you to change all these colors and conditionally displays the right lights.
+  #   make a UI to select the front tree's christmas only.
+  #   make accent light conditional for any holiday.
+
+template:
+- binary_sensor:
+  - unique_id: indoor_holiday
+    name: Indoor Holiday
+    default_entity_id: binary_sensor.indoor_holiday
+    device_class: light
+    state: >
+      {% set t = now() %}
+      {% set s = today_at(states('input_datetime.indoor_holiday_lights_start')) %}
+      {% set e = today_at(states('input_datetime.indoor_holiday_lights_end')) %}
+      {{ s <= t <= e and not is_state('sensor.holiday_lighting', 'no_holiday') }}
+
+- triggers:
+  - trigger: time
+    at: "00:00:00"
+  - trigger: homeassistant
+    event: start
+  - trigger: event
+    event_type: templates_reloaded
+  actions:
+  - action: script.get_indoor_holiday
+    response_variable: response
+  - variables:
+      entities: >
+        {%- set ns = namespace(items=[]) %}
+        {%- for section in response.lights %}
+          {%- for light in section.entity_id %}
+            {%- set extra = {} if not section.data else dict(attributes=section.data) %}
+            {%- set ns.items = ns.items + [dict(entity_id=light, **extra)] %}
+          {%- endfor %}
+        {%- endfor %}
+        {{ ns.items }}
+  sensor:
+  - unique_id: 87f4f2b9-f15c-4948-a4fe-6316ecd0d98e
+    name: Seasonal Accent Lights
+    default_entity_id: sensor.seasonal_accent_lights
+    state: "{{ entities | length }}"
+    attributes:
+      settings: "{{ entities }}"
+      ui: >
+        {% set ambiance_entity = 'light.great_room_ambiance' %}
+        {% set accent_entity = 'light.great_room_accent' %}
+        {% set ambiance = set(state_attr(ambiance_entity, 'entity_id')) %}
+        {% set accent = set(state_attr(accent_entity, 'entity_id')) %}
+        {% set seasonal = set(state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list) %}
+        {% set extra = seasonal - ambiance %}
+        {% set guess = seasonal - extra %}
+        {% if ambiance == guess %}
+          {{ [ambiance_entity] + extra | list }}
+        {% elif accent == guess %}
+          {{ [accent_entity] + extra | list }}
+        {% else %}
+          {{ [ambiance_entity] }}
+        {% endif %}
+
+- sensor:
+  - unique_id: seasonal_lights
+    name: Seasonal Lights
+    default_entity_id: sensor.seasonal_lights
+    state: >
+      {%- set scenes = dict(
+        christmas="scene.holiday_bulbs_christmas",
+        easter="scene.holiday_bulbs_easter",
+        halloween="scene.holiday_bulbs_halloween",
+        independence_day="scene.holiday_bulbs_patriotic",
+        veterans_day="scene.holiday_bulbs_patriotic",
+        memorial_day="scene.holiday_bulbs_patriotic",
+        st_patricks_day="scene.holiday_bulbs_st_patricks_day",
+        thanksgiving="scene.holiday_bulbs_thanksgiving",
+        valentines="scene.holiday_bulbs_valentines_day",
+      ) %}
+      {%- set holiday = states('sensor.holiday_lighting') %}
+      {{ scenes.get(holiday, "scene.holiday_bulbs_soft_white") }}
+
+- triggers:
+  - trigger: time
+    at: "00:00:00"
+  - trigger: homeassistant
+    event: start
+
+  # If you end up here to copy this, it relies on an automation in config\automation\events
+  # named "Events - Forward Reload Templates"
+  - trigger: event
+    event_type: templates_reloaded
+  - trigger: state
+    entity_id: input_select.holiday_override
+  actions:
+  - variables:
+      holidays:
+
+        # These holidays are meant to be used with easy_time.jinja
+        # start, end, and event are all dictionaries that contain macro and kwargs.
+        # macro is the macro used from easy_time.jina.
+        # kwargs are the arguments used by name, e.g. if the macro uses month, day as inputs
+        # kwargs will be set to month: #, day: #.
+
+        valentines:
+          event:
+            macro: month_day
+            kwargs:
+              month: 2
+              day: 14
+          before:
+            days: 14
+          after:
+            days: 1
+
+        st_patricks_day:
+          event:
+            macro: month_day
+            kwargs:
+              month: 3
+              day: 17
+          before:
+            days: 6
+          after:
+            days: 1
+
+        easter:
+          event:
+            macro: easter
+          before:
+            days: 6
+          after:
+            days: 1
+
+        memorial_day:
+          event:
+            macro: last_day_in_month
+            kwargs:
+              month: 5
+              weekday: 1
+          before:
+            days: 6
+          after:
+            days: 1
+
+        independence_day:
+          event:
+            macro: month_day
+            kwargs:
+              month: 7
+              day: 4
+          before:
+            days: 6
+          after:
+            days: 1
+
+        halloween:
+          start:
+            macro: month_day
+            kwargs:
+              month: 10
+              day: 1
+          end:
+            macro: month_day
+            kwargs:
+              month: 11
+              day: 1
+
+        veterans_day:
+          event:
+            macro: month_day
+            kwargs:
+              month: 11
+              day: 11
+          before:
+            days: 6
+          after:
+            days: 1
+
+        thanksgiving:
+          start:
+            macro: month_day
+            kwargs:
+              month: 11
+              day: 2
+          end:
+            macro: month_week_day
+            kwargs:
+              month: 11
+              week: 4
+              weekday: 6
+
+        christmas:
+          start:
+            macro: month_week_day
+            kwargs:
+              month: 11
+              week: 4
+              weekday: 7
+          end:
+            macro: month_day
+            kwargs:
+              month: 1
+              day: 7
+
+      event: >
+        {%- set override = states('input_select.holiday_override') %}
+        {%- if override == 'automatic' %}
+          {%- import 'easy_time.jinja' as easy_time %}
+          {%- set dflt = {'minutes': 0 } %}
+          {%- set ns = namespace(events=[], found='no_holiday') %}
+          {%- for holiday, items in holidays.items() %}
+            {%- set event = items.get('event') %}
+            {%- set start = items.get('start') %}
+            {%- set end = items.get('end') %}
+            {%- if event %}
+              {%- set e = easy_time[event['macro']](**event.get('kwargs', {})) | as_datetime | as_local %}
+              {%- set b = timedelta(**items.get('before', dflt)) %}
+              {%- set a = timedelta(**items.get('after', dflt)) %}
+              {%- set ns.events = ns.events + [ (holiday, e - b), ('no_holiday', e + a) ] %}
+            {%- elif start and end %}
+              {%- set s = easy_time[start['macro']](**start.get('kwargs', {})) | as_datetime | as_local %}
+              {%- set e = easy_time[end['macro']](**end.get('kwargs', {})) | as_datetime | as_local %}
+              {%- set ns.events = ns.events + [ (holiday, s), ('no_holiday', e) ] %}
+            {%- endif %}
+          {%- endfor %}
+  
+          {%- for event, dt in ns.events | sort(attribute='1') %}
+            {%- if dt.date() <= now().date() %}
+              {%- set ns.found = event %}
+            {%- endif %}
+          {%- endfor %}
+          {{ ns.found }}
+        {%- else %}
+          {{ override }}
+        {%- endif %}
+  sensor:
+  - unique_id: indoor_holiday_lighting
+    name: Holiday Lighting
+    default_entity_id: sensor.holiday_lighting
+    state: "{{ event }}"
+
+- light:
+  #################################
+  ###      Christmas Tree       ###
+  #################################
+
+  - unique_id: christmas_tree
+    name: Christmas Tree
+    default_entity_id: light.christmas_tree
+    state: >
+      {{ is_state('switch.living_room_window', 'on') }}
+    availability: >
+      {{- expand('switch.living_room_window') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+    turn_on:
+    - action: switch.turn_on
+      target: &christmas_tree_switch
+        entity_id: switch.living_room_window
+    turn_off:
+    - action: switch.turn_off
+      target: *christmas_tree_switch
+
+# To autogenerate WLED selects as 'radio buttons'
+
+# {%- set select = 'select.cabinet_accent_preset' %}
+# {%- for option in ('Blinking Houses', 'Flashing Houses', 'Red and Green Houses', 'Town is on Fire') %}
+# {%- set name = 'christmas_' ~ option | slugify %}
+# {%- set barrier = '#' * 40 %}
+# {%- set banner = '{0}\n    ###{1}###\n    {0}' %}
+
+#     {{ banner.format(barrier, option.center(barrier|length - 6)) }}
+  
+#   - unique_id: {{ name }}
+#     name: {{ option }}
+#     variables:
+#       wled: {{ select }}
+#     state: >
+#       {%raw%}{{- is_state(wled, {%endraw%}'{{ option }}') {%raw%}}}{%endraw%}
+#     availability: >
+#       {%raw%}{{- wled | has_value }}{%endraw%}
+#     turn_on:
+#     - <<: &{{name}}_target
+#         action: select.select_option
+#         target: 
+#           entity_id: {{ select }}
+#       data:
+#         option: {{ option }}
+#     turn_off:
+#     - <<: *{{name}}_target
+#       data:
+#         option: All Off
+# {%- endfor %}
+
+- light:
+
+    ########################################
+    ###         Blinking Houses          ###
+    ########################################
+  
+  - unique_id: christmas_blinking_houses
+    name: Blinking Houses
+    default_entity_id: light.christmas_blinking_houses
+    variables:
+      wled: select.cabinet_accent_preset
+    state: >
+      {{- is_state(wled, 'Blinking Houses') }}
+    availability: >
+      {{- wled | has_value }}
+    turn_on:
+    - <<: &christmas_blinking_houses_target
+        action: select.select_option
+        target: 
+          entity_id: select.cabinet_accent_preset
+      data:
+        option: Blinking Houses
+    turn_off:
+    - <<: *christmas_blinking_houses_target
+      data:
+        option: All Off
+
+    ########################################
+    ###         Flashing Houses          ###
+    ########################################
+  
+  - unique_id: christmas_flashing_houses
+    name: Flashing Houses
+    default_entity_id: light.christmas_flashing_houses
+    variables:
+      wled: select.cabinet_accent_preset
+    state: >
+      {{- is_state(wled, 'Flashing Houses') }}
+    availability: >
+      {{- wled | has_value }}
+    turn_on:
+    - <<: &christmas_flashing_houses_target
+        action: select.select_option
+        target: 
+          entity_id: select.cabinet_accent_preset
+      data:
+        option: Flashing Houses
+    turn_off:
+    - <<: *christmas_flashing_houses_target
+      data:
+        option: All Off
+
+    ########################################
+    ###       Red and Green Houses       ###
+    ########################################
+  
+  - unique_id: christmas_red_and_green_houses
+    name: Red and Green Houses
+    default_entity_id: light.christmas_red_and_green_houses
+    variables:
+      wled: select.cabinet_accent_preset
+    state: >
+      {{- is_state(wled, 'Red and Green Houses') }}
+    availability: >
+      {{- wled | has_value }}
+    turn_on:
+    - <<: &christmas_red_and_green_houses_target
+        action: select.select_option
+        target: 
+          entity_id: select.cabinet_accent_preset
+      data:
+        option: Red and Green Houses
+    turn_off:
+    - <<: *christmas_red_and_green_houses_target
+      data:
+        option: All Off
+
+    ########################################
+    ###         Town is on Fire          ###
+    ########################################
+  
+  - unique_id: christmas_town_is_on_fire
+    name: Town is on Fire
+    default_entity_id: light.christmas_town_is_on_fire
+    variables:
+      wled: select.cabinet_accent_preset
+    state: >
+      {{- is_state(wled, 'Town is on Fire') }}
+    availability: >
+      {{- wled | has_value }}
+    turn_on:
+    - <<: &christmas_town_is_on_fire_target
+        action: select.select_option
+        target: 
+          entity_id: select.cabinet_accent_preset
+      data:
+        option: Town is on Fire
+    turn_off:
+    - <<: *christmas_town_is_on_fire_target
+      data:
+        option: All Off
+
+- switch:
+  # You attempted to use this, however you could not find a good equation
+  # to match rgbw to rgb
+  
+  # {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
+  # {%- set ns = namespace(items=[], current=False, rollup=[]) %}
+  # {%- for setting in settings %}
+  #   {%- set ns.current = False %}
+  #   {%- set ns.rollup = [] %}
+  #   {%- if is_state(setting.entity_id, 'on') %}
+  #     {%- if setting.attributes is defined %}
+  #       {%- for key, value in setting.attributes.items() %}
+  #         {%- set ns.rollup = ns.rollup + [is_state_attr(setting.entity_id, key, value)] %}
+  #       {%- endfor %}
+  #       {%- set ns.current = ns.rollup | select('true') | list | length == setting.attributes | length %}
+  #     {%- else %}
+  #       {%- set ns.current = True %}
+  #     {%- endif %}
+  #   {%- endif %}
+  #   {%- set ns.items = ns.items + [ ns.current ] %}
+  # {%- endfor %}
+  # {{- ns.items | select('true') | list | length == settings | length }}
+  
+  - unique_id: 2954ff2b-3e2e-47e4-9a5a-f2cc6c226bdc
+    name: Indoor Holiday
+    default_entity_id: switch.indoor_holiday
+    state: >
+      {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
+      {{ settings | map(attribute='entity_id') | select('is_state', 'on') | list | length == settings | length }}
+  
+    availability: >
+      {{ state_attr('sensor.seasonal_accent_lights', 'settings') is not none }}
+    turn_on:
+    - action: script.set_indoor_holiday
+      data:
+        transition: 3
+        brightness: 255
+    turn_off:
+    - action: homeassistant.turn_off
+      target:
+        entity_id: >
+          {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}

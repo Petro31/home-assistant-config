@@ -131,7 +131,7 @@ Goal: over time, move features whose automations, scripts and templates are spli
   - Get names, integrations and `device_id`s from `.storage/core.device_registry`, `.storage/core.entity_registry` and `.storage/core.config_entries`. Use them only to read; never edit them.
   - Entities that the package doesn't reference but that relate to it (e.g. leftover UI helpers built on the package's sensors) go in an "Unused (but related) entities" group, using the same grouping. Keep them; don't delete the helpers.
   - Entities created by this package are listed by their real `entity_id` from the entity registry, not one guessed from the name. Leave out automations; they aren't referenced by `entity_id`.
-- Shared plumbing stays shared. "Events - Forward Reload Templates" in `automation/events.yaml` fires `templates_reloaded`, which is used by both `master_bathroom_humidity` and `template/seasons.yaml`.
+- Shared plumbing stays shared. "Events - Forward Reload Templates" in `automation/events.yaml` fires `templates_reloaded`, which is used by both `master_bathroom_humidity` and `holiday_lighting`.
 - Check that the package filename doesn't clash with an existing package.
 - Name the package after what it does, matching its description (e.g. `garage_parking_laser`, not `laser`). The candidate names below are only labels.
 - Record any problems you notice (bugs, leftover entities, legacy syntax outside the change) under [Known issues](#known-issues) instead of fixing them.
@@ -140,7 +140,6 @@ Goal: over time, move features whose automations, scripts and templates are spli
 ### Candidates
 
 Spread across all three folders:
-- [ ] holiday (automation/holiday, scripts/holiday, template/christmas, template/wled_christmas; macros stay in custom_templates/holiday.jinja)
 - [ ] irrigation (automation, scripts, template)
 
 Spread across two folders:
@@ -150,7 +149,7 @@ Spread across two folders:
 
 Grouped by name, to check before migrating:
 - [ ] house humidity (the House Humidity sensor from template/humidity; maybe a house_climate package with the matching sensor in template/temperatures)
-- [ ] wled (scripts/wled, template/wled_ambiance; wled_ambiance's "Indoor Holiday" switch may belong with holiday)
+- [ ] wled (scripts/wled, template/wled_ambiance)
 - [ ] lighting (scripts/lights, template/light_*_targets, template/light_great_room)
 - [ ] echos/alexa (automation/echos, scripts/alexa)
 
@@ -166,6 +165,7 @@ Done:
 - [x] todo (packages/daily_todo_lists.yaml)
 - [x] lzw45 (packages/lzw45_led_strips.yaml; also includes the Mood Lighting switch from template/living_room_remote.yaml)
 - [x] run_schedule (packages/running_training_programs.yaml)
+- [x] holiday (packages/holiday_lighting.yaml; also includes template/seasons.yaml and the Indoor Holiday switch from template/wled_ambiance.yaml)
 
 ## Known issues
 
@@ -204,6 +204,11 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/weather_camera_events.yaml
 - "Manage outside camera power based on temperature" still uses legacy syntax: `trigger:` with `platform: state`, plus `action:` and `service:`. The `switch.turn_{{ action }}` step also passes `entity_id` under `data:` instead of `target:`.
+
+### packages/holiday_lighting.yaml
+- `script.indoor_ambiance` and `script.indoor_holiday_colors` aren't used by anything.
+- `script.indoor_ambiance` has a pointless `variables: pass: foo`.
+- The `&colors` anchor is never referenced by an alias.
 
 ### CLAUDE.md
 - The bullet about UI helpers under "How to migrate a feature" says the trend sensors are "used by `master_bathroom_humidity`". They aren't; the package uses the derivative helper `sensor.master_bathroom_humidity_change`.
