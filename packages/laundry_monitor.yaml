@@ -78,6 +78,12 @@ automation:
     entity_id:
     - input_boolean.test_washer
     - binary_sensor.washer_status
+    not_from:
+    - unknown
+    - unavailable
+    not_to:
+    - unknown
+    - unavailable
   variables:
 
     <<: &prefix
