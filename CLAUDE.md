@@ -164,7 +164,7 @@ Grouped by name, to check before migrating:
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
 - [x] doorbell (packages/doorbell.yaml)
-- [x] update (packages/update.yaml)
+- [x] update (packages/device_firmware_updates.yaml)
 - [x] laser (packages/garage_parking_laser.yaml; also includes template/garage.yaml)
 
 ## Known issues
@@ -178,6 +178,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/doorbell.yaml
 - The notification automation's alias is just `Notify`, which is hard to tell apart from other automations in the UI and logs. Its entity is `automation.announce_and_notify_on_doorbell_press`.
 - "Fix Doorbell Chime Status" in `automation/reactions.yaml` is doorbell-related and probably belongs in this package. It uses `sensor.doorbell_chime_off` and `switch.doorbell_chime_active`. It also mixes syntax: it has `triggers:` and `conditions:`, but a legacy top-level `action:`.
+
+### packages/device_firmware_updates.yaml
+- The "Esphome Entities" template update entity mixes in the ESPHome Device Builder app. It uses the app's own update entity, `update.esphome_update` (from the Supervisor), for its picture and as the fallback `installed_version` / `latest_version`. It should only reference the ESPHome devices, i.e. the `update.*` entities from the `esphome` integration.
 
 ### packages/garbage_notifications.yaml
 - The shared condition in `script.mobile_app_turn_on` / `script.mobile_app_turn_off` checks `next_state is not none`, but `next_state` is never defined. An undefined variable renders as empty rather than `none`, so this check probably always passes. That means it doesn't guard anything.
