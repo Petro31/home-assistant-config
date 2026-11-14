@@ -1,10 +1,28 @@
-# The UI has 2 trend sensors
-#   binary_sensor.master_bathroom_humidity_rising
-#   binary_sensor.master_bathroom_humidity_falling
-
-# Xiaomi sensor
-#   Device: Master Bathroom LYWSDCGQ
-#   sensor.master_bathroom_lywsdcgq_humidity
+# Turns the master bathroom fan on when a shower raises the humidity.
+# Turns it off 20 minutes after the humidity status turns off, which
+# happens when the humidity starts falling or after 40 minutes.
+#
+# External entities used:
+#   Xiaomi BLE (xiaomi_ble)
+#     Master Bathroom: LYWSDCGQ (C4B9) (496303931d7efbad6a29b98ef9ec9871)
+#       sensor.master_bathroom_lywsdcgq_humidity
+#   Z-Wave JS (zwave_js)
+#     Master Bathroom: Fan (6fe9f3b48ddc1e9af7b3a1f7ac8fd92b)
+#       switch.master_bathroom_fan
+#   Derivative helper (derivative, UI)
+#     sensor.master_bathroom_humidity_change
+#
+# Unused (but related) entities:
+#   Trend helper (trend, UI)
+#     binary_sensor.master_bathroom_humidity_rising
+#     binary_sensor.master_bathroom_humidity_falling
+#
+# Entities created by this package:
+#   sensor.master_bathroom_filtered_humidity
+#   sensor.master_bathroom_filtered_humidity_statistics
+#   sensor.master_bathroom_average_humidity
+#   binary_sensor.master_bathroom_humidity_high
+#   binary_sensor.master_bathroom_humidity_status
 
 sensor:
 
