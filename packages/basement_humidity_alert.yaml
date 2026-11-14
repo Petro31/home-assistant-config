@@ -3,8 +3,8 @@
 #
 # External entities used:
 #   ESPHome (esphome)
-#     Basement: Basement Esp32 (9e8c12dd263640ce2a892d9f85ed961a)
-#       sensor.basement_cgdk2_humidity
+#     Basement: Apollo AIR-1 1ecac0 (a0cfccc71119cba9acc4041ea295e41e)
+#       sensor.apollo_air_1_1ecac0_humidity
 #   scripts/notifiers.yaml
 #     script.notify
 #
@@ -40,7 +40,7 @@ template:
     name: Basement Humidity High
     default_entity_id: binary_sensor.basement_humidity_high
     state: >
-      {{ states('sensor.basement_cgdk2_humidity') | float > 60 }}
+      {{ states('sensor.apollo_air_1_1ecac0_humidity') | float > 60 }}
     availability: >
-      {{ states('sensor.basement_cgdk2_humidity') | is_number }}
+      {{ states('sensor.apollo_air_1_1ecac0_humidity') | is_number }}
     device_class: moisture
