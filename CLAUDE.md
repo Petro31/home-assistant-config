@@ -148,7 +148,6 @@ Spread across all three folders:
 
 Spread across two folders:
 - [ ] harmony (automation, scripts)
-- [ ] laundry (automation, scripts)
 - [ ] events (automation, template)
 - [ ] run_schedule (scripts, template)
 - [ ] plants (automation, template, top-level plants.yaml)
@@ -166,6 +165,7 @@ Done:
 - [x] laser (packages/garage_parking_laser.yaml; also includes template/garage.yaml)
 - [x] basement humidity (packages/basement_humidity_alert.yaml)
 - [x] hyperion (packages/tv_ambient_lighting.yaml)
+- [x] laundry (packages/laundry_monitor.yaml; also includes the laundry blocks from template/energy.yaml)
 
 ## Known issues
 
