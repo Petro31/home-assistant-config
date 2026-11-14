@@ -97,7 +97,7 @@ Goal: over time, move features whose automations, scripts and templates are spli
   - inside each trigger, including `wait_for_trigger:`, `platform: <type>` → `trigger: <type>`
   - inside action and sequence steps, `service: <domain.service>` → `action: <domain.service>`
   Change only the key names. Values, ordering, comments and indentation stay the same.
-- **Give every template entity a `default_entity_id:`** set to its current `entity_id` from `.storage/core.entity_registry` (look it up by `unique_id`; don't derive it from the name). Put it on the line right after `name:` (see `packages/garbage_notifications.yaml`). This keeps the entity ID tied to the YAML rather than to the name. Template entities that already have one keep it unchanged.
+- **Give every template entity a `default_entity_id:`** set to its current `entity_id` from `.storage/core.entity_registry` (look it up by `unique_id`; don't derive it from the name). Put it on the line right after `name:` (see `packages/garbage_notifications.yaml`), or right after `unique_id:` when the entity has no `name:`. This keeps the entity ID tied to the YAML rather than to the name. Template entities that already have one keep it unchanged.
 - **Keep all content and YAML anchors/aliases.** Never drop, inline or merge an anchor. Before merging, list the anchor names in every source file. HA doesn't reject a duplicate anchor name; the later definition silently takes over, so aliases end up pointing at the wrong content. When two source files use the same anchor name, rename one of them and every alias that refers to it. That rename is the only change allowed for anchors.
 - Remove the content from its old file in the same change, or HA sees duplicate IDs and script keys. If an old file ends up empty, delete it rather than leaving it empty under an `!include_dir_merge_*` directory.
 - YAML anchors only work within one file. Make sure every anchor still has its alias in the same file after the move.
@@ -150,7 +150,6 @@ Spread across two folders:
 - [ ] harmony (automation, scripts)
 - [ ] laundry (automation, scripts)
 - [ ] events (automation, template)
-- [ ] hyperion (automation, template)
 - [ ] run_schedule (scripts, template)
 - [ ] plants (automation, template, top-level plants.yaml)
 
@@ -166,6 +165,7 @@ Done:
 - [x] update (packages/device_firmware_updates.yaml)
 - [x] laser (packages/garage_parking_laser.yaml; also includes template/garage.yaml)
 - [x] basement humidity (packages/basement_humidity_alert.yaml)
+- [x] hyperion (packages/tv_ambient_lighting.yaml)
 
 ## Known issues
 
@@ -178,6 +178,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/doorbell.yaml
 - The notification automation's alias is just `Notify`, which is hard to tell apart from other automations in the UI and logs. Its entity is `automation.announce_and_notify_on_doorbell_press`.
 - "Fix Doorbell Chime Status" in `automation/reactions.yaml` is doorbell-related and probably belongs in this package. It uses `sensor.doorbell_chime_off` and `switch.doorbell_chime_active`. It also mixes syntax: it has `triggers:` and `conditions:`, but a legacy top-level `action:`.
+
+### packages/tv_ambient_lighting.yaml
+- "Turn Off Hyperion with Activities" (`automation.harmony_turn_off_hyperion_with_harmony_activities`) is with the harmony automations. It belongs to harmony; keep it in mind when migrating harmony.
 
 ### automation/calibrations.yaml
 - "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`. It also still uses legacy syntax.

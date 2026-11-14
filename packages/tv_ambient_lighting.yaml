@@ -1,94 +1,162 @@
+# Controls the Hyperion TV backlight: applies the effect and brightness
+# chosen in the UI helpers, and provides switches for screen mimicking
+# and a few preset effects.
+#
+# External entities used:
+#   Hyperion (hyperion)
+#     No area: GPIO 18 - TV Living Room (a46cd8f50bb07319af3910f654b034f3)
+#       light.gpio_18_tv
+#       switch.gpio_18_tv_component_led_device
+#       switch.gpio_18_tv_component_usb_capture
+#   Dropdown helper (input_select, UI)
+#     input_select.hyperion_effects
+#   Number helper (input_number, UI)
+#     input_number.hyperion_brightness
+#
+# Entities created by this package:
+#   switch.hyperion
+#   switch.hyperion_usb_capture
+#   switch.hyperion_cinema
+#   switch.hyperion_rainbow_swirl_fast
+#   switch.hyperion_solid_green
+
+automation:
+- alias: Execute Effects
+  id: hyperion_execute_effects
+  mode: restart
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_number.hyperion_brightness
+    - input_select.hyperion_effects
+  variables:
+    valid: >
+      {{ trigger.from_state is defined and trigger.from_state is not none 
+         and trigger.to_state is defined and trigger.to_state is not none 
+         and trigger.from_state.state != trigger.to_state.state }}
+    source: >
+      {{ trigger.to_state.entity_id }}
+    target: light.gpio_18_tv
+    brightness: >
+      {%- if source == 'input_number.hyperion_brightness' %}
+        {{ trigger.to_state.state }}
+      {%- else %}
+        {{ states('input_number.hyperion_brightness') }}
+      {%- endif %}
+    effect: >
+      {%- if source == 'input_select.hyperion_effects' %}
+        {{ trigger.to_state.state }}
+      {%- else %}
+        {{ states('input_select.hyperion_effects') }}
+      {%- endif %}
+  conditions:
+  - condition: template
+    value_template: "{{ valid }}"
+  actions:
+  - action: light.turn_on
+    target:
+      entity_id: "{{ target }}"
+    data:
+      brightness: "{{ brightness }}"
+      effect: "{{ effect }}"
+
+template:
 - switch:
   - unique_id: hyperion
+    default_entity_id: switch.hyperion
     state: >
       {%- set entities = 'switch.gpio_18_tv_component_led_device', 'switch.gpio_18_tv_component_usb_capture' %}
       {{ entities | select('is_state', 'on') | list | count == 2 }}
     turn_on:
-    - service: light.turn_on
+    - action: light.turn_on
       target:
         entity_id: 
         - switch.gpio_18_tv_component_led_device
         - switch.gpio_18_tv_component_usb_capture
     turn_off:
-    - service: light.turn_off
+    - action: light.turn_off
       target:
         entity_id: 
         - switch.gpio_18_tv_component_led_device
         - switch.gpio_18_tv_component_usb_capture
   
   - unique_id: hyperion_usb_capture
+    default_entity_id: switch.hyperion_usb_capture
     state: >
       {%- set entities = 'switch.gpio_18_tv_component_led_device', 'switch.gpio_18_tv_component_usb_capture' %}
       {{ entities | select('is_state', 'on') | list | count == 2 }}
     turn_on:
-    - service: switch.turn_on
+    - action: switch.turn_on
       entity_id:
       - switch.gpio_18_tv_component_led_device
       - switch.gpio_18_tv_component_usb_capture
     turn_off:
-    - service: homeassistant.turn_off
+    - action: homeassistant.turn_off
       target:
         entity_id: 
         - switch.gpio_18_tv_component_led_device
         - switch.gpio_18_tv_component_usb_capture
   
   - unique_id: hyperion_cinema
+    default_entity_id: switch.hyperion_cinema
     state: >
       {%- set entity = 'light.gpio_18_tv' %}
       {{ is_state(entity, 'on') and is_state_attr(entity, 'effect', 'Cinema dim lights') }}
     turn_on:
-    - service: switch.turn_on
+    - action: switch.turn_on
       entity_id: switch.gpio_18_tv_component_led_device
-    - service: light.turn_on
+    - action: light.turn_on
       target:
         entity_id: light.gpio_18_tv
       data:
         brightness: 255
         effect: Cinema dim lights
     turn_off:
-    - service: homeassistant.turn_off
+    - action: homeassistant.turn_off
       target:
         entity_id:
         - light.gpio_18_tv
         - switch.gpio_18_tv_component_led_device
   
   - unique_id: hyperion_rainbow_swirl_fast
+    default_entity_id: switch.hyperion_rainbow_swirl_fast
     state: >
       {%- set entity = 'light.gpio_18_tv' %}
       {{ is_state(entity, 'on') and is_state_attr(entity, 'effect', 'Rainbow swirl fast') }}
     turn_on:
-    - service: switch.turn_on
+    - action: switch.turn_on
       entity_id: switch.gpio_18_tv_component_led_device
-    - service: light.turn_on
+    - action: light.turn_on
       target:
         entity_id: light.gpio_18_tv
       data:
         brightness: 255
         effect: Rainbow swirl fast
     turn_off:
-    - service: homeassistant.turn_off
+    - action: homeassistant.turn_off
       target:
         entity_id:
         - light.gpio_18_tv
         - switch.gpio_18_tv_component_led_device
   
   - unique_id: hyperion_solid_green
+    default_entity_id: switch.hyperion_solid_green
     state: >
       {%- set entity = 'light.gpio_18_tv' %}
       {%- set is_solid = is_state_attr(entity, 'effect', 'Solid') %}
       {%- set is_green = is_state_attr(entity, 'rgb_color', (0, 255, 0)) %}
       {{ is_state(entity, 'on') and is_solid and is_green }}
     turn_on:
-    - service: switch.turn_on
+    - action: switch.turn_on
       entity_id: switch.gpio_18_tv_component_led_device
-    - service: light.turn_on
+    - action: light.turn_on
       target:
         entity_id: light.gpio_18_tv
       data:
         brightness: 255
         rgb_color: [0, 255, 0]
     turn_off:
-    - service: homeassistant.turn_off
+    - action: homeassistant.turn_off
       target:
         entity_id:
         - light.gpio_18_tv
