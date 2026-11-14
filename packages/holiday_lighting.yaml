@@ -7,7 +7,6 @@
 #   Group (group, UI)
 #     light.great_room_accent
 #     light.great_room_ambiance
-#     light.living_room
 #   MQTT (mqtt)
 #     Dining Room: Uplight 1 (66c83616fea2480405441e0cc452c13f)
 #       light.dining_room_uplight_1
@@ -57,8 +56,7 @@
 #   light.christmas_red_and_green_houses
 #   light.christmas_town_is_on_fire
 #   switch.indoor_holiday
-#   script.indoor_ambiance
-#   script.indoor_holiday_colors
+#   script.indoor_holiday_colors (for testing only; nothing calls it)
 #   script.get_indoor_holiday
 #   script.set_indoor_holiday
 
@@ -107,17 +105,8 @@ automation:
         entity_id: "{{ target }}"
 
 script:
-  indoor_ambiance:
-    alias: Indoor Ambiance
-    mode: parallel
-    variables:
-      pass: foo
-    sequence:
-    - action: homeassistant.turn_on
-      target:
-        entity_id: light.living_room
-
-
+  # For testing only: sets the given lights to one random color from a
+  # holiday's palette. Nothing calls it; run it manually from the UI.
   indoor_holiday_colors:
     alias: Indoor Holiday Colors
     mode: single

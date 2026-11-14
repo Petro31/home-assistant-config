@@ -206,8 +206,6 @@ Problems found while adding package notes, moving packages or updating legacy ke
 - "Manage outside camera power based on temperature" still uses legacy syntax: `trigger:` with `platform: state`, plus `action:` and `service:`. The `switch.turn_{{ action }}` step also passes `entity_id` under `data:` instead of `target:`.
 
 ### packages/holiday_lighting.yaml
-- `script.indoor_ambiance` and `script.indoor_holiday_colors` aren't used by anything.
-- `script.indoor_ambiance` has a pointless `variables: pass: foo`.
 - The `&colors` anchor is never referenced by an alias.
 
 ### CLAUDE.md
