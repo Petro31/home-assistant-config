@@ -1,3 +1,25 @@
+# Garbage day reminders. Sends a reminder on Tuesday at 7 PM. On
+# Wednesday before 9 AM, notifies whoever unplugs their phone while home.
+# The phones mark charging on/off by calling the mobile_app_turn_on/off scripts.
+#
+# External entities used:
+#   Mobile App (mobile_app)
+#     No area: Petro (d16f2df2c395d51d093f540b1d3bc695)
+#       notify.mobile_app_petro (notify action, not an entity)
+#     No area: Lindsay’s iPhone (d1294582fbb63bf938b82086919315c1)
+#       notify.mobile_app_lindsays_iphone (notify action, not an entity)
+#   Person (person, UI)
+#     person.petro
+#     person.lambo
+#   scripts/notifiers.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   switch.petro_charging
+#   switch.lambo_charging
+#   script.mobile_app_turn_on
+#   script.mobile_app_turn_off
+
 # Basically input booleans, but in the switch domain.
 template:
 - switch:
