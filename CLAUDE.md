@@ -148,6 +148,7 @@ Grouped by name, to check before migrating:
 - [ ] wled (scripts/wled, template/wled_ambiance)
 - [ ] lighting (scripts/lights, template/light_*_targets, template/light_great_room)
 - [ ] echos/alexa (automation/echos, scripts/alexa)
+- [ ] basement receiver (template/basement_reciever.yaml, plus binary_sensor.basement_yamaha_receiver from packages/living_room_yamaha.yaml; its switches call the receiver scripts in living_room_yamaha)
 
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)

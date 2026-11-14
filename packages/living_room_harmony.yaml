@@ -263,13 +263,12 @@ script:
         remote:
           description: (Optional) The remote for the harmony activity
           example: remote.living_room
-          required: true
+          required: false
           selector:
             entity:
-              domain: binary_sensor
-              device_class: door
+              domain: remote
       <<: &echo_field
-        echo_through_reciever:
+        echo_through_receiver:
           description: (Optional) Switch that turns on/off bluetooth adapter for echo
           example: switch.echo_through_receiver
           selector:
@@ -277,7 +276,7 @@ script:
               domain: switch
     variables:
       harmony: "{{ remote | default('remote.living_room') }}"
-      echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+      echo: "{{ echo_through_receiver | default('switch.echo_through_receiver') }}"
     sequence:
     - action: remote.turn_on
       target:
@@ -309,14 +308,14 @@ script:
     alias: Turn All Off
     mode: single
     description: >
-      Turns off all harmony activities and auxilary devices.
+      Turns off all harmony activities and auxiliary devices.
     fields:
       <<: *remote_field
       <<: *echo_field
     variables:
       poweroff: PowerOff
       harmony: "{{ remote | default('remote.living_room') }}"
-      echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+      echo: "{{ echo_through_receiver | default('switch.echo_through_receiver') }}"
     sequence:
     - action: remote.turn_on
       target:
@@ -365,7 +364,7 @@ script:
     variables:
       switch: switch.roku
       media_player: "{{ roku | default('media_player.roku_living_room') }}"
-      echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+      echo: "{{ echo_through_receiver | default('switch.echo_through_receiver') }}"
     sequence:
     - choose:
       - conditions:

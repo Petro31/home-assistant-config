@@ -165,9 +165,9 @@ script:
             - Total Body
             - Upper Body
       chromecast:
-        description: (Optional) The Roku media_player.
+        description: (Optional) The Chromecast media_player(s).
         example: media_player.chromecast
-        required: true
+        required: false
         selector:
           entity:
             domain: media_player
@@ -308,7 +308,8 @@ template:
         source: Apple TV
     turn_off: &turn_off_roku
     - action: switch.turn_off
-      entity_id: switch.roku
+      target:
+        entity_id: switch.roku
   
   # NETFLIX
   - unique_id: b289f6f7-ab1b-4c58-9f78-7044b1e33457
@@ -417,7 +418,7 @@ template:
     state: >
       {{ states('media_player.chromecast') in ['playing','paused'] and 
         is_state_attr('media_player.chromecast', 'media_title', 'Core') }}
-    turn_on: &cast_workout_core
+    turn_on:
     - action: script.cast_workout_video
       data:
         workout: Core
@@ -430,7 +431,7 @@ template:
     state: >
       {{ states('media_player.chromecast') in ['playing','paused'] and 
         is_state_attr('media_player.chromecast', 'media_title', 'Cardio Kickboxing') }}
-    turn_on: &cast_workout_cardio_kickboxing
+    turn_on:
     - action: script.cast_workout_video
       data:
         workout: Cardio Kickboxing
@@ -441,7 +442,7 @@ template:
     state: >
       {{ states('media_player.chromecast') in ['playing','paused'] and 
         is_state_attr('media_player.chromecast', 'media_title', 'Lower Body') }}
-    turn_on: &cast_workout_lower_body
+    turn_on:
     - action: script.cast_workout_video
       data:
         workout: Lower Body
@@ -452,7 +453,7 @@ template:
     state: >
       {{ states('media_player.chromecast') in ['playing','paused'] and 
         is_state_attr('media_player.chromecast', 'media_title', 'Total Body') }}
-    turn_on: &cast_workout_total_body
+    turn_on:
     - action: script.cast_workout_video
       data:
         workout: Total Body
@@ -463,7 +464,7 @@ template:
     state: >
       {{ states('media_player.chromecast') in ['playing','paused'] and 
         is_state_attr('media_player.chromecast', 'media_title', 'Upper Body') }}
-    turn_on: &cast_workout_upper_body
+    turn_on:
     - action: script.cast_workout_video
       data:
         workout: Upper Body
