@@ -183,7 +183,7 @@ Problems found while adding package notes, moving packages or updating legacy ke
 - "Turn Off Hyperion with Activities" (`automation.harmony_turn_off_hyperion_with_harmony_activities`) is with the harmony automations. It belongs to harmony; keep it in mind when migrating harmony.
 
 ### packages/laundry_monitor.yaml
-- Unused leftovers related to the package, probably from building the power detection: `input_number.test_washer` (UI helper), and `binary_sensor.washer_power_mqtt` / `binary_sensor.dryer_power_mqtt` in `mqtt/binary_sensor.yaml` (`dryer_power_mqtt` is disabled). Nothing references them.
+- `input_number.test_washer` (UI helper) is an unused leftover, probably from building the power detection. Nothing references it.
 - The "Notify" automation's alias is generic, and its entity is `automation.dryer_notify` even though it handles both the washer and the dryer.
 
 ### automation/calibrations.yaml

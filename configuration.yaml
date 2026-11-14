@@ -22,7 +22,6 @@ logger: !include logger.yaml
 lovelace: !include lovelace.yaml
 lovelace_gen:
 media_player: !include media_player.yaml
-mqtt: !include_dir_merge_named mqtt/
 notify: !include notify.yaml
 plant: !include plants.yaml
 python_script:

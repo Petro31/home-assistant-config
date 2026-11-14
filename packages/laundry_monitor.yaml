@@ -17,9 +17,6 @@
 #     script.notify
 #
 # Unused (but related) entities:
-#   mqtt/binary_sensor.yaml
-#     binary_sensor.washer_power_mqtt
-#     binary_sensor.dryer_power_mqtt
 #   Number helper (input_number, UI)
 #     input_number.test_washer
 #
