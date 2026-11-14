@@ -205,8 +205,5 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/weather_camera_events.yaml
 - "Manage outside camera power based on temperature" still uses legacy syntax: `trigger:` with `platform: state`, plus `action:` and `service:`. The `switch.turn_{{ action }}` step also passes `entity_id` under `data:` instead of `target:`.
 
-### packages/holiday_lighting.yaml
-- The `&colors` anchor is never referenced by an alias.
-
 ### CLAUDE.md
 - The bullet about UI helpers under "How to migrate a feature" says the trend sensors are "used by `master_bathroom_humidity`". They aren't; the package uses the derivative helper `sensor.master_bathroom_humidity_change`.

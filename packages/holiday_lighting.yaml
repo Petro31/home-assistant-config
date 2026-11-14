@@ -149,7 +149,7 @@ script:
             - label: Thanksgiving
               value: thanksgiving
     variables:
-      config: &colors >
+      config: >
         {% from 'holiday.jinja' import color_configuration %}
         {{ color_configuration }}
       found: >
