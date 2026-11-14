@@ -1,0 +1,187 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+This file is public. Hostnames, owner names and other private details live in the git-ignored `CLAUDE.local.md`. Refer to that file instead of writing those details here.
+
+## Ground rules (read first)
+
+This repository is the **live configuration of a running Home Assistant instance**. A bad edit can break the home's automations, dashboards, or startup. Be cautious.
+
+- **Never modify, create, delete, move, or rename any file without explicit approval from the user.** Propose the exact change first (show the diff or new content) and wait for a clear yes. Approval for one change does not cover follow-up or related changes; ask again.
+- Also get approval before any action that changes system state. That includes git commits, pushes, branch operations, reloads, restarts, and service calls.
+- Read-only investigation (reading files, searching, `git log`/`git diff`/`git status`) is fine without asking.
+- When proposing a change, point out anything that could break: YAML structure or indentation, include-directive shape (list vs mapping), renamed or removed entity IDs referenced elsewhere, and whether a reload or a full restart will be needed.
+
+## What this is
+
+The live Home Assistant `/config` directory (mounted over SMB; the share path is in `CLAUDE.local.md`), version-controlled and published publicly on GitHub (repo URL in `CLAUDE.local.md`). The current HA version is in `.HA_VERSION`. Edits made here affect the running instance once HA reloads them.
+
+- There is no build, lint, or test tooling in the repo. Check configuration from HA itself (Developer Tools → YAML → Check configuration, or `ha core check` on the host). Then reload the affected domain (automations, scripts, templates, etc.) or restart HA.
+- The repo is public: never commit `secrets.yaml` or `esphome/secrets.yaml`. Use `!secret` references instead. `.gitignore` also excludes runtime state (`.storage/`, logs, `home-assistant_v2.db`, `.cloud/`, `.zwjs/`), so treat it as the source of truth for what is tracked.
+- The git default branch is `master`; the remote is named `home-assistant-config`, not `origin`.
+
+## Configuration layout
+
+`configuration.yaml` is just a hub. Most config is pulled in through include directives, and the merge style matters when you add files:
+
+| Location | Included as | File format |
+|---|---|---|
+| `packages/` | `homeassistant: packages: !include_dir_named` | One feature per file, spanning many domains (`template:`, `automation:`, `script:`, …). The filename is the package name. |
+| `automation/` | `automation directory: !include_dir_merge_list` | Top-level YAML **list** of automations |
+| `automations.yaml` | `automation: !include` | Managed by the UI editor; don't hand-edit |
+| `scripts/` | `script directory: !include_dir_merge_named` | Top-level **mapping** of `script_id: {...}` |
+| `scripts.yaml` | `script: !include` | Managed by the UI editor |
+| `template/` | `template: !include_dir_merge_list` | Top-level **list** of template blocks (`- sensor:`, `- trigger:` …) |
+| `mqtt/` | `!include_dir_merge_named` | Mapping keyed by platform |
+| `command_line/` | `!include_dir_merge_list` | List |
+| `themes/` | `!include_dir_merge_named` | (git-ignored) |
+
+Other top-level `*.yaml` files are single-domain includes referenced from `configuration.yaml`. Some (e.g. `alexa.yaml`, `http.yaml`, `history*.yaml`) are tracked but no longer included.
+
+New self-contained features go in `packages/` (see `packages/leak_detection.yaml` for the current style). Domain-organized additions go in the matching `automation/`, `scripts/`, or `template/` file.
+
+### Conventions
+
+- Every automation gets an `id:` and every template entity gets a `unique_id:`, both random UUIDs. Generate fresh ones and never reuse them.
+- Newer files use current syntax (`triggers:` / `- trigger: state`, `actions:`, `action: light.turn_on`). Older files still use `trigger:` / `platform:` / `service:`. Use the new syntax for new or rewritten code. Don't mass-migrate unrelated files unless asked; migrations are done as their own commits (e.g. `color_temp` → `color_temp_kelvin`).
+- YAML anchors are common for reusing entity lists between a trigger and `variables` (`entity_id: &entities` … `entities: *entities`).
+- Reusable Jinja macros live in `custom_templates/*.jinja` and are imported in templates with `{% from 'easy_time.jinja' import month_day %}`.
+- `python_scripts/` holds HA `python_script` integration scripts (sandboxed, no imports), with their service schemas in `python_scripts/services.yaml`.
+
+## Dashboards (lovelace_gen)
+
+`lovelace.yaml` defines two YAML-mode dashboards, `ui-home.yaml` and `ui-status.yaml`. Both are built from `lovelace/`:
+
+- `lovelace/views/`: one file per view. `master.yaml` assembles the view list for the Home dashboard.
+- `lovelace/templates/` and `lovelace/partials/`: reusable card fragments.
+- Files whose first line is `# lovelace_gen` are rendered as Jinja by the `lovelace_gen` custom component ([docs and source](https://github.com/thomasloven/hass-lovelace_gen)) before YAML parsing. Fragments are included with variables via the list form of `!include` (filename first, then a dict of variables):
+  ```yaml
+  - !include
+    - '../templates/headers/navigator.yaml'
+    - name: Drinks
+  ```
+  Inside the template, variables are plain Jinja (`{{ entity }}`, `{{ label|default(...) }}`).
+- lovelace_gen specifics that commonly cause mistakes:
+  - Templates render once, when the dashboard is rendered, using the variables passed in. They are **not** live: use `{% raw %}…{% endraw %}` for anything that must be evaluated by the frontend or HA (button-card JS, `{{ states(...) }}`).
+  - Dicts can't be passed directly as include variables. Send them with `| tojson` and decode them with `| fromjson` (a filter lovelace_gen adds).
+  - Values under `lovelace_gen:` in `configuration.yaml` are available as `_global` (currently empty here).
+  - `!file /local/x.js` appends a random version to bust browser caches.
+  - Macro output isn't re-indented, so macros take an explicit indent argument (see `lovelace/views/dynamic_view_builder.yaml` and the macros in `master.yaml`).
+  - Don't put the `# lovelace_gen` header in the top-level dashboard files (`ui-home.yaml`, `ui-status.yaml`), only in files they include.
+- Most cards are `custom:button-card` and other HACS frontend cards. `www/community/` is git-ignored.
+- To pick up template edits, use **Refresh** from the dashboard's three-dot menu. Changes to `lovelace.yaml` or the `lovelace_gen:` config need an HA restart.
+
+## Custom integrations
+
+`custom_components/` is **git-ignored**: changes there are not versioned in this repo. Several of these are the owner's own projects with separate upstream repos. Make real fixes there, not here.
+
+- Owner-maintained: `door_buddy`, `harmony_helper`, `multizone_controller` (upstream repos listed in `CLAUDE.local.md`). Their YAML config is in `door_buddy.yaml` and `harmony_helper.yaml`. Dashboard and remote templates (`custom_templates/harmony.jinja`, `lovelace/templates/remote*`) depend on harmony_helper entities.
+- Third-party (HACS): `lovelace_gen`, `custom_icons`, `ge_home`, `pirateweather`, `spook`, `toyota_na`. Spook raises repairs for references to missing entities and services, so renaming or removing an entity usually means updating every reference to it.
+
+## ESPHome
+
+`esphome/*.yaml` are ESPHome device configs compiled by the ESPHome add-on, not loaded by HA. Their build directories (`esphome/<device>/`) and `esphome/secrets.yaml` are git-ignored.
+
+## Package migration (ongoing)
+
+Goal: over time, move features whose automations, scripts and templates are split across `automation/`, `scripts/` and `template/` into one file per feature in `packages/`. Do one feature per change and commit, and only when the user asks for that item.
+
+### How to migrate a feature
+
+- Wrap the moved content under its domain key: automations (list) under `automation:`, scripts (mapping) under `script:`, template blocks (list) under `template:`.
+- **Move content unchanged.** Keep every `id` and `unique_id` exactly as they are so entity IDs, history and UI customizations survive.
+- **The only changes allowed are the ones listed here.** No optimizations, refactors, reordering, reformatting, renamed entities, template rewrites or "while I'm here" fixes. If something looks wrong, mention it to the user and leave it as it is.
+- **Update legacy syntax to the modern keys as part of the move.** This applies to automations, scripts and trigger-based template blocks:
+  - top-level `trigger:` → `triggers:`, `condition:` → `conditions:`, `action:` → `actions:` (automations and trigger-based template blocks)
+  - inside each trigger, including `wait_for_trigger:`, `platform: <type>` → `trigger: <type>`
+  - inside action and sequence steps, `service: <domain.service>` → `action: <domain.service>`
+  Change only the key names. Values, ordering, comments and indentation stay the same.
+- **Keep all content and YAML anchors/aliases.** Never drop, inline or merge an anchor. Before merging, list the anchor names in every source file. HA doesn't reject a duplicate anchor name; the later definition silently takes over, so aliases end up pointing at the wrong content. When two source files use the same anchor name, rename one of them and every alias that refers to it. That rename is the only change allowed for anchors.
+- Remove the content from its old file in the same change, or HA sees duplicate IDs and script keys. If an old file ends up empty, delete it rather than leaving it empty under an `!include_dir_merge_*` directory.
+- YAML anchors only work within one file. Make sure every anchor still has its alias in the same file after the move.
+- Jinja macros stay in `custom_templates/`, and integration configs with their own top-level key (e.g. `harmony_helper.yaml`) can stay where they are.
+- Some packages intentionally rely on UI helpers. They're listed in each package's header comment and should stay in the UI (e.g. `sensor.master_bathroom_humidity_change` and the trend sensors used by `master_bathroom_humidity`).
+- Start every package with a short description (one or two comment lines) of what the package does, followed by a header comment listing its entities by `entity_id`:
+  ```yaml
+  # Turns the master bathroom fan on when a shower raises the humidity
+  # and off again once the humidity settles.
+  #
+  # External entities used:
+  #   Xiaomi BLE (xiaomi_ble)
+  #     Master Bathroom: LYWSDCGQ (C4B9) (496303931d7efbad6a29b98ef9ec9871)
+  #       sensor.master_bathroom_lywsdcgq_humidity
+  #   Derivative helper (derivative, UI)
+  #     sensor.master_bathroom_humidity_change
+  #   template/some_file.yaml
+  #     sensor.some_template_sensor
+  #
+  # Unused (but related) entities:
+  #   Trend helper (trend, UI)
+  #     binary_sensor.some_trend_sensor
+  #
+  # Entities created by this package:
+  #   sensor.some_filter_sensor
+  #   binary_sensor.some_template_sensor
+  ```
+  - External entities are those defined outside the package. Group them by the integration that creates them, shown as its display name with the domain in parentheses. Add `UI` when the entity is a helper or config entry created from the UI.
+  - Under an integration, list each device as `<Area>: <name_by_user>` (falling back to the device's `name` when `name_by_user` is empty), with its `device_id` in parentheses, so the entities can be found in the UI. Use `No area` when the device has no area. Actions that belong to a device but aren't entities (e.g. `notify.mobile_app_*`) go under that device, marked `(notify action, not an entity)`. List that device's entities under it. Entities that have no device go directly under the integration.
+  - Entities defined in YAML elsewhere in the repo are grouped by the file that defines them.
+  - Get names, integrations and `device_id`s from `.storage/core.device_registry`, `.storage/core.entity_registry` and `.storage/core.config_entries`. Use them only to read; never edit them.
+  - Entities that the package doesn't reference but that relate to it (e.g. leftover UI helpers built on the package's sensors) go in an "Unused (but related) entities" group, using the same grouping. Keep them; don't delete the helpers.
+  - Entities created by this package are listed by their real `entity_id` from the entity registry, not one guessed from the name. Leave out automations; they aren't referenced by `entity_id`.
+- Shared plumbing stays shared. "Events - Forward Reload Templates" in `automation/events.yaml` fires `templates_reloaded`, which is used by both `master_bathroom_humidity` and `template/seasons.yaml`.
+- Check that the package filename doesn't clash with an existing package.
+- Record any problems you notice (bugs, leftover entities, legacy syntax outside the change) under [Known issues](#known-issues) instead of fixing them.
+- Afterwards: run a config check, then reload the affected domains. Restart instead if the package includes non-reloadable config (e.g. `sensor:` platforms or `plant:`).
+
+### Candidates
+
+Spread across all three folders:
+- [ ] holiday (automation/holiday, scripts/holiday, template/christmas, template/wled_christmas; macros stay in custom_templates/holiday.jinja)
+- [ ] irrigation (automation, scripts, template)
+- [ ] lzw45 (automation, scripts, template)
+- [ ] ups (automation, scripts, template)
+- [ ] todo (automation/todo, template/todo, scripts/todo_today)
+
+Spread across two folders:
+- [ ] harmony (automation, scripts)
+- [ ] laundry (automation, scripts)
+- [ ] laser (automation, scripts)
+- [ ] events (automation, template)
+- [ ] hyperion (automation, template)
+- [ ] run_schedule (scripts, template)
+- [ ] update (scripts, template)
+- [ ] doorbell (automation/door_bell, template/doorbell)
+- [ ] plants (automation, template, top-level plants.yaml)
+- [ ] basement humidity (automation/humidity, the Basement Humidity High binary sensor from template/humidity)
+
+Grouped by name, to check before migrating:
+- [ ] house humidity (the House Humidity sensor from template/humidity; maybe a house_climate package with the matching sensor in template/temperatures)
+- [ ] wled (scripts/wled, template/wled_ambiance; wled_ambiance's "Indoor Holiday" switch may belong with holiday)
+- [ ] lighting (scripts/lights, template/light_*_targets, template/light_great_room)
+- [ ] echos/alexa (automation/echos, scripts/alexa)
+
+Done:
+- [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
+
+## Known issues
+
+Problems found while adding package notes, moving packages or updating legacy keys. They're recorded here so they can be fixed later, each as its own change. Don't fix them as part of other work. Add new findings as you go, and remove an entry once the user has had it fixed.
+
+### packages/master_bathroom_humidity.yaml
+- Still uses legacy syntax. The trigger-based template block has `trigger:` with `platform:`, and the automation has `trigger:`/`platform:`, `condition:`, `action:` and `service:`.
+- The UI trend helpers `binary_sensor.master_bathroom_humidity_rising` and `binary_sensor.master_bathroom_humidity_falling` aren't used by anything in the package. They're probably left over from initial testing, and are listed as unused (but related) in the header.
+
+### packages/garbage_notifications.yaml
+- The shared condition in `script.mobile_app_turn_on` / `script.mobile_app_turn_off` checks `next_state is not none`, but `next_state` is never defined. An undefined variable renders as empty rather than `none`, so this check probably always passes. That means it doesn't guard anything.
+- "Notify Garbage Day Today" mixes syntax. It has `triggers:` with a legacy `platform: state` trigger, plus legacy `condition:`, `action:` and `service:`.
+
+### packages/leak_detection.yaml
+- "Leak Persistence" sends `message: "{{ message }}"`, but no `message` variable is defined in that automation. The repeat notifications probably go out with an empty message. "Leak Warning" reads `state_attr('binary_sensor.leak', 'message')` instead.
+
+### packages/weather_camera_events.yaml
+- "Manage outside camera power based on temperature" still uses legacy syntax: `trigger:` with `platform: state`, plus `action:` and `service:`. The `switch.turn_{{ action }}` step also passes `entity_id` under `data:` instead of `target:`.
+
+### CLAUDE.md
+- The bullet about UI helpers under "How to migrate a feature" says the trend sensors are "used by `master_bathroom_humidity`". They aren't; the package uses the derivative helper `sensor.master_bathroom_humidity_change`.
