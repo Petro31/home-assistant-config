@@ -152,7 +152,6 @@ Spread across two folders:
 - [ ] events (automation, template)
 - [ ] hyperion (automation, template)
 - [ ] run_schedule (scripts, template)
-- [ ] update (scripts, template)
 - [ ] plants (automation, template, top-level plants.yaml)
 - [ ] basement humidity (automation/humidity, the Basement Humidity High binary sensor from template/humidity)
 
@@ -165,6 +164,7 @@ Grouped by name, to check before migrating:
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
 - [x] doorbell (packages/doorbell.yaml)
+- [x] update (packages/update.yaml)
 
 ## Known issues
 
