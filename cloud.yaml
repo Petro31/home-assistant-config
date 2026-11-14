@@ -148,9 +148,11 @@ alexa:
     binary_sensor.announce_dryer:
       name: Announce Dryer
       description: "Dryer Binary Sensor"
+      display_categories: DOORBELL
     binary_sensor.announce_washer:
       name: Announce Washer
       description: "Washer Binary Sensor"
+      display_categories: DOORBELL
     fan.bonus_room_bedroom:
       name: Bonus Room Fan
     fan.bonus_room_office:
