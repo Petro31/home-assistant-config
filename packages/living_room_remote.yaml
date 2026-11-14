@@ -1,0 +1,470 @@
+# Living room remote: switches for the Harmony activities and Roku apps,
+# Chromecast workout videos, Chromecast play/pause/seek from the Harmony
+# remote (through emulated Roku), and living room lights that follow Roku
+# playback during movie time.
+#
+# External entities used:
+#   Emulated Roku (emulated_roku)
+#     Home Assistant server: roku_command events from the Harmony remote (event, not an entity)
+#   Google Cast (cast)
+#     Living Room: Chromecast (6afc6f09c0d1228eca62f6127f80f042)
+#       media_player.chromecast
+#   Group (group, UI)
+#     light.living_room
+#   Logitech Harmony Hub (harmony)
+#     Living Room: living_room (c00e43e3b3aa4b8bb7140258e5000a15)
+#       remote.living_room (through the custom_templates/harmony.jinja macros)
+#   Roku (roku)
+#     Living Room: Roku (352883bfe3d0fe1eaab8ea16fb5f96c3)
+#       media_player.roku_living_room
+#   packages/living_room_harmony.yaml
+#     script.harmony_activity_on
+#     script.harmony_activity_off
+#     script.harmony_all_off
+#     script.roku_source_on
+#   template/wled_ambiance.yaml
+#     switch.movie_time
+#
+# Entities created by this package:
+#   switch.xbox_one
+#   switch.playstation
+#   switch.switch
+#   switch.tv
+#   switch.chromecast
+#   switch.poweroff
+#   switch.roku
+#   switch.apple_tv
+#   switch.netflix
+#   switch.hbo
+#   switch.hulu
+#   switch.prime_video
+#   switch.disney_plus
+#   switch.plex
+#   switch.peacock
+#   switch.cast_workout_core
+#   switch.cast_workout_cardio_kickboxing
+#   switch.cast_workout_lower_body
+#   switch.cast_workout_total_body
+#   switch.cast_workout_upper_body
+#   script.cast_workout_video
+#   script.stop_casting
+
+automation:
+- alias: Give ChromeCast control to remote using emulated roku
+  id: harmony_give_chromecast_control_to_remote_using_emulated_roku
+  mode: restart
+  triggers:
+  - trigger: event
+    event_type: roku_command
+    event_data:
+      source_name: Home Assistant
+  variables:
+    target: media_player.chromecast
+    jump_in_seconds: 10
+    key: >
+      {{ trigger.event.data.key | default("NoPress") }}
+    keys:
+    # Mainly for my notes for the future, but unused.
+    - Play
+    - Rev
+    - Fwd
+    play_pause: "{{ key == 'Play' }}"
+    rev: "{{ key == 'Rev' }}"
+    fwd: "{{ key == 'Fwd' }}"
+    rev_fwd: "{{ fwd or rev }}"
+  conditions:
+  - condition: template
+    value_template: >
+      {{ states(target) in ['playing', 'paused'] and key != 'NoPress' }}
+  actions:
+  - choose:
+    # Play / Pause
+    - conditions:
+      - condition: template
+        value_template: "{{ play_pause }}"
+      sequence:
+      - action: media_player.media_play_pause
+        target:
+          entity_id: "{{ target }}"
+
+    # Reverse / Forward
+    - conditions:
+      - condition: template
+        value_template: "{{ rev_fwd }}"
+      sequence:
+      - action: media_player.media_seek
+        target:
+          entity_id: "{{ target }}"
+        data:
+          seek_position: >
+            {%- set current = state_attr(target, 'media_position') | default(0) %}
+            {%- set total = state_attr(target, 'media_duration') | default(0) %}
+            {%- set dir = 1 if fwd else -1 %}
+            {%- set next = current + jump_in_seconds * dir %}
+            {%- if fwd %}
+              {{ total if next >= total else next }}
+            {%- else %}
+              {{ 0 if next <= 0 else next }}
+            {%- endif %}
+              
+
+- alias: Play/Pause lighting in living room
+  id: 0c371ea2-c700-476b-9c3d-b36bd3c9a662
+  description: Turn on lighting when paused, turn off lighting when playing.
+  triggers:
+  - trigger: state
+    entity_id: media_player.roku_living_room
+    to:
+    - playing
+    - paused
+    not_from:
+    - unavailable
+    - unknown
+  variables:
+    light: light.living_room
+    media_state: "{{ trigger.to_state.state }}"
+    light_state: "{{ 'on' if media_state == 'paused' else 'off' }}"
+    movie_time: "{{ is_state('switch.movie_time', 'on') }}"
+    turned_on_by_this: >
+      {% if this.context.parent_id is not none %}
+        {{ light | expand | selectattr('state', 'eq', 'on') | selectattr('context.parent_id', 'eq', this.context.parent_id) | map(attribute='entity_id') | list }}
+      {% else %}
+        []
+      {% endif %}
+    living_room_lights: >
+      {% if movie_time and media_state == 'paused' and is_state(light, 'off') %}
+        {{ state_attr(light, 'entity_id') }}
+      {% elif movie_time and media_state == 'playing' and is_state(light, 'on') %}
+        {{ turned_on_by_this }}
+      {% else %}
+        []
+      {% endif %}
+  conditions:
+  - condition: template
+    value_template: "{{ living_room_lights | length > 0 }}"
+  actions:
+  - action: light.turn_{{ light_state }}
+    target:
+      entity_id: "{{ living_room_lights }}"
+
+script:
+  cast_workout_video:
+    alias: Workout Video
+    mode: single
+    fields:
+      workout:
+        description: (Required) Name of the workout.
+        example: Core
+        required: true
+        selector:
+          select:
+            options:
+            - Core
+            - Cardio Kickboxing
+            - Lower Body
+            - Total Body
+            - Upper Body
+      chromecast:
+        description: (Optional) The Roku media_player.
+        example: media_player.chromecast
+        required: true
+        selector:
+          entity:
+            domain: media_player
+            multiple: true
+            integration: cast
+    variables:
+      media_player: "{{ chromecast | default('media_player.chromecast') }}"
+      title: >
+        {%- set titles = [
+          'Core', 'Cardio Kickboxing', 'Lower Body', 'Total Body', 'Upper Body'
+        ] %}
+        {{ workout if workout in titles else 'NoTitle' }}
+      content_id: >
+        plex://{"library_name": "Workout Videos", "title": "{{ title }}"}
+    sequence:
+    - choose:
+      - conditions:
+        - condition: template
+          value_template: "{{ is_state('switch.chromecast', 'off') }}"
+        sequence:
+        - action: switch.turn_on
+          target:
+            entity_id: switch.chromecast
+
+    - action: media_player.play_media
+      target:
+        entity_id: "{{ media_player }}"
+      data:
+        media_content_id: "{{ content_id }}"
+        media_content_type: movie
+
+  stop_casting:
+    alias: Stop Casting
+    mode: single
+    sequence:
+    - action: media_player.turn_off
+      target:
+        entity_id: media_player.chromecast
+
+template:
+- switch:
+  
+  # XBOX HARMONY ACTIVITY
+  - unique_id: 2bb5c91b-5ff2-41d5-b1fa-7fa603c54fee
+    name: Xbox One
+    default_entity_id: switch.xbox_one
+    state: >
+      {%- from 'harmony.jinja' import xbox_one as f -%}{{- f() -}}
+    turn_on:
+    - action: script.harmony_activity_on
+      data:
+        activity: Xbox One
+    turn_off: &harmony_activity_off
+    - action: script.harmony_activity_off
+  
+  # PLAYSTATION HARMONY ACTIVITY
+  - unique_id: 8b9bae0f-2eb8-4af3-bb54-3d0252437ad6
+    name: Playstation
+    default_entity_id: switch.playstation
+    state: >
+      {%- from 'harmony.jinja' import playstation as f -%}{{- f() -}}
+    turn_on:
+    - action: script.harmony_activity_on
+      data:
+        activity: Playstation
+    turn_off: *harmony_activity_off
+  
+  # SWITCH HARMONY ACTIVITY
+  - unique_id: 9c1d6eab-6652-4531-b8d3-30662b4fb928
+    name: Switch
+    default_entity_id: switch.switch
+    state: >
+      {%- from 'harmony.jinja' import switch as f -%}{{- f() -}}
+    turn_on:
+    - action: script.harmony_activity_on
+      data:
+        activity: Switch
+    turn_off: *harmony_activity_off
+  
+  # TV HARMONY ACTIVITY
+  - unique_id: ec14504b-9b62-4b44-bcf1-5d0218e4504d
+    name: TV
+    default_entity_id: switch.tv
+    state: >
+      {%- from 'harmony.jinja' import tv as f -%}{{- f() -}}
+    turn_on:
+    - action: script.harmony_activity_on
+      data:
+        activity: TV
+    turn_off: *harmony_activity_off
+  
+  # CHROMECAST HARMONY ACTIVITY
+  - unique_id: c27197a0-e746-4873-ae62-737784541cf5
+    name: Chromecast
+    default_entity_id: switch.chromecast
+    state: >
+      {%- from 'harmony.jinja' import chromecast as f -%}{{- f() -}}
+    turn_on:
+    - action: script.harmony_activity_on
+      data:
+        activity: Chromecast
+    turn_off:
+    - action: script.harmony_activity_off
+    - action: script.stop_casting
+  
+  # OFF ACTIVITY
+  - unique_id: ab55c1de-77f1-49f6-9b70-2237e96847be
+    name: Power Off
+    default_entity_id: switch.poweroff
+    state: >
+      {%- from 'harmony.jinja' import power_off as f -%}{{- f() -}}
+    turn_on: &harmony_all_off
+      - action: script.harmony_all_off
+    turn_off: *harmony_all_off
+    
+  # ROKU HARMONY ACTIVITY
+  - unique_id: 9b436b75-1a7e-4d5f-a2ad-016308a8cbef
+    name: Roku
+    default_entity_id: switch.roku
+    state: >
+      {%- from 'harmony.jinja' import roku as f -%}{{- f() -}}
+    turn_on:
+    - action: script.harmony_activity_on
+      data:
+        activity: Roku
+    turn_off: *harmony_activity_off
+  
+  # APPLE TV
+  - unique_id: 7aa5614a-9bea-4088-b950-e22f3d8e1061 
+    name: Apple TV
+    default_entity_id: switch.apple_tv
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Apple TV') }}
+    turn_on:
+    - action: script.roku_source_on
+      data:
+        source: Apple TV
+    turn_off: &turn_off_roku
+    - action: switch.turn_off
+      entity_id: switch.roku
+  
+  # NETFLIX
+  - unique_id: b289f6f7-ab1b-4c58-9f78-7044b1e33457
+    name: Netflix
+    default_entity_id: switch.netflix
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Netflix') }}
+    turn_on:
+    - action: script.roku_source_on
+      data:
+        source: Netflix
+    turn_off: *turn_off_roku
+        
+  # HBO
+  - unique_id: c1c2a1f3-a01f-4e58-8ab9-d4fc8bd82832
+    name: HBO
+    default_entity_id: switch.hbo
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'HBO Max') }}
+    turn_on:
+    - action: script.roku_source_on
+      data:
+        source: HBO Max
+    turn_off: *turn_off_roku
+        
+  # Hulu
+  - unique_id: dbbc7f9c-3737-4e2e-bb81-de71495b1d7e
+    name: Hulu
+    default_entity_id: switch.hulu
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Hulu') }}
+    turn_on:
+    - action: script.roku_source_on
+      data:
+        source: Hulu
+    turn_off: *turn_off_roku
+        
+  # Prime Video
+  - unique_id: e93b60fb-9f47-411e-8672-81674a2f9061
+    name: Prime Video
+    default_entity_id: switch.prime_video
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Prime Video') }}
+    turn_on:
+    - action: script.roku_source_on
+      data:
+        source: Prime Video
+    turn_off: *turn_off_roku
+  
+        
+  # Disney Plus
+  - unique_id: 8971c31c-5529-4fc6-b98b-113b8c38b8a6
+    name: Disney Plus
+    default_entity_id: switch.disney_plus
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Disney Plus') }}
+    turn_on:
+    - action: script.roku_source_on
+      data:
+        source: Disney Plus
+    turn_off: *turn_off_roku
+        
+  # Plex
+  - unique_id: 263a42a3-25e8-43ac-a39b-2eaa07d3711f
+    name: Plex
+    default_entity_id: switch.plex
+    state: >
+      {{ is_state('switch.roku', 'on') and 'plex' in state_attr('media_player.roku_living_room', 'source') | string | lower }}
+    turn_on:
+    - action: script.roku_source_on
+      data:
+        source: >
+          {%- set player = expand('media_player.roku_living_room') | first %}
+          {%- set ns = namespace(ret=[]) %}
+          {%- for source in player.attributes.source_list %}
+            {%- if 'plex' in source.lower() %}
+              {%- set ns.ret = ns.ret + [ source ] %}
+            {%- endif %}
+          {%- endfor %}
+          {{ ns.ret | first | default('Plex - Free Movies & TV') }}
+    turn_off: *turn_off_roku
+  
+  # Peacock
+  - unique_id: 966ded9b-6022-44fb-93f3-3924b35d392f
+    name: Peacock
+    default_entity_id: switch.peacock
+    state: >
+      {{ is_state('switch.roku', 'on') and 
+         is_state_attr('media_player.roku_living_room', 'source', 'Peacock TV') }}
+    turn_on:
+    - action: script.roku_source_on
+      data:
+        source: Peacock TV
+    turn_off: *turn_off_roku
+  
+  
+
+- switch:
+  - unique_id: cast_workout_core
+    default_entity_id: switch.cast_workout_core
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Core') }}
+    turn_on: &cast_workout_core
+    - action: script.cast_workout_video
+      data:
+        workout: Core
+    turn_off: &chromecast_off
+    - action: script.harmony_activity_off
+    - action: script.stop_casting
+    
+  - unique_id: cast_workout_cardio_kickboxing
+    default_entity_id: switch.cast_workout_cardio_kickboxing
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Cardio Kickboxing') }}
+    turn_on: &cast_workout_cardio_kickboxing
+    - action: script.cast_workout_video
+      data:
+        workout: Cardio Kickboxing
+    turn_off: *chromecast_off
+  
+  - unique_id: cast_workout_lower_body
+    default_entity_id: switch.cast_workout_lower_body
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Lower Body') }}
+    turn_on: &cast_workout_lower_body
+    - action: script.cast_workout_video
+      data:
+        workout: Lower Body
+    turn_off: *chromecast_off
+  
+  - unique_id: cast_workout_total_body
+    default_entity_id: switch.cast_workout_total_body
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Total Body') }}
+    turn_on: &cast_workout_total_body
+    - action: script.cast_workout_video
+      data:
+        workout: Total Body
+    turn_off: *chromecast_off
+  
+  - unique_id: cast_workout_upper_body
+    default_entity_id: switch.cast_workout_upper_body
+    state: >
+      {{ states('media_player.chromecast') in ['playing','paused'] and 
+        is_state_attr('media_player.chromecast', 'media_title', 'Upper Body') }}
+    turn_on: &cast_workout_upper_body
+    - action: script.cast_workout_video
+      data:
+        workout: Upper Body
+    turn_off: *chromecast_off

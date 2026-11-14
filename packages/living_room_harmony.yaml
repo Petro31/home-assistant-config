@@ -1,0 +1,387 @@
+# Living room Harmony hub: the harmony_helper remote buttons, scripts that
+# start and stop Harmony activities (and open a Roku app), and lights and
+# Hyperion that follow the activities.
+#
+# External entities used:
+#   Group (group, UI)
+#     light.living_room
+#   Logitech Harmony Hub (harmony)
+#     Living Room: living_room (c00e43e3b3aa4b8bb7140258e5000a15)
+#       remote.living_room
+#   Roku (roku)
+#     Living Room: Roku (352883bfe3d0fe1eaab8ea16fb5f96c3)
+#       media_player.roku_living_room
+#   Sun (sun)
+#     sun.sun
+#   packages/living_room_remote.yaml
+#     switch.playstation
+#     switch.roku
+#     switch.switch
+#     switch.tv
+#     switch.xbox_one
+#   packages/living_room_yamaha.yaml
+#     switch.echo_through_receiver
+#   packages/tv_ambient_lighting.yaml
+#     switch.hyperion_usb_capture
+#
+# Entities created by this package:
+#   script.harmony_activity_on
+#   script.harmony_activity_off
+#   script.harmony_all_off
+#   script.roku_source_on
+#   Through harmony_helper, on the Living Room: living_room Harmony device:
+#     button.remote_living_room_rewind
+#     button.remote_living_room_play
+#     button.remote_living_room_pause
+#     button.remote_living_room_fastforward
+#     button.remote_living_room_directionup
+#     button.remote_living_room_directionleft
+#     button.remote_living_room_ok
+#     button.remote_living_room_directionright
+#     button.remote_living_room_directiondown
+#     button.remote_living_room_back
+#     button.remote_living_room_channelup
+#     button.remote_living_room_channeldown
+#     button.remote_living_room_channelprev
+#     button.remote_living_room_0
+#     button.remote_living_room_1
+#     button.remote_living_room_2
+#     button.remote_living_room_3
+#     button.remote_living_room_4
+#     button.remote_living_room_5
+#     button.remote_living_room_6
+#     button.remote_living_room_7
+#     button.remote_living_room_8
+#     button.remote_living_room_9
+#     button.remote_living_room_period
+#     button.remote_living_room_home
+#     button.remote_living_room_menu
+#     button.remote_living_room_lowerleft
+#     button.remote_living_room_lowerright
+#     button.remote_living_room_bottombutton
+#     button.remote_living_room_rightbutton
+#     button.remote_living_room_topbutton
+#     button.remote_living_room_leftbutton
+#     binary_sensor.remote_living_room_control
+
+harmony_helper:
+  living_room:
+    source: remote.living_room
+    activity_device_links:
+      roku:
+        activity: Roku
+        device: Roku Ultra
+      xbox_one:
+        activity: Xbox One
+        device: Microsoft Xbox One
+      playstation:
+        activity: Playstation
+        device: Sony Playstation
+      tv:
+        activity: TV
+        device: Sony TV
+      chromecast:
+        activity: Chromecast
+        device: Chromecast
+    commands:
+    - Rewind
+    - Play
+    - Pause
+    - command: FastForward
+      name: Forward
+    - command: DirectionUp
+      name: Up
+    - command: DirectionLeft
+      name: Left
+    - command: OK
+      name: Confirm
+    - command: DirectionRight
+      name: Right
+    - command: DirectionDown
+      name: Down
+    - Back
+    - command: ChannelUp
+      name: Up
+    - command: ChannelDown
+      name: Down
+    - ChannelPrev
+    - "0"
+    - "1"
+    - "2"
+    - "3"
+    - "4"
+    - "5"
+    - "6"
+    - "7"
+    - "8"
+    - "9"
+    
+    - command: Period
+      device_command: "."
+      links:
+      - tv
+      
+    - command: Home
+      icon: mdi:home
+      links:
+      - roku
+      - tv
+      - link: playstation
+        device_command: PS
+      - link: xbox_one
+        device_command: Xbox
+        
+    - command: Menu
+      icon: mdi:menu
+      links:
+      - link: roku
+        device_command: Options*
+        icon: mdi:asterisk
+      - tv
+      - link: playstation
+        device_command: Options
+      - link: xbox_one
+        icon: mdi:xbox-controller-menu
+        
+    - command: LowerLeft
+      links:
+      - link: roku
+        device_command: Search
+      - link: tv
+        device_command: Options
+        icon: mdi:asterisk
+      - link: playstation
+        device_command: Info
+      - link: xbox_one
+        device_command: View
+        
+    - command: LowerRight
+      links:
+      - link: roku
+        device_command: Exit
+      - link: tv
+        name: Info
+        device_command: TrackId
+      - link: playstation
+        device_command: Share
+      - link: xbox_one
+        name: One Guide
+        device_command: OneGuide
+      
+    - command: BottomButton
+      name: Confirm
+      links:
+      - link: playstation
+        device_command: Cross
+      - link: xbox_one
+        device_command: A
+        
+    - command: RightButton
+      name: Back
+      links:
+      - link: playstation
+        device_command: Circle
+      - link: xbox_one
+        device_command: B
+        
+    - command: TopButton
+      name: Search
+      links:
+      - link: playstation
+        device_command: Triangle
+      - link: xbox_one
+        device_command: Y
+        
+    - command: LeftButton
+      name: Backspace
+      links:
+      - link: playstation
+        device_command: Square
+      - link: xbox_one
+        device_command: X
+   
+
+automation:
+- alias: Turn On Livingroom lights with Activities
+  id: turn_on_livingroom_lights_with_harmony_activities
+  triggers:
+  - trigger: state
+    entity_id:
+    - switch.xbox_one
+    - switch.playstation
+    - switch.roku
+    - switch.switch
+    - switch.tv
+    to: 'on'
+    from: 'off'
+  conditions:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  actions:
+  - action: homeassistant.turn_on
+    target:
+      entity_id:
+      - light.living_room
+      - switch.hyperion_usb_capture
+
+- alias: Turn Off Hyperion with Activities
+  id: turn_off_hyperion_lights_with_harmony_activities
+  triggers:
+  - trigger: template
+    value_template: "{{ is_state_attr('remote.living_room', 'current_activity', 'PowerOff') }}"
+  conditions:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.hyperion_usb_capture
+
+script:
+  harmony_activity_on:
+    alias: Turn On Activity
+    mode: restart
+    description: >
+      Turns on any harmony activity and optionally any specified devices.
+    fields:
+      activity:
+        description: (Required) The harmony activity name.
+        example: Xbox One
+        required: true
+        selector:
+          select:
+            options:
+            - Chromecast
+            - Playstation
+            - Roku
+            - Switch
+            - TV
+            - Xbox One
+      <<: &remote_field
+        remote:
+          description: (Optional) The remote for the harmony activity
+          example: remote.living_room
+          required: true
+          selector:
+            entity:
+              domain: binary_sensor
+              device_class: door
+      <<: &echo_field
+        echo_through_reciever:
+          description: (Optional) Switch that turns on/off bluetooth adapter for echo
+          example: switch.echo_through_receiver
+          selector:
+            entity:
+              domain: switch
+    variables:
+      harmony: "{{ remote | default('remote.living_room') }}"
+      echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+    sequence:
+    - action: remote.turn_on
+      target:
+        entity_id: "{{ harmony }}"
+      data:
+        activity: "{{ activity }}"
+    - wait_template: "{{ is_state_attr(harmony, 'current_activity', activity) }}"
+    - action: switch.turn_off
+      target:
+        entity_id: "{{ echo }}"
+
+  harmony_activity_off:
+    alias: Turn Off Activity
+    mode: restart
+    description: >
+      Turns off all harmony activities.
+    fields:
+      <<: *remote_field
+    variables:
+      harmony: "{{ remote | default('remote.living_room') }}"
+    sequence:
+    - action: remote.turn_on
+      target:
+        entity_id: "{{ harmony }}"
+      data:
+        activity: PowerOff
+
+  harmony_all_off:
+    alias: Turn All Off
+    mode: single
+    description: >
+      Turns off all harmony activities and auxilary devices.
+    fields:
+      <<: *remote_field
+      <<: *echo_field
+    variables:
+      poweroff: PowerOff
+      harmony: "{{ remote | default('remote.living_room') }}"
+      echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+    sequence:
+    - action: remote.turn_on
+      target:
+        entity_id: "{{ harmony }}"
+      data:
+        activity: "{{ poweroff }}"
+    - wait_template: "{{ is_state_attr(harmony, 'current_activity', poweroff) }}"
+    - action: switch.turn_off
+      target:
+        entity_id: "{{ echo }}"
+
+  roku_source_on:
+    alias: Turn On Roku Activity
+    mode: single
+    description: >
+      Turns on the harmony roku activity and opens the selected application.
+    fields:
+      source:
+        description: (Required) The source to select on the roku
+        example: Netflix
+        required: true
+        selector:
+          select:
+            options:
+            - Home
+            - Disney Plus
+            - HBO Max
+            - Hulu
+            - Netflix
+            - Peacock TV
+            - Plex - Free Movies & TV
+            - Prime Video
+            - Redbox.
+            - Roku Media Player
+            - The Roku Channel
+            - Vudu Movie & TV Store
+            - YouTube
+      roku:
+        description: (Optional) The Roku media_player.
+        example: media_player.roku_living_room
+        selector:
+          entity:
+            domain: media_player
+            integration: roku
+      <<: *echo_field
+    variables:
+      switch: switch.roku
+      media_player: "{{ roku | default('media_player.roku_living_room') }}"
+      echo: "{{ echo_through_reciever | default('switch.echo_through_receiver') }}"
+    sequence:
+    - choose:
+      - conditions:
+        - condition: template
+          value_template: "{{ is_state(switch, 'off') }}"
+        sequence:
+        - action: switch.turn_on
+          target:
+            entity_id: "{{ switch }}"
+      default:
+      - action: switch.turn_off
+        target:
+          entity_id: "{{ echo }}"
+    - wait_template: "{{ is_state(switch, 'on') }}"
+    - action: media_player.select_source
+      target:
+        entity_id: "{{ media_player }}"
+      data:
+        source: "{{ source }}"

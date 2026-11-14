@@ -76,7 +76,7 @@ New self-contained features go in `packages/` (see `packages/leak_detection.yaml
 
 `custom_components/` is **git-ignored**: changes there are not versioned in this repo. Several of these are the owner's own projects with separate upstream repos. Make real fixes there, not here.
 
-- Owner-maintained: `door_buddy`, `harmony_helper`, `multizone_controller` (upstream repos listed in `CLAUDE.local.md`). Their YAML config is in `door_buddy.yaml` and `harmony_helper.yaml`. Dashboard and remote templates (`custom_templates/harmony.jinja`, `lovelace/templates/remote*`) depend on harmony_helper entities.
+- Owner-maintained: `door_buddy`, `harmony_helper`, `multizone_controller` (upstream repos listed in `CLAUDE.local.md`). Their YAML config is in `door_buddy.yaml` and `packages/living_room_harmony.yaml`. Dashboard and remote templates (`custom_templates/harmony.jinja`, `lovelace/templates/remote*`) depend on harmony_helper entities.
 - Third-party (HACS): `lovelace_gen`, `custom_icons`, `ge_home`, `pirateweather`, `spook`, `toyota_na`. Spook raises repairs for references to missing entities and services, so renaming or removing an entity usually means updating every reference to it.
 
 ## ESPHome
@@ -101,7 +101,7 @@ Goal: over time, move features whose automations, scripts and templates are spli
 - **Keep all content and YAML anchors/aliases.** Never drop, inline or merge an anchor. Before merging, list the anchor names in every source file. HA doesn't reject a duplicate anchor name; the later definition silently takes over, so aliases end up pointing at the wrong content. When two source files use the same anchor name, rename one of them and every alias that refers to it. That rename is the only change allowed for anchors.
 - Remove the content from its old file in the same change, or HA sees duplicate IDs and script keys. If an old file ends up empty, delete it rather than leaving it empty under an `!include_dir_merge_*` directory.
 - YAML anchors only work within one file. Make sure every anchor still has its alias in the same file after the move.
-- Jinja macros stay in `custom_templates/`, and integration configs with their own top-level key (e.g. `harmony_helper.yaml`) can stay where they are.
+- Jinja macros stay in `custom_templates/`, and integration configs with their own top-level key (e.g. `door_buddy.yaml`) can stay where they are.
 - Some packages intentionally rely on UI helpers. They're listed in each package's header comment and should stay in the UI (e.g. `sensor.master_bathroom_humidity_change` and the trend sensors used by `master_bathroom_humidity`).
 - Start every package with a short description (one or two comment lines) of what the package does, followed by a header comment listing its entities by `entity_id`:
   ```yaml
@@ -140,7 +140,6 @@ Goal: over time, move features whose automations, scripts and templates are spli
 ### Candidates
 
 Spread across two folders:
-- [ ] harmony (automation, scripts)
 - [ ] events (automation, template)
 - [ ] plants (automation, template, top-level plants.yaml)
 
@@ -164,6 +163,7 @@ Done:
 - [x] run_schedule (packages/running_training_programs.yaml)
 - [x] holiday (packages/holiday_lighting.yaml; also includes template/seasons.yaml and the Indoor Holiday switch from template/wled_ambiance.yaml)
 - [x] irrigation (packages/irrigation_scheduler.yaml)
+- [x] harmony (packages/living_room_harmony.yaml, living_room_remote.yaml and living_room_yamaha.yaml; also includes harmony_helper.yaml, scripts/cast.yaml, template/living_room_remote.yaml, template/yamaha.yaml, template/cast_workout.yaml and the Play/Pause lighting automation from automation/reactions.yaml)
 
 ## Known issues
 
@@ -176,9 +176,6 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/doorbell.yaml
 - The notification automation's alias is just `Notify`, which is hard to tell apart from other automations in the UI and logs. Its entity is `automation.announce_and_notify_on_doorbell_press`.
 - "Fix Doorbell Chime Status" in `automation/reactions.yaml` is doorbell-related and probably belongs in this package. It uses `sensor.doorbell_chime_off` and `switch.doorbell_chime_active`. It also mixes syntax: it has `triggers:` and `conditions:`, but a legacy top-level `action:`.
-
-### packages/tv_ambient_lighting.yaml
-- "Turn Off Hyperion with Activities" (`automation.harmony_turn_off_hyperion_with_harmony_activities`) is with the harmony automations. It belongs to harmony; keep it in mind when migrating harmony.
 
 ### packages/laundry_monitor.yaml
 - `input_number.test_washer` (UI helper) is an unused leftover, probably from building the power detection. Nothing references it.
