@@ -1,0 +1,115 @@
+# Notifies when the UPS switches to battery power, and if power isn't
+# restored within a minute, runs the power down sequence for the server.
+#
+# External entities used:
+#   Network UPS Tools (NUT) (nut)
+#     Server Room: Cyberpower (94e3b4146faeccb623c9382654d7b25e)
+#       sensor.cyberpower_output_voltage
+#       sensor.cyberpower_status_data
+#   Synology DSM (synology_dsm)
+#     Server Room: orion (bd91b19fde9fd82e50999c68f38c971c)
+#       button.orion_shutdown
+#   scripts/notifiers.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   binary_sensor.house_power_status
+#   binary_sensor.house_voltage_status
+#   script.power_down_sequence
+
+automation:
+- alias: Notify Power Outage
+  id: ups_notify_power_outage
+  triggers:
+  - id: notify
+    trigger: state
+    entity_id: binary_sensor.house_power_status
+    to: 'on'
+  - id: power off
+    trigger: state
+    entity_id: binary_sensor.house_power_status
+    to: 'on'
+    for: "00:01:00"
+  - id: cancel
+    trigger: state
+    entity_id: binary_sensor.house_power_status
+    from: 'on'
+    to: 'off'
+  variables:
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    message: >
+      {% if trigger.id == 'notify' %}
+        Detected power outage, starting power down sequence in 1 minute if power is not restored.
+      {% elif trigger.id == 'power off' %}
+        Power was not restored, starting power down sequence.
+      {% else %}
+        Power has restored, canceling power down sequence.
+      {% endif %}
+  conditions:
+  - condition: template
+    value_template: "{{ valid }}"
+  actions:
+  - action: script.notify
+    data:
+      message: "{{ message }}"
+  - condition: template
+    value_template: "{{ trigger.id == 'power off' }}"
+  - action: script.power_down_sequence
+
+script:
+  power_down_sequence:
+    alias: Power Down Sequence
+    mode: single
+    fields:
+      devices:
+        description: Devices to power off
+        example: Synology DSM
+        selector:
+          select:
+            multiple: true
+            options:
+            - Synology DSM
+    variables:
+      selected: >
+        {{ devices | default([]) }}
+      config:
+      - name: Synology DSM
+        service: button.press
+        target:
+          entity: button.orion_shutdown
+      services: >
+        {{ config | selectattr('name', 'in', selected) | list }}
+    sequence:
+    - condition: template
+      value_template: "{{ services | length > 0 }}"
+    - repeat:
+        for_each: "{{ services }}"
+        sequence:
+        - action: script.notify
+          data:
+            message: Shutting down {{ repeat.item.name }}
+        - action: "{{ repeat.item.service }}"
+          target: "{{ repeat.item.target }}"
+
+template:
+- binary_sensor:
+  - unique_id: house_power_status
+    name: House Power Status
+    default_entity_id: binary_sensor.house_power_status
+    state: > 
+      {{ 'OB' in states('sensor.cyberpower_status_data') }}
+    device_class: problem
+    attributes:
+      template: ups
+
+  - unique_id: house_voltage_status
+    name: House Voltage Status
+    default_entity_id: binary_sensor.house_voltage_status
+    state: > 
+      {{ states('sensor.cyberpower_output_voltage') | float > 118 }}
+    availability: >
+      {{ states('sensor.cyberpower_output_voltage') | is_number }}
+    device_class: problem
+    attributes:
+      template: ups

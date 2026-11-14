@@ -143,7 +143,6 @@ Spread across all three folders:
 - [ ] holiday (automation/holiday, scripts/holiday, template/christmas, template/wled_christmas; macros stay in custom_templates/holiday.jinja)
 - [ ] irrigation (automation, scripts, template)
 - [ ] lzw45 (automation, scripts, template)
-- [ ] ups (automation, scripts, template)
 - [ ] todo (automation/todo, template/todo, scripts/todo_today)
 
 Spread across two folders:
@@ -166,6 +165,7 @@ Done:
 - [x] basement humidity (packages/basement_humidity_alert.yaml)
 - [x] hyperion (packages/tv_ambient_lighting.yaml)
 - [x] laundry (packages/laundry_monitor.yaml; also includes the laundry blocks from template/energy.yaml)
+- [x] ups (packages/power_outage_shutdown.yaml)
 
 ## Known issues
 
