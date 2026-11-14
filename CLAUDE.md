@@ -153,7 +153,6 @@ Spread across two folders:
 - [ ] hyperion (automation, template)
 - [ ] run_schedule (scripts, template)
 - [ ] update (scripts, template)
-- [ ] doorbell (automation/door_bell, template/doorbell)
 - [ ] plants (automation, template, top-level plants.yaml)
 - [ ] basement humidity (automation/humidity, the Basement Humidity High binary sensor from template/humidity)
 
@@ -165,6 +164,7 @@ Grouped by name, to check before migrating:
 
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
+- [x] doorbell (packages/doorbell.yaml)
 
 ## Known issues
 
@@ -173,6 +173,10 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/master_bathroom_humidity.yaml
 - Still uses legacy syntax. The trigger-based template block has `trigger:` with `platform:`, and the automation has `trigger:`/`platform:`, `condition:`, `action:` and `service:`.
 - The UI trend helpers `binary_sensor.master_bathroom_humidity_rising` and `binary_sensor.master_bathroom_humidity_falling` aren't used by anything in the package. They're probably left over from initial testing, and are listed as unused (but related) in the header.
+
+### packages/doorbell.yaml
+- The notification automation's alias is just `Notify`, which is hard to tell apart from other automations in the UI and logs. Its entity is `automation.announce_and_notify_on_doorbell_press`.
+- "Fix Doorbell Chime Status" in `automation/reactions.yaml` is doorbell-related and probably belongs in this package. It uses `sensor.doorbell_chime_off` and `switch.doorbell_chime_active`. It also mixes syntax: it has `triggers:` and `conditions:`, but a legacy top-level `action:`.
 
 ### packages/garbage_notifications.yaml
 - The shared condition in `script.mobile_app_turn_on` / `script.mobile_app_turn_off` checks `next_state is not none`, but `next_state` is never defined. An undefined variable renders as empty rather than `none`, so this check probably always passes. That means it doesn't guard anything.

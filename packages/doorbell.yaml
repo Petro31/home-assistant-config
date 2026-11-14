@@ -1,0 +1,79 @@
+# Sends a notification when the doorbell is pressed (at most once every
+# 15 seconds) and briefly disables the chime after each press.
+#
+# External entities used:
+#   ESPHome (esphome)
+#     Porch: Doorbell (2bb10514634b0503f55fcb35ed9e5826)
+#       switch.doorbell_chime
+#       switch.doorbell_chime_active
+#   scripts/notifiers.yaml
+#     script.notify
+#
+# Unused (but related) entities:
+#   History stats helper (history_stats, UI)
+#     Porch: Doorbell (2bb10514634b0503f55fcb35ed9e5826)
+#       sensor.doorbell_chime_off
+#
+# Entities created by this package:
+#   binary_sensor.doorbell_chime
+
+automation:
+- alias: Notify
+  id: announce_and_notify_on_doorbell_press
+  mode: parallel
+  triggers:
+  - trigger: state
+    entity_id: 
+    - binary_sensor.doorbell_chime
+    to: 'on'
+    from: 'off'
+  variables:
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    timeout: >
+      {%- if valid %}
+        {{ as_timestamp(trigger.to_state.last_changed, 0) - as_timestamp(trigger.from_state.last_changed, 0) }}
+      {% endif %}
+    continue: >
+      {{ timeout and timeout > 15 }}
+  conditions:
+  - condition: template
+    value_template: "{{ continue }}"
+  actions:
+  - action: script.notify
+    data:
+      title: "Door Bell!"
+      message: "Door Bell!"
+
+- alias: Suppress Chime
+  id: suppress_doorbell_chime
+  mode: single
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.doorbell_chime
+    to: 'on'
+    from: 'off'
+  actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.doorbell_chime_active
+  - delay: "00:00:15"
+  - action: switch.turn_on
+    target:
+      entity_id: switch.doorbell_chime_active
+
+template:
+- binary_sensor:
+  - unique_id: doorbell_chime
+    name: Doorbell Chime
+    default_entity_id: binary_sensor.doorbell_chime
+    device_class: sound
+    state: >
+      {{ is_state('switch.doorbell_chime', 'on') }}
+    availability: >
+      {{ expand('switch.doorbell_chime') 
+                | selectattr('state', 'in', ['unknown', 'unavailable']) 
+                | list | length == 0 }}
+    attributes:
+      template: doorbell
