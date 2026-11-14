@@ -133,6 +133,7 @@ Goal: over time, move features whose automations, scripts and templates are spli
   - Entities created by this package are listed by their real `entity_id` from the entity registry, not one guessed from the name. Leave out automations; they aren't referenced by `entity_id`.
 - Shared plumbing stays shared. "Events - Forward Reload Templates" in `automation/events.yaml` fires `templates_reloaded`, which is used by both `master_bathroom_humidity` and `template/seasons.yaml`.
 - Check that the package filename doesn't clash with an existing package.
+- Name the package after what it does, matching its description (e.g. `garage_parking_laser`, not `laser`). The candidate names below are only labels.
 - Record any problems you notice (bugs, leftover entities, legacy syntax outside the change) under [Known issues](#known-issues) instead of fixing them.
 - Afterwards: run a config check, then reload the affected domains. Restart instead if the package includes non-reloadable config (e.g. `sensor:` platforms or `plant:`).
 
@@ -148,7 +149,6 @@ Spread across all three folders:
 Spread across two folders:
 - [ ] harmony (automation, scripts)
 - [ ] laundry (automation, scripts)
-- [ ] laser (automation, scripts)
 - [ ] events (automation, template)
 - [ ] hyperion (automation, template)
 - [ ] run_schedule (scripts, template)
@@ -165,6 +165,7 @@ Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
 - [x] doorbell (packages/doorbell.yaml)
 - [x] update (packages/update.yaml)
+- [x] laser (packages/garage_parking_laser.yaml; also includes template/garage.yaml)
 
 ## Known issues
 
