@@ -148,7 +148,6 @@ Grouped by name, to check before migrating:
 - [ ] wled (scripts/wled, template/wled_ambiance)
 - [ ] lighting (scripts/lights, template/light_*_targets, template/light_great_room)
 - [ ] echos/alexa (automation/echos, scripts/alexa)
-- [ ] basement receiver (template/basement_reciever.yaml, plus binary_sensor.basement_yamaha_receiver from packages/living_room_yamaha.yaml; its switches call the receiver scripts in living_room_yamaha)
 
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
@@ -165,6 +164,7 @@ Done:
 - [x] holiday (packages/holiday_lighting.yaml; also includes template/seasons.yaml and the Indoor Holiday switch from template/wled_ambiance.yaml)
 - [x] irrigation (packages/irrigation_scheduler.yaml)
 - [x] harmony (packages/living_room_harmony.yaml, living_room_remote.yaml and living_room_yamaha.yaml; also includes harmony_helper.yaml, scripts/cast.yaml, template/living_room_remote.yaml, template/yamaha.yaml, template/cast_workout.yaml and the Play/Pause lighting automation from automation/reactions.yaml)
+- [x] basement receiver (packages/basement_yamaha.yaml; also includes the yamaha platform and the Deck/Basement Speakers from media_player.yaml, the basement multizone_controller sensor from sensor.yaml, and the Basement Yamaha Receiver sensor from packages/living_room_yamaha.yaml)
 
 ## Known issues
 
@@ -203,6 +203,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/holiday_lighting.yaml
 - `script.indoor_ambiance` was removed from YAML but its entity registry entry is still there (shows as unavailable/restored). Delete it in Settings → Entities.
+
+### packages/basement_yamaha.yaml
+- `switch.basement_bluetooth` is broken (the switch died; a replacement is planned). Until it's replaced, the Echo (Deck) and Echo (Basement) switches can't turn on. When it's replaced, keep the same entity ID or update the 2 switches.
 
 ### CLAUDE.md
 - The bullet about UI helpers under "How to migrate a feature" says the trend sensors are "used by `master_bathroom_humidity`". They aren't; the package uses the derivative helper `sensor.master_bathroom_humidity_change`.

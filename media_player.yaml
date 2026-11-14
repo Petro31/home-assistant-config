@@ -1,31 +1,3 @@
-  - platform: yamaha
-    host: !secret yamaha_host
-    source_ignore:
-      - AV1
-      - AV2
-      - AV3
-      - AV4
-      - AV5
-      - AV6
-      - HDMI1
-      - HDMI2
-      - HDMI3
-      - HDMI4
-      - HDMI5
-      - NET RADIO
-      - Pandora
-      - Rhapsody
-      - SERVER
-      - SiriusXM
-      - Spotify
-      - TUNER
-      - USB
-      - V-AUX
-      - iPod (USB)
-    source_names:
-      AUDIO1: "Phone"
-      AUDIO2: "Echo"
-
   - platform: universal
     name: Living Room Speakers
     children:
@@ -35,16 +7,6 @@
     name: Dining Room Speakers
     children:
     - media_player.yamaha_rx_v6a_zone2
-
-  - platform: universal
-    name: Deck Speakers
-    children:
-    - media_player.yamaha_receiver
-
-  - platform: universal
-    name: Basement Speakers
-    children:
-    - media_player.yamaha_receiver_zone_2
 
   - platform: universal
     name: Bonus Room Television

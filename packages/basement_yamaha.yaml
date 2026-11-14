@@ -1,0 +1,179 @@
+# Basement Yamaha receiver (zone 1 is the Deck, zone 2 the Basement): the
+# yamaha media_player platform, Deck and Basement speaker players, a power
+# sensor, the multizone volume controller, and Echo and AirPlay switches for
+# each zone. The receiver doesn't support MusicCast, so it stays on the
+# yamaha platform.
+#
+# External entities used:
+#   packages/living_room_yamaha.yaml
+#     script.echo_through_media_player
+#     script.media_player_on
+#     script.media_player_off
+#   Not found (referenced, but no such entity exists):
+#     switch.basement_bluetooth (the Bluetooth switch broke; it will be replaced)
+#
+# Entities created by this package:
+#   media_player.yamaha_receiver (yamaha platform, no unique_id)
+#   media_player.yamaha_receiver_zone_2 (yamaha platform, no unique_id)
+#   media_player.deck_speakers (universal, no unique_id)
+#   media_player.basement_speakers (universal, no unique_id)
+#   sensor.basement_active_media_player (multizone_controller)
+#   binary_sensor.basement_yamaha_receiver
+#   switch.echo_through_deck
+#   switch.deck_airplay
+#   switch.echo_through_basement
+#   switch.basement_airplay
+
+media_player:
+  - platform: yamaha
+    host: !secret yamaha_host
+    source_ignore:
+      - AV1
+      - AV2
+      - AV3
+      - AV4
+      - AV5
+      - AV6
+      - HDMI1
+      - HDMI2
+      - HDMI3
+      - HDMI4
+      - HDMI5
+      - NET RADIO
+      - Pandora
+      - Rhapsody
+      - SERVER
+      - SiriusXM
+      - Spotify
+      - TUNER
+      - USB
+      - V-AUX
+      - iPod (USB)
+    source_names:
+      AUDIO1: "Phone"
+      AUDIO2: "Echo"
+
+  - platform: universal
+    name: Deck Speakers
+    children:
+    - media_player.yamaha_receiver
+
+  - platform: universal
+    name: Basement Speakers
+    children:
+    - media_player.yamaha_receiver_zone_2
+
+sensor:
+- platform: multizone_controller
+  unique_id: active_media_player_basement
+  zones:
+    - source: media_player.yamaha_receiver
+    - source: media_player.yamaha_receiver_zone_2
+  snap_volume: true
+  volume_increment: 0.05
+  volume_max: 1.0
+  volume_min: 0.2
+
+template:
+- binary_sensor:
+  - unique_id: yamaha_receiver_basement
+    name: Basement Yamaha Receiver
+    default_entity_id: binary_sensor.basement_yamaha_receiver
+    device_class: power
+    state: >
+      {{ expand('media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2') 
+                | selectattr('state','in',['on', 'playing', 'idle']) | list | length >= 1 }}
+    attributes:
+      template: yamaha
+
+- switch:
+
+  ##############
+  # DECK MUSIC #
+  ##############
+  
+  # Bluetooth to Echo
+  - unique_id: a0040da5-1837-495a-a7e6-880dac87985a
+    name: Echo
+    default_entity_id: switch.echo_through_deck
+    state: >
+      {{ is_state_attr('media_player.yamaha_receiver', 'source', 'Echo')
+         and is_state('switch.basement_bluetooth', 'on') }}
+    turn_on:
+    - action: script.echo_through_media_player
+      data:
+        switch: switch.basement_bluetooth
+        media_player: media_player.yamaha_receiver
+        desired_state: "on"
+        source: Echo
+      
+    turn_off:
+    - action: script.echo_through_media_player
+      data:
+        switch: switch.basement_bluetooth
+        media_player: media_player.yamaha_receiver
+        desired_state: "off"
+        source: Echo
+  
+  # Airplay
+  - unique_id: 168dea92-5fd4-4888-b5d7-7b97393bdd16
+    name: Airplay
+    default_entity_id: switch.deck_airplay
+    state: >
+      {{ is_state_attr('media_player.yamaha_receiver', 'source', 'AirPlay') }}
+    turn_on:
+    - action: script.media_player_on
+      data:
+        media_player: media_player.yamaha_receiver
+        volume: 0.7
+        source: AirPlay
+      
+    turn_off:
+    - action: script.media_player_off
+      data:
+        media_player: media_player.yamaha_receiver
+  
+  ##################
+  # BASEMENT MUSIC #
+  ##################
+  
+  # Bluetooth to Echo
+  - unique_id: fde6c03a-07c5-4ad0-9dc6-742214a59d7b
+    name: Echo
+    default_entity_id: switch.echo_through_basement
+    state: >
+      {{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'Echo')
+         and is_state('switch.basement_bluetooth', 'on') }}
+    turn_on:
+    - action: script.echo_through_media_player
+      data:
+        switch: switch.basement_bluetooth
+        media_player: media_player.yamaha_receiver_zone_2
+        desired_state: "on"
+        source: Echo
+  
+    turn_off:
+    - action: script.echo_through_media_player
+      data:
+        switch: switch.basement_bluetooth
+        media_player: media_player.yamaha_receiver_zone_2
+        desired_state: "off"
+        source: Echo
+  
+  # Airplay
+  - unique_id: 1e6e1c2f-379d-4937-9d8d-635d9bbb719c
+    name: Airplay
+    default_entity_id: switch.basement_airplay
+    state: >
+      {{ is_state_attr('media_player.yamaha_receiver_zone_2', 'source', 'AirPlay') }}
+    turn_on:
+    - action: script.media_player_on
+      data:
+        media_player: media_player.yamaha_receiver_zone_2
+        volume: 0.7
+        source: AirPlay
+      
+    turn_off:
+    - action: script.media_player_off
+      data:
+        media_player: media_player.yamaha_receiver_zone_2

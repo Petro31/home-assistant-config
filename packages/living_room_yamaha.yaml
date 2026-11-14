@@ -1,4 +1,4 @@
-# Living room Yamaha receivers: receiver power sensors, source and sound mode
+# Living room Yamaha receivers: receiver power sensor, source and sound mode
 # switches, Echo and AirPlay music through the RX-V6A zones, and scripts that
 # turn media players on at a set source and volume.
 #
@@ -11,15 +11,11 @@
 #   Z-Wave JS (zwave_js)
 #     Living Room: Echo Outlet (313fff6a2ab8c1e3c9b1cd8b3139c4bb)
 #       switch.floating_outlet_switch
-#   media_player.yaml (basement Yamaha receiver)
-#     media_player.yamaha_receiver
-#     media_player.yamaha_receiver_zone_2
 #   packages/living_room_remote.yaml
 #     switch.poweroff
 #
 # Entities created by this package:
 #   binary_sensor.yamaha_receiver
-#   binary_sensor.basement_yamaha_receiver
 #   switch.xbox_source
 #   switch.playstation_source
 #   switch.nintendo_switch_source
@@ -291,17 +287,6 @@ template:
     device_class: power
     state: >
       {{ expand('media_player.yamaha_rx_v6a', 'media_player.yamaha_rx_v6a_zone2') 
-                | selectattr('state','in',['on', 'playing', 'idle']) | list | length >= 1 }}
-    attributes:
-      template: yamaha
-
-- binary_sensor:
-  - unique_id: yamaha_receiver_basement
-    name: Basement Yamaha Receiver
-    default_entity_id: binary_sensor.basement_yamaha_receiver
-    device_class: power
-    state: >
-      {{ expand('media_player.yamaha_receiver', 'media_player.yamaha_receiver_zone_2') 
                 | selectattr('state','in',['on', 'playing', 'idle']) | list | length >= 1 }}
     attributes:
       template: yamaha
