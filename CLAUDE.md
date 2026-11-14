@@ -142,7 +142,6 @@ Goal: over time, move features whose automations, scripts and templates are spli
 Spread across all three folders:
 - [ ] holiday (automation/holiday, scripts/holiday, template/christmas, template/wled_christmas; macros stay in custom_templates/holiday.jinja)
 - [ ] irrigation (automation, scripts, template)
-- [ ] lzw45 (automation, scripts, template)
 
 Spread across two folders:
 - [ ] harmony (automation, scripts)
@@ -166,6 +165,7 @@ Done:
 - [x] laundry (packages/laundry_monitor.yaml; also includes the laundry blocks from template/energy.yaml)
 - [x] ups (packages/power_outage_shutdown.yaml)
 - [x] todo (packages/daily_todo_lists.yaml)
+- [x] lzw45 (packages/lzw45_led_strips.yaml; also includes the Mood Lighting switch from template/living_room_remote.yaml)
 
 ## Known issues
 
@@ -185,6 +185,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/laundry_monitor.yaml
 - `input_number.test_washer` (UI helper) is an unused leftover, probably from building the power detection. Nothing references it.
 - The "Notify" automation's alias is generic, and its entity is `automation.dryer_notify` even though it handles both the washer and the dryer.
+
+### packages/lzw45_led_strips.yaml
+- The LZW45 strips are expected to be removed. When they are, delete this package and its 19 UI helpers (listed in the header), and remove `switch.lzw45_mood_lighting` from `alexa.yaml` and `cloud.yaml`, the Mood Lighting dashboard view (`lovelace/views/mood_lighting.yaml`), and the strip lights from `automation/buttons.yaml` and `lovelace/views/master.yaml`.
 
 ### automation/calibrations.yaml
 - "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`. It also still uses legacy syntax.

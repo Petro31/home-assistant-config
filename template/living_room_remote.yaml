@@ -1,35 +1,5 @@
 - switch:
   
-  # LZW MOOD LIGHTING
-  - unique_id: lzw45_mood_lighting
-    name: Mood Lighting
-    state: "{{ states('input_text.lzw45_last_effect') != 'off' }}"
-    turn_on:
-    - service: input_number.set_value
-      data:
-        entity_id: input_number.quick_strip_color_temp
-        value: 2700
-    - service: input_select.select_option
-      data:
-        entity_id: input_select.quick_strip_effect
-        option: solid
-    turn_off:
-    - choose:
-      - conditions:
-        - condition: template
-          value_template: "{{ is_state('input_select.quick_strip_effect', 'off') }}"
-        sequence:
-        - service: script.lzw45_ui_quick_effect
-        - service: input_text.set_value
-          data:
-            entity_id: input_text.lzw45_last_effect
-            value: "off"
-      default:
-        service: input_select.select_option
-        data:
-          entity_id: input_select.quick_strip_effect
-          option: 'off'
-  
   # XBOX HARMONY ACTIVITY
   - unique_id: 2bb5c91b-5ff2-41d5-b1fa-7fa603c54fee
     name: Xbox One
