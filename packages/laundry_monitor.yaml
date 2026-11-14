@@ -56,7 +56,7 @@ automation:
     name: >
       {{ entity_name(trigger.entity_id).split(' ')[0] if valid else 'Unknown' }}
     announce: >
-      {{ name.lower() if name != 'Unkonwn' else none }}
+      {{ name.lower() if name != 'Unknown' else none }}
       
   conditions:
   - condition: template
@@ -328,7 +328,7 @@ template:
   - unique_id: dryer_status
     name: Dryer Status
     default_entity_id: binary_sensor.dryer_status
-    device_class: door
+    device_class: power
     state: >
       {{ trigger.to_state.state | float > 150 }}
     attributes:

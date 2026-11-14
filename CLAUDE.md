@@ -182,6 +182,10 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/tv_ambient_lighting.yaml
 - "Turn Off Hyperion with Activities" (`automation.harmony_turn_off_hyperion_with_harmony_activities`) is with the harmony automations. It belongs to harmony; keep it in mind when migrating harmony.
 
+### packages/laundry_monitor.yaml
+- Unused leftovers related to the package, probably from building the power detection: `input_number.test_washer` (UI helper), and `binary_sensor.washer_power_mqtt` / `binary_sensor.dryer_power_mqtt` in `mqtt/binary_sensor.yaml` (`dryer_power_mqtt` is disabled). Nothing references them.
+- The "Notify" automation's alias is generic, and its entity is `automation.dryer_notify` even though it handles both the washer and the dryer.
+
 ### automation/calibrations.yaml
 - "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`. It also still uses legacy syntax.
 
