@@ -139,9 +139,6 @@ Goal: over time, move features whose automations, scripts and templates are spli
 
 ### Candidates
 
-Spread across all three folders:
-- [ ] irrigation (automation, scripts, template)
-
 Spread across two folders:
 - [ ] harmony (automation, scripts)
 - [ ] events (automation, template)
@@ -166,6 +163,7 @@ Done:
 - [x] lzw45 (packages/lzw45_led_strips.yaml; also includes the Mood Lighting switch from template/living_room_remote.yaml)
 - [x] run_schedule (packages/running_training_programs.yaml)
 - [x] holiday (packages/holiday_lighting.yaml; also includes template/seasons.yaml and the Indoor Holiday switch from template/wled_ambiance.yaml)
+- [x] irrigation (packages/irrigation_scheduler.yaml)
 
 ## Known issues
 
