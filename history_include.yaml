@@ -50,8 +50,8 @@ entities:
   - sensor.garage_luminance
   - sensor.house_humidity
   - sensor.house_temperature
-  - sensor.house_power_status
-  - sensor.house_voltage_status
+  - binary_sensor.house_power_status
+  - binary_sensor.house_voltage_status
   - sensor.lambo_weight
   - sensor.markus_temperature
   - sensor.master_bathroom_filtered_humidity_statistics

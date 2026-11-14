@@ -43,6 +43,8 @@ automation:
         Detected power outage, starting power down sequence in 1 minute if power is not restored.
       {% elif trigger.id == 'power off' %}
         Power was not restored, starting power down sequence.
+      {% elif trigger.to_state.last_changed - trigger.from_state.last_changed >= timedelta(minutes=1) %}
+        Power has restored, but the power down sequence already ran. Devices that were shut down need to be turned back on.
       {% else %}
         Power has restored, canceling power down sequence.
       {% endif %}
@@ -56,6 +58,9 @@ automation:
   - condition: template
     value_template: "{{ trigger.id == 'power off' }}"
   - action: script.power_down_sequence
+    data:
+      devices:
+      - Synology DSM
 
 script:
   power_down_sequence:
@@ -77,7 +82,7 @@ script:
       - name: Synology DSM
         service: button.press
         target:
-          entity: button.orion_shutdown
+          entity_id: button.orion_shutdown
       services: >
         {{ config | selectattr('name', 'in', selected) | list }}
     sequence:
@@ -107,7 +112,7 @@ template:
     name: House Voltage Status
     default_entity_id: binary_sensor.house_voltage_status
     state: > 
-      {{ states('sensor.cyberpower_output_voltage') | float > 118 }}
+      {{ states('sensor.cyberpower_output_voltage') | float < 118 }}
     availability: >
       {{ states('sensor.cyberpower_output_voltage') | is_number }}
     device_class: problem
