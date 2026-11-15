@@ -1,15 +1,28 @@
 # Outdoor weather station: Outside Temperature and Outside Humidity from the
-# AMBWeather station on the roof.
+# AMBWeather station on the roof, and an Outside weather entity that combines
+# the station's readings with PirateWeather's condition and forecast.
 #
 # External entities used:
 #   MQTT (mqtt)
 #     Roof: AMBWeather (8c33175b612442b7e4c783c384ab0ec3)
+#       sensor.ambweather_baromrel
+#       sensor.ambweather_dewpoint
+#       sensor.ambweather_feelslike
+#       sensor.ambweather_hourlyrain
 #       sensor.ambweather_humidity1
 #       sensor.ambweather_temp1
+#       sensor.ambweather_uv
+#       sensor.ambweather_winddir
+#       sensor.ambweather_windgust
+#       sensor.ambweather_windspeed
+#   PirateWeather (pirateweather)
+#     No area: PirateWeather (d4be6c1d518c36939b6955a2d84e085d)
+#       weather.home
 #
 # Entities created by this package:
 #   sensor.outside_temperature
 #   sensor.outside_humidity
+#   weather.outside
 
 template:
 - sensor:
@@ -35,3 +48,61 @@ template:
     availability: >
       {{ has_value('sensor.ambweather_humidity1') }}
     unit_of_measurement: '%'
+
+# Trigger-based so each update can fetch PirateWeather's forecasts.
+- triggers:
+  - trigger: time_pattern
+    minutes: /5
+  - trigger: state
+    entity_id: weather.home
+  - trigger: homeassistant
+    event: start
+  - trigger: event
+    event_type: event_template_reloaded
+  actions:
+  - action: weather.get_forecasts
+    target:
+      entity_id: weather.home
+    data:
+      type: daily
+    response_variable: daily
+    continue_on_error: true
+  - action: weather.get_forecasts
+    target:
+      entity_id: weather.home
+    data:
+      type: hourly
+    response_variable: hourly
+    continue_on_error: true
+  weather:
+  - unique_id: a145572d-f792-41b3-aa9a-6f9f2ade5b73
+    name: Outside
+    default_entity_id: weather.outside
+    condition: >-
+      {%- set rain = states('sensor.ambweather_hourlyrain') | float(0) %}
+      {%- set wind = states('sensor.ambweather_windspeed') | float(0) %}
+      {%- set base = states('weather.home') %}
+      {%- if rain >= 0.3 %}pouring
+      {%- elif rain > 0 and base in ['lightning-rainy', 'snowy', 'snowy-rainy', 'hail', 'pouring'] %}{{ base }}
+      {%- elif rain > 0 %}{{ 'snowy-rainy' if states('sensor.outside_temperature') | float(50) <= 34 else 'rainy' }}
+      {%- elif wind >= 20 and base in ['cloudy', 'partlycloudy'] %}windy-variant
+      {%- elif wind >= 20 and base in ['sunny', 'clear-night'] %}windy
+      {%- else %}{{ base }}
+      {%- endif %}
+    temperature: "{{ states('sensor.outside_temperature') }}"
+    humidity: "{{ states('sensor.outside_humidity') }}"
+    apparent_temperature: "{{ states('sensor.ambweather_feelslike') }}"
+    dew_point: "{{ states('sensor.ambweather_dewpoint') }}"
+    pressure: "{{ states('sensor.ambweather_baromrel') }}"
+    wind_speed: "{{ states('sensor.ambweather_windspeed') }}"
+    wind_gust_speed: "{{ states('sensor.ambweather_windgust') }}"
+    wind_bearing: "{{ states('sensor.ambweather_winddir') }}"
+    uv_index: "{{ states('sensor.ambweather_uv') }}"
+    temperature_unit: °F
+    pressure_unit: inHg
+    wind_speed_unit: mph
+    precipitation_unit: in
+    forecast_daily: "{{ daily['weather.home'].forecast if daily is defined else [] }}"
+    forecast_hourly: "{{ hourly['weather.home'].forecast if hourly is defined else [] }}"
+    attribution: Ambient Weather station on the roof; condition and forecast from PirateWeather
+    availability: "{{ has_value('sensor.outside_temperature') and has_value('sensor.outside_humidity') }}"
