@@ -68,6 +68,24 @@ New features go in `packages/` (see `packages/leak_detection.yaml` for the curre
 - Most cards are `custom:button-card` and other HACS frontend cards. `www/community/` is git-ignored.
 - To pick up template edits, use **Refresh** from the dashboard's three-dot menu. Changes to `lovelace.yaml` or the `lovelace_gen:` config need an HA restart.
 
+### How the views are built
+
+- `ui-home.yaml` is only `views: !include lovelace/views/master.yaml`. `ui-status.yaml` points the same way at `status_master.yaml`, which follows the same pattern (with its own copy of the macros and `dashboard = 'ui-status'`).
+- `master.yaml` holds the dashboard data as Jinja literals at the top: `areas` (each with `entities`, `header`, `type` and `display` rules), `doors`, `echos`, and `main_buttons` (the top-level menu; a button's `entities` can be a list of sub-buttons such as `areas` or `doors`). Most frontend changes, like adding an entity to an area or adding an area or menu button, are edits to these lists.
+- Below the data, `master.yaml` writes the view list in four passes:
+  1. the Home view
+  2. one view per main button: its own `view:` file if it has one, otherwise `dynamic_view_builder.yaml`
+  3. the person map views
+  4. one generated subview per sub-button (each area and door), with `back_path` set to the parent's slug; then `remote_settings.yaml`
+- Jinja dicts and lists can't be passed straight into an `!include`, so the `toyaml` / `buildmapping` / `builditerable` macros turn them back into indented YAML text inside each `!include` variable block. Their first argument is the indent string, so keep it in step with where the output lands.
+- `dynamic_view_builder.yaml` is the generic view generator:
+  - Each `header` entry becomes a horizontal stack between `edge.yaml` spacers. A header entry can be one card (mapping) or a row of cards (list). Header cards also get the view's `entities`, `back_path`, `name` and `icon`.
+  - `entities` are split into grids of `rows` × `columns` (default 3×3); short rows are padded with `spacer`.
+  - Each cell's card is chosen in this order: an explicit `type:`, then the domain lookup in `mapped_button_cards` (e.g. light/switch/fan → `toggle2.yaml`, sensor/binary_sensor → `sensor.yaml`), then `empty.yaml`.
+  - A dict entry without `entity` is a navigation button to a subview.
+- A view's `path` is its `name` lowercased with spaces replaced by `_`. Renaming an area or button changes its URL and the `back_path` of its subviews.
+- Leaf templates are in `lovelace/templates/` (`buttons/`, `summary/`, `headers/`, `remote/`), and most are `custom:button-card` configs. `summary/overview.yaml` builds the "N lights on" style summaries at render time from `display` (domain/state/icon/units rules) and `triggers_update` (defaults to the button's `entities`). `override_sensors` sets the sensors shown in place of the leftover ones.
+
 ## Custom integrations
 
 `custom_components/` is **git-ignored**: changes there are not versioned in this repo. Several of these are the owner's own projects with separate upstream repos. Make real fixes there, not here.
@@ -217,3 +235,10 @@ Problems found while adding package notes, moving packages or updating legacy ke
 - There's a known Xiaomi BLE problem with CGDK2 sensors; they should be discoverable again in HA 2026.12 (December 2026). On 2026-11-15 the user removed all three from the Xiaomi BLE integration: CGDK2 (BC8A) in the Bonus Bedroom (it had just got a new battery), CGDK2 (BCC2) and CGDK2 (BC7C). Until then these entities don't exist: `sensor.bonus_room_cgdk2_*`, `sensor.server_room_cgdk2_*` and `sensor.car_bays_xiaomi_ble_cgdk2_signal_strength`.
 - Their registry entries are kept as deleted entities with their old IDs (and the bonus room temperature/humidity keep the `house_climate` label), so HA should restore them when the devices are rediscovered. After upgrading to 2026.12, re-add them and check: the IDs came back unchanged, `sensor.bonus_room_cgdk2_temperature` / `_humidity` still have the `house_climate` label (`packages/house_climate.yaml` averages them), and the dashboards that show them work (`lovelace/views/master.yaml`, `lovelace/views/status_master.yaml`). Set the bonus room device's area to Bonus Bedroom if it doesn't come back.
 - Separate from these: the basement CGDK2's Xiaomi BLE entities (`sensor.xiaomi_ble_basement_cgdk2_*`) were deleted on 2026-09-18. It was then read through ESPHome (`sensor.basement_cgdk2_*`), but those entities belong to the "Basement Esp32" ESPHome config entry, which is disabled, so the basement CGDK2 isn't reporting either.
+
+### Dashboards (lovelace/)
+- `lovelace/views/dynamic_view_builder.yaml`: the `label` includes use `'..templates/headers/label.yaml'` and `'..templates/headers/label_dynamic.yaml'`, which are missing the `/` after `..`. This only matters when a view passes `label`.
+- `lovelace/views/dynamic_view_builder.yaml`: in the `card()` macro, `'entity' not in kwargs` tests a list of `(key, value)` pairs, so it's always true and `entities` is always appended to header cards. It's probably harmless, but it doesn't do what it looks like.
+- `lovelace/views/master.yaml`: the Music button's icon is `mdi:mdi:music-box`.
+- `lovelace/views/master.yaml`: the area `'Guest Bathoom'` is misspelled. Fixing it changes the view path from `guest_bathoom` to `guest_bathroom`.
+- `lovelace/views/master.yaml`: `testing` is never set, so the Testing button never renders. This may be intentional.
