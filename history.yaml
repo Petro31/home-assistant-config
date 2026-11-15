@@ -1,2 +1,0 @@
-  include: !include history_include.yaml
-  exclude: !include history_exclude.yaml

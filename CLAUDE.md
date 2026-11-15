@@ -33,7 +33,7 @@ The live Home Assistant `/config` directory (mounted over SMB; the share path is
 | `scenes.yaml` | `scene: !include` | Scenes (no `id:`, so they aren't in the entity registry) |
 | `themes/` | `!include_dir_merge_named` | (git-ignored) |
 
-Other top-level `*.yaml` files are single-domain includes referenced from `configuration.yaml`. Some (e.g. `http.yaml`, `history*.yaml`) are tracked but no longer included.
+Other top-level `*.yaml` files are single-domain includes referenced from `configuration.yaml` (or, for `ui-*.yaml`, dashboards loaded by `lovelace.yaml`). Despite their names, `history_include.yaml` and `history_exclude.yaml` are the recorder's include/exclude lists, loaded by `recorder.yaml`. When removing an include from `configuration.yaml`, delete the file too rather than leaving it behind.
 
 New features go in `packages/` (see `packages/leak_detection.yaml` for the current style). The old domain folders (`automation/`, `scripts/`, `template/`, `command_line/`) and flat domain files (`sensor.yaml`, `media_player.yaml`, `notify.yaml`, `compensation.yaml`) are gone; put new config of those domains in a package.
 

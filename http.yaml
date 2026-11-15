@@ -1,3 +1,0 @@
-use_x_forwarded_for: true
-trusted_proxies:
-  - !secret nginx_proxy
