@@ -1,0 +1,210 @@
+# System recorder: the recorder's MySQL database, 60-day retention, and which
+# entities get recorded. It records only the entities under include: entities,
+# plus every light, switch and fan not listed under exclude: entities.
+# Everything else (automations, scripts, helpers, most sensors) has no history
+# or logbook. Add an entity to include: if a dashboard history graph or a
+# history-based sensor needs it.
+#
+# Keep the system_ prefix on this filename, even though the folder repeats
+# it. HA names a package after its filename alone (the folder is ignored),
+# so a shorter name like recorder/logging/cloud could silently clash with
+# another package anywhere under packages/.
+#
+# The lists below name entities by ID; they aren't repeated in this header.
+# Entities created by this package: none.
+
+recorder:
+  db_url: !secret recorder_url
+  purge_keep_days: 60
+  include:
+    entities:
+      - binary_sensor.deck_motion_sensor_occupancy
+      - binary_sensor.dryer_status
+      - binary_sensor.garage_entry_door
+      - binary_sensor.main_door
+      - binary_sensor.master_bathroom_humidity_status
+      - binary_sensor.outside_temperature_falling
+      - binary_sensor.outside_temperature_rising
+      - binary_sensor.sliding_door
+      - binary_sensor.washer_status
+      - binary_sensor.washer
+      - binary_sensor.water_heater_water_leak_detected
+      - binary_sensor.right_sink_water_leak_detected
+      - binary_sensor.left_sink_water_leak_detected
+      - binary_sensor.kitchen_sink_water_leak_detected
+      - binary_sensor.powder_room_sink_water_leak_detected
+      - binary_sensor.leak
+      - climate.living_room_thermostat
+      - device_tracker.petro
+      - person.lambo
+      - person.petro
+      - sensor.bonus_room_switch_temperature
+      - sensor.core_300s_air_quality
+      - sensor.cpu_temperature
+      - sensor.cyberpower_battery_charge
+      - sensor.cyberpower_battery_runtime
+      - sensor.cyberpower_input_voltage
+      - sensor.cyberpower_load
+      - sensor.cyberpower_output_voltage
+      - sensor.cyberpower_status
+      - sensor.cyberpower_status_data
+      - sensor.database_size
+      - sensor.disk_free_home
+      - sensor.deck_motion_sensor_illuminance
+      - sensor.deck_motion_sensor_temperature
+      - sensor.disk_use_home
+      - sensor.disk_use_percent_home
+      - sensor.disk_use_total
+      - sensor.dryer_power
+      - sensor.house_humidity
+      - sensor.house_temperature
+      - binary_sensor.house_power_status
+      - binary_sensor.house_voltage_status
+      - sensor.lambo_weight
+      - sensor.master_bathroom_filtered_humidity_statistics
+      - sensor.master_bathroom_filtered_humidity
+      - sensor.master_bathroom_humidity_change
+      - sensor.memory_free
+      - sensor.memory_use
+      - sensor.memory_use_percent
+      - sensor.memory_use_total
+      - sensor.orion_temperature
+      - sensor.outside_temperature
+      - sensor.outside_humidity
+      - sensor.petro_weight
+      - sensor.plant_sensor_2_conductivity
+      - sensor.plant_sensor_2_illuminance
+      - sensor.plant_sensor_2_moisture
+      - sensor.plant_sensor_2_temperature
+      - sensor.plant_sensor_3_conductivity
+      - sensor.plant_sensor_3_illuminance
+      - sensor.plant_sensor_3_moisture
+      - sensor.plant_sensor_3_temperature
+      - sensor.processor_use
+      - sensor.roomba_battery_level
+      - sensor.server_room_switch_temperature
+      - sensor.shelly_em3_channel_a_energy
+      - sensor.shelly_em3_channel_a_power
+      - sensor.shelly_em3_channel_a_energy_cost
+      - sensor.shelly_em3_channel_b_energy
+      - sensor.shelly_em3_channel_b_power
+      - sensor.shelly_em3_channel_b_energy_cost
+      - sensor.sliding_door_temperature
+      - sensor.speedtest_download
+      - sensor.speedtest_ping
+      - sensor.speedtest_upload
+      - sensor.synology_average_disk_temp_volume_1
+      - sensor.synology_cpu_load_total
+      - sensor.synology_memory_usage_real
+      - sensor.synology_network_down
+      - sensor.synology_network_up
+      - sensor.synology_total_size_volume_1
+      - sensor.synology_used_space_volume_1
+      - sensor.synology_volume_used_volume_1
+      - sensor.washer_power
+
+      - sensor.bonus_room_cgdk2_battery
+      - sensor.bonus_room_cgdk2_humidity
+      - sensor.bonus_room_cgdk2_temperature
+
+      - sensor.garage_refrigerator_lywsdcgq_battery
+      - sensor.garage_refrigerator_lywsdcgq_humidity
+      - sensor.garage_refrigerator_lywsdcgq_temperature
+
+      - sensor.kitchen_lywsdcgq_battery
+      - sensor.kitchen_lywsdcgq_humidity
+      - sensor.kitchen_lywsdcgq_temperature
+
+      - sensor.master_bathroom_lywsdcgq_battery
+      - sensor.master_bathroom_lywsdcgq_humidity
+      - sensor.master_bathroom_lywsdcgq_temperature
+
+      - sensor.master_bedroom_lywsdcgq_battery
+      - sensor.master_bedroom_lywsdcgq_humidity
+      - sensor.master_bedroom_lywsdcgq_temperature
+
+      - sensor.server_room_cgdk2_battery
+      - sensor.server_room_cgdk2_humidity
+      - sensor.server_room_cgdk2_temperature
+
+      - sensor.upstairs_server_room_lywsdcgq_battery
+      - sensor.upstairs_server_room_lywsdcgq_humidity
+      - sensor.upstairs_server_room_lywsdcgq_temperature
+
+      - sensor.test_temperature_bme280_temperature
+      - sensor.test_temperature_bme280_humidity
+
+      - sensor.office_d1_mini_temperature
+      - sensor.office_d1_mini_humidity
+
+      - sensor.basement_cgdk2_humidity
+      - sensor.basement_cgdk2_temperature
+      - sensor.basement_cgdk2_battery_level
+
+      - sensor.basement_bme280_humidity
+      - sensor.basement_bme280_temperature
+
+      - binary_sensor.rain_bird_controller_rainsensor
+      - sensor.rain_bird_controller_raindelay
+
+      - sensor.apollo_air_1_1ecac0_co2
+      - sensor.apollo_air_1_1ecac0_humidity
+      - sensor.apollo_air_1_1ecac0_temperature
+
+      - binary_sensor.apollo_msr_2_8935e0_radar_zone_1_occupancy
+      - binary_sensor.apollo_msr_2_8935e0_radar_zone_2_occupancy
+      - binary_sensor.apollo_msr_2_8935e0_radar_zone_3_occupancy
+      - binary_sensor.apollo_msr_2_8935e0_radar_target
+      - binary_sensor.apollo_msr_2_8935e0_radar_moving_target
+      - binary_sensor.apollo_msr_2_8935e0_radar_still_target
+
+    domains:
+      - light
+      - switch
+      - fan
+  exclude:
+    entities:
+      - light.primary_holiday_bulbs_set
+      - light.secondary_holiday_bulbs_set
+      - switch.alexa_source
+      - switch.disney_plus
+      - switch.doorbell_chime
+      - switch.doorbell_restart
+      - switch.driveway_camera
+      - switch.echo_through_receiver
+      - switch.foyer_camera
+      - switch.garage_camera
+      - switch.hbo
+      - switch.hulu
+      - switch.intel_nuc
+      - switch.kitchen_camera
+      - switch.living_room_playstation
+      - switch.living_room_roku
+      - switch.living_room_switch
+      - switch.living_room_tv
+      - switch.living_room_window
+      - switch.living_room_xbox_one
+      - switch.lzw45_mood_lighting
+      - switch.netflix
+      - switch.nintendo_switch_source
+      - switch.orion_home_mode
+      - switch.peacock
+      - switch.phone_source
+      - switch.playstation_source
+      - switch.plex
+      - switch.poweroff
+      - switch.prime_video
+      - switch.playstation
+      - switch.roku
+      - switch.roku_source
+      - switch.surround_mode_action_game
+      - switch.surround_mode_adventure
+      - switch.surround_mode_drama
+      - switch.surround_mode_roleplaying_game
+      - switch.surround_mode_sci_fi
+      - switch.surround_mode_sports
+      - switch.surround_mode_standard
+      - switch.switch
+      - switch.tv
+      - switch.xbox_one
+      - switch.xbox_source

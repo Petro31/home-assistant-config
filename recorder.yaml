@@ -1,4 +1,0 @@
-  db_url: !secret recorder_url
-  purge_keep_days: 60
-  include: !include history_include.yaml
-  exclude: !include history_exclude.yaml
