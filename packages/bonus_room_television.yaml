@@ -1,0 +1,61 @@
+# Bonus room television: a media player for the bonus room TV that turns it on
+# and off and changes the volume with IR commands from the Broadlink remote,
+# with its on/off state taken from the Roku (Bonus Room Television sensor).
+#
+# External entities used:
+#   Broadlink (broadlink)
+#     Bonus Bedroom: Bonus Room Remote (330139a60fd1eed01dc76115d8cac194)
+#       remote.bonus_room_remote
+#   Roku (roku)
+#     Bonus Bedroom: Roku (b23c48344edbaf884ac7c90ec5ee4e7f)
+#       media_player.bonus_room_roku
+#
+# Entities created by this package:
+#   media_player.bonus_room_television (universal, no unique_id)
+#   binary_sensor.bonus_room_television
+
+media_player:
+  - platform: universal
+    name: Bonus Room Television
+    commands:
+      turn_on:
+        <<: &remote
+          action: remote.send_command
+          target:
+            entity_id: remote.bonus_room_remote
+        data:
+          device: TV
+          command: power
+      turn_off:
+        <<: *remote
+        data:
+          device: TV
+          command: power
+      volume_up:
+        <<: *remote
+        data:
+          device: TV
+          command: volume_up
+      volume_down:
+        <<: *remote
+        data:
+          device: TV
+          command: volume_down
+      volume_mute:
+        <<: *remote
+        data:
+          device: TV
+          command: volume_mute
+    attributes:
+      state: binary_sensor.bonus_room_television
+
+template:
+- binary_sensor:
+  - unique_id: bonus_room_television
+    name: Bonus Room Television
+    default_entity_id: binary_sensor.bonus_room_television
+    state: > 
+      {{ is_state('media_player.bonus_room_roku', 'on') }}
+    device_class: power
+    attributes:
+      template: bonus_room

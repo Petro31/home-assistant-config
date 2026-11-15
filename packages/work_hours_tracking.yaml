@@ -1,0 +1,51 @@
+# Work hours tracking: how long Petro and Lambo have been at work so far this
+# week (since midnight on Monday), from their person states. The work zone
+# names are in secrets.yaml.
+#
+# External entities used:
+#   Person (person, UI)
+#     person.lambo
+#     person.petro
+#
+# Entities created by this package:
+#   sensor.petro_at_work (history_stats)
+#   sensor.lambo_at_work (history_stats)
+#   sensor.monday_this_week
+
+sensor:
+# HISTORY STATS
+
+- platform: history_stats
+  name: Petro at Work
+  unique_id: 532ca91c-17ed-4ea9-b95b-f14bc1673110
+  entity_id: person.petro
+  state: !secret petro_work
+  type: time
+  <<: &timeframe
+    start: >
+      {% set sensor = 'sensor.monday_this_week' %}
+      {% if sensor | has_value %}
+        {{ states(sensor) | as_datetime | as_local }}
+      {% else %}
+        {% set n = today_at() %}
+        {{ n - timedelta(days=n.weekday()) }}
+      {% endif %}
+    end: "{{ now() }}"
+
+- platform: history_stats
+  name: Lambo at Work
+  unique_id: 57a1843e-8aeb-43da-8d5b-4d06031140e4
+  entity_id: person.lambo
+  state: !secret lambo_work
+  type: time
+  <<: *timeframe
+
+template:
+- sensor:
+    - name: Monday This Week
+      default_entity_id: sensor.monday_this_week
+      unique_id: a813b421-8a7a-4ea6-b0b2-1b963b1b37df
+      device_class: timestamp
+      state: >
+        {% set n = today_at() %}
+        {{ n - timedelta(days=n.weekday()) }}

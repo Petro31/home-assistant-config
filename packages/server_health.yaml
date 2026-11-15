@@ -1,6 +1,6 @@
-# Server health: total disk and memory sensors, the Home Assistant release
-# graphic for the dashboard, backup status notifications, and clearing
-# persistent notifications at 22:00.
+# Server health: CPU temperature, total disk and memory sensors, the Home
+# Assistant release graphic for the dashboard, backup status notifications,
+# and clearing persistent notifications at 22:00.
 #
 # External entities used:
 #   Backup (backup)
@@ -19,6 +19,7 @@
 #     script.notify
 #
 # Entities created by this package:
+#   sensor.cpu_temperature (command_line)
 #   sensor.disk_use_total
 #   sensor.memory_use_total
 #   image.home_assistant_graphic
@@ -102,3 +103,12 @@ template:
         https://www.home-assistant.io/images/blog/{{ major }}-{{ '{0:02d}'.format(minor) }}/social.png
       availability: >
         {{ state_attr('update.home_assistant_core_update', 'installed_version') is not none }}
+
+command_line:
+- sensor:
+    unique_id: cpu_temperature
+    name: CPU Temperature
+    command: "cat /sys/class/thermal/thermal_zone3/temp"
+    unit_of_measurement: "°C"
+    value_template: '{{ value | multiply(0.001) | round(1) }}'
+    state_class: measurement

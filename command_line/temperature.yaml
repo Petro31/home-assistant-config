@@ -1,7 +1,0 @@
-- sensor:
-    unique_id: cpu_temperature
-    name: CPU Temperature
-    command: "cat /sys/class/thermal/thermal_zone3/temp"
-    unit_of_measurement: "°C"
-    value_template: '{{ value | multiply(0.001) | round(1) }}'
-    state_class: measurement

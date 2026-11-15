@@ -1,6 +1,8 @@
 # Living room Yamaha receivers: receiver power sensor, source and sound mode
-# switches, Echo and AirPlay music through the RX-V6A zones, and scripts that
-# turn media players on at a set source and volume.
+# switches, Echo and AirPlay music through the RX-V6A zones, scripts that
+# turn media players on at a set source and volume, Living Room and Dining
+# Room speaker players, each zone's volume in dB, and the multizone volume
+# controller.
 #
 # Keep the living_room_ prefix on this filename, even though the folder
 # repeats it. HA names a package after its filename alone (the folder is
@@ -62,6 +64,11 @@
 #   script.airplay_through_receiver_on
 #   script.echo_through_receiver_off
 #   script.echo_through_media_player
+#   media_player.living_room_speakers (universal, no unique_id)
+#   media_player.dining_room_speakers (universal, no unique_id)
+#   sensor.yamaha_receiver_volume (compensation)
+#   sensor.yamaha_receiver_zone_2_volume (compensation)
+#   sensor.active_media_player (multizone_controller)
 
 script:
   power_on:
@@ -771,3 +778,48 @@ template:
     - action: script.media_player_off
       data:
         media_player: media_player.yamaha_rx_v6a_zone2
+
+media_player:
+  - platform: universal
+    name: Living Room Speakers
+    children:
+    - media_player.yamaha_rx_v6a
+
+  - platform: universal
+    name: Dining Room Speakers
+    children:
+    - media_player.yamaha_rx_v6a_zone2
+
+compensation:
+  yamaha_receiver_volume:
+    unique_id: yamaha_receiver_volume
+    source: media_player.yamaha_rx_v6a
+    attribute: volume_level
+    unit_of_measurement: dB
+    precision: 1
+    data_points:
+      - [0.2, -80.0]
+      - [1.0, 0.0]
+
+  yamaha_receiver_zone_2_volume:
+    unique_id: yamaha_receiver_zone_2_volume
+    source: media_player.yamaha_rx_v6a_zone2
+    attribute: volume_level
+    unit_of_measurement: dB
+    precision: 1
+    data_points:
+      - [0.2, -80.0]
+      - [1.0, 0.0]
+
+sensor:
+# MULTIZONE CONTROLLER
+
+- platform: multizone_controller
+  unique_id: active_media_player
+  zones:
+    - source: media_player.yamaha_rx_v6a
+    - source: media_player.yamaha_rx_v6a_zone2
+  snap_volume: true
+  volume_increment: 0.05
+  volume_max: 1.0
+  volume_min: 0.0

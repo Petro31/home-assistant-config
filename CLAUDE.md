@@ -30,14 +30,12 @@ The live Home Assistant `/config` directory (mounted over SMB; the share path is
 | `packages/` | `homeassistant: packages: !include_dir_named` | One feature per file, spanning many domains (`template:`, `automation:`, `script:`, …). The filename is the package name. Subfolders can group related packages, but the folder isn't part of the name. |
 | `automations.yaml` | `automation: !include` | Managed by the UI editor; don't hand-edit |
 | `scripts.yaml` | `script: !include` | Managed by the UI editor |
-| `template/` | `template: !include_dir_merge_list` | Top-level **list** of template blocks (`- sensor:`, `- trigger:` …) |
-| `mqtt/` | `!include_dir_merge_named` | Mapping keyed by platform |
-| `command_line/` | `!include_dir_merge_list` | List |
+| `scenes.yaml` | `scene: !include` | Scenes (no `id:`, so they aren't in the entity registry) |
 | `themes/` | `!include_dir_merge_named` | (git-ignored) |
 
 Other top-level `*.yaml` files are single-domain includes referenced from `configuration.yaml`. Some (e.g. `http.yaml`, `history*.yaml`) are tracked but no longer included.
 
-New features go in `packages/` (see `packages/leak_detection.yaml` for the current style). The old domain folders `automation/` and `scripts/` are gone, and `template/` is being emptied; don't add files to them.
+New features go in `packages/` (see `packages/leak_detection.yaml` for the current style). The old domain folders (`automation/`, `scripts/`, `template/`, `command_line/`) and flat domain files (`sensor.yaml`, `media_player.yaml`, `notify.yaml`, `compensation.yaml`) are gone; put new config of those domains in a package.
 
 ### Conventions
 
@@ -145,7 +143,7 @@ Into existing packages:
 - [x] doorbell: "Fix Doorbell Chime Status" (automation/reactions.yaml)
 - [x] device_firmware_updates: script.update_zwave (scripts/zwave_js.yaml)
 - [x] power_outage_shutdown: UPS Model and UPS Battery Runtime (template/system.yaml)
-- [ ] living_room/living_room_yamaha: Living Room and Dining Room Speakers (media_player.yaml), the receiver volume compensations (compensation.yaml), the living room multizone_controller sensor (sensor.yaml) ⚠
+- [x] living_room/living_room_yamaha: Living Room and Dining Room Speakers (media_player.yaml), the receiver volume compensations (compensation.yaml), the living room multizone_controller sensor (sensor.yaml) ⚠
 
 Shared plumbing (packages/shared/):
 - [x] notifications: script.notify (scripts/notifiers.yaml) and the notify groups (notify.yaml)
@@ -157,14 +155,14 @@ New packages:
 - [x] daylight_saving_reminders: template/daylight_savings_time.yaml and "Notify DST Change" (automation/timed_events.yaml)
 - [x] household_reminders: "Notify Change Filters Message" and "Notify Mosby Heartworm and Flee Medication." (automation/timed_events.yaml)
 - [x] thermostat_schedule: "Simple Thermostat" (automation/timed_events.yaml)
-- [ ] server_health: Disk Use Total and Memory Use Total (template/system.yaml), template/homeassistant_image.yaml, "Notify Snapshot status" and "Clear persistent_notifications at bedtime" (automation/timed_events.yaml) are done; CPU Temperature (command_line/temperature.yaml) ⚠ is still to add
+- [x] server_health: Disk Use Total and Memory Use Total (template/system.yaml), CPU Temperature (command_line/temperature.yaml) ⚠, template/homeassistant_image.yaml, "Notify Snapshot status" and "Clear persistent_notifications at bedtime" (automation/timed_events.yaml)
 - [x] living_room/living_room_controllers: "Living Room Scene Controller" and its LEDs (automation/buttons.yaml), "Cube Actions" (automation/cube.yaml), "Living Room Lamp Availability." (automation/reactions.yaml; the commented-out "Fix Wled Errors" copy left in that file was deleted with it)
 - [x] zigbee_button_toggles: "Zigbee Button Toggler" (automation/buttons.yaml)
 - [x] linked_light_switches: automation/toggles.yaml
 - [x] garage_doors: template/door.yaml and script.garage_door_toggle (scripts/nfc.yaml)
 - [x] home_occupancy: template/people_tracker.yaml and template/network.yaml
-- [ ] work_hours_tracking: Petro/Lambo at Work history_stats (sensor.yaml) ⚠ and template/time.yaml
-- [ ] bonus_room_television: template/bonus_room.yaml and the Bonus Room Television universal player (media_player.yaml) ⚠
+- [x] work_hours_tracking: Petro/Lambo at Work history_stats (sensor.yaml) ⚠ and template/time.yaml
+- [x] bonus_room_television: template/bonus_room.yaml and the Bonus Room Television universal player (media_player.yaml) ⚠
 - [x] outdoor_weather_station: template/temperatures.yaml
 - [x] energy_tariff: template/energy.yaml
 - [x] aurora_alerts: automation/aurora.yaml
@@ -172,7 +170,7 @@ New packages:
 - [x] body_weight_tracking: automation/weight.yaml
 - [x] awtrix_announcements: scripts/awtrix.yaml
 - [x] dashboard_helpers: script.lovelace_toggle (scripts/misc.yaml)
-- [ ] voice_intents: intent_script.yaml
+- [x] voice_intents: deleted instead of migrated. intent_script.yaml (git-ignored) held old Alexa custom-skill intents that nothing could reach any more (no top-level `alexa:` config, no custom sentences); it was removed with the git-ignored `alexa/` skill files.
 - [x] testing_sandbox: scripts/tests.yaml and "MSR 2 Testing" (automation/apollo_msr2.yaml)
 - [x] sensor_calibration_helper: automation/calibrations.yaml (migrated as-is; see Known issues)
 
