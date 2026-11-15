@@ -215,13 +215,10 @@ Problems found while adding package notes, moving packages or updating legacy ke
 - Kitty's plant sensor (Xiaomi BLE "Plant Sensor (4C86)", MAC C4:7C:8D:6B:4C:86) is dead: its battery slot corroded, so it needs a replacement sensor. Until then `plant.kitty` stays `unknown`. A new sensor has a new MAC, so its entities get new IDs: either rename them to `sensor.plant_sensor_3_*` in the UI or update the `kitty:` sensors under `plant:` in the package (and its header), then delete the old 4C86 device. Set the new device's area to Dining Room (the old one is wrongly in Game Room). It reports through the dining room ESP32 Bluetooth proxy.
 
 ### packages/sensor_calibration_helper.yaml
-- "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`.
-
-### packages/energy_tariff.yaml
-- Nothing references `sensor.energy_terrif` (not the Energy dashboard, a dashboard or another config). It may be a leftover. Its name is now "Energy Tariff", but the entity ID keeps the old misspelling (`default_entity_id: sensor.energy_terrif`).
+- Keep this package: it's the user's reusable tool for calibrating any temperature/humidity sensor added to the house (it's normally off between calibrations). Update it before the next use: it still points at the last calibration's sensors. The sensors being calibrated, `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, belong to the disabled ESPHome "Basement Esp32" config entry, and the reference sensors were renamed: `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity` are now `sensor.apollo_air_1_1ecac0_temperature` / `sensor.apollo_air_1_1ecac0_humidity`.
 
 ### packages/testing_sandbox.yaml
-- "MSR 2 Testing" turns on `light.test_main` and `light.test_segment_1`–`3`, but those WLED entities are disabled, so it can't do anything.
+- "MSR 2 Testing" was removed (it drove disabled WLED test lights). Its entity `automation.msr_2_testing` is still in the registry (unavailable/restored); delete it in Settings → Entities.
 
 ### packages/holiday_lighting.yaml
 - `script.indoor_ambiance` was removed from YAML but its entity registry entry is still there (shows as unavailable/restored). Delete it in Settings → Entities.

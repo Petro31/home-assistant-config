@@ -1,6 +1,11 @@
-# Sensor calibration helper: logs each basement BME280 temperature and humidity
-# reading next to the Apollo AIR-1 reading to a file, to work out calibration
-# offsets. Its sensors no longer exist (see CLAUDE.md Known issues).
+# Sensor calibration helper: a reusable tool for calibrating a newly added
+# temperature or humidity sensor. Each reading from the sensor being calibrated
+# is logged to a file next to a reference sensor's reading, to work out the
+# calibration offset. To calibrate a new sensor, point `config:` (and the
+# trigger) at it, its File notify entity and a reference sensor, then turn the
+# automation on. It's currently set up for the last calibration (the basement
+# BME280 against the Apollo AIR-1), whose sensors have since been disabled or
+# renamed; see CLAUDE.md Known issues.
 #
 # External entities used:
 #   File (file, UI)

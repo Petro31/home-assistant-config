@@ -1,4 +1,6 @@
-# Energy tariff: a fixed electricity price sensor ($0.053080/kWh).
+# Energy tariff: a fixed electricity price sensor ($0.053080/kWh). Nothing
+# references it yet, but it's kept on purpose. The entity ID keeps the old
+# misspelling ("terrif").
 #
 # Entities created by this package:
 #   sensor.energy_terrif
