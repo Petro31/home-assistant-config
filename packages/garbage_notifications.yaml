@@ -54,7 +54,7 @@ script:
             {{ mobile_app.get(user_id) }}
     - <<: &condition
         condition: template
-        value_template: "{{ who is not none and next_state is not none and which is not none }}"
+        value_template: "{{ who is not none and which is not none }}"
     - action: switch.turn_on
       target:
         entity_id: "{{ which }}"

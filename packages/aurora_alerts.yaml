@@ -24,5 +24,5 @@ automation:
   actions:
     - action: script.notify
       data:
-        title: Snapshot Status
+        title: Aurora Alert
         message: "There's a {{ states('sensor.aurora_visibility_visibility') }}% chance that Aurora Borealis may be visible."

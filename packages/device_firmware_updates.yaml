@@ -9,9 +9,6 @@
 #     every update.* entity from this integration (found at runtime with integration_entities)
 #   Z-Wave JS (zwave_js)
 #     every update.* entity from this integration (found at runtime with integration_entities)
-#   Home Assistant Supervisor (hassio)
-#     No area: ESPHome Device Builder (6a285555270beb8eb634891673d48bf2)
-#       update.esphome_update
 #   packages/shared/notifications.yaml
 #     script.notify
 #     notify.mobile_app_petro (notify group action, not an entity)
@@ -90,16 +87,27 @@ template:
     name: Esphome Entities
     default_entity_id: update.esphome_entities
     picture: >
-      {{ state_attr('update.esphome_update', 'entity_picture') }}
+      {{ integration_entities('esphome') | select('search','^update') | map('state_attr', 'entity_picture') | select | first | default }}
+    # With no updates pending, both versions fall back to the newest ESPHome
+    # version installed on the devices (YYYY.M.P only; the Apollo AIR-1's own
+    # vendor firmware entity uses a different numbering).
     installed_version: >
-      {% set default_version = state_attr('update.esphome_update', 'installed_version') %}
+      {% set ns_all = namespace(versions=[]) %}
+      {% for ver in integration_entities('esphome') | select('search','^update') | map('state_attr', 'installed_version') | select('match', '[0-9]{4}[.]') | unique %}
+        {% set ns_all.versions = ns_all.versions + [version(ver)] %}
+      {% endfor %}
+      {% set default_version = ns_all.versions | sort | last | default %}
       {% set ns = namespace(versions=[]) %}
       {% for ver in integration_entities('esphome') | select('search','^update') | select('is_state','on') | map('state_attr', 'installed_version') | unique %}
         {% set ns.versions = ns.versions + [version(ver)] %}
       {% endfor %}
       {{ ns.versions | sort | first | default(default_version) }}
     latest_version: >
-      {% set default_version = state_attr('update.esphome_update', 'latest_version') %}
+      {% set ns_all = namespace(versions=[]) %}
+      {% for ver in integration_entities('esphome') | select('search','^update') | map('state_attr', 'installed_version') | select('match', '[0-9]{4}[.]') | unique %}
+        {% set ns_all.versions = ns_all.versions + [version(ver)] %}
+      {% endfor %}
+      {% set default_version = ns_all.versions | sort | last | default %}
       {% set ns = namespace(versions=[]) %}
       {% for ver in integration_entities('esphome') | select('search','^update') | select('is_state','on') | map('state_attr', 'latest_version') | unique %}
         {% set ns.versions = ns.versions + [version(ver)] %}

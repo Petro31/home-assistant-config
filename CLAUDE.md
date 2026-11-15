@@ -224,24 +224,11 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/energy_tariff.yaml
 - Nothing references `sensor.energy_terrif` (not the Energy dashboard, a dashboard or another config). It may be a leftover; the name is also misspelled ("Terrif").
 
-### packages/aurora_alerts.yaml
-- "Notify Aurora" sends its notification with the title "Snapshot Status" (copied from the backup notification).
-
 ### packages/testing_sandbox.yaml
 - "MSR 2 Testing" turns on `light.test_main` and `light.test_segment_1`–`3`, but those WLED entities are disabled, so it can't do anything.
 
-### packages/awtrix_announcements.yaml
-- `_ranbow_colors` in `script.awtrix_announce` looks colors up by name in a list (`_colors_config[c]`), which can't work, so the `rainbow-words` and `rainbow-characters` effects get no valid colors. Nothing calls the script.
-
-### packages/device_firmware_updates.yaml
-- The "Esphome Entities" template update entity mixes in the ESPHome Device Builder app. It uses the app's own update entity, `update.esphome_update` (from the Supervisor), for its picture and as the fallback `installed_version` / `latest_version`. It should only reference the ESPHome devices, i.e. the `update.*` entities from the `esphome` integration.
-
 ### packages/garbage_notifications.yaml
-- The shared condition in `script.mobile_app_turn_on` / `script.mobile_app_turn_off` checks `next_state is not none`, but `next_state` is never defined. An undefined variable renders as empty rather than `none`, so this check probably always passes. That means it doesn't guard anything.
 - "Notify Garbage Day Today" mixes syntax. It has `triggers:` with a legacy `platform: state` trigger, plus legacy `condition:`, `action:` and `service:`.
-
-### packages/leak_detection.yaml
-- "Leak Persistence" sends `message: "{{ message }}"`, but no `message` variable is defined in that automation. The repeat notifications probably go out with an empty message. "Leak Warning" reads `state_attr('binary_sensor.leak', 'message')` instead.
 
 ### packages/weather_camera_events.yaml
 - "Manage outside camera power based on temperature" still uses legacy syntax: `trigger:` with `platform: state`, plus `action:` and `service:`. The `switch.turn_{{ action }}` step also passes `entity_id` under `data:` instead of `target:`.

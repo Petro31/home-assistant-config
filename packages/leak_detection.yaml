@@ -101,5 +101,5 @@ automation:
   - action: script.notify
     data:
       title: Leak Detected!
-      message: "{{ message }}"
+      message: "{{ state_attr('binary_sensor.leak', 'message') }}"
   - <<: *set_datetime

@@ -109,7 +109,7 @@ script:
         {% set targets = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Teal', 'Purple'] %}
         {% set ns = namespace(colors=[]) %}
         {% for c in ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Teal', 'Purple']  %}
-          {% set ns.colors = ns.colors + [_colors_config[c]] %}
+          {% set ns.colors = ns.colors + [(_colors_config | selectattr('label', 'eq', c) | first).value] %}
         {% endfor %}
         {{ ns.colors }}
       supplied_colors: >
