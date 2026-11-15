@@ -18,145 +18,184 @@ recorder:
   purge_keep_days: 60
   include:
     entities:
-      - binary_sensor.deck_motion_sensor_occupancy
-      - binary_sensor.dryer_status
-      - binary_sensor.garage_entry_door
-      - binary_sensor.main_door
-      - binary_sensor.master_bathroom_humidity_status
-      - binary_sensor.outside_temperature_falling
-      - binary_sensor.outside_temperature_rising
-      - binary_sensor.sliding_door
-      - binary_sensor.washer_status
-      - binary_sensor.washer
-      - binary_sensor.water_heater_water_leak_detected
-      - binary_sensor.right_sink_water_leak_detected
-      - binary_sensor.left_sink_water_leak_detected
-      - binary_sensor.kitchen_sink_water_leak_detected
-      - binary_sensor.powder_room_sink_water_leak_detected
-      - binary_sensor.leak
-      - climate.living_room_thermostat
-      - device_tracker.petro
+      # People and presence (work hours: packages/work_hours_tracking.yaml)
       - person.lambo
       - person.petro
-      - sensor.bonus_room_switch_temperature
-      - sensor.core_300s_air_quality
-      - sensor.cpu_temperature
-      - sensor.cyberpower_battery_charge
-      - sensor.cyberpower_battery_runtime
-      - sensor.cyberpower_input_voltage
-      - sensor.cyberpower_load
-      - sensor.cyberpower_output_voltage
-      - sensor.cyberpower_status
-      - sensor.cyberpower_status_data
-      - sensor.database_size
-      - sensor.disk_free_home
-      - sensor.deck_motion_sensor_illuminance
-      - sensor.deck_motion_sensor_temperature
-      - sensor.disk_use_home
-      - sensor.disk_use_percent_home
-      - sensor.disk_use_total
-      - sensor.dryer_power
-      - sensor.house_humidity
-      - sensor.house_temperature
-      - binary_sensor.house_power_status
-      - binary_sensor.house_voltage_status
+      - device_tracker.petro
+      - sensor.lambo_at_work
+      - sensor.petro_at_work
+
+      # Body weight (packages/body_weight_tracking.yaml)
       - sensor.lambo_weight
-      - sensor.master_bathroom_filtered_humidity_statistics
-      - sensor.master_bathroom_filtered_humidity
-      - sensor.master_bathroom_humidity_change
-      - sensor.memory_free
-      - sensor.memory_use
-      - sensor.memory_use_percent
-      - sensor.memory_use_total
-      - sensor.orion_temperature
-      - sensor.outside_temperature
-      - sensor.outside_humidity
       - sensor.petro_weight
-      - sensor.plant_sensor_2_conductivity
-      - sensor.plant_sensor_2_illuminance
-      - sensor.plant_sensor_2_moisture
-      - sensor.plant_sensor_2_temperature
-      - sensor.plant_sensor_3_conductivity
-      - sensor.plant_sensor_3_illuminance
-      - sensor.plant_sensor_3_moisture
-      - sensor.plant_sensor_3_temperature
-      - sensor.processor_use
-      - sensor.roomba_battery_level
-      - sensor.server_room_switch_temperature
-      - sensor.shelly_em3_channel_a_energy
-      - sensor.shelly_em3_channel_a_power
-      - sensor.shelly_em3_channel_a_energy_cost
-      - sensor.shelly_em3_channel_b_energy
-      - sensor.shelly_em3_channel_b_power
-      - sensor.shelly_em3_channel_b_energy_cost
+
+      # Doors and lock (door_buddy, packages/garage_doors.yaml) and door sensor batteries
+      - binary_sensor.main_door
+      - binary_sensor.garage_entry_door
+      - binary_sensor.sliding_door
+      - binary_sensor.passenger_door
+      - binary_sensor.front_garage_door
+      - binary_sensor.rear_garage_door
+      - lock.smart_lock_ultra
+      - binary_sensor.sliding_door_battery
+      - sensor.garage_door_entrance_sensor_battery_level
+      - sensor.main_entrance_door_sensor_battery_level
       - sensor.sliding_door_temperature
-      - sensor.speedtest_download
-      - sensor.speedtest_ping
-      - sensor.speedtest_upload
-      - sensor.synology_average_disk_temp_volume_1
-      - sensor.synology_cpu_load_total
-      - sensor.synology_memory_usage_real
-      - sensor.synology_network_down
-      - sensor.synology_network_up
-      - sensor.synology_total_size_volume_1
-      - sensor.synology_used_space_volume_1
-      - sensor.synology_volume_used_volume_1
-      - sensor.washer_power
 
-      - sensor.bonus_room_cgdk2_battery
-      - sensor.bonus_room_cgdk2_humidity
-      - sensor.bonus_room_cgdk2_temperature
+      # Leak detection (packages/leak_detection.yaml)
+      - binary_sensor.leak
+      - binary_sensor.water_heater_water_leak_detected
+      - binary_sensor.kitchen_sink_water_leak_detected
+      - binary_sensor.powder_room_sink_water_leak_detected
+      - binary_sensor.left_sink_water_leak_detected
+      - binary_sensor.right_sink_water_leak_detected
+      - binary_sensor.guest_bathroom_left_sink_water_leak_detected
+      - binary_sensor.guest_bathroom_right_sink_water_leak_detected
 
-      - sensor.garage_refrigerator_lywsdcgq_battery
-      - sensor.garage_refrigerator_lywsdcgq_humidity
-      - sensor.garage_refrigerator_lywsdcgq_temperature
-
-      - sensor.kitchen_lywsdcgq_battery
-      - sensor.kitchen_lywsdcgq_humidity
+      # Indoor climate: house averages (packages/house_climate.yaml), thermostat and rooms
+      - sensor.house_temperature
+      - sensor.house_humidity
+      - climate.living_room_thermostat
+      - sensor.living_room_temperature
+      - sensor.living_room_humidity
       - sensor.kitchen_lywsdcgq_temperature
-
-      - sensor.master_bathroom_lywsdcgq_battery
-      - sensor.master_bathroom_lywsdcgq_humidity
-      - sensor.master_bathroom_lywsdcgq_temperature
-
-      - sensor.master_bedroom_lywsdcgq_battery
-      - sensor.master_bedroom_lywsdcgq_humidity
+      - sensor.kitchen_lywsdcgq_humidity
+      - sensor.kitchen_lywsdcgq_battery
       - sensor.master_bedroom_lywsdcgq_temperature
-
-      - sensor.server_room_cgdk2_battery
-      - sensor.server_room_cgdk2_humidity
-      - sensor.server_room_cgdk2_temperature
-
-      - sensor.upstairs_server_room_lywsdcgq_battery
-      - sensor.upstairs_server_room_lywsdcgq_humidity
-      - sensor.upstairs_server_room_lywsdcgq_temperature
-
-      - sensor.test_temperature_bme280_temperature
-      - sensor.test_temperature_bme280_humidity
-
+      - sensor.master_bedroom_lywsdcgq_humidity
+      - sensor.master_bedroom_lywsdcgq_battery
+      - sensor.master_bathroom_lywsdcgq_temperature
+      - sensor.master_bathroom_lywsdcgq_humidity
+      - sensor.master_bathroom_lywsdcgq_battery
       - sensor.office_d1_mini_temperature
       - sensor.office_d1_mini_humidity
+      - sensor.apollo_air_1_1ecac0_temperature
+      - sensor.apollo_air_1_1ecac0_humidity
+      - sensor.apollo_air_1_1ecac0_co2
+      - sensor.garage_refrigerator_lywsdcgq_temperature
+      - sensor.garage_refrigerator_lywsdcgq_humidity
+      - sensor.garage_refrigerator_lywsdcgq_battery
+      - sensor.core_300s_air_quality
 
-      - sensor.basement_cgdk2_humidity
+      # Bonus room climate: removed from Xiaomi BLE until HA 2026.12 (see CLAUDE.md Known issues)
+      - sensor.bonus_room_cgdk2_temperature
+      - sensor.bonus_room_cgdk2_humidity
+      - sensor.bonus_room_cgdk2_battery
+
+      # Basement climate: the "Basement Esp32" ESPHome device is disabled; the BME280 is the
+      # calibration helper's target (packages/sensor_calibration_helper.yaml)
       - sensor.basement_cgdk2_temperature
+      - sensor.basement_cgdk2_humidity
       - sensor.basement_cgdk2_battery_level
-
-      - sensor.basement_bme280_humidity
       - sensor.basement_bme280_temperature
+      - sensor.basement_bme280_humidity
 
+      # Master bathroom shower fan (packages/master_bathroom_humidity.yaml)
+      - sensor.master_bathroom_filtered_humidity
+      - sensor.master_bathroom_filtered_humidity_statistics
+      - sensor.master_bathroom_humidity_change
+      - binary_sensor.master_bathroom_humidity_status
+
+      # Outdoor: weather station, temperature trends (weather_camera_events), deck motion, rain sensor
+      - sensor.outside_temperature
+      - sensor.outside_humidity
+      - binary_sensor.outside_temperature_rising
+      - binary_sensor.outside_temperature_falling
+      - binary_sensor.deck_motion_sensor_occupancy
+      - sensor.deck_motion_sensor_illuminance
+      - sensor.deck_motion_sensor_temperature
       - binary_sensor.rain_bird_controller_rainsensor
       - sensor.rain_bird_controller_raindelay
 
-      - sensor.apollo_air_1_1ecac0_co2
-      - sensor.apollo_air_1_1ecac0_humidity
-      - sensor.apollo_air_1_1ecac0_temperature
-
+      # Desk presence (Apollo MSR-2): kept on purpose. The history is watched
+      # for when someone's at the computer desk; no automation uses it yet.
       - binary_sensor.apollo_msr_2_8935e0_radar_zone_1_occupancy
       - binary_sensor.apollo_msr_2_8935e0_radar_zone_2_occupancy
       - binary_sensor.apollo_msr_2_8935e0_radar_zone_3_occupancy
       - binary_sensor.apollo_msr_2_8935e0_radar_target
       - binary_sensor.apollo_msr_2_8935e0_radar_moving_target
       - binary_sensor.apollo_msr_2_8935e0_radar_still_target
+
+      # Plants (packages/plant_care_notifications.yaml): plant_sensor_2 is Yucca, plant_sensor_3
+      # is Kitty (dead until the sensor is replaced)
+      - sensor.plant_sensor_2_moisture
+      - sensor.plant_sensor_2_conductivity
+      - sensor.plant_sensor_2_illuminance
+      - sensor.plant_sensor_2_temperature
+      - sensor.plant_sensor_3_moisture
+      - sensor.plant_sensor_3_conductivity
+      - sensor.plant_sensor_3_illuminance
+      - sensor.plant_sensor_3_temperature
+
+      # Laundry (packages/laundry_monitor.yaml)
+      - sensor.washer_power
+      - binary_sensor.washer_status
+      - binary_sensor.washer
+      - sensor.dryer_power
+      - binary_sensor.dryer_status
+
+      # Energy: the Shelly EM3 channels feed the Energy dashboard (long-term statistics need these)
+      - sensor.shelly_em3_channel_a_power
+      - sensor.shelly_em3_channel_a_energy
+      - sensor.shelly_em3_channel_a_energy_cost
+      - sensor.shelly_em3_channel_b_power
+      - sensor.shelly_em3_channel_b_energy
+      - sensor.shelly_em3_channel_b_energy_cost
+
+      # House power and UPS (packages/power_outage_shutdown.yaml)
+      - binary_sensor.house_power_status
+      - binary_sensor.house_voltage_status
+      - sensor.cyberpower_status
+      - sensor.cyberpower_status_data
+      - sensor.cyberpower_battery_charge
+      - sensor.cyberpower_battery_runtime
+      - sensor.cyberpower_load
+      - sensor.cyberpower_input_voltage
+      - sensor.cyberpower_output_voltage
+
+      # Home Assistant server (packages/server_health.yaml)
+      - sensor.cpu_temperature
+      - sensor.processor_use
+      - sensor.memory_use
+      - sensor.memory_free
+      - sensor.memory_use_percent
+      - sensor.memory_use_total
+      - sensor.disk_use_home
+      - sensor.disk_free_home
+      - sensor.disk_use_percent_home
+      - sensor.disk_use_total
+      - sensor.database_size
+
+      # Network, NAS (orion) and server room
+      - sensor.synology_cpu_load_total
+      - sensor.synology_memory_usage_real
+      - sensor.synology_network_up
+      - sensor.synology_network_down
+      - sensor.synology_average_disk_temp_volume_1
+      - sensor.synology_total_size_volume_1
+      - sensor.synology_used_space_volume_1
+      - sensor.synology_volume_used_volume_1
+      - sensor.orion_temperature
+      - sensor.speedtest_download
+      - sensor.speedtest_upload
+      - sensor.speedtest_ping
+      - sensor.server_room_switch_temperature
+      - sensor.bonus_room_switch_temperature
+      - sensor.upstairs_server_room_lywsdcgq_temperature
+      - sensor.upstairs_server_room_lywsdcgq_humidity
+      - sensor.upstairs_server_room_lywsdcgq_battery
+
+      # Server room climate: removed from Xiaomi BLE until HA 2026.12 (see CLAUDE.md Known issues)
+      - sensor.server_room_cgdk2_temperature
+      - sensor.server_room_cgdk2_humidity
+      - sensor.server_room_cgdk2_battery
+
+      # Test devices
+      - sensor.test_temperature_bme280_temperature
+      - sensor.test_temperature_bme280_humidity
+
+      # Other
+      - sensor.roomba_battery_level
 
     domains:
       - light
