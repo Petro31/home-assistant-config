@@ -9,7 +9,7 @@
 #   Home Assistant Supervisor (hassio)
 #     No area: ESPHome Device Builder (6a285555270beb8eb634891673d48bf2)
 #       update.esphome_update
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:

@@ -1,0 +1,16 @@
+# Template reload event: fires a templates_reloaded event one second after
+# templates are reloaded, so packages can re-run their own logic after a
+# reload (used by master_bathroom_humidity and holiday_lighting).
+#
+# Entities created by this package: none (the automation isn't listed).
+
+automation:
+- alias: Events - Forward Reload Templates
+  id: reload_templates
+  triggers:
+  - trigger: event
+    event_type: event_template_reloaded
+  actions:
+  - delay: "00:00:01"
+  - event: templates_reloaded
+    event_data: {}

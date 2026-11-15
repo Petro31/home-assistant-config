@@ -20,7 +20,7 @@
 #       binary_sensor.guest_bathroom_right_sink_water_leak_detected
 #   Date/Time helper (input_datetime, UI)
 #     input_datetime.leak_annoy
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:

@@ -10,7 +10,7 @@
 #       sensor.plant_sensor_2_illuminance
 #       sensor.plant_sensor_2_moisture
 #       sensor.plant_sensor_2_temperature
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #   Not found (referenced, but no such entity exists):
 #     sensor.plant_sensor_3_conductivity (Kitty's sensor died; it needs replacing)

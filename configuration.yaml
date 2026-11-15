@@ -21,7 +21,6 @@ logger: !include logger.yaml
 lovelace: !include lovelace.yaml
 lovelace_gen:
 media_player: !include media_player.yaml
-notify: !include notify.yaml
 python_script:
 recorder: !include recorder.yaml
 scene: !include scenes.yaml

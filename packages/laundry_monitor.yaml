@@ -10,10 +10,10 @@
 #       sensor.dryer_power
 #   Toggle helper (input_boolean, UI)
 #     input_boolean.test_washer
-#   scripts/mqtt.yaml
+#   packages/shared/mqtt_discovery_helpers.yaml
 #     script.mqtt_automated_config
 #     script.mqtt_automated_states
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Unused (but related) entities:

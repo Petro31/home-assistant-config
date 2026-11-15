@@ -13,7 +13,7 @@
 #     binary_sensor.outside_temperature_rising
 #   template/temperatures.yaml
 #     sensor.outside_temperature
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:

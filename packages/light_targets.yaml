@@ -19,7 +19,7 @@
 #   Mobile App (mobile_app)
 #     No area: Petro (d16f2df2c395d51d093f540b1d3bc695)
 #       notify.mobile_app_petro (notify action, not an entity)
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:

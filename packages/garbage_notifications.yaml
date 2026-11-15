@@ -11,7 +11,7 @@
 #   Person (person, UI)
 #     person.petro
 #     person.lambo
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:

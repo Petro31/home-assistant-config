@@ -26,10 +26,10 @@
 #       binary_sensor.rain_bird_controller_rainsensor
 #   Date/Time helper (input_datetime, UI)
 #     input_datetime.irrigation_program_start
-#   scripts/mqtt.yaml
+#   packages/shared/mqtt_discovery_helpers.yaml
 #     script.mqtt_automated_config
 #     script.mqtt_automated_states
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:

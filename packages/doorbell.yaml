@@ -6,7 +6,7 @@
 #     Porch: Doorbell (2bb10514634b0503f55fcb35ed9e5826)
 #       switch.doorbell_chime
 #       switch.doorbell_chime_active
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Unused (but related) entities:

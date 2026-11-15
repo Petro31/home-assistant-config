@@ -5,7 +5,7 @@
 #   ESPHome (esphome)
 #     Basement: Apollo AIR-1 1ecac0 (a0cfccc71119cba9acc4041ea295e41e)
 #       sensor.apollo_air_1_1ecac0_humidity
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:

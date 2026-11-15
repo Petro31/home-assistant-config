@@ -150,9 +150,9 @@ Into existing packages:
 - [ ] living_room/living_room_yamaha: Living Room and Dining Room Speakers (media_player.yaml), the receiver volume compensations (compensation.yaml), the living room multizone_controller sensor (sensor.yaml) ⚠
 
 Shared plumbing (packages/shared/):
-- [ ] notifications: script.notify (scripts/notifiers.yaml) and the notify groups (notify.yaml)
-- [ ] mqtt_discovery_helpers: scripts/mqtt.yaml
-- [ ] template_reload_event: "Events - Forward Reload Templates" (automation/events.yaml)
+- [x] notifications: script.notify (scripts/notifiers.yaml) and the notify groups (notify.yaml)
+- [x] mqtt_discovery_helpers: scripts/mqtt.yaml
+- [x] template_reload_event: "Events - Forward Reload Templates" (automation/events.yaml)
 
 New packages:
 - [ ] outdoor_sunset_lighting: script.sunrise_sunset (scripts/sunset_sunrise.yaml), "Outdoor Lights On at Sunset, Off at Sunrise" (automation/timed_events.yaml), "Keep Sunset Switches On." (automation/reactions.yaml)
@@ -250,6 +250,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/house_climate.yaml
 - `sensor.bonus_room_cgdk2_humidity` has the `house_climate` label but `sensor.bonus_room_cgdk2_temperature` doesn't, so the bonus room counts toward House Humidity but not House Temperature. Every other room has both labeled. Possibly intentional; check before changing the label.
+
+### packages/shared/notifications.yaml
+- Several package headers list `notify.mobile_app_petro` under the Mobile App device "Petro", but it's actually the notify group defined in this package (it forwards to the phone's real action, `notify.mobile_app_iphone`). The headers should list it under `packages/shared/notifications.yaml` instead.
 
 ### scripts/zwave_js.yaml
 - `script.zwave_multicast_group` was removed (unused since 2024-04-21, replaced by `script.light_handler` in packages/light_targets.yaml). Its entity registry entry is still there; delete it in Settings → Entities.

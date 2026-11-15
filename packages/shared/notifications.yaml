@@ -1,0 +1,125 @@
+# Notifications: script.notify sends a message (with a timestamp and an
+# optional image) to a phone or the homeowners group, and by default also as
+# a persistent notification. The notify groups it sends to are defined here
+# too. Most packages notify through script.notify.
+#
+# External entities used:
+#   Mobile App (mobile_app)
+#     No area: Lindsay’s iPhone (d1294582fbb63bf938b82086919315c1)
+#       notify.mobile_app_lindsays_iphone (notify action, not an entity)
+#     No area: Petro (d16f2df2c395d51d093f540b1d3bc695)
+#       notify.mobile_app_iphone (notify action, not an entity)
+#
+# Entities created by this package:
+#   script.notify
+#   notify.homeowners (notify group action, not an entity)
+#   notify.mobile_app_petro (notify group action, not an entity; forwards to notify.mobile_app_iphone)
+
+notify:
+- name: homeowners
+  platform: group
+  services:
+    - service: mobile_app_petro
+    - service: mobile_app_lindsays_iphone
+
+- name: mobile_app_petro
+  platform: group
+  services:
+    - service: mobile_app_iphone
+
+script:
+  # General notification engine that adds timestamps
+
+  notify:
+    alias: Notify
+    fields:
+      format: 
+        description: The timestamp format for persistent notifications & notifications.  Annoucements do not have a timestamp.
+        example: "%-I:%M:%S %p"
+        default: "%-I:%M:%S %p"
+        selector:
+          text:
+            type: text
+      persistent_notification:
+        description: On/Off for Persistent Notifications
+        default: on
+        example: on
+        required: false
+        selector:
+          boolean:
+      title:
+        description: Title of the persistent notification.
+        example: "Title"
+        default: ""
+        selector:
+          text:
+            type: text
+      message:
+        description: Message to be sent/annouced.
+        example: "Hello"
+        required: true
+        selector:
+          text:
+            type: text
+      image:
+        description: Local image.
+        example: "local\\images\\home.jpg"
+        default: None
+        selector:
+          text:
+            type: url
+      notify: &notify_homeowners
+        description: Devices to notify.
+        example: notify.mobile_app_petro
+        selector:
+          select:
+            options:
+            - label: Petro
+              value: notify.mobile_app_petro
+            - label: Lambo
+              value: notify.mobile_app_lindsays_iphone
+            - label: Home Owners
+              value: notify.homeowners
+    variables:
+      timestamp: >
+        {% set t = now() %}
+        {% if format is defined %}
+          {{ None if format is none else t.strftime(format) }}
+        {% else %}
+          {{ t.strftime("%-I:%M:%S %p") }}
+        {% endif %}
+      persistent_notification: >
+        {{ persistent_notification | default(true) }}
+      out_notify: "{{ notify | default('notify.homeowners') }}"
+      external_url: !secret external_url
+      url: >
+        {% if image | default %}
+          {{ external_url }}/{{ image.replace('\\', '/') }}
+        {% endif %}
+      persistent_notification_data: >
+        {% set ret = namespace(data=[]) %}
+        {% if title | default %}
+          {% set ret.data = ret.data +[('title', title)] %}
+        {% endif %}
+        {% if message | default %}
+          {% set ret.data = ret.data +[('message', '[{}] {}'.format(timestamp, message) if timestamp else message)] %}
+        {% endif %}
+        {{ dict.from_keys(ret.data) or {'message': 'No Message Provided'} }}
+      notification_data: >
+        {% if image | default %}
+          {{ dict(data={'attachment': {'url': url}}, **persistent_notification_data)}}
+        {% else %}
+          {{ persistent_notification_data }}
+        {% endif %}
+
+    sequence:
+    - choose:
+      - conditions: "{{ persistent_notification }}"
+        sequence:
+        - action: persistent_notification.create
+          data: "{{ persistent_notification_data }}"
+    - choose:
+      - conditions: "{{ out_notify.startswith('notify.') }}"
+        sequence:
+        - action: "{{ out_notify }}"
+          data: "{{ notification_data }}"

@@ -48,7 +48,7 @@
 #     input_boolean.kitchen
 #     input_boolean.living_room
 #     input_boolean.master_bedroom
-#   scripts/mqtt.yaml
+#   packages/shared/mqtt_discovery_helpers.yaml
 #     script.mqtt_automated_config
 #     script.mqtt_automated_states
 #

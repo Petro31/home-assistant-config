@@ -9,7 +9,7 @@
 #     calendar.lambosino_s_random_events
 #   Dropdown helper (input_select, UI)
 #     input_select.event_category
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:

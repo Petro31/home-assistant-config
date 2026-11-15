@@ -9,7 +9,7 @@
 #   Synology DSM (synology_dsm)
 #     Server Room: orion (bd91b19fde9fd82e50999c68f38c971c)
 #       button.orion_shutdown
-#   scripts/notifiers.yaml
+#   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:
