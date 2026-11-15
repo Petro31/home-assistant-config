@@ -72,54 +72,6 @@
       announce: False
       area: living_room
 
-- alias: Fix Zwave Multicast Errors
-  id: 6c4bb70c-e8a7-40c8-9c78-bb077023e3b9
-  description: Refreshes a zwave multicast light and attempts to fix it.
-  mode: single
-  triggers:
-  - trigger: state
-    entity_id: sensor.multicast_error
-    <<: &unavailable
-      not_from:
-      - unknown
-      - unavailable
-      not_to:
-      - unknown
-      - unavailable
-  variables:
-    action: "{{ trigger.to_state.attributes.action | default(None) }}"
-    entity_id: "{{ trigger.to_state.attributes.entity_id | default(None) }}"
-    new: &new >
-      {# Stops reload template from triggering. #}
-      {%- set t = now() %}
-      {%- set yesterday = t - timedelta(hours=24) %}
-      {{ t - trigger.to_state.state | as_datetime(yesterday) | as_local < timedelta(seconds=10) }}
-    continue: "{{ action is not none and entity_id is not none and new }}"
-  conditions:
-  - condition: template
-    value_template: "{{ continue }}"
-  action:
-  - action: script.notify
-    data:
-      notify: notify.mobile_app_petro
-      title: Multicast Error
-      message: Refreshing {{ entity_id  | entity_name }}
-
-  - action: script.get_zwave_entities_from_light_group
-    data:
-      light: "{{ entity_id }}"
-    response_variable: response
-
-  - delay: 1
-
-  - action: zwave_js.refresh_value
-    target:
-      entity_id: "{{ response.entity_id }}"
-
-  - action: "{{ action }}"
-    target:
-      entity_id: "{{ entity_id }}"
-
 # - alias: Fix Wled Errors
 #   id: 06cfa18a-fa57-406d-94dc-5037e6096b87
 #   description: Refreshes a zwave multicast light and attempts to fix it.
