@@ -155,10 +155,10 @@ Shared plumbing (packages/shared/):
 - [x] template_reload_event: "Events - Forward Reload Templates" (automation/events.yaml)
 
 New packages:
-- [ ] outdoor_sunset_lighting: script.sunrise_sunset (scripts/sunset_sunrise.yaml), "Outdoor Lights On at Sunset, Off at Sunrise" (automation/timed_events.yaml), "Keep Sunset Switches On." (automation/reactions.yaml)
-- [ ] daylight_saving_reminders: template/daylight_savings_time.yaml and "Notify DST Change" (automation/timed_events.yaml)
-- [ ] household_reminders: "Notify Change Filters Message" and "Notify Mosby Heartworm and Flee Medication." (automation/timed_events.yaml)
-- [ ] thermostat_schedule: "Simple Thermostat" (automation/timed_events.yaml)
+- [x] outdoor_sunset_lighting: script.sunrise_sunset (scripts/sunset_sunrise.yaml), "Outdoor Lights On at Sunset, Off at Sunrise" (automation/timed_events.yaml), "Keep Sunset Switches On." (automation/reactions.yaml)
+- [x] daylight_saving_reminders: template/daylight_savings_time.yaml and "Notify DST Change" (automation/timed_events.yaml)
+- [x] household_reminders: "Notify Change Filters Message" and "Notify Mosby Heartworm and Flee Medication." (automation/timed_events.yaml)
+- [x] thermostat_schedule: "Simple Thermostat" (automation/timed_events.yaml)
 - [ ] server_health: Disk Use Total and Memory Use Total (template/system.yaml), CPU Temperature (command_line/temperature.yaml) ⚠, template/homeassistant_image.yaml, "Notify Snapshot status" and "Clear persistent_notifications at bedtime" (automation/timed_events.yaml)
 - [ ] living_room/living_room_controllers: "Living Room Scene Controller" and its LEDs (automation/buttons.yaml), "Cube Actions" (automation/cube.yaml), "Living Room Lamp Availability." (automation/reactions.yaml)
 - [ ] zigbee_button_toggles: "Zigbee Button Toggler" (automation/buttons.yaml)

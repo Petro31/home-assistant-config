@@ -1,0 +1,43 @@
+# Thermostat schedule: when an event named "heat" or "cool" starts on the
+# Thermostat calendar, sets the living room thermostat to 70 or 66 (in
+# heat/cool mode, to a 4-degree range starting there).
+#
+# External entities used:
+#   Local Calendar (local_calendar, UI)
+#     calendar.thermostat
+#   Z-Wave JS (zwave_js)
+#     Living Room: Thermostat (4e7c706ef188cf1c09a94d375f041e81)
+#       climate.living_room_thermostat
+
+automation:
+- alias: Simple Thermostat
+  id: simple_thermostat
+  triggers:
+    - trigger: calendar
+      # Possible values: start, end
+      event: start
+      # The calendar entity_id
+      entity_id: calendar.thermostat
+  variables:
+    config:
+      heat: 70
+      cool: 66
+    event: >
+      {{ trigger.calendar_event.summary.lower() }}
+    temperature: >
+      {{ config.get(event) }}
+    service_data: >
+      {%- if is_state('climate.living_room_thermostat', 'heat_cool') %}
+        {# Because we are using 70 and 66, this should just flip flop between 66-70 when 'cool' and 70-74 when 'heat' #}
+        {{ dict(target_temp_low=temperature, target_temp_high=temperature + 4) }}
+      {%- else %}
+        {{ dict(temperature=temperature) }}
+      {%- endif %}
+  conditions:
+    - condition: template
+      value_template: "{{ temperature is not none }}"
+  actions:
+    - action: climate.set_temperature
+      target:
+        entity_id: climate.living_room_thermostat
+      data: "{{ service_data }}"

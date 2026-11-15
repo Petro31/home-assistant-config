@@ -1,0 +1,129 @@
+# Outdoor sunset lighting: at sunset, turns the outdoor bulbs on with the
+# season's scene (sensor.seasonal_lights), and at sunrise switches them to the
+# sunrise scene. If someone turns off a front door sconce switch, turns it back
+# on, notifies, announces it in the living room and, during the day, turns the
+# bulbs back off.
+#
+# External entities used:
+#   Group (group, UI)
+#     light.outdoor_bulbs
+#   Sun (sun)
+#     sun.sun (through the sun triggers and condition)
+#   Z-Wave JS (zwave_js)
+#     Front Yard: Garage Sconces (b1d0a1ebdf7883af6ca9be5ad848e5eb)
+#       switch.sconces_garage
+#     Front Yard: Main Door Sconces (355f69100e17fb9869a9bbcb7198786f)
+#       switch.sconces_main_entrance
+#     Front Yard: Passenger Door Sconce (12ec0b2afff1bb467983d1c17993f753)
+#       switch.passenger_sconce
+#   scenes.yaml
+#     scene.sunrise_bulbs
+#     scene.holiday_bulbs_* (whichever one sensor.seasonal_lights names)
+#   packages/echo_announcements.yaml
+#     script.notify_area
+#   packages/holiday_lighting.yaml
+#     sensor.seasonal_lights
+#   packages/shared/notifications.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   script.sunrise_sunset
+
+automation:
+- alias: Outdoor Lights On at Sunset, Off at Sunrise
+  id: outdoor_lights_on_off
+  triggers:
+    - trigger: sun
+      event: sunset
+    - trigger: sun
+      event: sunrise
+  variables:
+    event: >
+      {{ trigger.event | default('invalid') }}
+    scene: >
+      {{ states('sensor.seasonal_lights') }}
+  actions:
+    - action: script.sunrise_sunset
+      data:
+        event: "{{ event }}"
+        scene: "{{ scene }}"
+
+- alias: Keep Sunset Switches On.
+  id: reaction_keep_sunset_switches_on
+  mode: parallel
+  triggers:
+  - trigger: state
+    entity_id:
+    - switch.passenger_sconce
+    - switch.sconces_garage
+    - switch.sconces_main_entrance
+    to: 'off'
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+  conditions:
+  - condition: template
+    value_template: "{{ continue }}"
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: "{{ trigger.entity_id }}"
+  - action: script.notify
+    data:
+      title: "Sunset Switch Turned Off"
+      message: >
+        {{ trigger.entity_id | entity_name }} door sconce switch was turned off, turning back on.
+  - action: script.notify_area
+    data:
+      message: Jim counter action initiative in affect. Turning on {{ trigger.entity_id | entity_name }} door sconces.
+      announce: False
+      area: living_room
+  - condition: sun
+    after: sunrise
+    before: sunset
+  - delay:
+      seconds: 5
+  - action: light.turn_off
+    target:
+      entity_id: light.outdoor_bulbs
+
+script:
+  sunrise_sunset:
+    alias: Sunrise/Sunset - Scenes
+    mode: single
+    fields:
+      event: 
+        description: Sunrise or sunset event
+        example: sunrise
+        required: true
+        selector:
+          select:
+            options:
+            - label: Sunrise
+              value: sunrise
+            - label: Sunset
+              value: sunset
+      scene:
+        description: What Scene to run, if sunset
+        example: scene.holiday_bulbs_soft_white
+        selector:
+          entity:
+            domain: scene
+  
+    variables:
+      evt: >
+        {{ event | default('invalid') }}
+      input_scene: >
+        {{ scene | default('unknown') }}
+      execute_scene: >
+        {{ event in ['sunset', 'sunrise'] and start_scene not in ['unknown', 'unavailable'] }}
+      start_scene: >
+        {{ input_scene if event == 'sunset' else 'scene.sunrise_bulbs' }}
+      continue: >
+        {{ evt in ['sunset','sunrise'] and execute_scene }}
+    sequence:
+    - condition: template
+      value_template: "{{ continue }}"
+    - action: scene.turn_on
+      target:
+        entity_id: "{{ start_scene }}"

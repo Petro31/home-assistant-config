@@ -1,0 +1,38 @@
+# Household reminders, sent at 10:00 and 19:00: on the 1st of every month,
+# give Mosby heartworm and flea medication; on the 1st of January, April,
+# July and October, change the HVAC filter.
+#
+# External entities used:
+#   packages/shared/notifications.yaml
+#     script.notify
+
+automation:
+- alias: Notify Change Filters Message
+  id: change_filters_message
+  triggers:
+    - trigger: time
+      at: "10:00:00"
+    - trigger: time
+      at: "19:00:00"
+  conditions:
+    - condition: template
+      value_template: "{{ now().day == 1 and now().month in [ 1, 4, 7, 10 ] }}"
+  actions:
+    - action: script.notify
+      data:
+        message: "Change HVAC filter."
+
+- alias: Notify Mosby Heartworm and Flee Medication.
+  id: mosby_heartworm
+  triggers:
+    - trigger: time
+      at: "10:00:00"
+    - trigger: time
+      at: "19:00:00"
+  conditions:
+    - condition: template
+      value_template: "{{ now().day == 1 }}"
+  actions:
+    - action: script.notify
+      data:
+        message: "Give mosby heartworm and flee medication."
