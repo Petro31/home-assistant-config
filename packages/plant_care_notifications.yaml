@@ -152,6 +152,7 @@ template:
             {%- endif %}
           {%- endif %}
         {%- endfor %}
+        {{ ns.items }}
 
 - binary_sensor:
   - name: Plant Issue
