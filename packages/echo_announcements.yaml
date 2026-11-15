@@ -51,10 +51,6 @@
 #   scripts/mqtt.yaml
 #     script.mqtt_automated_config
 #     script.mqtt_automated_states
-#   Not found (referenced, but no such entity exists):
-#     notify.downstairs_speak
-#     notify.everywhere_speak
-#     notify.great_room_speak
 #
 # Entities created by this package:
 #   script.notify_alexa_ui
@@ -90,7 +86,7 @@ script:
         selector:
           boolean:
       user_id:
-        description: Annouce or TTS (True for announce, False or omit for TTS)
+        description: User ID of the sender, used to name them in announcements
         selector:
           text:
             type: text
@@ -209,10 +205,10 @@ script:
         speak: notify.bonus_room_echo_dot_speak
       - area: downstairs
         announce: notify.downstairs_announce
-        speak: notify.downstairs_speak
+        speak: notify.downstairs_announce  # zones have no speak entity; always announce
       - area: everywhere
         announce: notify.everywhere_announce
-        speak: notify.everywhere_speak
+        speak: notify.everywhere_announce  # zones have no speak entity; always announce
       - area: game_room
         announce: notify.game_room_echo_dot_announce
         speak: notify.game_room_echo_dot_speak
@@ -221,7 +217,7 @@ script:
         speak: notify.garage_echo_dot_speak
       - area: great_room
         announce: notify.great_room_announce
-        speak: notify.great_room_speak
+        speak: notify.great_room_announce  # zones have no speak entity; always announce
       - area: kitchen
         announce: notify.kitchen_echo_dot_announce
         speak: notify.kitchen_echo_dot_speak
@@ -268,7 +264,7 @@ script:
       value_template: "{{ should_continue }}"
     - action: notify.send_message
       target:
-        entity_id: "{{ entities | first }}"
+        entity_id: "{{ entities }}"
       data:
         message: "{{ text }}"
     - action: script.mqtt_automated_states

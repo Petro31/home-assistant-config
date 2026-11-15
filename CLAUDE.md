@@ -37,7 +37,7 @@ The live Home Assistant `/config` directory (mounted over SMB; the share path is
 | `command_line/` | `!include_dir_merge_list` | List |
 | `themes/` | `!include_dir_merge_named` | (git-ignored) |
 
-Other top-level `*.yaml` files are single-domain includes referenced from `configuration.yaml`. Some (e.g. `alexa.yaml`, `http.yaml`, `history*.yaml`) are tracked but no longer included.
+Other top-level `*.yaml` files are single-domain includes referenced from `configuration.yaml`. Some (e.g. `http.yaml`, `history*.yaml`) are tracked but no longer included.
 
 New self-contained features go in `packages/` (see `packages/leak_detection.yaml` for the current style). Domain-organized additions go in the matching `automation/`, `scripts/`, or `template/` file.
 
@@ -183,7 +183,7 @@ Problems found while adding package notes, moving packages or updating legacy ke
 - The "Notify" automation's alias is generic, and its entity is `automation.dryer_notify` even though it handles both the washer and the dryer.
 
 ### packages/lzw45_led_strips.yaml
-- The LZW45 strips are expected to be removed. When they are, delete this package and its 19 UI helpers (listed in the header), and remove `switch.lzw45_mood_lighting` from `alexa.yaml` and `cloud.yaml`, the Mood Lighting dashboard view (`lovelace/views/mood_lighting.yaml`), and the strip lights from `automation/buttons.yaml` and `lovelace/views/master.yaml`.
+- The LZW45 strips are expected to be removed. When they are, delete this package and its 19 UI helpers (listed in the header), and remove `switch.lzw45_mood_lighting` from `cloud.yaml`, the Mood Lighting dashboard view (`lovelace/views/mood_lighting.yaml`), and the strip lights from `automation/buttons.yaml` and `lovelace/views/master.yaml`.
 
 ### automation/calibrations.yaml
 - "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`. It also still uses legacy syntax.
@@ -212,14 +212,6 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/house_climate.yaml
 - `sensor.bonus_room_cgdk2_humidity` has the `house_climate` label but `sensor.bonus_room_cgdk2_temperature` doesn't, so the bonus room counts toward House Humidity but not House Temperature. Every other room has both labeled. Possibly intentional; check before changing the label.
-
-### packages/echo_announcements.yaml
-- `script.notify_area` maps downstairs, everywhere and great_room to `notify.downstairs_speak`, `notify.everywhere_speak` and `notify.great_room_speak`, which don't exist (Alexa Devices only creates `_announce` entities for those zones). A non-announce message to those areas fails.
-- `script.notify_area` sends only to `entities | first`, so when several areas are passed (e.g. from the dashboard buttons with more than one area toggled on) only the first one gets the message. The `alexa_last_tts` sensor still lists all of them as targets.
-- In `script.notify_alexa_ui`, the `user_id` field's description is copied from the `announce` field ("Annouce or TTS…").
-
-### Unused top-level files
-- `input_text.yaml`, `alexa.yaml` and `alexa_media.yaml` aren't included from `configuration.yaml`, so HA doesn't load them. `input_text: !include` was removed in 2021 (`input_text.alexa_say` is now a UI helper), `alexa_media.yaml` was replaced by the UI in 2022, and the live `alexa:` config is in `cloud.yaml`. The lzw45 entry above still mentions `alexa.yaml`.
 
 ### scripts/zwave_js.yaml
 - `script.zwave_multicast_group` was removed (unused since 2024-04-21, replaced by `script.light_handler` in packages/light_targets.yaml). Its entity registry entry is still there; delete it in Settings → Entities.
