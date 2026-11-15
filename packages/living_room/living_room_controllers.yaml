@@ -1,73 +1,60 @@
-- alias: Zigbee Button Toggler
-  id: button_toggle_lights
-  mode: parallel
-  trigger:
-  - platform: state
-    entity_id:
-    - event.workshop_button_action
-    - event.mikes_button_action
-    - event.jims_button_action
-    - event.lindsays_button_action
-  variables:
-    continue: >
-      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
-    event: >
-      {{ trigger.to_state.attributes.event_type | default('') if continue else '' }}
-    source: >
-      {{ trigger.entity_id }}
-    config:
-      event.workshop_button_action:
-        single:
-        - light.workshop_desk
-        double:
-        - light.workshop_desk
-        - light.workshop_bench_strip
-        hold:
-        - light.workshop_desk
-        - light.workshop_dome
-        - switch.floating_double_plug_left
-        - light.workshop_bench_strip
-      event.mikes_button_action:
-        single:
-        - light.mikes_lamp
-        double:
-        - light.living_room
-        hold:
-        - switch.movie_time
-      event.jims_button_action:
-        single:
-        - light.jims_lamp
-        double:
-        - light.all_living_room
-        hold:
-        - light.all_living_room
-      event.lindsays_button_action:
-        single:
-        - light.lindsays_lamp
-        double:
-        - light.living_room
-        hold:
-        - light.all_living_room
-    which: >
-      {%- set item = config.get(source, {}) %}
-      {{ item.get(event, []) }}
-    targets: >
-      {{ which | count > 0 }}
-    are_on: >
-      {{ which | select('is_state', 'on') | list | count > 0 }}
-  condition:
-  - condition: template
-    value_template: "{{ continue and targets }}"
-  action:
-  - service: homeassistant.turn_o{{ 'ff' if are_on else 'n' }}
-    target:
-      entity_id: "{{ which }}"
+# Living room controllers: the two Zooz ZEN32 scene controllers toggle the
+# living and dining room lights and the Hyperion effects, and their LEDs show
+# each target's state (red when unavailable). Shaking Mike's cube toggles
+# movie time and rotating it sets the receiver volume. If a lamp is turned off
+# at the lamp (goes unavailable), a notice is sent and announced in the living
+# room.
+#
+# Keep the living_room_ prefix on this filename, even though the folder
+# repeats it. HA names a package after its filename alone (the folder is
+# ignored), so a shorter name like harmony/remote/yamaha could silently
+# clash with another package anywhere under packages/.
+#
+# External entities used:
+#   Group (group, UI)
+#     light.all_living_room
+#     light.downstairs_ambiance
+#     light.living_room
+#   MQTT (mqtt)
+#     Dining Room: Uplight 1 (66c83616fea2480405441e0cc452c13f)
+#       light.dining_room_uplight_1
+#     Dining Room: Uplight 2 (32bd95073fc8774e551bdcc9bed92acb)
+#       light.dining_room_uplight_2
+#     Living Room: Jims Lamp (763734bfecb338741315b92f8e5938aa)
+#       light.jims_lamp
+#     Living Room: Lindsays Lamp (93f68ad1a02b9626fa0f4bd28f60c584)
+#       light.lindsays_lamp
+#     Living Room: Mikes Cube (e43c8cddf98acaa7818c353b98e8f5bb)
+#       event.mikes_cube_action
+#     Living Room: Mikes Lamp (a8c6d407a0b57dc149e552c366b19443)
+#       light.mikes_lamp
+#     Living Room: Uplight (70d03dbbaaf19027d700b6216decd435)
+#       light.living_room_uplight
+#   Yamaha MusicCast (yamaha_musiccast)
+#     Living Room: RX-V6A Zone 1 (4b66b537b89fb740de894c22f1e09407)
+#       media_player.yamaha_rx_v6a
+#   Z-Wave JS (zwave_js)
+#     Living Room: Living Room Scene Controller (f7a1fe2db74bf6a3b652301589f7cebc)
+#       button presses (zwave_js_value_notification events) and LED config parameters, by device_id
+#     Living Room: Living Room Scene Controller 2 (215253fb0f54a57d98bc940fac442073)
+#       button presses (zwave_js_value_notification events) and LED config parameters, by device_id
+#   packages/echo_announcements.yaml
+#     script.notify_area
+#   packages/living_room/living_room_remote.yaml
+#     switch.movie_time
+#   packages/shared/notifications.yaml
+#     script.notify
+#   packages/tv_ambient_lighting.yaml
+#     switch.hyperion_cinema
+#     switch.hyperion_rainbow_swirl_fast
+#     switch.hyperion_usb_capture
 
+automation:
 - alias: Living Room Scene Controller
   id: button_living_room_scene_controller
   mode: parallel
-  trigger:
-  - platform: event
+  triggers:
+  - trigger: event
     event_type: zwave_js_value_notification
   variables:
     device: >
@@ -205,19 +192,19 @@
       {{ config.get(device, {}).get(label, {}).get(value, {}).get('service') }}
     data: >
       {{ config.get(device, {}).get(label, {}).get(value, {}).get('data') }}
-  condition:
+  conditions:
   - condition: template
     value_template: "{{ service is not none and data is not none }}"
-  action:
-  - service: "{{ service }}"
+  actions:
+  - action: "{{ service }}"
     data: "{{ data }}"
 
 - alias: Living Room Scene Controller LEDs
   id: button_living_room_scene_controller_leds
   mode: queued
   max: 25
-  trigger:
-  - platform: state
+  triggers:
+  - trigger: state
     entity_id:
     - light.mikes_lamp
     - light.lindsays_lamp
@@ -300,15 +287,15 @@
       {% else %}
         None
       {% endif %}
-  condition:
+  conditions:
   - condition: template
     value_template: "{{ value is not none and state_parameter is not none }}"
-  action:
+  actions:
   - repeat:
       for_each: "{{ devices }}"
       sequence:
       - <<: &target
-          service: zwave_js.bulk_set_partial_config_parameters
+          action: zwave_js.bulk_set_partial_config_parameters
           target:
             device_id: "{{ repeat.item }}"
         data:
@@ -327,3 +314,76 @@
         data:
           parameter: "{{ color_parameter }}"
           value: "{{ color }}"
+
+- id: f6524e79-6b0c-4aa2-b508-3d67f83901a8
+  alias: Cube Actions
+  mode: parallel
+  triggers:
+    - trigger: state
+      entity_id: event.mikes_cube_action
+      from: ~
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    event: "{{ trigger.to_state.attributes.event_type | default(None) if continue else None }}"
+    player: media_player.yamaha_rx_v6a
+    volume: "{{ state_attr(player, 'volume_level') }}"
+  conditions:
+  - condition: template
+    value_template: "{{ event is not none }}"
+  actions:
+    - alias: "Which action"
+      choose:
+        - alias: Shake
+          conditions: "{{ event == 'shake' }}"
+          sequence:
+            - action: switch.toggle
+              target:
+                entity_id: switch.movie_time
+        - alias: Rotate
+          conditions: "{{ 'rotate' in event }}"
+          sequence:
+            - if: "{{ volume is not none }}"
+              then:
+                - action: media_player.volume_set
+                  target:
+                    entity_id: "{{ player }}"
+                  data:
+                    volume_level: >
+                      {% set c = 0.05 if event == 'rotate_right' else -0.05 %}
+                      {{ ([ 0, volume + c, 1] | sort)[1] | round(2) }}
+
+- alias: Living Room Lamp Availability.
+  id: reaction_keep_living_room_lamps_available
+  mode: parallel
+  triggers:
+  - trigger: state
+    entity_id: &lamp_lights
+    - light.jims_lamp
+    - light.mikes_lamp
+    - light.lindsays_lamp
+    to: 'unavailable'
+  variables:
+    triggering: >
+      {{ trigger.entity_id }}
+    entities: *lamp_lights
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    only_triggering_light: >
+      {{ expand(entities) | rejectattr('entity_id', 'eq', triggering) | map(attribute='state') | select('eq', 'unavailable') | list | length == 0 }}
+    name: >
+      {{ triggering | entity_name or 'unknown' }}
+  conditions:
+  - condition: template
+    value_template: "{{ continue and only_triggering_light }}"
+  actions:
+  - action: script.notify
+    data:
+      message: >
+        {{ name.capitalize() }} went unavailable!  Notifying living room.
+  - action: script.notify_area
+    data:
+      message: >
+        Please do not turn off living room lamps, turn the lamp back on.  If you want to turn on this lamp in the future, say: Turn on {{ name }}.  
+      announce: False
+      area: living_room

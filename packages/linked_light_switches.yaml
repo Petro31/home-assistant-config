@@ -1,48 +1,69 @@
+# Linked light switches: keeps switches that control the same lights in step.
+# The game room lamp switch turns the bookcase and buffet outlets on and off
+# with it, the basement stairs switch does the same for the cans, and the deck
+# mood lighting and patio string light switches follow each other.
+#
+# External entities used:
+#   Z-Wave JS (zwave_js)
+#     Basement: Cans (7a058c63d5c8cc310b8f44f9779cfe29)
+#       switch.basement_cans
+#     Basement: Stairs (7b0099e5f7271bd233c48036b4380f61)
+#       switch.basement_stairs
+#     Deck: Mood Lighting (c52131ac2eb906cb47ad0cf8dbf53737)
+#       switch.deck_mood_lighting
+#     Game Room: Bookcase Outlet (87d8cb5789ad31ed31a100bcc81afee9)
+#       switch.game_room_bookcase_outlet
+#     Game Room: Buffet Outlet (ad5c28f9abce1cee402852bc5a21f189)
+#       switch.game_room_buffet_outlet
+#     Game Room: Lamps (157288dafb40af7e41de1c7f8e322291)
+#       switch.game_room_switch
+#     Patio: String Light (6072831956d76824ec0162709247cd8d)
+#       switch.patio_string_light
+
+automation:
 - alias: Game Room Lights
   id: toggle_game_room_lights
-  trigger:
-  - platform: state
+  triggers:
+  - trigger: state
     entity_id: switch.game_room_switch
   variables:
     continue: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
     to_state: >
       {{ trigger.to_state.state | default('') if continue else '' }}
-  condition:
+  conditions:
   - condition: template
     value_template: "{{ continue and to_state in ['on','off'] }}"
-  action:
-  - service: switch.turn_{{ to_state }}
+  actions:
+  - action: switch.turn_{{ to_state }}
     target:
       entity_id:
       - switch.game_room_bookcase_outlet
       - switch.game_room_buffet_outlet
 
-
 - alias: Basement Lights
   id: toggle_basement_lights
-  trigger:
-  - platform: state
+  triggers:
+  - trigger: state
     entity_id: switch.basement_stairs
   variables:
     continue: >
       {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
     to_state: >
       {{ trigger.to_state.state | default('') if continue else '' }}
-  condition:
+  conditions:
   - condition: template
     value_template: "{{ continue and to_state in ['on','off'] }}"
-  action:
-  - service: switch.turn_{{ to_state }}
+  actions:
+  - action: switch.turn_{{ to_state }}
     target:
       entity_id:
       - switch.basement_cans
 
-
 - alias: Deck String Lights
   id: toggle_deck_string_lights
-  trigger:
-  - platform: state
+  triggers:
+  - trigger: state
     entity_id: &deck_string_entities
     - switch.deck_mood_lighting
     - switch.patio_string_light
@@ -57,10 +78,10 @@
       {{ trigger.to_state.state | default(none) if continue else none }}
     targets: >
       {{ expand(entities) | rejectattr('entity_id', 'eq', trigger.entity_id) | rejectattr('state', 'eq', to_state) | map(attribute='entity_id') | list if continue else [] }}
-  condition:
+  conditions:
   - condition: template
     value_template: "{{ continue and to_state in state_list and targets | count > 0 }}"
-  action:
-  - service: switch.turn_{{ to_state }}
+  actions:
+  - action: switch.turn_{{ to_state }}
     target:
       entity_id: "{{ targets }}"

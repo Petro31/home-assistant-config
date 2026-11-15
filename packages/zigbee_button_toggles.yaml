@@ -1,0 +1,102 @@
+# Zigbee button toggles: a single, double or long press on one of the four
+# Zigbee buttons toggles a set of lights (all off if any are on, otherwise
+# all on):
+#   Workshop button: desk / desk and bench strip / desk, dome, bench strip
+#     and the left floating plug
+#   Mike's button: Mike's lamp / living room / movie time
+#   Jim's button: Jim's lamp / all living room / all living room
+#   Lindsay's button: Lindsay's lamp / living room / all living room
+#
+# External entities used:
+#   Group (group, UI)
+#     light.all_living_room
+#     light.living_room
+#     light.workshop_desk
+#     light.workshop_dome
+#   MQTT (mqtt)
+#     Living Room: Jims Button (752d5ae3539edc56c1a3fd1ad4f31457)
+#       event.jims_button_action
+#     Living Room: Jims Lamp (763734bfecb338741315b92f8e5938aa)
+#       light.jims_lamp
+#     Living Room: Lindsays Button (caf9027764529cfc3cf0bdbd4a684b78)
+#       event.lindsays_button_action
+#     Living Room: Lindsays Lamp (93f68ad1a02b9626fa0f4bd28f60c584)
+#       light.lindsays_lamp
+#     Living Room: Mikes Button (3a3d5f79a66e83d2f621f04a533196d1)
+#       event.mikes_button_action
+#     Living Room: Mikes Lamp (a8c6d407a0b57dc149e552c366b19443)
+#       light.mikes_lamp
+#     Workshop: Button (d28d2d7e3d14e06e7c47c84924abf8d7)
+#       event.workshop_button_action
+#   Z-Wave JS (zwave_js)
+#     Workshop: Bench Strip (7782fb0e044755ca4928254d9c4c8db4)
+#       light.workshop_bench_strip
+#     switch.floating_double_plug_left
+#   packages/living_room/living_room_remote.yaml
+#     switch.movie_time
+
+automation:
+- alias: Zigbee Button Toggler
+  id: button_toggle_lights
+  mode: parallel
+  triggers:
+  - trigger: state
+    entity_id:
+    - event.workshop_button_action
+    - event.mikes_button_action
+    - event.jims_button_action
+    - event.lindsays_button_action
+  variables:
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    event: >
+      {{ trigger.to_state.attributes.event_type | default('') if continue else '' }}
+    source: >
+      {{ trigger.entity_id }}
+    config:
+      event.workshop_button_action:
+        single:
+        - light.workshop_desk
+        double:
+        - light.workshop_desk
+        - light.workshop_bench_strip
+        hold:
+        - light.workshop_desk
+        - light.workshop_dome
+        - switch.floating_double_plug_left
+        - light.workshop_bench_strip
+      event.mikes_button_action:
+        single:
+        - light.mikes_lamp
+        double:
+        - light.living_room
+        hold:
+        - switch.movie_time
+      event.jims_button_action:
+        single:
+        - light.jims_lamp
+        double:
+        - light.all_living_room
+        hold:
+        - light.all_living_room
+      event.lindsays_button_action:
+        single:
+        - light.lindsays_lamp
+        double:
+        - light.living_room
+        hold:
+        - light.all_living_room
+    which: >
+      {%- set item = config.get(source, {}) %}
+      {{ item.get(event, []) }}
+    targets: >
+      {{ which | count > 0 }}
+    are_on: >
+      {{ which | select('is_state', 'on') | list | count > 0 }}
+  conditions:
+  - condition: template
+    value_template: "{{ continue and targets }}"
+  actions:
+  - action: homeassistant.turn_o{{ 'ff' if are_on else 'n' }}
+    target:
+      entity_id: "{{ which }}"

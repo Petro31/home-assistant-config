@@ -160,9 +160,9 @@ New packages:
 - [x] household_reminders: "Notify Change Filters Message" and "Notify Mosby Heartworm and Flee Medication." (automation/timed_events.yaml)
 - [x] thermostat_schedule: "Simple Thermostat" (automation/timed_events.yaml)
 - [ ] server_health: Disk Use Total and Memory Use Total (template/system.yaml), CPU Temperature (command_line/temperature.yaml) ⚠, template/homeassistant_image.yaml, "Notify Snapshot status" and "Clear persistent_notifications at bedtime" (automation/timed_events.yaml)
-- [ ] living_room/living_room_controllers: "Living Room Scene Controller" and its LEDs (automation/buttons.yaml), "Cube Actions" (automation/cube.yaml), "Living Room Lamp Availability." (automation/reactions.yaml)
-- [ ] zigbee_button_toggles: "Zigbee Button Toggler" (automation/buttons.yaml)
-- [ ] linked_light_switches: automation/toggles.yaml
+- [x] living_room/living_room_controllers: "Living Room Scene Controller" and its LEDs (automation/buttons.yaml), "Cube Actions" (automation/cube.yaml), "Living Room Lamp Availability." (automation/reactions.yaml; the commented-out "Fix Wled Errors" copy left in that file was deleted with it)
+- [x] zigbee_button_toggles: "Zigbee Button Toggler" (automation/buttons.yaml)
+- [x] linked_light_switches: automation/toggles.yaml
 - [ ] garage_doors: template/door.yaml and script.garage_door_toggle (scripts/nfc.yaml)
 - [ ] home_occupancy: template/people_tracker.yaml and template/network.yaml
 - [ ] work_hours_tracking: Petro/Lambo at Work history_stats (sensor.yaml) ⚠ and template/time.yaml
