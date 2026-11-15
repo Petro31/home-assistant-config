@@ -39,7 +39,7 @@
 #       light.kitchen_island
 #     Kitchen: Pantry Dome (f3754e5601df799c9cbe15f19cbbad4e)
 #       switch.kitchen_pantry
-#   packages/holiday_lighting.yaml
+#   packages/holiday/holiday_lighting.yaml
 #     sensor.seasonal_accent_lights
 #   packages/tv_ambient_lighting.yaml
 #     switch.hyperion_usb_capture

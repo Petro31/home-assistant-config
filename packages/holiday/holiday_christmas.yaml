@@ -1,0 +1,257 @@
+# Holiday Christmas: the Christmas-only lights. The Christmas tree (on the
+# living room window outlet), the four WLED Christmas village effects on the
+# kitchen cabinet accent strip (as lights that act like radio buttons), the
+# front yard trees, and the Christmas outdoor bulb scene. Which holiday it is,
+# and the indoor accent colors, come from holiday_lighting.yaml.
+#
+# Keep the holiday_ prefix on this filename, even though the folder repeats
+# it. HA names a package after its filename alone (the folder is ignored),
+# so a shorter name like lighting/scenes/christmas could silently clash with
+# another package anywhere under packages/.
+#
+# External entities used:
+#   MQTT (mqtt)
+#     Front Yard: Garage Door Left Bulb (a601f2794fc36effc0cffb767485bd40)
+#       light.garage_sconce_left_bulb
+#     Front Yard: Garage Door Right Bulb (48540c549cff5acaa24779839108dc4e)
+#       light.garage_sconce_right_bulb
+#     Front Yard: Main Door Left Bulb (51abc464a490917f743e4db6d0866263)
+#       light.main_door_left_bulb
+#     Front Yard: Main Door Right Bulb (5f65fbf28117e47fb1e18d220107aac4)
+#       light.main_door_right_bulb
+#     Front Yard: Passenger Door Bulb (c891bf3c80ca54eb5e78fe78167e9f2b)
+#       light.passenger_door_bulb
+#     Front Yard: Uplight Left (a918c67ea821a0454a03d20d0357d1b7)
+#       light.front_yard_uplight_left
+#     Front Yard: Uplight Middle (57cdbc11d8edb45527be2ee453f90d5d)
+#       light.front_yard_uplight_middle
+#     Front Yard: Uplight Right (887f1338ee29de89beeb686df55f88e7)
+#       light.front_yard_uplight_right
+#   WLED (wled)
+#     Game Room: Front Tree (e6825f7b5ff4d08f51bacc669da6296e) (config entry disabled outside the season)
+#       select.front_tree_preset
+#     Kitchen: Cabinet Accent (2a5e6cb86ca686b3bfd060de29831aba)
+#       select.cabinet_accent_preset
+#   Z-Wave JS (zwave_js)
+#     Living Room: Window Outlet (a7d9ac16cae4a1e6ae0a7eb5bb9a226c)
+#       switch.living_room_window
+#
+# Entities created by this package:
+#   light.christmas_tree
+#   light.christmas_blinking_houses
+#   light.christmas_flashing_houses
+#   light.christmas_red_and_green_houses
+#   light.christmas_town_is_on_fire
+#   switch.front_trees
+#   scene.holiday_bulbs_christmas (no unique_id)
+
+template:
+- light:
+  #################################
+  ###      Christmas Tree       ###
+  #################################
+
+  - unique_id: christmas_tree
+    name: Christmas Tree
+    default_entity_id: light.christmas_tree
+    state: >
+      {{ is_state('switch.living_room_window', 'on') }}
+    availability: >
+      {{- expand('switch.living_room_window') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
+    turn_on:
+    - action: switch.turn_on
+      target: &christmas_tree_switch
+        entity_id: switch.living_room_window
+    turn_off:
+    - action: switch.turn_off
+      target: *christmas_tree_switch
+
+# To autogenerate WLED selects as 'radio buttons'
+
+# {%- set select = 'select.cabinet_accent_preset' %}
+# {%- for option in ('Blinking Houses', 'Flashing Houses', 'Red and Green Houses', 'Town is on Fire') %}
+# {%- set name = 'christmas_' ~ option | slugify %}
+# {%- set barrier = '#' * 40 %}
+# {%- set banner = '{0}\n    ###{1}###\n    {0}' %}
+
+#     {{ banner.format(barrier, option.center(barrier|length - 6)) }}
+  
+#   - unique_id: {{ name }}
+#     name: {{ option }}
+#     variables:
+#       wled: {{ select }}
+#     state: >
+#       {%raw%}{{- is_state(wled, {%endraw%}'{{ option }}') {%raw%}}}{%endraw%}
+#     availability: >
+#       {%raw%}{{- wled | has_value }}{%endraw%}
+#     turn_on:
+#     - <<: &{{name}}_target
+#         action: select.select_option
+#         target: 
+#           entity_id: {{ select }}
+#       data:
+#         option: {{ option }}
+#     turn_off:
+#     - <<: *{{name}}_target
+#       data:
+#         option: All Off
+# {%- endfor %}
+
+- light:
+
+    ########################################
+    ###         Blinking Houses          ###
+    ########################################
+  
+  - unique_id: christmas_blinking_houses
+    name: Blinking Houses
+    default_entity_id: light.christmas_blinking_houses
+    variables:
+      wled: select.cabinet_accent_preset
+    state: >
+      {{- is_state(wled, 'Blinking Houses') }}
+    availability: >
+      {{- wled | has_value }}
+    turn_on:
+    - <<: &christmas_blinking_houses_target
+        action: select.select_option
+        target: 
+          entity_id: select.cabinet_accent_preset
+      data:
+        option: Blinking Houses
+    turn_off:
+    - <<: *christmas_blinking_houses_target
+      data:
+        option: All Off
+
+    ########################################
+    ###         Flashing Houses          ###
+    ########################################
+  
+  - unique_id: christmas_flashing_houses
+    name: Flashing Houses
+    default_entity_id: light.christmas_flashing_houses
+    variables:
+      wled: select.cabinet_accent_preset
+    state: >
+      {{- is_state(wled, 'Flashing Houses') }}
+    availability: >
+      {{- wled | has_value }}
+    turn_on:
+    - <<: &christmas_flashing_houses_target
+        action: select.select_option
+        target: 
+          entity_id: select.cabinet_accent_preset
+      data:
+        option: Flashing Houses
+    turn_off:
+    - <<: *christmas_flashing_houses_target
+      data:
+        option: All Off
+
+    ########################################
+    ###       Red and Green Houses       ###
+    ########################################
+  
+  - unique_id: christmas_red_and_green_houses
+    name: Red and Green Houses
+    default_entity_id: light.christmas_red_and_green_houses
+    variables:
+      wled: select.cabinet_accent_preset
+    state: >
+      {{- is_state(wled, 'Red and Green Houses') }}
+    availability: >
+      {{- wled | has_value }}
+    turn_on:
+    - <<: &christmas_red_and_green_houses_target
+        action: select.select_option
+        target: 
+          entity_id: select.cabinet_accent_preset
+      data:
+        option: Red and Green Houses
+    turn_off:
+    - <<: *christmas_red_and_green_houses_target
+      data:
+        option: All Off
+
+    ########################################
+    ###         Town is on Fire          ###
+    ########################################
+  
+  - unique_id: christmas_town_is_on_fire
+    name: Town is on Fire
+    default_entity_id: light.christmas_town_is_on_fire
+    variables:
+      wled: select.cabinet_accent_preset
+    state: >
+      {{- is_state(wled, 'Town is on Fire') }}
+    availability: >
+      {{- wled | has_value }}
+    turn_on:
+    - <<: &christmas_town_is_on_fire_target
+        action: select.select_option
+        target: 
+          entity_id: select.cabinet_accent_preset
+      data:
+        option: Town is on Fire
+    turn_off:
+    - <<: *christmas_town_is_on_fire_target
+      data:
+        option: All Off
+
+- switch:
+  # Front Trees
+  - unique_id: front_trees
+    name: Front Trees
+    default_entity_id: switch.front_trees
+    state: >
+      {{ states('select.front_tree_preset') in state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list }}
+    turn_on:
+    - action: select.select_option
+      <<: &front_trees
+        target:
+          entity_id: select.front_tree_preset
+      data:
+        option: "{{ state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list | random }}"
+    turn_off:
+    - action: select.select_option
+      data:
+        option: 'Off'
+      <<: *front_trees
+
+scene:
+- name: Holiday Bulbs Christmas
+  icon: mdi:string-lights
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  0, 179,  44]
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  0, 179,  44]
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
+    light.front_yard_uplight_left:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]
+    light.front_yard_uplight_middle:
+      state: 'on'
+      brightness: 255
+      rgb_color: [  0, 179,  44]
+    light.front_yard_uplight_right:
+      state: 'on'
+      brightness: 255
+      rgb_color: [179,   0,  12]

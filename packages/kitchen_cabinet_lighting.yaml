@@ -16,7 +16,7 @@
 #   Z-Wave JS (zwave_js)
 #     Kitchen: Cabinet (088f2d268e600b9dd69c385cf3a8b72c)
 #       switch.kitchen_cabinet
-#   packages/holiday_lighting.yaml
+#   packages/holiday/holiday_lighting.yaml
 #     binary_sensor.indoor_holiday
 #
 # Entities created by this package:

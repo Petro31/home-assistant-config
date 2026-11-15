@@ -30,7 +30,7 @@ The live Home Assistant `/config` directory (mounted over SMB; the share path is
 | `packages/` | `homeassistant: packages: !include_dir_named` | One feature per file, spanning many domains (`template:`, `automation:`, `script:`, …). The filename is the package name. Subfolders can group related packages, but the folder isn't part of the name. |
 | `automations.yaml` | `automation: !include` | Managed by the UI editor; don't hand-edit |
 | `scripts.yaml` | `script: !include` | Managed by the UI editor |
-| `scenes.yaml` | `scene: !include` | Scenes (no `id:`, so they aren't in the entity registry) |
+| `scenes.yaml` | `scene: !include` | Managed by the UI scene editor (currently empty, `[]`). The YAML scenes (no `id:`, so they aren't in the entity registry) live in packages: the holiday bulb scenes in `packages/holiday/`, the everyday outdoor bulb scenes in `packages/outdoor_sunset_lighting.yaml`. |
 | `themes/` | `!include_dir_merge_named` | (git-ignored) |
 
 The only other top-level `*.yaml` files are `secrets.yaml` and the dashboards (`ui-*.yaml`, loaded by `lovelace.yaml`). Integration settings live in packages too: `packages/system/` holds `system_recorder.yaml` (the recorder, including its include/exclude filters), `system_logging.yaml` (logger and system_log) and `system_cloud.yaml` (the Nabu Casa cloud/Alexa config), and `packages/door_buddy.yaml` holds door_buddy. When removing an include from `configuration.yaml`, delete the file too rather than leaving it behind.
@@ -186,12 +186,12 @@ Done:
 - [x] todo (packages/daily_todo_lists.yaml)
 - [x] lzw45 (packages/lzw45_led_strips.yaml; also includes the Mood Lighting switch from template/living_room_remote.yaml)
 - [x] run_schedule (packages/running_training_programs.yaml)
-- [x] holiday (packages/holiday_lighting.yaml; also includes template/seasons.yaml and the Indoor Holiday switch from template/wled_ambiance.yaml)
+- [x] holiday (packages/holiday_lighting.yaml; also includes template/seasons.yaml and the Indoor Holiday switch from template/wled_ambiance.yaml). Later split into `packages/holiday/`: `holiday_lighting.yaml` (the shared holiday logic), `holiday_christmas.yaml` (the Christmas-only lights, front trees and Christmas bulb scene) and `holiday_scenes.yaml` (the other holidays' bulb scenes, from scenes.yaml). Other holidays can get their own files once they have enough devices of their own.
 - [x] irrigation (packages/irrigation_scheduler.yaml)
 - [x] harmony (packages/living_room/: living_room_harmony.yaml, living_room_remote.yaml and living_room_yamaha.yaml; also includes harmony_helper.yaml, scripts/cast.yaml, template/living_room_remote.yaml, template/yamaha.yaml, template/cast_workout.yaml and the Play/Pause lighting automation from automation/reactions.yaml)
 - [x] basement receiver (packages/basement_yamaha.yaml; also includes the yamaha platform and the Deck/Basement Speakers from media_player.yaml, the basement multizone_controller sensor from sensor.yaml, and the Basement Yamaha Receiver sensor from packages/living_room/living_room_yamaha.yaml)
 - [x] events (packages/calendar_and_milestone_events.yaml; also includes script.event and script.events from scripts/notifiers.yaml)
-- [x] wled (packages/kitchen_cabinet_lighting.yaml, with the cabinet sync automation from automation/toggles.yaml; Movie Time moved to living_room_remote, Front Trees to holiday_lighting; the unused scripts/wled.yaml scripts were deleted)
+- [x] wled (packages/kitchen_cabinet_lighting.yaml, with the cabinet sync automation from automation/toggles.yaml; Movie Time moved to living_room_remote, Front Trees to holiday_lighting, now packages/holiday/holiday_christmas.yaml; the unused scripts/wled.yaml scripts were deleted)
 - [x] lighting (packages/light_targets.yaml with the scripts from scripts/lights.yaml and the Fix Zwave Multicast Errors automation from automation/reactions.yaml; the generated template lights are in packages/.lights/)
 - [x] house humidity (packages/house_climate.yaml; also includes House Temperature from template/temperatures.yaml)
 - [x] echos/alexa (packages/echo_announcements.yaml with the MQTT Discovery automation from automation/echos.yaml and the scripts from scripts/alexa.yaml)

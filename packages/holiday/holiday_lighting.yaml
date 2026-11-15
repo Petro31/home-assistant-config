@@ -1,7 +1,14 @@
 # Holiday lighting: works out the current holiday (or override) and its
-# colors, sets the indoor accent lights and seasonal outdoor bulbs to match
-# during the scheduled window, and provides the Christmas tree and WLED
-# Christmas village lights. Color macros live in custom_templates/holiday.jinja.
+# colors, and sets the indoor accent lights and seasonal outdoor bulbs to
+# match during the scheduled window. This is the shared logic for every
+# holiday; the outdoor bulb scenes are in holiday_scenes.yaml (and
+# holiday_christmas.yaml), and the Christmas-only lights are in
+# holiday_christmas.yaml. Color macros live in custom_templates/holiday.jinja.
+#
+# Keep the holiday_ prefix on this filename, even though the folder repeats
+# it. HA names a package after its filename alone (the folder is ignored),
+# so a shorter name like lighting/scenes/christmas could silently clash with
+# another package anywhere under packages/.
 #
 # External entities used:
 #   Group (group, UI)
@@ -21,10 +28,6 @@
 #       light.cabinet_master
 #     Kitchen: Cabinet Slave (942dc69d2db63e50bd466240df69fbe2)
 #       light.cabinet_slave
-#     Kitchen: Cabinet Accent (2a5e6cb86ca686b3bfd060de29831aba)
-#       select.cabinet_accent_preset
-#     Game Room: Front Tree (e6825f7b5ff4d08f51bacc669da6296e) (config entry disabled outside the season)
-#       select.front_tree_preset
 #   Z-Wave JS (zwave_js)
 #     Living Room: Window Outlet (a7d9ac16cae4a1e6ae0a7eb5bb9a226c)
 #       switch.living_room_window
@@ -35,28 +38,24 @@
 #     input_datetime.indoor_holiday_lights_end
 #   Dropdown helper (input_select, UI)
 #     input_select.holiday_override
-#   scenes.yaml
+#   packages/holiday/holiday_christmas.yaml
 #     scene.holiday_bulbs_christmas
+#   packages/holiday/holiday_scenes.yaml
 #     scene.holiday_bulbs_easter
 #     scene.holiday_bulbs_halloween
 #     scene.holiday_bulbs_patriotic
-#     scene.holiday_bulbs_soft_white
 #     scene.holiday_bulbs_st_patricks_day
 #     scene.holiday_bulbs_thanksgiving
 #     scene.holiday_bulbs_valentines_day
+#   packages/outdoor_sunset_lighting.yaml
+#     scene.holiday_bulbs_soft_white
 #
 # Entities created by this package:
 #   binary_sensor.indoor_holiday
 #   sensor.seasonal_accent_lights
 #   sensor.seasonal_lights
 #   sensor.holiday_lighting
-#   light.christmas_tree
-#   light.christmas_blinking_houses
-#   light.christmas_flashing_houses
-#   light.christmas_red_and_green_houses
-#   light.christmas_town_is_on_fire
 #   switch.indoor_holiday
-#   switch.front_trees
 #   script.indoor_holiday_colors (for testing only; nothing calls it)
 #   script.get_indoor_holiday
 #   script.set_indoor_holiday
@@ -383,7 +382,7 @@ template:
   - trigger: homeassistant
     event: start
 
-  # If you end up here to copy this, it relies on an automation in config\automation\events
+  # If you end up here to copy this, it relies on an automation in packages/shared/template_reload_event.yaml
   # named "Events - Forward Reload Templates"
   - trigger: event
     event_type: templates_reloaded
@@ -537,159 +536,6 @@ template:
     default_entity_id: sensor.holiday_lighting
     state: "{{ event }}"
 
-- light:
-  #################################
-  ###      Christmas Tree       ###
-  #################################
-
-  - unique_id: christmas_tree
-    name: Christmas Tree
-    default_entity_id: light.christmas_tree
-    state: >
-      {{ is_state('switch.living_room_window', 'on') }}
-    availability: >
-      {{- expand('switch.living_room_window') | selectattr('state','in',['unavailable','unknown']) | list | length == 0 }}
-    turn_on:
-    - action: switch.turn_on
-      target: &christmas_tree_switch
-        entity_id: switch.living_room_window
-    turn_off:
-    - action: switch.turn_off
-      target: *christmas_tree_switch
-
-# To autogenerate WLED selects as 'radio buttons'
-
-# {%- set select = 'select.cabinet_accent_preset' %}
-# {%- for option in ('Blinking Houses', 'Flashing Houses', 'Red and Green Houses', 'Town is on Fire') %}
-# {%- set name = 'christmas_' ~ option | slugify %}
-# {%- set barrier = '#' * 40 %}
-# {%- set banner = '{0}\n    ###{1}###\n    {0}' %}
-
-#     {{ banner.format(barrier, option.center(barrier|length - 6)) }}
-  
-#   - unique_id: {{ name }}
-#     name: {{ option }}
-#     variables:
-#       wled: {{ select }}
-#     state: >
-#       {%raw%}{{- is_state(wled, {%endraw%}'{{ option }}') {%raw%}}}{%endraw%}
-#     availability: >
-#       {%raw%}{{- wled | has_value }}{%endraw%}
-#     turn_on:
-#     - <<: &{{name}}_target
-#         action: select.select_option
-#         target: 
-#           entity_id: {{ select }}
-#       data:
-#         option: {{ option }}
-#     turn_off:
-#     - <<: *{{name}}_target
-#       data:
-#         option: All Off
-# {%- endfor %}
-
-- light:
-
-    ########################################
-    ###         Blinking Houses          ###
-    ########################################
-  
-  - unique_id: christmas_blinking_houses
-    name: Blinking Houses
-    default_entity_id: light.christmas_blinking_houses
-    variables:
-      wled: select.cabinet_accent_preset
-    state: >
-      {{- is_state(wled, 'Blinking Houses') }}
-    availability: >
-      {{- wled | has_value }}
-    turn_on:
-    - <<: &christmas_blinking_houses_target
-        action: select.select_option
-        target: 
-          entity_id: select.cabinet_accent_preset
-      data:
-        option: Blinking Houses
-    turn_off:
-    - <<: *christmas_blinking_houses_target
-      data:
-        option: All Off
-
-    ########################################
-    ###         Flashing Houses          ###
-    ########################################
-  
-  - unique_id: christmas_flashing_houses
-    name: Flashing Houses
-    default_entity_id: light.christmas_flashing_houses
-    variables:
-      wled: select.cabinet_accent_preset
-    state: >
-      {{- is_state(wled, 'Flashing Houses') }}
-    availability: >
-      {{- wled | has_value }}
-    turn_on:
-    - <<: &christmas_flashing_houses_target
-        action: select.select_option
-        target: 
-          entity_id: select.cabinet_accent_preset
-      data:
-        option: Flashing Houses
-    turn_off:
-    - <<: *christmas_flashing_houses_target
-      data:
-        option: All Off
-
-    ########################################
-    ###       Red and Green Houses       ###
-    ########################################
-  
-  - unique_id: christmas_red_and_green_houses
-    name: Red and Green Houses
-    default_entity_id: light.christmas_red_and_green_houses
-    variables:
-      wled: select.cabinet_accent_preset
-    state: >
-      {{- is_state(wled, 'Red and Green Houses') }}
-    availability: >
-      {{- wled | has_value }}
-    turn_on:
-    - <<: &christmas_red_and_green_houses_target
-        action: select.select_option
-        target: 
-          entity_id: select.cabinet_accent_preset
-      data:
-        option: Red and Green Houses
-    turn_off:
-    - <<: *christmas_red_and_green_houses_target
-      data:
-        option: All Off
-
-    ########################################
-    ###         Town is on Fire          ###
-    ########################################
-  
-  - unique_id: christmas_town_is_on_fire
-    name: Town is on Fire
-    default_entity_id: light.christmas_town_is_on_fire
-    variables:
-      wled: select.cabinet_accent_preset
-    state: >
-      {{- is_state(wled, 'Town is on Fire') }}
-    availability: >
-      {{- wled | has_value }}
-    turn_on:
-    - <<: &christmas_town_is_on_fire_target
-        action: select.select_option
-        target: 
-          entity_id: select.cabinet_accent_preset
-      data:
-        option: Town is on Fire
-    turn_off:
-    - <<: *christmas_town_is_on_fire_target
-      data:
-        option: All Off
-
 - switch:
   # You attempted to use this, however you could not find a good equation
   # to match rgbw to rgb
@@ -732,23 +578,3 @@ template:
       target:
         entity_id: >
           {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
-
-- switch:
-  # Front Trees
-  - unique_id: front_trees
-    name: Front Trees
-    default_entity_id: switch.front_trees
-    state: >
-      {{ states('select.front_tree_preset') in state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list }}
-    turn_on:
-    - action: select.select_option
-      <<: &front_trees
-        target:
-          entity_id: select.front_tree_preset
-      data:
-        option: "{{ state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list | random }}"
-    turn_off:
-    - action: select.select_option
-      data:
-        option: 'Off'
-      <<: *front_trees

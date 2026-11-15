@@ -2,11 +2,29 @@
 # season's scene (sensor.seasonal_lights), and at sunrise switches them to the
 # sunrise scene. If someone turns off a front door sconce switch, turns it back
 # on, notifies, announces it in the living room and, during the day, turns the
-# bulbs back off.
+# bulbs back off. Also holds the everyday outdoor bulb scenes: Sunrise Bulbs
+# (all off), Soft White (the default when there's no holiday) and DayLight.
 #
 # External entities used:
 #   Group (group, UI)
 #     light.outdoor_bulbs
+#   MQTT (mqtt)
+#     Front Yard: Garage Door Left Bulb (a601f2794fc36effc0cffb767485bd40)
+#       light.garage_sconce_left_bulb
+#     Front Yard: Garage Door Right Bulb (48540c549cff5acaa24779839108dc4e)
+#       light.garage_sconce_right_bulb
+#     Front Yard: Main Door Left Bulb (51abc464a490917f743e4db6d0866263)
+#       light.main_door_left_bulb
+#     Front Yard: Main Door Right Bulb (5f65fbf28117e47fb1e18d220107aac4)
+#       light.main_door_right_bulb
+#     Front Yard: Passenger Door Bulb (c891bf3c80ca54eb5e78fe78167e9f2b)
+#       light.passenger_door_bulb
+#     Front Yard: Uplight Left (a918c67ea821a0454a03d20d0357d1b7)
+#       light.front_yard_uplight_left
+#     Front Yard: Uplight Middle (57cdbc11d8edb45527be2ee453f90d5d)
+#       light.front_yard_uplight_middle
+#     Front Yard: Uplight Right (887f1338ee29de89beeb686df55f88e7)
+#       light.front_yard_uplight_right
 #   Sun (sun)
 #     sun.sun (through the sun triggers and condition)
 #   Z-Wave JS (zwave_js)
@@ -16,18 +34,20 @@
 #       switch.sconces_main_entrance
 #     Front Yard: Passenger Door Sconce (12ec0b2afff1bb467983d1c17993f753)
 #       switch.passenger_sconce
-#   scenes.yaml
-#     scene.sunrise_bulbs
-#     scene.holiday_bulbs_* (whichever one sensor.seasonal_lights names)
 #   packages/echo_announcements.yaml
 #     script.notify_area
-#   packages/holiday_lighting.yaml
+#   packages/holiday/holiday_christmas.yaml and holiday_scenes.yaml
+#     scene.holiday_bulbs_* (whichever one sensor.seasonal_lights names)
+#   packages/holiday/holiday_lighting.yaml
 #     sensor.seasonal_lights
 #   packages/shared/notifications.yaml
 #     script.notify
 #
 # Entities created by this package:
 #   script.sunrise_sunset
+#   scene.sunrise_bulbs (no unique_id)
+#   scene.holiday_bulbs_soft_white (no unique_id)
+#   scene.holiday_bulbs_daylight (no unique_id)
 
 automation:
 - alias: Outdoor Lights On at Sunset, Off at Sunrise
@@ -127,3 +147,88 @@ script:
     - action: scene.turn_on
       target:
         entity_id: "{{ start_scene }}"
+
+scene:
+- name: Sunrise Bulbs
+  icon: mdi:weather-sunset-up
+  entities:
+    light.main_door_left_bulb:
+      state: 'off'
+    light.main_door_right_bulb:
+      state: 'off'
+    light.passenger_door_bulb:
+      state: 'off'
+    light.garage_sconce_left_bulb:
+      state: 'off'
+    light.garage_sconce_right_bulb:
+      state: 'off'
+    light.front_yard_uplight_left:
+      state: 'off'
+    light.front_yard_uplight_middle:
+      state: 'off'
+    light.front_yard_uplight_right:
+      state: 'off'
+
+- name: Holiday Bulbs Soft White
+  icon: mdi:weather-sunset
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 2700
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 2700
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 2700
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 2700
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 2700
+    light.front_yard_uplight_left:
+      state: 'off'
+    light.front_yard_uplight_middle:
+      state: 'off'
+    light.front_yard_uplight_right:
+      state: 'off'
+
+      
+
+- name: Holiday Bulbs DayLight
+  icon: mdi:white-balance-sunny
+  entities:
+    light.main_door_left_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 6535
+    light.main_door_right_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 6535
+    light.passenger_door_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 6535
+    light.garage_sconce_left_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 6535
+    light.garage_sconce_right_bulb:
+      state: 'on'
+      brightness: 255
+      color_temp_kelvin: 6535
+    light.front_yard_uplight_left:
+      state: 'off'
+    light.front_yard_uplight_middle:
+      state: 'off'
+    light.front_yard_uplight_right:
+      state: 'off'
+
+      
