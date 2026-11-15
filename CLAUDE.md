@@ -217,23 +217,10 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/sensor_calibration_helper.yaml
 - Keep this package: it's the user's reusable tool for calibrating any temperature/humidity sensor added to the house (it's normally off between calibrations). Update it before the next use: it still points at the last calibration's sensors. The sensors being calibrated, `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, belong to the disabled ESPHome "Basement Esp32" config entry, and the reference sensors were renamed: `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity` are now `sensor.apollo_air_1_1ecac0_temperature` / `sensor.apollo_air_1_1ecac0_humidity`.
 
-### packages/testing_sandbox.yaml
-- "MSR 2 Testing" was removed (it drove disabled WLED test lights). Its entity `automation.msr_2_testing` is still in the registry (unavailable/restored); delete it in Settings → Entities.
-
-### packages/holiday_lighting.yaml
-- `script.indoor_ambiance` was removed from YAML but its entity registry entry is still there (shows as unavailable/restored). Delete it in Settings → Entities.
-
 ### packages/basement_yamaha.yaml
 - `switch.basement_bluetooth` is broken (the switch died; a replacement is planned). Until it's replaced, the Echo (Deck) and Echo (Basement) switches can't turn on. When it's replaced, keep the same entity ID or update the 2 switches.
-
-### scripts/wled.yaml (deleted)
-- The 3 deleted WLED scripts still have entity registry entries (they show as unavailable/restored): `script.wled_master_segments`, `script.wled_cabinet_segments` and `script.wled_hutch_segment_handler`. Delete them in Settings → Entities.
 
 ### Xiaomi BLE CGDK2 sensors (removed until HA 2026.12)
 - There's a known Xiaomi BLE problem with CGDK2 sensors; they should be discoverable again in HA 2026.12 (December 2026). On 2026-11-15 the user removed all three from the Xiaomi BLE integration: CGDK2 (BC8A) in the Bonus Bedroom (it had just got a new battery), CGDK2 (BCC2) and CGDK2 (BC7C). Until then these entities don't exist: `sensor.bonus_room_cgdk2_*`, `sensor.server_room_cgdk2_*` and `sensor.car_bays_xiaomi_ble_cgdk2_signal_strength`.
 - Their registry entries are kept as deleted entities with their old IDs (and the bonus room temperature/humidity keep the `house_climate` label), so HA should restore them when the devices are rediscovered. After upgrading to 2026.12, re-add them and check: the IDs came back unchanged, `sensor.bonus_room_cgdk2_temperature` / `_humidity` still have the `house_climate` label (`packages/house_climate.yaml` averages them), and the dashboards that show them work (`lovelace/views/master.yaml`, `lovelace/views/status_master.yaml`). Set the bonus room device's area to Bonus Bedroom if it doesn't come back.
 - Not affected: the basement CGDK2 (`sensor.basement_cgdk2_*`) comes in through ESPHome, not Xiaomi BLE.
-
-### scripts/zwave_js.yaml (deleted)
-- `script.zwave_multicast_group` was removed (unused since 2024-04-21, replaced by `script.light_handler` in packages/light_targets.yaml). Its entity registry entry is still there; delete it in Settings → Entities.
-- `script.zwave_ping` was removed (nothing called it; last ran 2023-05-26, a leftover from the 2023 multicast workaround). Delete its entity in Settings → Entities.
