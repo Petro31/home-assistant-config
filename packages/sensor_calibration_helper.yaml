@@ -1,0 +1,44 @@
+# Sensor calibration helper: logs each basement BME280 temperature and humidity
+# reading next to the Apollo AIR-1 reading to a file, to work out calibration
+# offsets. Its sensors no longer exist (see CLAUDE.md Known issues).
+#
+# External entities used:
+#   File (file, UI)
+#     notify.basement_humidity
+#     notify.basement_temperature
+#   ESPHome (esphome)
+#     Basement: Basement Esp32 (9e8c12dd263640ce2a892d9f85ed961a)
+#       sensor.basement_bme280_humidity (disabled)
+#       sensor.basement_bme280_temperature (disabled)
+#   Not found (referenced, but no such entity exists):
+#     sensor.apollo_air_1_1ecac0_sen55_humidity
+#     sensor.apollo_air_1_1ecac0_sen55_temperature
+
+automation:
+- alias: Calibration Helper
+  id: 467417d9-fe47-4fb8-a0fd-2764c92e099a
+  mode: parallel
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.basement_bme280_temperature
+    - sensor.basement_bme280_humidity
+  variables:
+    config:
+      sensor.basement_bme280_temperature:
+        notify: notify.basement_temperature
+        sensor: sensor.apollo_air_1_1ecac0_sen55_temperature
+      sensor.basement_bme280_humidity:
+        notify: notify.basement_humidity
+        sensor: sensor.apollo_air_1_1ecac0_sen55_humidity
+    which: "{{ config.get(trigger.to_state.entity_id) }}"
+  conditions:
+  - condition: template
+    value_template: "{{ which is not none }}"
+  actions:
+  - action: notify.send_message
+    target:
+      entity_id: "{{ which.notify }}"
+    data:
+      message: > 
+        {{ now().isoformat() }},{{ trigger.to_state.state }},{{ states(which.sensor) }}

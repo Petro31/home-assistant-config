@@ -1,12 +1,32 @@
+# Body weight tracking: assigns each new reading from the bathroom scale to the
+# person whose last weight is within 20 lb of it, and publishes it as that
+# person's weight sensor through MQTT (created at startup).
+#
+# External entities used:
+#   Person (person, UI)
+#     person.lambo
+#     person.petro
+#   Xiaomi BLE (xiaomi_ble)
+#     Master Bathroom: Mi Body Composition Scale (6E52) (d9cb21cd0a9c29ee538eabc7b43165e2)
+#       sensor.mi_body_composition_scale_6e52_mass
+#   packages/shared/mqtt_discovery_helpers.yaml
+#     script.mqtt_automated_config
+#     script.mqtt_automated_states
+#
+# Entities created by this package:
+#   sensor.lambo_weight (through MQTT discovery)
+#   sensor.petro_weight (through MQTT discovery)
+
+automation:
 - alias: MQTT Discovery and Automation
   id: mqtt_store_and_automate_weights
   mode: parallel
-  trigger:
+  triggers:
     - id: start
-      platform: homeassistant
+      trigger: homeassistant
       event: start
     - id: new
-      platform: state
+      trigger: state
       entity_id: sensor.mi_body_composition_scale_6e52_mass
   variables:
     root: "homeassistant"
@@ -42,14 +62,14 @@
       {%- else -%}
         None
       {%- endif %}
-  action:
+  actions:
   - choose:
     - conditions: "{{ trigger.id == 'start' }}"
       sequence:
       - repeat:
           for_each: "{{ people }}"
           sequence:
-          - service: script.mqtt_automated_config
+          - action: script.mqtt_automated_config
             data:
               domain: sensor
               unique_id: "{{ repeat.item.unique_id }}"
@@ -60,7 +80,7 @@
 
     - conditions: "{{ weight is not none }}"
       sequence:
-      - service: script.mqtt_automated_states
+      - action: script.mqtt_automated_states
         data:
           domain: sensor
           unique_id: "{{ weight.unique_id }}"

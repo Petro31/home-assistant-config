@@ -1,5 +1,15 @@
+# Aurora alerts: notifies when the aurora visibility alert turns on, with the
+# chance that the Aurora Borealis may be visible.
+#
+# External entities used:
+#   Aurora (aurora)
+#     Town: Aurora visibility (97e63b519ef6371b26efb198d05ead94)
+#       binary_sensor.aurora_visibility_visibility_alert
+#       sensor.aurora_visibility_visibility
+#   packages/shared/notifications.yaml
+#     script.notify
 
-
+automation:
 - alias: Notify Aurora
   id: 1d19d3a4-4ce1-433e-b27a-bc5fa8364153
   triggers:
@@ -12,7 +22,7 @@
       entity_id: sensor.aurora_visibility_visibility
       above: 0
   actions:
-    - service: script.notify
+    - action: script.notify
       data:
         title: Snapshot Status
         message: "There's a {{ states('sensor.aurora_visibility_visibility') }}% chance that Aurora Borealis may be visible."

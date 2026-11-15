@@ -1,0 +1,93 @@
+# Testing sandbox: scripts and automations for trying things out. Shows who
+# ran a script (context test), renders a table of script variables as a
+# persistent notification, and colors WLED test segments by Apollo MSR-2 radar
+# zone occupancy.
+#
+# External entities used:
+#   ESPHome (esphome)
+#     Office: Apollo MSR-2 8935e0 (d74fcbde9e23fb420b69894cabd3eff0)
+#       binary_sensor.apollo_msr_2_8935e0_radar_zone_1_occupancy
+#       binary_sensor.apollo_msr_2_8935e0_radar_zone_2_occupancy
+#       binary_sensor.apollo_msr_2_8935e0_radar_zone_3_occupancy
+#   Person (person, UI)
+#     every person (matched by user_id)
+#   WLED (wled)
+#     Kitchen: Cabinet Surface (70c5f67ec2f82f9ba128fe6e99eb7dfa)
+#       light.test_main (disabled)
+#       light.test_segment_1 (disabled)
+#       light.test_segment_2 (disabled)
+#       light.test_segment_3 (disabled)
+#
+# Entities created by this package:
+#   script.test_context
+#   script.debug_script_variables
+
+automation:
+- alias: MSR 2 Testing
+  id: d0be7b52-30f2-4947-a8de-a20a15df8849
+  mode: parallel
+  triggers:
+  - trigger: state
+    entity_id: &entities
+    - binary_sensor.apollo_msr_2_8935e0_radar_zone_1_occupancy
+    - binary_sensor.apollo_msr_2_8935e0_radar_zone_2_occupancy
+    - binary_sensor.apollo_msr_2_8935e0_radar_zone_3_occupancy
+  variables:
+    entities: *entities
+    colors:
+      'on': [0, 255, 0]
+      'off': [255, 0, 0]
+      unknown: [255, 255, 255]
+      unavailable: [0, 0, 255]
+    color: >
+      {{ colors.get(trigger.to_state.state, colors.unavailable) }}
+    index: >
+      {{ entities.index(trigger.to_state.entity_id) }}
+    target: light.test_segment_{{ index + 1 }}
+  actions:
+  - if: "{{ is_state('light.test_main', 'off') }}"
+    then:
+    - action: light.turn_on
+      target:
+        entity_id: light.test_main
+      data:
+        brightness: 255
+  - action: light.turn_on
+    target:
+      entity_id: "{{ target }}"
+    data:
+      rgb_color: "{{ color }}"
+
+script:
+  test_context:
+    alias: Context
+    mode: parallel
+    variables:
+      user: >
+        {{ states.person | selectattr('attributes.user_id', 'eq', this.context.user_id) | map(attribute='name') | first | default }} 
+    sequence:
+    - action: persistent_notification.create
+      data:
+        message: "{{ user }}"
+
+  debug_script_variables:
+    alias: Debug Script Variables
+    fields:
+      script_variables:
+        description: Dictionary of variables
+        example: Make a dictionary of variables under info.
+    variables:
+      table: >
+        {%- macro tableline(c, items) %}
+        <tr>{%- for item in items -%}<t{{c}}>{{item}}</t{{c}}>{%- endfor -%}</tr>
+        {%- endmacro %}
+        {%- set ns = namespace(ret=[ tableline('h', ['Variable', 'Value']) ]) %}
+        {%- for k, v in script_variables.items() %}
+        {%- set ns.ret = ns.ret + [ tableline('d', [k, v]) ] %}
+        {%- endfor %}
+        {{ '<table>{}</table>'.format(ns.ret | join('')) }}
+    sequence:
+    - action: persistent_notification.create
+      data:
+        title: Debug Variables
+        message: "{{ table if table else 'No Information Provided' }}"

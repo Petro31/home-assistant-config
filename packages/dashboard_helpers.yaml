@@ -1,0 +1,37 @@
+# Dashboard helpers: script.lovelace_toggle turns a set of entities on or off,
+# skipping the ones already in that state, for the dashboard's all on/off
+# header buttons (lovelace/templates/headers/*navigator.yaml).
+#
+# Entities created by this package:
+#   script.lovelace_toggle
+
+script:
+  # A Toggle for the UI.  Helps create global on/off buttons that don't error 
+  # when the button is pressed and everything is off.  e.g.  all lights are off and press off does not
+  # result in a lovelace call-service error.
+  lovelace_toggle:
+    alias: Toggle UI Entities
+    description: >
+      Toggle a set of entities
+    fields:
+      entities:
+        description: (Required) A list of entites
+        required: true
+        selector:
+          entity:
+            multiple: true
+      state:
+        description: (Required) A desired state
+        required: True
+        selector:
+          text:
+            type: text
+    variables:
+      target_entities: >
+        {{ expand(entities) | selectattr('state', '!=', state) | map(attribute='entity_id') | list }}
+    sequence:
+    - condition: template
+      value_template: "{{ target_entities | length > 0 }}"
+    - action: homeassistant.turn_{{ state }}
+      data:
+        entity_id: "{{ target_entities }}"

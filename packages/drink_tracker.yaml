@@ -1,8 +1,22 @@
+# Drink tracker: at startup, publishes the cocktail recipes (ingredients, amounts
+# and pictures) to MQTT as a drinks config sensor and a Drink select, so the
+# dashboard can show the chosen drink's recipe.
+#
+# External entities used:
+#   packages/shared/mqtt_discovery_helpers.yaml
+#     script.mqtt_automated_config
+#     script.mqtt_automated_states
+#
+# Entities created by this package:
+#   sensor.drinks_config (through MQTT discovery)
+#   select.drink (through MQTT discovery)
+
+automation:
 - alias: MQTT Discovery
   id: mqtt_store_drink_states_discovery
   mode: single
-  trigger:
-    - platform: homeassistant
+  triggers:
+    - trigger: homeassistant
       event: start
   variables:
     root: "homeassistant"
@@ -122,13 +136,13 @@
             type: parts
             count: "{{ shot }}"
 
-  action:
-    - service: script.mqtt_automated_config
+  actions:
+    - action: script.mqtt_automated_config
       data:
         domain: sensor
         unique_id: drinks_config
 
-    - service: script.mqtt_automated_states
+    - action: script.mqtt_automated_states
       data:
         domain: sensor
         unique_id: drinks_config
@@ -138,7 +152,7 @@
               'drinks': drinks
           } }}
 
-    - service: mqtt.publish
+    - action: mqtt.publish
       data: >
         {% set command_template = "{% set drinks = " ~ drinks ~ "%}{% set drink = drinks | selectattr('name', 'eq', value) | first | default(drinks[0]) %}{{ drink | to_json }}" %}
         {% set options = drinks | map(attribute='name') | list %}

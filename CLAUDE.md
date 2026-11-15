@@ -169,14 +169,14 @@ New packages:
 - [ ] bonus_room_television: template/bonus_room.yaml and the Bonus Room Television universal player (media_player.yaml) ⚠
 - [ ] outdoor_weather_station: template/temperatures.yaml
 - [ ] energy_tariff: template/energy.yaml
-- [ ] aurora_alerts: automation/aurora.yaml
-- [ ] drink_tracker: automation/drinks.yaml
-- [ ] body_weight_tracking: automation/weight.yaml
-- [ ] awtrix_announcements: scripts/awtrix.yaml
-- [ ] dashboard_helpers: script.lovelace_toggle (scripts/misc.yaml)
+- [x] aurora_alerts: automation/aurora.yaml
+- [x] drink_tracker: automation/drinks.yaml
+- [x] body_weight_tracking: automation/weight.yaml
+- [x] awtrix_announcements: scripts/awtrix.yaml
+- [x] dashboard_helpers: script.lovelace_toggle (scripts/misc.yaml)
 - [ ] voice_intents: intent_script.yaml
-- [ ] testing_sandbox: scripts/tests.yaml and "MSR 2 Testing" (automation/apollo_msr2.yaml)
-- [ ] sensor_calibration_helper: automation/calibrations.yaml (migrate as-is; see Known issues)
+- [x] testing_sandbox: scripts/tests.yaml and "MSR 2 Testing" (automation/apollo_msr2.yaml)
+- [x] sensor_calibration_helper: automation/calibrations.yaml (migrated as-is; see Known issues)
 
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
@@ -222,8 +222,17 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### packages/plant_care_notifications.yaml
 - Kitty's plant sensor (Xiaomi BLE "Plant Sensor (4C86)", MAC C4:7C:8D:6B:4C:86) is dead: its battery slot corroded, so it needs a replacement sensor. Until then `plant.kitty` stays `unknown`. A new sensor has a new MAC, so its entities get new IDs: either rename them to `sensor.plant_sensor_3_*` in the UI or update the `kitty:` sensors under `plant:` in the package (and its header), then delete the old 4C86 device. Set the new device's area to Dining Room (the old one is wrongly in Game Room). It reports through the dining room ESP32 Bluetooth proxy.
 
-### automation/calibrations.yaml
-- "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`. It also still uses legacy syntax.
+### packages/sensor_calibration_helper.yaml
+- "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`.
+
+### packages/aurora_alerts.yaml
+- "Notify Aurora" sends its notification with the title "Snapshot Status" (copied from the backup notification).
+
+### packages/testing_sandbox.yaml
+- "MSR 2 Testing" turns on `light.test_main` and `light.test_segment_1`–`3`, but those WLED entities are disabled, so it can't do anything.
+
+### packages/awtrix_announcements.yaml
+- `_ranbow_colors` in `script.awtrix_announce` looks colors up by name in a list (`_colors_config[c]`), which can't work, so the `rainbow-words` and `rainbow-characters` effects get no valid colors. Nothing calls the script.
 
 ### packages/device_firmware_updates.yaml
 - The "Esphome Entities" template update entity mixes in the ESPHome Device Builder app. It uses the app's own update entity, `update.esphome_update` (from the Supervisor), for its picture and as the fallback `installed_version` / `latest_version`. It should only reference the ESPHome devices, i.e. the `update.*` entities from the `esphome` integration.
