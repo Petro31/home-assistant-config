@@ -1,36 +1,3 @@
-zwave_ping:
-  mode: parallel
-  alias: Ping nodes after x seconds
-  fields:
-    entities:
-      description: (Required) The group of lights & switches
-      example: group.bonus_room_area
-      selector:
-        entity:
-          integration: zwave_js
-          domain:
-            - light
-            - switch
-          multiple: True
-    delay:
-      description: (Optional) How long from now you'll ping the nodes.
-      example: 1
-      selector:
-        number:
-          min: 0
-          max: 300
-  sequence:
-    - choose:
-        - conditions:
-            - condition: template
-              value_template: "{{ delay is defined }}"
-          sequence:
-            - delay:
-                seconds: "{{ delay }}"
-    - action: zwave_js.ping
-      target:
-        entity_id: "{{ entities }}"
-
 update_zwave:
   alias: Update Zwave devices in order
   mode: single

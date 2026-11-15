@@ -133,7 +133,7 @@ Goal: over time, move features whose automations, scripts and templates are spli
   - Get names, integrations and `device_id`s from `.storage/core.device_registry`, `.storage/core.entity_registry` and `.storage/core.config_entries`. Use them only to read; never edit them.
   - Entities that the package doesn't reference but that relate to it (e.g. leftover UI helpers built on the package's sensors) go in an "Unused (but related) entities" group, using the same grouping. Keep them; don't delete the helpers.
   - Entities created by this package are listed by their real `entity_id` from the entity registry, not one guessed from the name. Leave out automations; they aren't referenced by `entity_id`.
-- Shared plumbing stays shared. "Events - Forward Reload Templates" in `automation/events.yaml` fires `templates_reloaded`, which is used by both `master_bathroom_humidity` and `holiday_lighting`.
+- Shared plumbing stays shared, in its own packages under `packages/shared/` (not copied into the features that use it). For example, "Events - Forward Reload Templates" fires `templates_reloaded`, which is used by both `master_bathroom_humidity` and `holiday_lighting`.
 - Check that the package filename doesn't clash with an existing package anywhere under `packages/`, subfolders included.
 - Name the package after what it does, matching its description (e.g. `garage_parking_laser`, not `laser`). The candidate names below are only labels.
 - Record any problems you notice (bugs, leftover entities, legacy syntax outside the change) under [Known issues](#known-issues) instead of fixing them.
@@ -141,7 +141,42 @@ Goal: over time, move features whose automations, scripts and templates are spli
 
 ### Candidates
 
-None left. Other files in `automation/`, `scripts/` and `template/` could be surveyed for new candidates.
+Goal: migrate everything left in `automation/`, `scripts/`, `template/` and `command_line/`, plus `sensor.yaml`, `media_player.yaml`, `notify.yaml`, `compensation.yaml` and `intent_script.yaml`. Delete each file (and its `configuration.yaml` line) once it's empty. These stay where they are: the UI-managed `automations.yaml`, `scripts.yaml` and `scenes.yaml`, and the infrastructure configs (`cloud`, `logger`, `recorder`, `lovelace`, `system_log`, `door_buddy`). Items marked ⚠ use non-reloadable platforms: do them last and restart once.
+
+Into existing packages:
+- [ ] doorbell: "Fix Doorbell Chime Status" (automation/reactions.yaml)
+- [ ] device_firmware_updates: script.update_zwave (scripts/zwave_js.yaml)
+- [ ] power_outage_shutdown: UPS Model and UPS Battery Runtime (template/system.yaml)
+- [ ] living_room/living_room_yamaha: Living Room and Dining Room Speakers (media_player.yaml), the receiver volume compensations (compensation.yaml), the living room multizone_controller sensor (sensor.yaml) ⚠
+
+Shared plumbing (packages/shared/):
+- [ ] notifications: script.notify (scripts/notifiers.yaml) and the notify groups (notify.yaml)
+- [ ] mqtt_discovery_helpers: scripts/mqtt.yaml
+- [ ] template_reload_event: "Events - Forward Reload Templates" (automation/events.yaml)
+
+New packages:
+- [ ] outdoor_sunset_lighting: script.sunrise_sunset (scripts/sunset_sunrise.yaml), "Outdoor Lights On at Sunset, Off at Sunrise" (automation/timed_events.yaml), "Keep Sunset Switches On." (automation/reactions.yaml)
+- [ ] daylight_saving_reminders: template/daylight_savings_time.yaml and "Notify DST Change" (automation/timed_events.yaml)
+- [ ] household_reminders: "Notify Change Filters Message" and "Notify Mosby Heartworm and Flee Medication." (automation/timed_events.yaml)
+- [ ] thermostat_schedule: "Simple Thermostat" (automation/timed_events.yaml)
+- [ ] server_health: Disk Use Total and Memory Use Total (template/system.yaml), CPU Temperature (command_line/temperature.yaml) ⚠, template/homeassistant_image.yaml, "Notify Snapshot status" and "Clear persistent_notifications at bedtime" (automation/timed_events.yaml)
+- [ ] living_room/living_room_controllers: "Living Room Scene Controller" and its LEDs (automation/buttons.yaml), "Cube Actions" (automation/cube.yaml), "Living Room Lamp Availability." (automation/reactions.yaml)
+- [ ] zigbee_button_toggles: "Zigbee Button Toggler" (automation/buttons.yaml)
+- [ ] linked_light_switches: automation/toggles.yaml
+- [ ] garage_doors: template/door.yaml and script.garage_door_toggle (scripts/nfc.yaml)
+- [ ] home_occupancy: template/people_tracker.yaml and template/network.yaml
+- [ ] work_hours_tracking: Petro/Lambo at Work history_stats (sensor.yaml) ⚠ and template/time.yaml
+- [ ] bonus_room_television: template/bonus_room.yaml and the Bonus Room Television universal player (media_player.yaml) ⚠
+- [ ] outdoor_weather_station: template/temperatures.yaml
+- [ ] energy_tariff: template/energy.yaml
+- [ ] aurora_alerts: automation/aurora.yaml
+- [ ] drink_tracker: automation/drinks.yaml
+- [ ] body_weight_tracking: automation/weight.yaml
+- [ ] awtrix_announcements: scripts/awtrix.yaml
+- [ ] dashboard_helpers: script.lovelace_toggle (scripts/misc.yaml)
+- [ ] voice_intents: intent_script.yaml
+- [ ] testing_sandbox: scripts/tests.yaml and "MSR 2 Testing" (automation/apollo_msr2.yaml)
+- [ ] sensor_calibration_helper: automation/calibrations.yaml (migrate as-is; see Known issues)
 
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
@@ -218,6 +253,7 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### scripts/zwave_js.yaml
 - `script.zwave_multicast_group` was removed (unused since 2024-04-21, replaced by `script.light_handler` in packages/light_targets.yaml). Its entity registry entry is still there; delete it in Settings → Entities.
+- `script.zwave_ping` was removed (nothing called it; last ran 2023-05-26, a leftover from the 2023 multicast workaround). Delete its entity in Settings → Entities.
 
 ### CLAUDE.md
 - The bullet about UI helpers under "How to migrate a feature" says the trend sensors are "used by `master_bathroom_humidity`". They aren't; the package uses the derivative helper `sensor.master_bathroom_humidity_change`.
