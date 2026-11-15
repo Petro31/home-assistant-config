@@ -506,7 +506,6 @@ template:
       }}
     turn_on:
     - variables: &movie_variables
-        cabinet:
         seasonal: >
           {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
         extra:
@@ -515,11 +514,9 @@ template:
         entities: >
           {{ seasonal + extra }}
     - parallel:
-      - if: "{{ 1 == 1 }}"
-        then:
-        - action: homeassistant.turn_on
-          target: &movie_entities
-            entity_id: "{{ entities }}"
+      - action: homeassistant.turn_on
+        target: &movie_entities
+          entity_id: "{{ entities }}"
       - action: homeassistant.turn_off
         target:
           entity_id: 
