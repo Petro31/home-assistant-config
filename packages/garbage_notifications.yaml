@@ -88,7 +88,7 @@ automation:
 - alias: Notify Garbage Day Today
   id: e1ae2a4b-c774-4918-b4c4-59143f87bad9
   triggers:
-    - platform: state
+    - trigger: state
       entity_id:
       - switch.petro_charging
       - switch.lambo_charging
@@ -107,15 +107,15 @@ automation:
       {{ people.get(trigger.entity_id, "person.not_real") }}
     is_home: >
       {{ is_state(person, 'home') }}
-  condition:
+  conditions:
     - condition: time
       before: "09:00:00"
       weekday:
         - wed
     - condition: template
       value_template: "{{ is_home }}"
-  action:
-    - service: script.notify
+  actions:
+    - action: script.notify
       data:
         message: Trash and recycling day today!
         notify: "{{ notify }}"

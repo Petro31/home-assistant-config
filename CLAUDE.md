@@ -202,7 +202,7 @@ Done:
 Problems found while adding package notes, moving packages or updating legacy keys. They're recorded here so they can be fixed later, each as its own change. Don't fix them as part of other work. Add new findings as you go, and remove an entry once the user has had it fixed.
 
 ### packages/master_bathroom_humidity.yaml
-- Still uses legacy syntax. The trigger-based template block has `trigger:` with `platform:`, and the automation has `trigger:`/`platform:`, `condition:`, `action:` and `service:`.
+- `sensor.master_bathroom_average_humidity` reads `state_attr('sensor.master_bathroom_filtered_humidity_statistics', 'mean')`, but the statistics sensor no longer has a `mean` attribute (its state is the mean). So the average is always `unknown` and `binary_sensor.master_bathroom_humidity_high` never turns on. The fan automation uses `binary_sensor.master_bathroom_humidity_status` instead, so the fan still works. Fix: use `states(...)`.
 - The UI trend helpers `binary_sensor.master_bathroom_humidity_rising` and `binary_sensor.master_bathroom_humidity_falling` aren't used by anything in the package. They're probably left over from initial testing, and are listed as unused (but related) in the header.
 
 ### packages/doorbell.yaml
@@ -226,12 +226,6 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/testing_sandbox.yaml
 - "MSR 2 Testing" turns on `light.test_main` and `light.test_segment_1`–`3`, but those WLED entities are disabled, so it can't do anything.
-
-### packages/garbage_notifications.yaml
-- "Notify Garbage Day Today" mixes syntax. It has `triggers:` with a legacy `platform: state` trigger, plus legacy `condition:`, `action:` and `service:`.
-
-### packages/weather_camera_events.yaml
-- "Manage outside camera power based on temperature" still uses legacy syntax: `trigger:` with `platform: state`, plus `action:` and `service:`. The `switch.turn_{{ action }}` step also passes `entity_id` under `data:` instead of `target:`.
 
 ### packages/holiday_lighting.yaml
 - `script.indoor_ambiance` was removed from YAML but its entity registry entry is still there (shows as unavailable/restored). Delete it in Settings → Entities.

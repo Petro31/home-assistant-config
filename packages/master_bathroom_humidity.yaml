@@ -71,28 +71,28 @@ template:
       {% endif %}
     device_class: moisture
 
-- trigger:
+- triggers:
   - id: rising
-    platform: template
+    trigger: template
     value_template: >
       {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
       {{ change is not none and change > 200 }}
   - id: falling
-    platform: template
+    trigger: template
     value_template: >
       {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
       {{ change is not none and change < -150 }}
   - id: constant
-    platform: template
+    trigger: template
     value_template: >
       {%- set change = states('sensor.master_bathroom_humidity_change') | float(none) %}
       {{ change is not none and -100 <= change <= 125 }}
   - id: start
-    platform: homeassistant
+    trigger: homeassistant
     event: start
-  # If you end up here to copy this, it relies on an automation in config\automation\events
+  # If you end up here to copy this, it relies on an automation in packages/shared/template_reload_event.yaml
   # named "Events - Forward Reload Templates"
-  - platform: event
+  - trigger: event
     event_type: templates_reloaded
   binary_sensor:
   - unique_id: master_bathroom_humidity_status
@@ -120,8 +120,8 @@ automation:
 - alias: Toggle bathroom fan using humidity
   id: bathroom_turn_on_fan_when_humidity_is_high
   mode: restart
-  trigger:
-  - platform: state
+  triggers:
+  - trigger: state
     entity_id: binary_sensor.master_bathroom_humidity_status
   variables:
     check: >
@@ -133,17 +133,17 @@ automation:
       switch.turn_{{ trigger.to_state.state if continue else none }}
     add_delay: >
       {{ trigger.to_state.state == 'off' if continue else False }}
-  condition:
+  conditions:
   - condition: template
     value_template: "{{ continue }}"
-  action:
+  actions:
   
   - choose:
     - conditions: "{{ add_delay }}"
       sequence:
       - delay: "00:20:00"
 
-  - service: "{{ service }}"
+  - action: "{{ service }}"
     target:
       entity_id: switch.master_bathroom_fan
 

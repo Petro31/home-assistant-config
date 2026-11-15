@@ -68,10 +68,10 @@ template:
 automation:
 - alias: Manage outside camera power based on temperature
   id: b5d5ca16-83ca-4fc7-93eb-2bce122071c4
-  trigger:
+  triggers:
 
   # Turn off the cameras
-  - platform: state
+  - trigger: state
     entity_id: binary_sensor.camera_shutoff
     from: 'off'
     to: 'on'
@@ -80,7 +80,7 @@ automation:
       phrase: below 16°F
 
   # Turn on the cameras
-  - platform: state
+  - trigger: state
     entity_id: binary_sensor.camera_turn_on
     from: 'off'
     to: 'on'
@@ -88,11 +88,11 @@ automation:
       action: 'on'
       phrase: above 20°F
 
-  action:
-  - service: script.notify
+  actions:
+  - action: script.notify
     data:
       message: >
         Temperature is moving {{ phrase }}, turning {{ action }} the driveway and backyard camera.
-  - service: switch.turn_{{ action }}
-    data:
+  - action: switch.turn_{{ action }}
+    target:
       entity_id: switch.outside_cameras
