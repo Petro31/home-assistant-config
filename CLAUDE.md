@@ -201,13 +201,6 @@ Done:
 
 Problems found while adding package notes, moving packages or updating legacy keys. They're recorded here so they can be fixed later, each as its own change. Don't fix them as part of other work. Add new findings as you go, and remove an entry once the user has had it fixed.
 
-### packages/master_bathroom_humidity.yaml
-- The UI trend helpers `binary_sensor.master_bathroom_humidity_rising` and `binary_sensor.master_bathroom_humidity_falling` aren't used by anything in the package. They're probably left over from initial testing, and are listed as unused (but related) in the header.
-
-### packages/laundry_monitor.yaml
-- `input_number.test_washer` (UI helper) is an unused leftover, probably from building the power detection. Nothing references it.
-- "Washer and Dryer Done Notification" has the entity ID `automation.dryer_notify` even though it handles both machines. Renaming the entity ID is a registry change (Settings → Entities) and would break anything that refers to the old ID.
-
 ### packages/lzw45_led_strips.yaml
 - The LZW45 strips are expected to be removed. When they are, delete this package and its 19 UI helpers (listed in the header), and remove `switch.lzw45_mood_lighting` from `cloud.yaml`, the Mood Lighting dashboard view (`lovelace/views/mood_lighting.yaml`), and the strip lights from `packages/zigbee_button_toggles.yaml` (`light.workshop_bench_strip`) and `lovelace/views/master.yaml`.
 

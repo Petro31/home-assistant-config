@@ -16,10 +16,6 @@
 #   packages/shared/notifications.yaml
 #     script.notify
 #
-# Unused (but related) entities:
-#   Number helper (input_number, UI)
-#     input_number.test_washer
-#
 # Entities created by this package:
 #   binary_sensor.announce_washer
 #   binary_sensor.announce_dryer
