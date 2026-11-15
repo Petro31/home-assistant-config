@@ -205,12 +205,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 - `sensor.master_bathroom_average_humidity` reads `state_attr('sensor.master_bathroom_filtered_humidity_statistics', 'mean')`, but the statistics sensor no longer has a `mean` attribute (its state is the mean). So the average is always `unknown` and `binary_sensor.master_bathroom_humidity_high` never turns on. The fan automation uses `binary_sensor.master_bathroom_humidity_status` instead, so the fan still works. Fix: use `states(...)`.
 - The UI trend helpers `binary_sensor.master_bathroom_humidity_rising` and `binary_sensor.master_bathroom_humidity_falling` aren't used by anything in the package. They're probably left over from initial testing, and are listed as unused (but related) in the header.
 
-### packages/doorbell.yaml
-- The notification automation's alias is just `Notify`, which is hard to tell apart from other automations in the UI and logs. Its entity is `automation.announce_and_notify_on_doorbell_press`.
-
 ### packages/laundry_monitor.yaml
 - `input_number.test_washer` (UI helper) is an unused leftover, probably from building the power detection. Nothing references it.
-- The "Notify" automation's alias is generic, and its entity is `automation.dryer_notify` even though it handles both the washer and the dryer.
+- "Washer and Dryer Done Notification" has the entity ID `automation.dryer_notify` even though it handles both machines. Renaming the entity ID is a registry change (Settings → Entities) and would break anything that refers to the old ID.
 
 ### packages/lzw45_led_strips.yaml
 - The LZW45 strips are expected to be removed. When they are, delete this package and its 19 UI helpers (listed in the header), and remove `switch.lzw45_mood_lighting` from `cloud.yaml`, the Mood Lighting dashboard view (`lovelace/views/mood_lighting.yaml`), and the strip lights from `packages/zigbee_button_toggles.yaml` (`light.workshop_bench_strip`) and `lovelace/views/master.yaml`.
@@ -222,7 +219,7 @@ Problems found while adding package notes, moving packages or updating legacy ke
 - "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`.
 
 ### packages/energy_tariff.yaml
-- Nothing references `sensor.energy_terrif` (not the Energy dashboard, a dashboard or another config). It may be a leftover; the name is also misspelled ("Terrif").
+- Nothing references `sensor.energy_terrif` (not the Energy dashboard, a dashboard or another config). It may be a leftover. Its name is now "Energy Tariff", but the entity ID keeps the old misspelling (`default_entity_id: sensor.energy_terrif`).
 
 ### packages/testing_sandbox.yaml
 - "MSR 2 Testing" turns on `light.test_main` and `light.test_segment_1`–`3`, but those WLED entities are disabled, so it can't do anything.

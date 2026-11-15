@@ -18,7 +18,7 @@
 #   binary_sensor.doorbell_chime
 
 automation:
-- alias: Notify
+- alias: Doorbell Press Notification
   id: announce_and_notify_on_doorbell_press
   mode: parallel
   triggers:

@@ -7,7 +7,7 @@ template:
 - sensor:
 
   - unique_id: energy_terrif
-    name: Energy Terrif
+    name: Energy Tariff
     default_entity_id: sensor.energy_terrif
     state: "0.053080"
     unit_of_measurement: $/kWh

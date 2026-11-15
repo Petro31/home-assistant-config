@@ -31,7 +31,7 @@
 #   script.calculate_washer_cycle
 
 automation:
-- alias: Notify
+- alias: Washer and Dryer Done Notification
   id: announce_dryer_when_complete
   mode: parallel
   triggers:
