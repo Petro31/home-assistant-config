@@ -141,8 +141,7 @@ Goal: over time, move features whose automations, scripts and templates are spli
 
 ### Candidates
 
-Spread across two folders:
-- [ ] plants (automation, template, top-level plants.yaml)
+None left. Other files in `automation/`, `scripts/` and `template/` could be surveyed for new candidates.
 
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
@@ -165,6 +164,7 @@ Done:
 - [x] lighting (packages/light_targets.yaml with the scripts from scripts/lights.yaml and the Fix Zwave Multicast Errors automation from automation/reactions.yaml; the generated template lights are in packages/.lights/)
 - [x] house humidity (packages/house_climate.yaml; also includes House Temperature from template/temperatures.yaml)
 - [x] echos/alexa (packages/echo_announcements.yaml with the MQTT Discovery automation from automation/echos.yaml and the scripts from scripts/alexa.yaml)
+- [x] plants (packages/plant_care_notifications.yaml with the `plant:` config from plants.yaml, automation/plants.yaml and template/plants.yaml)
 
 ## Known issues
 
@@ -184,6 +184,11 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/lzw45_led_strips.yaml
 - The LZW45 strips are expected to be removed. When they are, delete this package and its 19 UI helpers (listed in the header), and remove `switch.lzw45_mood_lighting` from `cloud.yaml`, the Mood Lighting dashboard view (`lovelace/views/mood_lighting.yaml`), and the strip lights from `automation/buttons.yaml` and `lovelace/views/master.yaml`.
+
+### packages/plant_care_notifications.yaml
+- Kitty's plant sensor (Xiaomi BLE "Plant Sensor (4C86)", MAC C4:7C:8D:6B:4C:86) is dead: its battery slot corroded, so it needs a replacement sensor. Until then `plant.kitty` stays `unknown`. A new sensor has a new MAC, so its entities get new IDs: either rename them to `sensor.plant_sensor_3_*` in the UI or update the `kitty:` sensors under `plant:` in the package (and its header), then delete the old 4C86 device. Set the new device's area to Dining Room (the old one is wrongly in Game Room). It reports through the dining room ESP32 Bluetooth proxy.
+- Yucca's sensor (4BDB) got a new battery on 2026-11-15 and is reporting again with its original `sensor.plant_sensor_2_*` IDs.
+- The `events` attribute of `sensor.plant_events` builds `ns.items` but never outputs it (no `{{ ns.items }}` at the end), so it's always empty. `binary_sensor.plant_issue` stays `off` and the "Notify" automation never sends.
 
 ### automation/calibrations.yaml
 - "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`. It also still uses legacy syntax.

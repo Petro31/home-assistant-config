@@ -22,7 +22,6 @@ lovelace: !include lovelace.yaml
 lovelace_gen:
 media_player: !include media_player.yaml
 notify: !include notify.yaml
-plant: !include plants.yaml
 python_script:
 recorder: !include recorder.yaml
 scene: !include scenes.yaml

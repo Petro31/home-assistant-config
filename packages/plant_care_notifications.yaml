@@ -1,0 +1,164 @@
+# Plant care notifications: plant monitors for Kitty and Yucca built from the
+# Xiaomi plant sensors, a Plants group of every plant, and notifications
+# (on a new problem and at 10:00, 15:30 and 19:00) naming the plants that
+# need water or plant food.
+#
+# External entities used:
+#   Xiaomi BLE (xiaomi_ble)
+#     Dining Room: Plant Sensor (4BDB) (cd289252effa37394a8fab6d322730d9)
+#       sensor.plant_sensor_2_conductivity
+#       sensor.plant_sensor_2_illuminance
+#       sensor.plant_sensor_2_moisture
+#       sensor.plant_sensor_2_temperature
+#   scripts/notifiers.yaml
+#     script.notify
+#   Not found (referenced, but no such entity exists):
+#     sensor.plant_sensor_3_conductivity (Kitty's sensor died; it needs replacing)
+#     sensor.plant_sensor_3_illuminance
+#     sensor.plant_sensor_3_moisture
+#     sensor.plant_sensor_3_temperature
+#
+# Entities created by this package:
+#   plant.kitty (no unique_id)
+#   plant.yucca (no unique_id)
+#   group.plants (through group.set in "Update Group Members")
+#   sensor.plant_events
+#   binary_sensor.plant_issue
+
+plant:
+  kitty:
+    sensors:
+      moisture: sensor.plant_sensor_3_moisture
+      temperature: sensor.plant_sensor_3_temperature
+      conductivity: sensor.plant_sensor_3_conductivity
+      brightness: sensor.plant_sensor_3_illuminance
+    min_brightness: 800
+    max_brightness: 22000
+    min_temperature: 50
+    max_temperature: 89.6
+    min_moisture: 15
+    max_moisture: 60
+    min_conductivity: 350
+    max_conductivity: 2000
+
+  yucca:
+    sensors:
+      moisture: sensor.plant_sensor_2_moisture
+      temperature: sensor.plant_sensor_2_temperature
+      conductivity: sensor.plant_sensor_2_conductivity
+      brightness: sensor.plant_sensor_2_illuminance
+    min_brightness: 1500
+    max_brightness: 20000
+    min_temperature: 46.4
+    max_temperature: 89.6
+    min_moisture: 15
+    max_moisture: 60
+    min_conductivity: 350
+    max_conductivity: 2000
+
+automation:
+- alias: Update Group Members
+  id: plants_update group members
+  triggers:
+  - trigger: time
+    at: '00:00:00'
+  - trigger: homeassistant
+    event: start
+  - trigger: event
+    event_type: event_template_reloaded
+  actions:
+  - action: group.set
+    data:
+      name: Plants
+      object_id: plants
+      icon: mdi:sprout
+      entities: "{{ states.plant | map(attribute='entity_id') | list }}"
+
+- alias: Notify
+  id: plants_notify
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.plant_issue
+    to: 'on'
+    from: 'off'
+    variables:
+      state: "{{ trigger.to_state.state }}"
+  - trigger: time
+    at: "10:00"
+    variables: &vars
+      state: "{{ states('binary_sensor.plant_issue') }}"
+  - trigger: time
+    at: "15:30"
+    variables: *vars
+  - trigger: time
+    at: "19:00"
+    variables: *vars
+  variables:
+    problems: >
+      {{ state_attr('sensor.plant_events', 'events') }}
+    count: >
+      {{ problems | length }}
+    title: >
+      Plant{{ 's' if count > 1 else '' }} Need{{ '' if count > 1 else 's' }} Attention!
+    message: >
+      {%- set ns = namespace(items=[]) %}
+      {%- for issue, plants in problems | groupby(attribute='problems') %}
+        {%- set phrases = plants | map(attribute='name') | list %}
+        {%- set phrase = phrases[:-1] | join(', ') ~ ' and ' ~ phrases[-1] if phrases | length > 1 else phrases | first | default %}
+        {%- set plural = '' if phrases | length > 1 else 's' %}
+        {%- set ns.items = ns.items + [ (phrase ~ ' need%s ' % plural ~ issue ~ '.') | capitalize ] %}
+      {%- endfor %}
+      {{ ns.items | join('\n') }}
+  conditions:
+  - condition: template
+    value_template: "{{ count > 0 }}"
+  actions:
+  - action: script.notify
+    data:
+      title: "{{ title }}"
+      message: "{{ message }}"
+
+template:
+- sensor:
+  - name: Plant Events
+    default_entity_id: sensor.plant_events
+    unique_id: plant_events
+    device_class: timestamp
+    state: >
+      {{ expand('group.plants') | map(attribute='last_updated') | sort(reverse=True) | first | default }}
+    availability: >
+      {{ expand('group.plants') | list | length > 0 }}
+    attributes:
+      events: >
+        {% set _translations = {
+            'conductivity':  'plant food',
+            'moisture': 'water',
+        } %}
+        {%- set ns = namespace(items=[], spool=[]) %}
+        {%- for plant in expand('group.plants') %}
+          {%- if plant.attributes.problem %}
+            {%- set problems = plant.attributes.problem.split(', ') if plant.attributes.problem else [] %}
+            {%- for problem in problems %}
+              {%- set target = _translations.get(problem.split(' ') | first) %}
+              {%- if target is not none %}
+                {%- set ns.spool = ns.spool + [ target ] %}
+              {%- endif %}
+            {%- endfor %}
+            {%- if ns.spool %}
+              {%- set phrases = ns.spool %}
+              {%- set phrase = phrases[:-1] | join(', ') ~ ' and ' ~ phrases[-1] if phrases | length > 1 else phrases | first | default %}
+              {%- set ns.items = ns.items + [{'name': plant.name, 'problems': phrase}] %}
+              {%- set ns.spool = [] %}
+            {%- endif %}
+          {%- endif %}
+        {%- endfor %}
+
+- binary_sensor:
+  - name: Plant Issue
+    default_entity_id: binary_sensor.plant_issue
+    unique_id: plant_issue
+    device_class: problem
+    state: >
+      {{ state_attr('sensor.plant_events', 'events') | length > 0 }}
+    availability: >
+      {{ state_attr('sensor.plant_events', 'events') is not none }}
