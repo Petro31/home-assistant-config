@@ -212,5 +212,8 @@ Problems found while adding package notes, moving packages or updating legacy ke
 ### scripts/wled.yaml (deleted)
 - The 3 deleted WLED scripts still have entity registry entries (they show as unavailable/restored): `script.wled_master_segments`, `script.wled_cabinet_segments` and `script.wled_hutch_segment_handler`. Delete them in Settings → Entities.
 
+### scripts/zwave_js.yaml
+- `script.zwave_multicast_group` was removed (unused since 2024-04-21, replaced by `script.light_handler` in packages/light_targets.yaml). Its entity registry entry is still there; delete it in Settings → Entities.
+
 ### CLAUDE.md
 - The bullet about UI helpers under "How to migrate a feature" says the trend sensors are "used by `master_bathroom_humidity`". They aren't; the package uses the derivative helper `sensor.master_bathroom_humidity_change`.

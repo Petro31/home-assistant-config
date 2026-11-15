@@ -21,10 +21,9 @@
 #       notify.mobile_app_petro (notify action, not an entity)
 #   scripts/notifiers.yaml
 #     script.notify
-#   template/error.yaml
-#     sensor.multicast_error
 #
 # Entities created by this package:
+#   sensor.multicast_error (trigger-based: last failed multicast call)
 #   script.get_light_endpoints
 #   script.get_light_entities
 #   script.get_entities_from_light_group
@@ -91,7 +90,7 @@ automation:
       {%- set t = now() %}
       {%- set yesterday = t - timedelta(hours=24) %}
       {{ t - trigger.to_state.state | as_datetime(yesterday) | as_local < timedelta(seconds=10) }}
-    continue: "{{ action is not none and entity_id is not none and new }}"
+    continue: "{{ action is not none and entity_id is not none and entity_id | count > 0 and new }}"
   conditions:
   - condition: template
     value_template: "{{ continue }}"
@@ -100,18 +99,24 @@ automation:
     data:
       notify: notify.mobile_app_petro
       title: Multicast Error
-      message: Refreshing {{ entity_id  | entity_name }}
+      message: Refreshing {{ entity_id | map('entity_name') | join(', ') }}
 
-  - action: script.get_zwave_entities_from_light_group
-    data:
-      light: "{{ entity_id }}"
-    response_variable: response
+  # entity_id is a list: the failed service call can target several lights.
+  - repeat:
+      for_each: "{{ entity_id }}"
+      sequence:
+      - action: script.get_zwave_entities_from_light_group
+        data:
+          light: "{{ repeat.item }}"
+        response_variable: response
 
-  - delay: 1
+      - delay: 1
 
-  - action: zwave_js.refresh_value
-    target:
-      entity_id: "{{ response.entity_id }}"
+      - if: "{{ response.entity_id | count > 0 }}"
+        then:
+        - action: zwave_js.refresh_value
+          target:
+            entity_id: "{{ response.entity_id }}"
 
   - action: "{{ action }}"
     target:
@@ -123,6 +128,37 @@ automation:
 # Jinja in their header comments. Don't edit them by hand.           #
 ######################################################################
 template: !include_dir_merge_list .lights
+
+# Labeled key because "template:" above is taken by the .lights include.
+template multicast_error:
+- triggers:
+    - trigger: event
+      event_type: system_log_event
+      event_data:
+        name: homeassistant.core
+  variables:
+    is_multicast: >
+      {{ 'Unable to set value via multicast' in trigger.event.data.exception }}
+    targets: >
+      {% set find = '(?!.+__)(?!_)[\\da-z_]+(?<!_)\\.(?!_)[\\da-z_]+(?<!_)' %}
+      {{ trigger.event.data.message | regex_findall(find) | list }}
+    action: >
+      {{ targets | select('search', 'turn_o(ff|n)') | list | first | default(none) }}
+    entity_id: >
+      {{ targets | reject('search', 'turn_o(ff|n)') | list }}
+  conditions:
+    - condition: template
+      value_template: "{{ is_multicast }}"
+  sensor:
+    - name: Multicast Error
+      unique_id: e9236ec7-1af0-4da8-8b27-255807e459b3
+      device_class: timestamp
+      state: >
+        {{ trigger.event.time_fired }}
+      attributes:
+        data: "{{ trigger.event.data }}"
+        action: "{{ action }}"
+        entity_id: "{{ entity_id }}"
 
 script:
   ######################################
