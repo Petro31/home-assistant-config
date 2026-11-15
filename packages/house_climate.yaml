@@ -1,0 +1,58 @@
+# Averages the house's climate sensors: House Temperature and House Humidity
+# are the mean of every sensor with the house_climate label (and a value).
+#
+# External entities used:
+#   Labels (not entities): house_climate. The sensors below carry it; the
+#   templates find them through label_entities(), not by entity_id.
+#   ESPHome (esphome)
+#     Basement: Apollo AIR-1 1ecac0 (a0cfccc71119cba9acc4041ea295e41e)
+#       sensor.apollo_air_1_1ecac0_humidity
+#       sensor.apollo_air_1_1ecac0_temperature
+#     Office: D1 Mini (adf0eae5cfe0dea1465fc796781d5e10)
+#       sensor.office_d1_mini_humidity
+#       sensor.office_d1_mini_temperature
+#   Xiaomi BLE (xiaomi_ble)
+#     Bonus Bedroom: CGDK2 (BC8A) (10cac61c99f3aaa8ec9def234ac9fa05)
+#       sensor.bonus_room_cgdk2_humidity
+#     Kitchen: LYWSDCGQ (B721) (e68aad4abd3f8f61f3b5a14cc9a6fa53)
+#       sensor.kitchen_lywsdcgq_humidity
+#       sensor.kitchen_lywsdcgq_temperature
+#     Master Bathroom: LYWSDCGQ (C4B9) (496303931d7efbad6a29b98ef9ec9871)
+#       sensor.master_bathroom_lywsdcgq_humidity
+#       sensor.master_bathroom_lywsdcgq_temperature
+#     Master Bedroom: LYWSDCGQ (BF45) (ad90dd39ccefdb5f3ebd890087414af6)
+#       sensor.master_bedroom_lywsdcgq_humidity
+#       sensor.master_bedroom_lywsdcgq_temperature
+#   Z-Wave JS (zwave_js)
+#     Living Room: Thermostat (4e7c706ef188cf1c09a94d375f041e81)
+#       sensor.living_room_humidity
+#       sensor.living_room_temperature
+#
+# Entities created by this package:
+#   sensor.house_humidity
+#   sensor.house_temperature
+
+template:
+- sensor:
+  - unique_id: house_humidity
+    name: House Humidity
+    default_entity_id: sensor.house_humidity
+    device_class: humidity
+    state_class: measurement
+    state: > 
+      {{ label_entities("house_climate") | select('has_value') | select('is_state_attr', 'device_class', 'humidity') | map('states') | map('float') | list | average }}
+    availability: >
+      {{ label_entities("house_climate") | select('has_value') | select('is_state_attr', 'device_class', 'humidity') | list | count > 0 }}
+    unit_of_measurement: '%'
+
+- sensor:
+  - unique_id: house_temperature
+    name: House Temperature
+    default_entity_id: sensor.house_temperature
+    device_class: temperature
+    state_class: measurement
+    state: > 
+      {{ label_entities("house_climate") | select('has_value') | select('is_state_attr', 'device_class', 'temperature') | map('states') | map('float') | list | average }}
+    availability: >
+      {{ label_entities("house_climate") | select('has_value') | select('is_state_attr', 'device_class', 'temperature') | list | count > 0 }}
+    unit_of_measurement: '°F'

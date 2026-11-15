@@ -145,7 +145,6 @@ Spread across two folders:
 - [ ] plants (automation, template, top-level plants.yaml)
 
 Grouped by name, to check before migrating:
-- [ ] house humidity (the House Humidity sensor from template/humidity; maybe a house_climate package with the matching sensor in template/temperatures)
 - [ ] echos/alexa (automation/echos, scripts/alexa)
 
 Done:
@@ -167,6 +166,7 @@ Done:
 - [x] events (packages/calendar_and_milestone_events.yaml; also includes script.event and script.events from scripts/notifiers.yaml)
 - [x] wled (packages/kitchen_cabinet_lighting.yaml, with the cabinet sync automation from automation/toggles.yaml; Movie Time moved to living_room_remote, Front Trees to holiday_lighting; the unused scripts/wled.yaml scripts were deleted)
 - [x] lighting (packages/light_targets.yaml with the scripts from scripts/lights.yaml and the Fix Zwave Multicast Errors automation from automation/reactions.yaml; the generated template lights are in packages/.lights/)
+- [x] house humidity (packages/house_climate.yaml; also includes House Temperature from template/temperatures.yaml)
 
 ## Known issues
 
@@ -211,6 +211,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### scripts/wled.yaml (deleted)
 - The 3 deleted WLED scripts still have entity registry entries (they show as unavailable/restored): `script.wled_master_segments`, `script.wled_cabinet_segments` and `script.wled_hutch_segment_handler`. Delete them in Settings → Entities.
+
+### packages/house_climate.yaml
+- `sensor.bonus_room_cgdk2_humidity` has the `house_climate` label but `sensor.bonus_room_cgdk2_temperature` doesn't, so the bonus room counts toward House Humidity but not House Temperature. Every other room has both labeled. Possibly intentional; check before changing the label.
 
 ### scripts/zwave_js.yaml
 - `script.zwave_multicast_group` was removed (unused since 2024-04-21, replaced by `script.light_handler` in packages/light_targets.yaml). Its entity registry entry is still there; delete it in Settings → Entities.

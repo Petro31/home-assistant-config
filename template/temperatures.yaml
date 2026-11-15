@@ -19,14 +19,3 @@
     availability: >
       {{ has_value('sensor.ambweather_humidity1') }}
     unit_of_measurement: '%'
-
-- sensor:
-  - unique_id: house_temperature
-    name: House Temperature
-    device_class: temperature
-    state_class: measurement
-    state: > 
-      {{ label_entities("house_climate") | select('has_value') | select('is_state_attr', 'device_class', 'temperature') | map('states') | map('float') | list | average }}
-    availability: >
-      {{ label_entities("house_climate") | select('has_value') | select('is_state_attr', 'device_class', 'temperature') | list | count > 0 }}
-    unit_of_measurement: '°F'
