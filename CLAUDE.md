@@ -202,7 +202,6 @@ Done:
 Problems found while adding package notes, moving packages or updating legacy keys. They're recorded here so they can be fixed later, each as its own change. Don't fix them as part of other work. Add new findings as you go, and remove an entry once the user has had it fixed.
 
 ### packages/master_bathroom_humidity.yaml
-- `sensor.master_bathroom_average_humidity` reads `state_attr('sensor.master_bathroom_filtered_humidity_statistics', 'mean')`, but the statistics sensor no longer has a `mean` attribute (its state is the mean). So the average is always `unknown` and `binary_sensor.master_bathroom_humidity_high` never turns on. The fan automation uses `binary_sensor.master_bathroom_humidity_status` instead, so the fan still works. Fix: use `states(...)`.
 - The UI trend helpers `binary_sensor.master_bathroom_humidity_rising` and `binary_sensor.master_bathroom_humidity_falling` aren't used by anything in the package. They're probably left over from initial testing, and are listed as unused (but related) in the header.
 
 ### packages/laundry_monitor.yaml

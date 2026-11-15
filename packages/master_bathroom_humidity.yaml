@@ -54,7 +54,7 @@ template:
   - unique_id: master_bathroom_average_humidity
     name: Master Bathroom Average Humidity
     state: > 
-      {{ state_attr('sensor.master_bathroom_filtered_humidity_statistics', 'mean') }}
+      {{ states('sensor.master_bathroom_filtered_humidity_statistics') | float(none) }}
     unit_of_measurement: '%'
     attributes:
       template: humidity
