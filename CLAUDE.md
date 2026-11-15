@@ -144,7 +144,6 @@ Spread across two folders:
 
 Grouped by name, to check before migrating:
 - [ ] house humidity (the House Humidity sensor from template/humidity; maybe a house_climate package with the matching sensor in template/temperatures)
-- [ ] wled (scripts/wled, template/wled_ambiance)
 - [ ] lighting (scripts/lights, template/light_*_targets, template/light_great_room)
 - [ ] echos/alexa (automation/echos, scripts/alexa)
 
@@ -165,6 +164,7 @@ Done:
 - [x] harmony (packages/living_room_harmony.yaml, living_room_remote.yaml and living_room_yamaha.yaml; also includes harmony_helper.yaml, scripts/cast.yaml, template/living_room_remote.yaml, template/yamaha.yaml, template/cast_workout.yaml and the Play/Pause lighting automation from automation/reactions.yaml)
 - [x] basement receiver (packages/basement_yamaha.yaml; also includes the yamaha platform and the Deck/Basement Speakers from media_player.yaml, the basement multizone_controller sensor from sensor.yaml, and the Basement Yamaha Receiver sensor from packages/living_room_yamaha.yaml)
 - [x] events (packages/calendar_and_milestone_events.yaml; also includes script.event and script.events from scripts/notifiers.yaml)
+- [x] wled (packages/kitchen_cabinet_lighting.yaml, with the cabinet sync automation from automation/toggles.yaml; Movie Time moved to living_room_remote, Front Trees to holiday_lighting; the unused scripts/wled.yaml scripts were deleted)
 
 ## Known issues
 
@@ -206,6 +206,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/basement_yamaha.yaml
 - `switch.basement_bluetooth` is broken (the switch died; a replacement is planned). Until it's replaced, the Echo (Deck) and Echo (Basement) switches can't turn on. When it's replaced, keep the same entity ID or update the 2 switches.
+
+### scripts/wled.yaml (deleted)
+- The 3 deleted WLED scripts still have entity registry entries (they show as unavailable/restored): `script.wled_master_segments`, `script.wled_cabinet_segments` and `script.wled_hutch_segment_handler`. Delete them in Settings → Entities.
 
 ### CLAUDE.md
 - The bullet about UI helpers under "How to migrate a feature" says the trend sensors are "used by `master_bathroom_humidity`". They aren't; the package uses the derivative helper `sensor.master_bathroom_humidity_change`.

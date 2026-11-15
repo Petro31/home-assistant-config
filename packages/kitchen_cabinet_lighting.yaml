@@ -1,9 +1,66 @@
+# Kitchen cabinet and hutch WLED lighting: switches that set the cabinet
+# surface, cabinet uplights and hutch uplight to the warm white that matches
+# the kitchen lights. The cabinet switches follow the Z-Wave kitchen cabinet
+# switch (the uplights are skipped while indoor holiday lighting is on).
+#
+# External entities used:
+#   WLED (wled)
+#     Dining Room: Hutch Uplight (6b78817bff699c15f49f8c4fdb4aae82)
+#       light.hutch_uplight
+#     Kitchen: Cabinet Master (653d6472075da68e0d450fa01e22dc62)
+#       light.cabinet_master
+#     Kitchen: Cabinet Slave (942dc69d2db63e50bd466240df69fbe2)
+#       light.cabinet_slave
+#     Kitchen: Cabinet Surface (70c5f67ec2f82f9ba128fe6e99eb7dfa)
+#       light.cabinet_surface
+#   Z-Wave JS (zwave_js)
+#     Kitchen: Cabinet (088f2d268e600b9dd69c385cf3a8b72c)
+#       switch.kitchen_cabinet
+#   packages/holiday_lighting.yaml
+#     binary_sensor.indoor_holiday
+#
+# Entities created by this package:
+#   switch.kitchen_cabinet_2
+#   switch.kitchen_uplight
+#   switch.wled_hutch
+
+automation:
+- alias: Uplight & Downlight Cabinet from Switch
+  id: toggle_cabinet_string_lights
+  mode: single
+  triggers:
+  - trigger: state
+    entity_id: switch.kitchen_cabinet
+  variables:
+    entities:
+    - switch.kitchen_cabinet_2
+    - switch.kitchen_uplight
+    in_season: >
+      {% set remove = ['switch.kitchen_uplight'] if is_state('binary_sensor.indoor_holiday', 'on') else [] %}
+      {{ entities | reject('in', remove) | list }}
+    state_list:
+    - 'on'
+    - 'off'
+    continue: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined and trigger.to_state.state in state_list }}
+    targets: >
+      {{ in_season | reject('is_state', trigger.to_state.state) | list if continue else [] }}
+  conditions:
+  - condition: template
+    value_template: "{{ targets | count > 0 }}"
+  actions:
+  - action: switch.turn_{{ trigger.to_state.state }}
+    target:
+      entity_id: "{{ targets }}"
+
+template:
 - switch:
   
   # WLED Kitchen Cabinet 2, matches switch.kitchen_cabinet (zwave)
   
   - unique_id: 84c17669-2405-4aae-9e4d-06bd58f42964
     name: Kitchen Cabinet 2
+    default_entity_id: switch.kitchen_cabinet_2
     state: >
       {% set rgbw = (255, 199, 125, 0) %}
       {% set brightness = 217 %}
@@ -26,6 +83,7 @@
   
   - unique_id: b72a41c4-9fb8-4b5d-8559-d09a0cac143d
     name: Kitchen Uplight
+    default_entity_id: switch.kitchen_uplight
     state: >
       {% set rgbw = (255, 199, 125, 0) %}
       {% set brightness = 217 %}
@@ -47,6 +105,7 @@
   # WLED Hutch Lights, matches kitchen cabinets
   - unique_id: wled_hutch
     name: WLED Hutch
+    default_entity_id: switch.wled_hutch
     state: >
       {% set rgbw = (255, 199, 125, 0) %}
       {% set brightness = 217 %}
@@ -62,67 +121,3 @@
     - action: light.turn_off
       target: *wled_match_hutch
       data: *wled_match_off_data
-  
-  # Front Trees
-  - unique_id: front_trees
-    name: Front Trees
-    state: >
-      {{ states('select.front_tree_preset') in state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list }}
-    turn_on:
-    - service: select.select_option
-      <<: &front_trees
-        target:
-          entity_id: select.front_tree_preset
-      data:
-        option: "{{ state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list | random }}"
-    turn_off:
-    - service: select.select_option
-      data:
-        option: 'Off'
-      <<: *front_trees
-  
-  ######################
-  # Movie / TV viewing #
-  ######################
-  
-  - unique_id: movie_time
-    name: Movie Time
-    state: >
-      {% set seasonal = state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list + ['switch.kitchen_cabinet'] %}
-      {% set seasonal_on = seasonal | select('is_state', 'on') | list | length == seasonal | length %}
-      {{
-        is_state('switch.hyperion_usb_capture', 'on')
-        and seasonal_on
-        and is_state('light.dining_room_chandelier', 'off')
-        and is_state('light.kitchen_cans', 'off')
-        and is_state('light.kitchen_island', 'off')
-        and is_state('switch.kitchen_pantry', 'off')
-      }}
-    turn_on:
-    - variables: &movie_variables
-        cabinet:
-        seasonal: >
-          {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
-        extra:
-        - switch.kitchen_cabinet
-        - switch.hyperion_usb_capture
-        entities: >
-          {{ seasonal + extra }}
-    - parallel:
-      - if: "{{ 1 == 1 }}"
-        then:
-        - service: homeassistant.turn_on
-          target: &movie_entities
-            entity_id: "{{ entities }}"
-      - service: homeassistant.turn_off
-        target:
-          entity_id: 
-          - light.all_living_room
-          - light.dining_room_chandelier
-          - light.kitchen_cans
-          - light.kitchen_island
-          - switch.kitchen_pantry
-    turn_off:
-    - variables: *movie_variables
-    - service: homeassistant.turn_off
-      target: *movie_entities

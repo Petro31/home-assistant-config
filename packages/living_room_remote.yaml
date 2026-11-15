@@ -1,7 +1,7 @@
 # Living room remote: switches for the Harmony activities and Roku apps,
 # Chromecast workout videos, Chromecast play/pause/seek from the Harmony
 # remote (through emulated Roku), and living room lights that follow Roku
-# playback during movie time.
+# playback during movie time, and the Movie Time viewing scene.
 #
 # External entities used:
 #   Emulated Roku (emulated_roku)
@@ -10,6 +10,7 @@
 #     Living Room: Chromecast (6afc6f09c0d1228eca62f6127f80f042)
 #       media_player.chromecast
 #   Group (group, UI)
+#     light.all_living_room
 #     light.living_room
 #   Logitech Harmony Hub (harmony)
 #     Living Room: living_room (c00e43e3b3aa4b8bb7140258e5000a15)
@@ -22,8 +23,21 @@
 #     script.harmony_activity_off
 #     script.harmony_all_off
 #     script.roku_source_on
-#   template/wled_ambiance.yaml
-#     switch.movie_time
+#   Z-Wave JS (zwave_js)
+#     Dining Room: Chandelier (65e3c11152d87ef0475d41a5cdf3f9a4)
+#       light.dining_room_chandelier
+#     Kitchen: Cabinet (088f2d268e600b9dd69c385cf3a8b72c)
+#       switch.kitchen_cabinet
+#     Kitchen: Cans (c5e6c2e6836ebf64d58f9cf2743d6d00)
+#       light.kitchen_cans
+#     Kitchen: Island (8d9f9dc53f45c7fe4e73c6e2c08f81b4)
+#       light.kitchen_island
+#     Kitchen: Pantry Dome (f3754e5601df799c9cbe15f19cbbad4e)
+#       switch.kitchen_pantry
+#   packages/holiday_lighting.yaml
+#     sensor.seasonal_accent_lights
+#   packages/tv_ambient_lighting.yaml
+#     switch.hyperion_usb_capture
 #
 # Entities created by this package:
 #   switch.xbox_one
@@ -46,6 +60,7 @@
 #   switch.cast_workout_lower_body
 #   switch.cast_workout_total_body
 #   switch.cast_workout_upper_body
+#   switch.movie_time
 #   script.cast_workout_video
 #   script.stop_casting
 
@@ -469,3 +484,51 @@ template:
       data:
         workout: Upper Body
     turn_off: *chromecast_off
+
+- switch:
+  ######################
+  # Movie / TV viewing #
+  ######################
+  
+  - unique_id: movie_time
+    name: Movie Time
+    default_entity_id: switch.movie_time
+    state: >
+      {% set seasonal = state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list + ['switch.kitchen_cabinet'] %}
+      {% set seasonal_on = seasonal | select('is_state', 'on') | list | length == seasonal | length %}
+      {{
+        is_state('switch.hyperion_usb_capture', 'on')
+        and seasonal_on
+        and is_state('light.dining_room_chandelier', 'off')
+        and is_state('light.kitchen_cans', 'off')
+        and is_state('light.kitchen_island', 'off')
+        and is_state('switch.kitchen_pantry', 'off')
+      }}
+    turn_on:
+    - variables: &movie_variables
+        cabinet:
+        seasonal: >
+          {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
+        extra:
+        - switch.kitchen_cabinet
+        - switch.hyperion_usb_capture
+        entities: >
+          {{ seasonal + extra }}
+    - parallel:
+      - if: "{{ 1 == 1 }}"
+        then:
+        - action: homeassistant.turn_on
+          target: &movie_entities
+            entity_id: "{{ entities }}"
+      - action: homeassistant.turn_off
+        target:
+          entity_id: 
+          - light.all_living_room
+          - light.dining_room_chandelier
+          - light.kitchen_cans
+          - light.kitchen_island
+          - switch.kitchen_pantry
+    turn_off:
+    - variables: *movie_variables
+    - action: homeassistant.turn_off
+      target: *movie_entities

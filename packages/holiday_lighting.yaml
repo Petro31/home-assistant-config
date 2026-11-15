@@ -23,6 +23,8 @@
 #       light.cabinet_slave
 #     Kitchen: Cabinet Accent (2a5e6cb86ca686b3bfd060de29831aba)
 #       select.cabinet_accent_preset
+#     Game Room: Front Tree (e6825f7b5ff4d08f51bacc669da6296e) (config entry disabled outside the season)
+#       select.front_tree_preset
 #   Z-Wave JS (zwave_js)
 #     Living Room: Window Outlet (a7d9ac16cae4a1e6ae0a7eb5bb9a226c)
 #       switch.living_room_window
@@ -42,8 +44,6 @@
 #     scene.holiday_bulbs_st_patricks_day
 #     scene.holiday_bulbs_thanksgiving
 #     scene.holiday_bulbs_valentines_day
-#   template/wled_ambiance.yaml
-#     switch.front_trees
 #
 # Entities created by this package:
 #   binary_sensor.indoor_holiday
@@ -56,6 +56,7 @@
 #   light.christmas_red_and_green_houses
 #   light.christmas_town_is_on_fire
 #   switch.indoor_holiday
+#   switch.front_trees
 #   script.indoor_holiday_colors (for testing only; nothing calls it)
 #   script.get_indoor_holiday
 #   script.set_indoor_holiday
@@ -731,3 +732,23 @@ template:
       target:
         entity_id: >
           {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
+
+- switch:
+  # Front Trees
+  - unique_id: front_trees
+    name: Front Trees
+    default_entity_id: switch.front_trees
+    state: >
+      {{ states('select.front_tree_preset') in state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list }}
+    turn_on:
+    - action: select.select_option
+      <<: &front_trees
+        target:
+          entity_id: select.front_tree_preset
+      data:
+        option: "{{ state_attr('select.front_tree_preset', 'options') | reject('in', ['Match','Off','On']) | list | random }}"
+    turn_off:
+    - action: select.select_option
+      data:
+        option: 'Off'
+      <<: *front_trees
