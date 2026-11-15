@@ -2,6 +2,11 @@
 # start and stop Harmony activities (and open a Roku app), and lights and
 # Hyperion that follow the activities.
 #
+# Keep the living_room_ prefix on this filename, even though the folder
+# repeats it. HA names a package after its filename alone (the folder is
+# ignored), so a shorter name like harmony/remote/yamaha could silently
+# clash with another package anywhere under packages/.
+#
 # External entities used:
 #   Group (group, UI)
 #     light.living_room
@@ -13,13 +18,13 @@
 #       media_player.roku_living_room
 #   Sun (sun)
 #     sun.sun
-#   packages/living_room_remote.yaml
+#   packages/living_room/living_room_remote.yaml
 #     switch.playstation
 #     switch.roku
 #     switch.switch
 #     switch.tv
 #     switch.xbox_one
-#   packages/living_room_yamaha.yaml
+#   packages/living_room/living_room_yamaha.yaml
 #     switch.echo_through_receiver
 #   packages/tv_ambient_lighting.yaml
 #     switch.hyperion_usb_capture

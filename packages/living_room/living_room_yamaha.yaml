@@ -2,6 +2,11 @@
 # switches, Echo and AirPlay music through the RX-V6A zones, and scripts that
 # turn media players on at a set source and volume.
 #
+# Keep the living_room_ prefix on this filename, even though the folder
+# repeats it. HA names a package after its filename alone (the folder is
+# ignored), so a shorter name like harmony/remote/yamaha could silently
+# clash with another package anywhere under packages/.
+#
 # External entities used:
 #   Yamaha MusicCast (yamaha_musiccast)
 #     Dining Room: RX-V6A Zone 2 (6a37bd692c94c39ed4bd4b1de7f56076)
@@ -11,7 +16,7 @@
 #   Z-Wave JS (zwave_js)
 #     Living Room: Echo Outlet (313fff6a2ab8c1e3c9b1cd8b3139c4bb)
 #       switch.floating_outlet_switch
-#   packages/living_room_remote.yaml
+#   packages/living_room/living_room_remote.yaml
 #     switch.poweroff
 #
 # Entities created by this package:

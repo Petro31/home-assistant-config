@@ -5,7 +5,7 @@
 # yamaha platform.
 #
 # External entities used:
-#   packages/living_room_yamaha.yaml
+#   packages/living_room/living_room_yamaha.yaml
 #     script.echo_through_media_player
 #     script.media_player_on
 #     script.media_player_off

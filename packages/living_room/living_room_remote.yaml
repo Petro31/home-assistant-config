@@ -3,6 +3,11 @@
 # remote (through emulated Roku), and living room lights that follow Roku
 # playback during movie time, and the Movie Time viewing scene.
 #
+# Keep the living_room_ prefix on this filename, even though the folder
+# repeats it. HA names a package after its filename alone (the folder is
+# ignored), so a shorter name like harmony/remote/yamaha could silently
+# clash with another package anywhere under packages/.
+#
 # External entities used:
 #   Emulated Roku (emulated_roku)
 #     Home Assistant server: roku_command events from the Harmony remote (event, not an entity)
@@ -18,7 +23,7 @@
 #   Roku (roku)
 #     Living Room: Roku (352883bfe3d0fe1eaab8ea16fb5f96c3)
 #       media_player.roku_living_room
-#   packages/living_room_harmony.yaml
+#   packages/living_room/living_room_harmony.yaml
 #     script.harmony_activity_on
 #     script.harmony_activity_off
 #     script.harmony_all_off
