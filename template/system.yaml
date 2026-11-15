@@ -1,29 +1,4 @@
 - sensor:
-  - unique_id: ups_model
-    name: UPS Model
-    state: Back-UPS RS 1500MS
-    attributes:
-      template: system
-
-  - unique_id: ups_battery_runtime
-    name: UPS Battery Runtime
-    state: >
-      {%- set up_time = states('sensor.cyberpower_battery_runtime') | int(default=0) %}
-      {%- macro phrase(name, divisor, mod=None) %}
-        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
-        {%- set end = 's' if value > 1 else '' %}
-        {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
-      {%- endmacro %}
-      
-      {%- set values = [ 
-                 phrase('hr', 60*60, 24),
-                 phrase('min', 60),
-             ] | select('!=','') | list %}
-                    
-      {{ values[:-1] | join(', ') ~ ' ' ~ values[-1] if values | length > 1 else values | first | default }}
-    attributes:
-      template: system
-
   - unique_id: disk_use_total
     name: Disk Use Total
     state: >

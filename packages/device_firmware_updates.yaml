@@ -1,20 +1,25 @@
-# Installs pending firmware updates for ESPHome and Zigbee (MQTT) devices,
-# and combines the ESPHome device updates into a single update entity.
+# Installs pending firmware updates for ESPHome, Zigbee (MQTT) and Z-Wave
+# devices (Z-Wave one device at a time), and combines the ESPHome device
+# updates into a single update entity.
 #
 # External entities used:
 #   ESPHome (esphome)
 #     every update.* entity from this integration (found at runtime with integration_entities)
 #   MQTT (mqtt)
 #     every update.* entity from this integration (found at runtime with integration_entities)
+#   Z-Wave JS (zwave_js)
+#     every update.* entity from this integration (found at runtime with integration_entities)
 #   Home Assistant Supervisor (hassio)
 #     No area: ESPHome Device Builder (6a285555270beb8eb634891673d48bf2)
 #       update.esphome_update
 #   packages/shared/notifications.yaml
 #     script.notify
+#     notify.mobile_app_petro (notify group action, not an entity)
 #
 # Entities created by this package:
 #   script.update_esphome
 #   script.update_zigbee
+#   script.update_zwave
 #   update.esphome_entities
 
 script:
@@ -46,6 +51,38 @@ script:
       message: >
         Updating firmware for household hue lights.  Lights will not work for 1 hour.
     sequence: *sequence
+
+  update_zwave:
+    alias: Update Zwave devices in order
+    mode: single
+    variables:
+      _integration: zwave_js
+      message_title: "{{ _integration | replace('_', ' ') | title }}"
+      entities: >
+        {{ integration_entities(_integration) | select('search','^update') | select('is_state','on') | list }}
+      message: >
+        Updating firmware for household zwave sensors.
+
+    sequence:
+      - condition: template
+        value_template: "{{ entities | length > 0 }}"
+      - action: script.notify
+        data:
+          title: >
+            {{ message_title }} Firmware Update
+          message: "{{ message }}"
+      - repeat:
+          for_each: "{{ entities }}"
+          sequence:
+            - action: script.notify
+              data:
+                title: >
+                  {{ message_title }} Firmware Status
+                message: Installing update for {{ device_name(repeat.item) }}
+                notify: notify.mobile_app_petro
+            - action: update.install
+              target:
+                entity_id: "{{ repeat.item }}"
 
 template:
 - update:

@@ -1,9 +1,11 @@
 # Notifies when the UPS switches to battery power, and if power isn't
 # restored within a minute, runs the power down sequence for the server.
+# Also shows the UPS model and its remaining battery runtime.
 #
 # External entities used:
 #   Network UPS Tools (NUT) (nut)
 #     Server Room: Cyberpower (94e3b4146faeccb623c9382654d7b25e)
+#       sensor.cyberpower_battery_runtime
 #       sensor.cyberpower_output_voltage
 #       sensor.cyberpower_status_data
 #   Synology DSM (synology_dsm)
@@ -16,6 +18,8 @@
 #   binary_sensor.house_power_status
 #   binary_sensor.house_voltage_status
 #   script.power_down_sequence
+#   sensor.ups_model
+#   sensor.ups_battery_runtime
 
 automation:
 - alias: Notify Power Outage
@@ -118,3 +122,31 @@ template:
     device_class: problem
     attributes:
       template: ups
+
+- sensor:
+  - unique_id: ups_model
+    name: UPS Model
+    default_entity_id: sensor.ups_model
+    state: Back-UPS RS 1500MS
+    attributes:
+      template: system
+
+  - unique_id: ups_battery_runtime
+    name: UPS Battery Runtime
+    default_entity_id: sensor.ups_battery_runtime
+    state: >
+      {%- set up_time = states('sensor.cyberpower_battery_runtime') | int(default=0) %}
+      {%- macro phrase(name, divisor, mod=None) %}
+        {%- set value = ((up_time // divisor) % (mod if mod else divisor)) | int %}
+        {%- set end = 's' if value > 1 else '' %}
+        {{- '{} {}{}'.format(value, name, end) if value > 0 else '' }}
+      {%- endmacro %}
+      
+      {%- set values = [ 
+                 phrase('hr', 60*60, 24),
+                 phrase('min', 60),
+             ] | select('!=','') | list %}
+                    
+      {{ values[:-1] | join(', ') ~ ' ' ~ values[-1] if values | length > 1 else values | first | default }}
+    attributes:
+      template: system

@@ -1,18 +1,18 @@
 # Sends a notification when the doorbell is pressed (at most once every
-# 15 seconds) and briefly disables the chime after each press.
+# 15 seconds), briefly disables the chime after each press, and turns the
+# chime back on if it has been off for 5 minutes or is found off at 8am.
 #
 # External entities used:
 #   ESPHome (esphome)
 #     Porch: Doorbell (2bb10514634b0503f55fcb35ed9e5826)
 #       switch.doorbell_chime
 #       switch.doorbell_chime_active
-#   packages/shared/notifications.yaml
-#     script.notify
-#
-# Unused (but related) entities:
 #   History stats helper (history_stats, UI)
 #     Porch: Doorbell (2bb10514634b0503f55fcb35ed9e5826)
 #       sensor.doorbell_chime_off
+#   packages/shared/notifications.yaml
+#     script.notify
+#     notify.mobile_app_petro (notify group action, not an entity)
 #
 # Entities created by this package:
 #   binary_sensor.doorbell_chime
@@ -59,6 +59,46 @@ automation:
     target:
       entity_id: switch.doorbell_chime_active
   - delay: "00:00:15"
+  - action: switch.turn_on
+    target:
+      entity_id: switch.doorbell_chime_active
+
+- alias: Fix Doorbell Chime Status
+  id: 3f1c8cab-0151-4961-854e-80fdb956fcae
+  description: Checks to see if the doorbell chime is on periodically.
+  triggers:
+  - id: turn_on
+    trigger: state
+    entity_id: switch.doorbell_chime_active
+    to: 'off'
+    for:
+      minutes: 5
+  - id: turn_on
+    trigger: template
+    value_template: "{{ states('sensor.doorbell_chime_off') | float(0) == 5 }}"
+  - id: check
+    trigger: time
+    at: '8:00:00'
+  variables:
+    message: >
+      {% if trigger.id == 'turn_on' %}
+        Doorbell chime has been off for at least 5 minutes.  Turning Back on.
+      {% elif is_state('sensor.doorbell_chime_off', 'off') %}
+        Doorbell chime was found to be off at 8am, turning back on.
+      {% else%}
+        None
+      {% endif %}
+    continue: "{{ message is not none }}"
+  conditions:
+  - condition: template
+    value_template: "{{ continue }}"
+  actions:
+  - action: script.notify
+    data:
+      notify: notify.mobile_app_petro
+      title: Fixing Doorbell Chime
+      message: "{{ message }}"
+
   - action: switch.turn_on
     target:
       entity_id: switch.doorbell_chime_active

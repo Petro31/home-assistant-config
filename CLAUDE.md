@@ -144,9 +144,9 @@ Goal: over time, move features whose automations, scripts and templates are spli
 Goal: migrate everything left in `automation/`, `scripts/`, `template/` and `command_line/`, plus `sensor.yaml`, `media_player.yaml`, `notify.yaml`, `compensation.yaml` and `intent_script.yaml`. Delete each file (and its `configuration.yaml` line) once it's empty. These stay where they are: the UI-managed `automations.yaml`, `scripts.yaml` and `scenes.yaml`, and the infrastructure configs (`cloud`, `logger`, `recorder`, `lovelace`, `system_log`, `door_buddy`). Items marked ⚠ use non-reloadable platforms: do them last and restart once.
 
 Into existing packages:
-- [ ] doorbell: "Fix Doorbell Chime Status" (automation/reactions.yaml)
-- [ ] device_firmware_updates: script.update_zwave (scripts/zwave_js.yaml)
-- [ ] power_outage_shutdown: UPS Model and UPS Battery Runtime (template/system.yaml)
+- [x] doorbell: "Fix Doorbell Chime Status" (automation/reactions.yaml)
+- [x] device_firmware_updates: script.update_zwave (scripts/zwave_js.yaml)
+- [x] power_outage_shutdown: UPS Model and UPS Battery Runtime (template/system.yaml)
 - [ ] living_room/living_room_yamaha: Living Room and Dining Room Speakers (media_player.yaml), the receiver volume compensations (compensation.yaml), the living room multizone_controller sensor (sensor.yaml) ⚠
 
 Shared plumbing (packages/shared/):
@@ -211,7 +211,6 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/doorbell.yaml
 - The notification automation's alias is just `Notify`, which is hard to tell apart from other automations in the UI and logs. Its entity is `automation.announce_and_notify_on_doorbell_press`.
-- "Fix Doorbell Chime Status" in `automation/reactions.yaml` is doorbell-related and probably belongs in this package. It uses `sensor.doorbell_chime_off` and `switch.doorbell_chime_active`. It also mixes syntax: it has `triggers:` and `conditions:`, but a legacy top-level `action:`.
 
 ### packages/laundry_monitor.yaml
 - `input_number.test_washer` (UI helper) is an unused leftover, probably from building the power detection. Nothing references it.
