@@ -1,6 +1,21 @@
+# Outdoor weather station: Outside Temperature and Outside Humidity from the
+# AMBWeather station on the roof.
+#
+# External entities used:
+#   MQTT (mqtt)
+#     Roof: AMBWeather (8c33175b612442b7e4c783c384ab0ec3)
+#       sensor.ambweather_humidity1
+#       sensor.ambweather_temp1
+#
+# Entities created by this package:
+#   sensor.outside_temperature
+#   sensor.outside_humidity
+
+template:
 - sensor:
   - unique_id: outside_temperature
     name: Outside Temperature
+    default_entity_id: sensor.outside_temperature
     device_class: temperature
     state_class: measurement
     state: > 
@@ -12,6 +27,7 @@
 - sensor:
   - unique_id: ffc879a1-37ef-4cf7-ad3d-9d32352827f8
     name: Outside Humidity
+    default_entity_id: sensor.outside_humidity
     device_class: humidity
     state_class: measurement
     state: > 

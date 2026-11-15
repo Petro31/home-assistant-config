@@ -1,6 +1,0 @@
-- sensor:
-
-  - unique_id: energy_terrif
-    name: Energy Terrif
-    state: "0.053080"
-    unit_of_measurement: $/kWh

@@ -6,7 +6,6 @@ homeassistant:
 analytics:
   snapshots_url: # use default
 automation: !include automations.yaml
-automation directory: !include_dir_merge_list automation
 cloud: !include cloud.yaml
 command_line: !include_dir_merge_list command_line
 compensation: !include compensation.yaml
@@ -25,7 +24,6 @@ python_script:
 recorder: !include recorder.yaml
 scene: !include scenes.yaml
 script: !include scripts.yaml
-script directory: !include_dir_merge_named scripts/
 sensor: !include sensor.yaml
 system_health:
 template: !include_dir_merge_list template

@@ -1,0 +1,73 @@
+# Garage doors: open/closed binary sensors for the front and rear garage doors
+# (from their covers), and script.garage_door_toggle (run from an NFC tag),
+# which locks or unlocks the Smart Lock Ultra and tells the homeowners who did.
+#
+# External entities used:
+#   ESPHome (esphome)
+#     Car Bays: Front Garage Door (09955d605c80fc51b4502ca8f48b6ee3)
+#       cover.front_garage_door
+#     Car Bays: Rear Garage Door (7f720b662ab811dba9017c2df237df6b)
+#       cover.rear_garage_door
+#   Matter (matter)
+#     Mud Room: Smart Lock Ultra (5633d9346d98cb107f431374c03ec411)
+#       lock.smart_lock_ultra
+#   Person (person, UI)
+#     every person (matched by user_id to name who ran the script)
+#   packages/shared/notifications.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   binary_sensor.front_garage_door
+#   binary_sensor.rear_garage_door
+#   script.garage_door_toggle
+
+template:
+- binary_sensor:
+  - name: Garage Door
+    default_entity_id: binary_sensor.front_garage_door
+    unique_id: binary_sensor.garage_door_tilt_inverted
+    state: "{{ not is_state('cover.front_garage_door', 'closed') }}"
+    availability: "{{ states('cover.front_garage_door') in ['open', 'opening', 'closed', 'closing'] }}"
+    device_class: garage_door
+    attributes:
+      template: door
+
+  - name: Rear Garage Door
+    default_entity_id: binary_sensor.rear_garage_door
+    unique_id: rear_garage_door
+    state: "{{ not is_state('cover.rear_garage_door', 'closed') }}"
+    availability: "{{ states('cover.rear_garage_door') in ['open', 'opening', 'closed', 'closing'] }}"
+    device_class: garage_door
+    attributes:
+      template: door
+
+script:
+  # A toggle for the lock
+  garage_door_toggle:
+    alias: Toggle Garage Door
+    description: >
+      Toggle the garage door and notify the homeowners
+    sequence:
+    - variables:
+        user_id: >
+          {{ context.user_id }}
+        who: >
+          {{ states.person | selectattr('attributes.user_id', 'eq', user_id) | map(attribute='entity_id') | first | default }}
+        next_state: >
+          {# The nuki lock reports stupid states through matter, you must account for that.  open == unlocked #}
+          {# You are abusing filters.  if locked and unlocked are before open, the first state should always be locked or unlocked #}
+          {%- set filtered_states = ['locked', 'unlocked', 'open'] | reject('eq', states('lock.smart_lock_ultra')) | list %}
+          {%- set next_state = filtered_states | first | default(None) %}
+          {%- if next_state is none or filtered_states | count > 2 %}
+            None
+          {%- else %}
+            {{ next_state }}
+          {%- endif %}
+    - condition: template
+      value_template: "{{ who is not none and next_state is not none }}"
+    - action: script.notify
+      data:
+        message: "{{ who | entity_name }} {{ next_state }} the garage door."
+    - action: lock.{{ next_state.replace('ed', '') }}
+      data:
+        entity_id: lock.smart_lock_ultra

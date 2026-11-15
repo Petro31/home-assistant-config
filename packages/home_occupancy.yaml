@@ -1,0 +1,105 @@
+# Home occupancy: counts who is home (everyone labeled person_of_interest who
+# is home, guests included) with name lists for messages, and detects guests
+# from devices on the UniFi guest network ("Spartan Family") or the manual
+# Company toggle. sensor.people_at_home is also used by door_buddy.
+#
+# External entities used:
+#   Labels (not entities): person_of_interest. The people below carry it; the
+#   templates find them through label_entities(), not by entity_id.
+#   Group (group, UI), labeled person_of_interest
+#     binary_sensor.guests (Unifi Guests or Manual Guests)
+#   Person (person, UI), labeled person_of_interest
+#     person.andrea
+#     person.bonnie
+#     person.james
+#     person.lambo
+#     person.owen
+#     person.petro
+#   Toggle helper (input_boolean, UI)
+#     input_boolean.company
+#   UniFi Network (unifi)
+#     every device_tracker from this integration (found at runtime with integration_entities)
+#
+# Entities created by this package:
+#   sensor.people_at_home
+#   sensor.total_unifi_guests
+#   sensor.total_unifi_trusted_devices
+#   binary_sensor.unifi_guests
+#   binary_sensor.manual_guests
+
+template:
+- sensor:
+  - unique_id: people_at_home
+    name: People at Home
+    default_entity_id: sensor.people_at_home
+    state: >
+      {%- set people = label_entities('person_of_interest') %}
+      {{ people | select('is_state', ['home','on']) | list | count }}
+    icon: >
+      {%- set icons = ['account-off', 'account', 'account-multiple'] %}
+      {%- set people = label_entities('person_of_interest') %}
+      {%- set cnt = people | select('is_state', ['home','on']) | list | count %}
+      {%- if cnt >= 0 %}
+        mdi:{{ icons[cnt] if cnt in range(icons | count) else 'account-group' }}
+      {%- else %}
+        mdi:account-alert
+      {%- endif %}
+    attributes:
+      template: people_tracker
+      people: > 
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('entity_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('entity_name') | list %}
+        {%- set people = people + company %}
+        {{ people }}
+      and: >
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('entity_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('entity_name') | list %}
+        {%- set people = people + company %}
+        {%- if people | count > 0 %}
+          {{- [people[:-1] | join(', '), 'and', people[-1]] | join(' ') if people | count > 1 else people[0] }}
+        {%- else %}unknown
+        {%- endif %}
+      or: >
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('entity_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('entity_name') | list %}
+        {%- set people = people + company %}
+        {%- if people | count > 0 %}
+          {{- [people[:-1] | join(', '), 'or', people[-1]] | join(' ') if people | count > 1 else people[0] }}
+        {%- else %}unknown
+        {%- endif %}
+      count: >
+        {%- set people = label_entities('person_of_interest') | select('is_state', 'home') | map('entity_name') | list %}
+        {%- set company = label_entities('person_of_interest') | select('is_state', 'on') | map('entity_name') | list %}
+        {%- set people = people + company %}
+        {{ people | count }}
+
+- sensor:
+  - name: Total Unifi Guests
+    default_entity_id: sensor.total_unifi_guests
+    unique_id: total_unifi_guests
+    unit_of_measurement: Guests
+    state: >
+      {{ integration_entities('unifi') | select('search','^device_tracker') | expand | selectattr('attributes.essid', 'eq', 'Spartan Family') | list | count }}
+
+  - name: Total Unifi Trusted Devices
+    default_entity_id: sensor.total_unifi_trusted_devices
+    unique_id: total_unifi_trusted_devices
+    unit_of_measurement: Devices
+    state: >
+      {{ integration_entities('unifi') | select('search','^device_tracker') | expand | selectattr('attributes.essid', 'eq', 'Spartan') | list | count }}
+
+- binary_sensor:
+  - name: Unifi Guests
+    default_entity_id: binary_sensor.unifi_guests
+    unique_id: unifi_guests
+    device_class: presence
+    state: >
+      {{ integration_entities('unifi') | select('search','^device_tracker') | expand | selectattr('attributes.essid', 'eq', 'Spartan Family') | list | count > 0 }}
+
+- binary_sensor:
+  - name: Manual Guests
+    default_entity_id: binary_sensor.manual_guests
+    unique_id: manual_guests
+    device_class: presence
+    state: >
+      {{ is_state('input_boolean.company', 'on') }}

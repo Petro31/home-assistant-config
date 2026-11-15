@@ -1,0 +1,104 @@
+# Server health: total disk and memory sensors, the Home Assistant release
+# graphic for the dashboard, backup status notifications, and clearing
+# persistent notifications at 22:00.
+#
+# External entities used:
+#   Backup (backup)
+#     No area: Backup (6fcd21089a6d79aba310077bde2a98c4)
+#       event.backup_automatic_backup
+#   Home Assistant Supervisor (hassio)
+#     No area: Home Assistant Core (0b07169b68e0567306136cdeb87b37d2)
+#       update.home_assistant_core_update
+#   System Monitor (systemmonitor)
+#     Server Room: System Monitor (64484db27055abac82f892277d4f66bd)
+#       sensor.disk_free_home
+#       sensor.disk_use_home
+#       sensor.memory_free
+#       sensor.memory_use
+#   packages/shared/notifications.yaml
+#     script.notify
+#
+# Entities created by this package:
+#   sensor.disk_use_total
+#   sensor.memory_use_total
+#   image.home_assistant_graphic
+
+automation:
+- alias: Notify Snapshot status
+  id: snapshot_status
+  mode: parallel
+  trace:
+    stored_traces: 20
+  triggers:
+    - trigger: state
+      entity_id: event.backup_automatic_backup
+      not_from:
+      - unknown
+      - unavailable
+  variables:
+    valid: >
+      {{ trigger | default(none) is not none and trigger.to_state is defined and trigger.from_state is defined }}
+    event_type: >
+      {{ trigger.to_state.attributes.event_type }}
+    event_stage: >
+      {{ trigger.to_state.attributes.backup_stage }}
+    status: >
+      {% if event_type == "completed" or (event_type == "in_progress" and event_stage == "home_assistant") %}
+        {{ event_type | replace('_', ' ') }}
+      {% elif event_type == "failed" %}
+        {{ event_type }}: {{ trigger.to_state.attributes.failed_reason }}
+      {% else %}
+        None
+      {% endif %}
+  conditions:
+    - condition: template
+      value_template: "{{ valid and status is not none }}"
+  actions:
+    - action: script.notify
+      data:
+        title: Backup Status
+        message: "Backup {{ status }}."
+
+- alias: Clear persistent_notifications at bedtime
+  id: clear_persistent_notifications_around_bedtime
+  triggers:
+    - trigger: time
+      at: "22:00:00"
+  actions:
+    - action: persistent_notification.dismiss_all
+
+template:
+- sensor:
+  - unique_id: disk_use_total
+    name: Disk Use Total
+    default_entity_id: sensor.disk_use_total
+    state: >
+      {{ expand('sensor.disk_free_home', 'sensor.disk_use_home') | map(attribute='state') | map('float', 0) | sum | round(1) }}
+    availability: >
+      {%- set items = 'sensor.disk_free_home', 'sensor.disk_use_home' -%}
+      {{ expand(items) | rejectattr('state','in',['unknown','unavailable']) | list | count == items | count }}
+    unit_of_measurement: "GiB"
+    attributes:
+      template: system
+      
+  - unique_id: memory_use_total
+    name: Memory Use Total
+    default_entity_id: sensor.memory_use_total
+    state: >
+      {{ expand('sensor.memory_free', 'sensor.memory_use') | map(attribute='state') | map('float', 0) | sum | round(1) }}
+    availability: >
+      {%- set items = 'sensor.memory_free', 'sensor.memory_use' -%}
+      {{ expand(items) | rejectattr('state','in',['unknown','unavailable']) | list | count == items | count }}
+    unit_of_measurement: "MiB"
+    attributes:
+      template: system
+
+- image:
+    - name: Home Assistant Graphic
+      default_entity_id: image.home_assistant_graphic
+      unique_id: d25697e5-534f-4d55-8360-7221576f904e
+      url: >
+        {% set major, minor = state_attr('update.home_assistant_core_update', 'installed_version').split('.')[:2] | map('int') %}
+        https://www.home-assistant.io/images/blog/{{ major }}-{{ '{0:02d}'.format(minor) }}/social.png
+      availability: >
+        {{ state_attr('update.home_assistant_core_update', 'installed_version') is not none }}

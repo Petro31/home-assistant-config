@@ -1,0 +1,13 @@
+# Energy tariff: a fixed electricity price sensor ($0.053080/kWh).
+#
+# Entities created by this package:
+#   sensor.energy_terrif
+
+template:
+- sensor:
+
+  - unique_id: energy_terrif
+    name: Energy Terrif
+    default_entity_id: sensor.energy_terrif
+    state: "0.053080"
+    unit_of_measurement: $/kWh

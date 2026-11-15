@@ -28,9 +28,7 @@ The live Home Assistant `/config` directory (mounted over SMB; the share path is
 | Location | Included as | File format |
 |---|---|---|
 | `packages/` | `homeassistant: packages: !include_dir_named` | One feature per file, spanning many domains (`template:`, `automation:`, `script:`, …). The filename is the package name. Subfolders can group related packages, but the folder isn't part of the name. |
-| `automation/` | `automation directory: !include_dir_merge_list` | Top-level YAML **list** of automations |
 | `automations.yaml` | `automation: !include` | Managed by the UI editor; don't hand-edit |
-| `scripts/` | `script directory: !include_dir_merge_named` | Top-level **mapping** of `script_id: {...}` |
 | `scripts.yaml` | `script: !include` | Managed by the UI editor |
 | `template/` | `template: !include_dir_merge_list` | Top-level **list** of template blocks (`- sensor:`, `- trigger:` …) |
 | `mqtt/` | `!include_dir_merge_named` | Mapping keyed by platform |
@@ -39,7 +37,7 @@ The live Home Assistant `/config` directory (mounted over SMB; the share path is
 
 Other top-level `*.yaml` files are single-domain includes referenced from `configuration.yaml`. Some (e.g. `http.yaml`, `history*.yaml`) are tracked but no longer included.
 
-New self-contained features go in `packages/` (see `packages/leak_detection.yaml` for the current style). Domain-organized additions go in the matching `automation/`, `scripts/`, or `template/` file.
+New features go in `packages/` (see `packages/leak_detection.yaml` for the current style). The old domain folders `automation/` and `scripts/` are gone, and `template/` is being emptied; don't add files to them.
 
 ### Conventions
 
@@ -159,16 +157,16 @@ New packages:
 - [x] daylight_saving_reminders: template/daylight_savings_time.yaml and "Notify DST Change" (automation/timed_events.yaml)
 - [x] household_reminders: "Notify Change Filters Message" and "Notify Mosby Heartworm and Flee Medication." (automation/timed_events.yaml)
 - [x] thermostat_schedule: "Simple Thermostat" (automation/timed_events.yaml)
-- [ ] server_health: Disk Use Total and Memory Use Total (template/system.yaml), CPU Temperature (command_line/temperature.yaml) ⚠, template/homeassistant_image.yaml, "Notify Snapshot status" and "Clear persistent_notifications at bedtime" (automation/timed_events.yaml)
+- [ ] server_health: Disk Use Total and Memory Use Total (template/system.yaml), template/homeassistant_image.yaml, "Notify Snapshot status" and "Clear persistent_notifications at bedtime" (automation/timed_events.yaml) are done; CPU Temperature (command_line/temperature.yaml) ⚠ is still to add
 - [x] living_room/living_room_controllers: "Living Room Scene Controller" and its LEDs (automation/buttons.yaml), "Cube Actions" (automation/cube.yaml), "Living Room Lamp Availability." (automation/reactions.yaml; the commented-out "Fix Wled Errors" copy left in that file was deleted with it)
 - [x] zigbee_button_toggles: "Zigbee Button Toggler" (automation/buttons.yaml)
 - [x] linked_light_switches: automation/toggles.yaml
-- [ ] garage_doors: template/door.yaml and script.garage_door_toggle (scripts/nfc.yaml)
-- [ ] home_occupancy: template/people_tracker.yaml and template/network.yaml
+- [x] garage_doors: template/door.yaml and script.garage_door_toggle (scripts/nfc.yaml)
+- [x] home_occupancy: template/people_tracker.yaml and template/network.yaml
 - [ ] work_hours_tracking: Petro/Lambo at Work history_stats (sensor.yaml) ⚠ and template/time.yaml
 - [ ] bonus_room_television: template/bonus_room.yaml and the Bonus Room Television universal player (media_player.yaml) ⚠
-- [ ] outdoor_weather_station: template/temperatures.yaml
-- [ ] energy_tariff: template/energy.yaml
+- [x] outdoor_weather_station: template/temperatures.yaml
+- [x] energy_tariff: template/energy.yaml
 - [x] aurora_alerts: automation/aurora.yaml
 - [x] drink_tracker: automation/drinks.yaml
 - [x] body_weight_tracking: automation/weight.yaml
@@ -224,6 +222,9 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/sensor_calibration_helper.yaml
 - "Calibration Helper" (used to calibrate temperatures around the house) probably has stale entity IDs. It triggers on `sensor.basement_bme280_temperature` / `sensor.basement_bme280_humidity`, which belong to the disabled ESPHome "Basement Esp32" config entry. It also compares against `sensor.apollo_air_1_1ecac0_sen55_temperature` / `_sen55_humidity`, which don't exist; the Apollo AIR-1 now exposes e.g. `sensor.apollo_air_1_1ecac0_humidity`.
+
+### packages/energy_tariff.yaml
+- Nothing references `sensor.energy_terrif` (not the Energy dashboard, a dashboard or another config). It may be a leftover; the name is also misspelled ("Terrif").
 
 ### packages/aurora_alerts.yaml
 - "Notify Aurora" sends its notification with the title "Snapshot Status" (copied from the backup notification).
