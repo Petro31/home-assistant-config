@@ -4,8 +4,6 @@
 #
 # External entities used:
 #   Mobile App (mobile_app)
-#     No area: Petro (d16f2df2c395d51d093f540b1d3bc695)
-#       notify.mobile_app_petro (notify action, not an entity)
 #     No area: Lindsay’s iPhone (d1294582fbb63bf938b82086919315c1)
 #       notify.mobile_app_lindsays_iphone (notify action, not an entity)
 #   Person (person, UI)
@@ -13,6 +11,7 @@
 #     person.lambo
 #   packages/shared/notifications.yaml
 #     script.notify
+#     notify.mobile_app_petro (notify group action, not an entity)
 #
 # Entities created by this package:
 #   switch.petro_charging
