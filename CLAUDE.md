@@ -144,9 +144,6 @@ Goal: over time, move features whose automations, scripts and templates are spli
 Spread across two folders:
 - [ ] plants (automation, template, top-level plants.yaml)
 
-Grouped by name, to check before migrating:
-- [ ] echos/alexa (automation/echos, scripts/alexa)
-
 Done:
 - [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
 - [x] doorbell (packages/doorbell.yaml)
@@ -167,6 +164,7 @@ Done:
 - [x] wled (packages/kitchen_cabinet_lighting.yaml, with the cabinet sync automation from automation/toggles.yaml; Movie Time moved to living_room_remote, Front Trees to holiday_lighting; the unused scripts/wled.yaml scripts were deleted)
 - [x] lighting (packages/light_targets.yaml with the scripts from scripts/lights.yaml and the Fix Zwave Multicast Errors automation from automation/reactions.yaml; the generated template lights are in packages/.lights/)
 - [x] house humidity (packages/house_climate.yaml; also includes House Temperature from template/temperatures.yaml)
+- [x] echos/alexa (packages/echo_announcements.yaml with the MQTT Discovery automation from automation/echos.yaml and the scripts from scripts/alexa.yaml)
 
 ## Known issues
 
@@ -214,6 +212,14 @@ Problems found while adding package notes, moving packages or updating legacy ke
 
 ### packages/house_climate.yaml
 - `sensor.bonus_room_cgdk2_humidity` has the `house_climate` label but `sensor.bonus_room_cgdk2_temperature` doesn't, so the bonus room counts toward House Humidity but not House Temperature. Every other room has both labeled. Possibly intentional; check before changing the label.
+
+### packages/echo_announcements.yaml
+- `script.notify_area` maps downstairs, everywhere and great_room to `notify.downstairs_speak`, `notify.everywhere_speak` and `notify.great_room_speak`, which don't exist (Alexa Devices only creates `_announce` entities for those zones). A non-announce message to those areas fails.
+- `script.notify_area` sends only to `entities | first`, so when several areas are passed (e.g. from the dashboard buttons with more than one area toggled on) only the first one gets the message. The `alexa_last_tts` sensor still lists all of them as targets.
+- In `script.notify_alexa_ui`, the `user_id` field's description is copied from the `announce` field ("Annouce or TTS…").
+
+### Unused top-level files
+- `input_text.yaml`, `alexa.yaml` and `alexa_media.yaml` aren't included from `configuration.yaml`, so HA doesn't load them. `input_text: !include` was removed in 2021 (`input_text.alexa_say` is now a UI helper), `alexa_media.yaml` was replaced by the UI in 2022, and the live `alexa:` config is in `cloud.yaml`. The lzw45 entry above still mentions `alexa.yaml`.
 
 ### scripts/zwave_js.yaml
 - `script.zwave_multicast_group` was removed (unused since 2024-04-21, replaced by `script.light_handler` in packages/light_targets.yaml). Its entity registry entry is still there; delete it in Settings → Entities.
