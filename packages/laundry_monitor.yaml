@@ -21,6 +21,7 @@
 #   binary_sensor.announce_dryer
 #   binary_sensor.washer_status
 #   binary_sensor.dryer_status
+#   binary_sensor.laundry_running (washer or dryer running; group-like)
 #   binary_sensor.washer (through MQTT discovery)
 #   binary_sensor.test_washer (through MQTT discovery)
 #   script.reset_washer
@@ -274,6 +275,22 @@ script:
         attributes: "{{ {'source': source, 'cycles': cycles} }}"
 
 template:
+# On while the washer (MQTT spin-cycle tracker) or the dryer (power draw) is
+# running: the same two sensors the done notification watches. The entity_id
+# attribute lists them, so it acts like a binary_sensor group.
+- binary_sensor:
+  - unique_id: laundry_running
+    name: Laundry
+    default_entity_id: binary_sensor.laundry_running
+    device_class: running
+    state: >
+      {{ ['binary_sensor.washer', 'binary_sensor.dryer_status'] | select('is_state', 'on') | list | count > 0 }}
+    icon: >
+      {{ 'mdi:washing-machine' if ['binary_sensor.washer', 'binary_sensor.dryer_status'] | select('is_state', 'on') | list else 'mdi:washing-machine-off' }}
+    attributes:
+      entity_id: >
+        {{ ['binary_sensor.washer', 'binary_sensor.dryer_status'] }}
+
 - triggers:
   - trigger: event
     event_type: announce_energy
