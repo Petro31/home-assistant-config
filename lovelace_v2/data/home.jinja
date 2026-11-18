@@ -12,6 +12,9 @@
   one of the rule's states. Either may be left out: 'entities' defaults to
   [target], 'target' to the first of 'entities'. A key may also hold a list of
   groups, one icon each (e.g. Garage's car bay doors and passenger door).
+  Room cards only: 'state' replaces the rule's states for the icon's count,
+  and 'badge_entity' shows the count while that entity is on (instead of
+  while the target is in one of the states).
 
   Count rules, in the order of the counts in status lines ("3 lights on ·
   1 fan on") and badges (top of the Areas, area and Doors views; hidden while
@@ -36,7 +39,11 @@
   {%- for g in ([value] if value is mapping else value) %}
     {%- set ids = g.entities if 'entities' in g else ([g.target] if 'target' in g else []) %}
     {%- if ids or 'target' in g %}
-      {%- set ns.out = ns.out + [{'target': g.target if 'target' in g else ids[0], 'entities': ids}] %}
+      {%- set one = namespace(g={'target': g.target if 'target' in g else ids[0], 'entities': ids}) %}
+      {%- for k in ['state', 'badge_entity'] if k in g %}
+        {%- set one.g = dict(one.g, **{k: g[k]}) %}
+      {%- endfor %}
+      {%- set ns.out = ns.out + [one.g] %}
     {%- endif %}
   {%- endfor %}
   {{- ns.out | tojson }}
@@ -441,8 +448,8 @@
   lists the keys shown as small icons, in order; every icon opens more-info
   (never toggles the house), or, for a key in 'links', the page of that Home
   button (by name). The card opens Areas. 'image' is the card's background
-  (the Areas button's picture). Its doors (all of them) are added after the
-  doors list below.
+  (the Areas button's picture). Its locks group (the lock plus every door) is
+  added after the doors list below.
 -#}
 {%- set house_ns = namespace(lights=[], leaks=[]) %}
 {%- for area in areas %}
@@ -460,11 +467,10 @@
   'area_id': 'home',
   'icon': 'mdi:home',
   'image': '/local/images/home_transparent_5.png',
-  'icons': ['lights', 'locks', 'appliances', 'leaks', 'doors'],
+  'icons': ['lights', 'locks', 'appliances', 'leaks'],
   'toggle': [],
-  'links': {'lights': 'Areas', 'locks': 'Doors', 'doors': 'Doors'},
+  'links': {'lights': 'Areas', 'locks': 'Doors'},
   'lights': {'target': 'light.floor_all', 'entities': house_ns.lights},
-  'locks': {'target': 'lock.smart_lock_ultra'},
   'appliances': {
     'target': 'binary_sensor.laundry_running',
     'entities': ['binary_sensor.washer', 'binary_sensor.dryer_status'],
@@ -508,7 +514,13 @@
     'door_type': 'door',
   },
 ] %}
-{%- set house = dict(house, doors={'target': 'binary_sensor.home_doors', 'entities': doors | map(attribute='entity') | list}) %}
+{#- The house's lock icon counts the open doors and the unlocked lock. #}
+{%- set house = dict(house, locks={
+  'target': 'lock.smart_lock_ultra',
+  'entities': doors | map(attribute='entity') | list + ['lock.smart_lock_ultra'],
+  'state': ['on', 'unlocked', 'unlocking', 'open', 'opening'],
+  'badge_entity': 'binary_sensor.home_security',
+}) %}
 
 {#-
   The remote: a square Room Summary Card beside the house's, shaped the same

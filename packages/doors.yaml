@@ -1,9 +1,10 @@
 # Doors: config for the door_buddy custom integration (owner-maintained;
-# upstream repo in CLAUDE.local.md), and binary_sensor.home_doors. For each
-# door, door_buddy turns lights on when the door opens in the dark, notifies
-# when a door is left open too long (unless nobody's home), and tracks when it
-# was last opened. binary_sensor.home_doors is on while any outside door is
-# open (the house card's door count on the Home v2 dashboard).
+# upstream repo in CLAUDE.local.md), and two group-like template sensors. For
+# each door, door_buddy turns lights on when the door opens in the dark,
+# notifies when a door is left open too long (unless nobody's home), and
+# tracks when it was last opened. binary_sensor.home_doors is on while any
+# outside door is open; binary_sensor.home_security also while the mudroom
+# lock is unlocked (the house card's lock count on the Home v2 dashboard).
 #
 # External entities used:
 #   ESPHome (esphome)
@@ -40,6 +41,9 @@
 #       binary_sensor.garage_entry_door
 #     Server Room: Bulb (c6685c56d34e84fce09991e476a53358)
 #       switch.server_room_switch
+#   Matter (matter)
+#     Mud Room: Smart Lock Ultra (5633d9346d98cb107f431374c03ec411)
+#       lock.smart_lock_ultra
 #   packages/garage_doors.yaml
 #     binary_sensor.front_garage_door
 #     binary_sensor.rear_garage_door
@@ -57,6 +61,7 @@
 #
 # Entities created by this package (template):
 #   binary_sensor.home_doors (any outside door open; group-like)
+#   binary_sensor.home_security (any outside door open or the lock unlocked; group-like)
 
 door_buddy:
   main_door:
@@ -164,11 +169,27 @@ template:
     name: Doors
     default_entity_id: binary_sensor.home_doors
     device_class: door
+    variables:
+      entities: &doors [binary_sensor.main_door, binary_sensor.garage_entry_door, binary_sensor.sliding_door, binary_sensor.front_garage_door, binary_sensor.rear_garage_door, binary_sensor.passenger_door]
     state: >
-      {{ ['binary_sensor.main_door', 'binary_sensor.garage_entry_door', 'binary_sensor.sliding_door',
-          'binary_sensor.front_garage_door', 'binary_sensor.rear_garage_door', 'binary_sensor.passenger_door']
-         | select('is_state', 'on') | list | count > 0 }}
+      {{ entities | select('is_state', 'on') | list | count > 0 }}
     attributes:
       entity_id: >
-        {{ ['binary_sensor.main_door', 'binary_sensor.garage_entry_door', 'binary_sensor.sliding_door',
-            'binary_sensor.front_garage_door', 'binary_sensor.rear_garage_door', 'binary_sensor.passenger_door'] }}
+        {{ entities }}
+
+  # On (unsafe) while any outside door is open or the mudroom lock is
+  # unlocked: the lock icon's count on the Home v2 house card. The entity_id
+  # attribute lists all of them, so it acts like a binary_sensor group.
+  - unique_id: home_security
+    name: Home Security
+    default_entity_id: binary_sensor.home_security
+    device_class: safety
+    variables:
+      doors: *doors
+      entities: >
+        {{ doors + ['lock.smart_lock_ultra'] }}
+    state: >
+      {{ entities | select('is_state', ['on', 'unlocked', 'unlocking', 'open', 'opening']) | list | count > 0 }}
+    attributes:
+      entity_id: >
+        {{ entities }}

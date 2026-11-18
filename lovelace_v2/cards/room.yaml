@@ -29,14 +29,25 @@
 {%- set info = {'action': 'more-info'} %}
 {%- set small = {'--user-badge-size': '20px'} %}
 
-{#- A count badge: the label counts the group's entities in the rule's states. #}
+{#-
+  A count badge: the label counts the group's entities in the rule's states
+  (or the group's own 'state'). Shown while the target is in one of them, or,
+  with 'badge_entity', while that entity is on.
+#}
 {%- macro count_badge(group, rule) %}
-  {%- set label = "{{ " ~ (group.entities | tojson) ~ " | select('is_state', " ~ (rule.state | tojson) ~ ") | list | count }}" %}
-  {%- set ns = namespace(states=[]) %}
-  {%- for st in rule.state %}
-    {%- set ns.states = ns.states + [{'state': st, 'label': label}] %}
-  {%- endfor %}
-  {{- {'mode': 'if_match', 'position': 'bottom_right', 'styles': small, 'states': ns.states} | tojson }}
+  {%- set states = group.state | default(rule.state) %}
+  {%- set label = "{{ " ~ (group.entities | tojson) ~ " | select('is_state', " ~ (states | tojson) ~ ") | list | count }}" %}
+  {%- set badge = {'mode': 'if_match', 'position': 'bottom_right', 'styles': small} %}
+  {%- if group.badge_entity is defined %}
+    {%- set badge = dict(badge, entity_id=group.badge_entity, states=[{'state': 'on', 'label': label}]) %}
+  {%- else %}
+    {%- set ns = namespace(states=[]) %}
+    {%- for st in states %}
+      {%- set ns.states = ns.states + [{'state': st, 'label': label}] %}
+    {%- endfor %}
+    {%- set badge = dict(badge, states=ns.states) %}
+  {%- endif %}
+  {{- badge | tojson }}
 {%- endmacro %}
 
 {%- set keys = area.icons if area.icons is defined else count_rules | selectattr('room_icon', 'defined') | map(attribute='key') | list %}
