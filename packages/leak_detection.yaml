@@ -43,14 +43,22 @@ template:
     not_from:
     - unavailable
     - unknown
+  # Recalculate on start and template reload too, so the attributes follow
+  # changes to the sensor list without waiting for a sensor to change.
+  - trigger: homeassistant
+    event: start
+  - trigger: event
+    event_type: event_template_reloaded
   variables:
     entities: *entities
+    wet: >
+      {{ entities | select('is_state', 'on') | list }}
     next_state: >
-      {{ entities | select('is_state', 'on') | list | count > 0 }}
+      {{ wet | count > 0 }}
     area: >
-      {{ trigger.entity_id | area_name | lower }}
+      {{ wet[0] | area_name | lower if wet else '' }}
     what: >
-      {{ trigger.entity_id | entity_name | lower | replace(area + ' ', '') }}
+      {{ wet[0] | entity_name | lower | replace(area + ' ', '') if wet else '' }}
   binary_sensor:
   - unique_id: c25ba0eb-0ab1-4005-b35e-15bc91e58479
     name: Leak
