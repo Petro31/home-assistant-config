@@ -1,7 +1,9 @@
-# Door Buddy: config for the door_buddy custom integration (owner-maintained;
-# upstream repo in CLAUDE.local.md). For each door it turns lights on when the
-# door opens in the dark, notifies when a door is left open too long (unless
-# nobody's home), and tracks when it was last opened.
+# Doors: config for the door_buddy custom integration (owner-maintained;
+# upstream repo in CLAUDE.local.md), and binary_sensor.home_doors. For each
+# door, door_buddy turns lights on when the door opens in the dark, notifies
+# when a door is left open too long (unless nobody's home), and tracks when it
+# was last opened. binary_sensor.home_doors is on while any outside door is
+# open (the house card's door count on the Home v2 dashboard).
 #
 # External entities used:
 #   ESPHome (esphome)
@@ -38,6 +40,9 @@
 #       binary_sensor.garage_entry_door
 #     Server Room: Bulb (c6685c56d34e84fce09991e476a53358)
 #       switch.server_room_switch
+#   packages/garage_doors.yaml
+#     binary_sensor.front_garage_door
+#     binary_sensor.rear_garage_door
 #   packages/home_occupancy.yaml
 #     sensor.people_at_home
 #
@@ -49,6 +54,9 @@
 #   sensor.rear_garage_door_last_opened
 #   sensor.server_room_door_last_opened
 #   sensor.sliding_door_last_opened
+#
+# Entities created by this package (template):
+#   binary_sensor.home_doors (any outside door open; group-like)
 
 door_buddy:
   main_door:
@@ -147,3 +155,20 @@ door_buddy:
     unique_id: 7f41ec35-9a92-4cf0-9b32-17f5feef116d
     turn_on:
     - switch.server_room_switch
+
+template:
+# On while any outside door is open (the server room door isn't one). The
+# entity_id attribute lists them, so it acts like a binary_sensor group.
+- binary_sensor:
+  - unique_id: home_doors
+    name: Doors
+    default_entity_id: binary_sensor.home_doors
+    device_class: door
+    state: >
+      {{ ['binary_sensor.main_door', 'binary_sensor.garage_entry_door', 'binary_sensor.sliding_door',
+          'binary_sensor.front_garage_door', 'binary_sensor.rear_garage_door', 'binary_sensor.passenger_door']
+         | select('is_state', 'on') | list | count > 0 }}
+    attributes:
+      entity_id: >
+        {{ ['binary_sensor.main_door', 'binary_sensor.garage_entry_door', 'binary_sensor.sliding_door',
+            'binary_sensor.front_garage_door', 'binary_sensor.rear_garage_door', 'binary_sensor.passenger_door'] }}
