@@ -19,6 +19,22 @@
 #       light.dining_room_uplight_1
 #     Dining Room: Uplight 2 (32bd95073fc8774e551bdcc9bed92acb)
 #       light.dining_room_uplight_2
+#     Front Yard: Garage Door Left Bulb (a601f2794fc36effc0cffb767485bd40)
+#       light.garage_sconce_left_bulb
+#     Front Yard: Garage Door Right Bulb (48540c549cff5acaa24779839108dc4e)
+#       light.garage_sconce_right_bulb
+#     Front Yard: Main Door Left Bulb (51abc464a490917f743e4db6d0866263)
+#       light.main_door_left_bulb
+#     Front Yard: Main Door Right Bulb (5f65fbf28117e47fb1e18d220107aac4)
+#       light.main_door_right_bulb
+#     Front Yard: Passenger Door Bulb (c891bf3c80ca54eb5e78fe78167e9f2b)
+#       light.passenger_door_bulb
+#     Front Yard: Uplight Left (a918c67ea821a0454a03d20d0357d1b7)
+#       light.front_yard_uplight_left
+#     Front Yard: Uplight Middle (57cdbc11d8edb45527be2ee453f90d5d)
+#       light.front_yard_uplight_middle
+#     Front Yard: Uplight Right (887f1338ee29de89beeb686df55f88e7)
+#       light.front_yard_uplight_right
 #     Living Room: Uplight (70d03dbbaaf19027d700b6216decd435)
 #       light.living_room_uplight
 #   WLED (wled)
@@ -56,6 +72,7 @@
 #   sensor.seasonal_lights
 #   sensor.holiday_lighting
 #   switch.indoor_holiday
+#   switch.holiday_scene (the current holiday's outdoor bulb scene)
 #   script.indoor_holiday_colors (for testing only; nothing calls it)
 #   script.get_indoor_holiday
 #   script.set_indoor_holiday
@@ -535,6 +552,8 @@ template:
     name: Holiday Lighting
     default_entity_id: sensor.holiday_lighting
     state: "{{ event }}"
+    # The holiday's picture (the Home v2 holiday card's background).
+    picture: "/local/images/{{ event }}.png"
 
 - switch:
   # You attempted to use this, however you could not find a good equation
@@ -578,3 +597,32 @@ template:
       target:
         entity_id: >
           {{ state_attr('sensor.seasonal_accent_lights', 'settings') | map(attribute='entity_id') | list }}
+
+  # The current holiday's outdoor bulb scene (sensor.seasonal_lights; soft
+  # white when there's no holiday) as a switch: on while any of its bulbs is
+  # on, turning on applies the scene, turning off turns the bulbs off. Its
+  # icon and scene_name follow the scene. Every holiday scene sets the same
+  # bulbs.
+  - unique_id: holiday_scene
+    name: Holiday Scene
+    default_entity_id: switch.holiday_scene
+    variables:
+      scene: "{{ states('sensor.seasonal_lights') }}"
+      bulbs: &holiday_bulbs [light.main_door_left_bulb, light.main_door_right_bulb, light.garage_sconce_left_bulb, light.garage_sconce_right_bulb, light.passenger_door_bulb, light.front_yard_uplight_left, light.front_yard_uplight_middle, light.front_yard_uplight_right]
+    state: >
+      {{ bulbs | select('is_state', 'on') | list | count > 0 }}
+    icon: >
+      {{ state_attr(scene, 'icon') or 'mdi:string-lights' }}
+    attributes:
+      scene: "{{ scene }}"
+      scene_name: >
+        {{ (state_attr(scene, 'friendly_name') or 'Holiday Bulbs') | replace('Holiday Bulbs ', '') }}
+      entity_id: "{{ bulbs }}"
+    turn_on:
+    - action: scene.turn_on
+      target:
+        entity_id: "{{ states('sensor.seasonal_lights') }}"
+    turn_off:
+    - action: light.turn_off
+      target:
+        entity_id: *holiday_bulbs

@@ -18,7 +18,8 @@
 #   - stats: the area's 'temperature' and 'humidity' sensors (not HA's area
 #     averages, which depend on area assignments)
 #   - the area's 'image', if any, is the card's background and the room icon
-#     is hidden (its space still opens the subview)
+#     is hidden (its space still opens the subview); or 'image_entity', an
+#     entity whose picture is the background
 #   - no area stats line, no default room entity (light.<area>_light)
 # Variables:
 #   area             an area from data/home.jinja (or the house)
@@ -94,5 +95,7 @@
 {%- endif %}
 {%- if area.image is defined %}
   {%- set card = dict(card, background={'image': area.image}, features=card.features + ['hide_room_icon']) %}
+{%- elif area.image_entity is defined %}
+  {%- set card = dict(card, background={'image_entity': area.image_entity}, features=card.features + ['hide_room_icon']) %}
 {%- endif %}
 {{ dict(card, **card_options | default({})) | tojson }}

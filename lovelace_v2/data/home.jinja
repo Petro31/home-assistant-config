@@ -75,7 +75,12 @@
 {%- set color_light = [{'type': 'light-brightness'}, {'type': 'light-color-temp'}, {'type': 'light-color-favorites'}] %}
 {%- set rgb_light = [{'type': 'light-brightness'}, {'type': 'light-color-favorites'}] %}
 {%- set tile_features = {
+  'light.cabinet_master': rgb_light,
+  'light.cabinet_slave': rgb_light,
+  'light.christmas_tree': [{'type': 'toggle'}],
   'light.deck_wled_master': rgb_light,
+  'light.dining_room_uplight_1': color_light,
+  'light.dining_room_uplight_2': color_light,
   'light.dining_room_uplights': color_light,
   'light.front_yard_uplight_left': color_light,
   'light.front_yard_uplight_middle': color_light,
@@ -83,6 +88,8 @@
   'light.garage_buffet_strip': color_light,
   'light.garage_sconce_left_bulb': color_light,
   'light.garage_sconce_right_bulb': color_light,
+  'light.great_room_ambiance': color_light,
+  'light.hutch_uplight': rgb_light,
   'light.jims_lamp': color_light,
   'light.lindsays_lamp': color_light,
   'light.living_room_uplight': color_light,
@@ -544,6 +551,42 @@
   'extras': ['switch.movie_time', 'switch.hyperion_usb_capture'],
 } %}
 
+{#-
+  Holiday lighting (packages/holiday/): a square Room Summary Card beside the
+  others, shaped the same way. Its background is sensor.holiday_lighting's
+  picture (the current holiday's). Two icons (tap toggles): the accent lights
+  on/off (the great room ambiance group), and the indoor holiday scene (the
+  accent lights in the current holiday's colors). The card opens the Holiday
+  view: the Holiday section, split into 'indoor' and 'outdoor' tiles ({entity,
+  name, state_content}; one with 'holiday' shows only during that holiday,
+  per sensor.holiday_lighting), then the 'rooms' and their lights (the accent
+  lights and the living room lamps).
+-#}
+{%- set home_holiday = {
+  'name': 'Holiday',
+  'area_id': 'holiday',
+  'icon': 'mdi:string-lights',
+  'image_entity': 'sensor.holiday_lighting',
+  'page': 'Holiday',
+  'icons': [],
+  'extras': ['light.great_room_ambiance', 'switch.indoor_holiday'],
+  'indoor': [
+    {'entity': 'switch.indoor_holiday', 'name': 'Indoor Scene'},
+    {'entity': 'light.great_room_ambiance', 'name': 'All Accent Lights'},
+    {'entity': 'light.christmas_tree', 'holiday': 'christmas'},
+  ],
+  'outdoor': [
+    {'entity': 'switch.holiday_scene', 'name': 'Outdoor Bulbs', 'state_content': ['scene_name', 'state']},
+    {'entity': 'switch.front_trees', 'holiday': 'christmas'},
+    {'entity': 'switch.outdoor_receptacle', 'name': 'Outdoor Christmas Lights', 'holiday': 'christmas'},
+  ],
+  'rooms': [
+    {'name': 'Living Room', 'lights': ['light.living_room_uplight', 'light.lindsays_lamp', 'light.mikes_lamp', 'light.jims_lamp']},
+    {'name': 'Dining Room', 'lights': ['light.dining_room_uplight_1', 'light.dining_room_uplight_2', 'light.hutch_uplight']},
+    {'name': 'Kitchen', 'lights': ['light.cabinet_master', 'light.cabinet_slave']},
+  ],
+} %}
+
 {#- People on the Home view. 'who' is their name in custom_templates/dates.jinja
     (for the birthday); 'map' is their map view on the old dashboard. #}
 {%- set people = [
@@ -621,7 +664,7 @@
     'icon': 'mdi:string-lights',
     'household': ['Accent lights'],
     'image': "/local/images/{{ states('sensor.holiday_lighting') }}.png",
-    'legacy': 'sensor.holiday_lighting',
+    'view': 'holiday',
     'status': "{{ 'Accent lights' if is_state('sensor.holiday_lighting', 'no_holiday') else states('sensor.holiday_lighting') | replace('_', ' ') | title }}",
   },{
     'name': 'Music',

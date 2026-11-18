@@ -1,0 +1,47 @@
+# lovelace_gen
+# The Holiday subview (home_holiday in data/home.jinja): the Holiday section,
+# Indoor (the indoor holiday scene, the accent lights group, and at Christmas
+# the tree) and Outdoor (the holiday's bulb scene, and at Christmas the front
+# trees and outdoor lights); then a section per room with its lights. Tile
+# features come from tile_features in data/home.jinja (or the domain default).
+# Variables:
+#   name, icon, path, back_path
+#   badges  the view's badges (built by main.yaml)
+{%- from '/config/lovelace_v2/data/home.jinja' import home_holiday %}
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+type: sections
+max_columns: 2
+subview: true
+back_path: {{ back_path }}
+badges: {{ badges | default([]) | tojson }}
+sections:
+- type: grid
+  cards:
+  - type: heading
+    heading: Holiday
+  {%- for part in ['indoor', 'outdoor'] %}
+  - type: heading
+    heading: {{ part | title }}
+    heading_style: subtitle
+    {%- for item in home_holiday[part] %}
+      {%- set t = namespace(card={}) %}
+      {%- for k in ['name', 'state_content'] if k in item %}
+        {%- set t.card = dict(t.card, **{k: item[k]}) %}
+      {%- endfor %}
+      {%- if item.holiday is defined %}
+        {%- set t.card = dict(t.card, visibility=[{'condition': 'state', 'entity': 'sensor.holiday_lighting', 'state': item.holiday}]) %}
+      {%- endif %}
+  - !include ['../cards/tile.yaml', {{ {'entity': item.entity, 'card': t.card} | tojson }}]
+    {%- endfor %}
+  {%- endfor %}
+{%- for room in home_holiday.rooms %}
+- type: grid
+  cards:
+  - type: heading
+    heading: {{ room.name | tojson }}
+  {%- for light in room.lights %}
+  - !include ['../cards/tile.yaml', {{ {'entity': light} | tojson }}]
+  {%- endfor %}
+{%- endfor %}
