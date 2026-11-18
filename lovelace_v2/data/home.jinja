@@ -583,6 +583,12 @@
     'entities': doors,
     'doors': {'entities': doors | map(attribute='entity') | list},
     'locks': {'target': 'lock.smart_lock_ultra'},
+    'controls': [
+      {'entity': 'lock.smart_lock_ultra', 'name': 'Mudroom Door'},
+      {'entity': 'cover.front_garage_door', 'name': 'Front Garage'},
+      {'entity': 'cover.rear_garage_door', 'name': 'Rear Garage'},
+      {'entity': 'switch.garage_temporary_laser', 'name': 'Laser'},
+    ],
     'status': "{%- set doors = " ~ (doors | tojson) ~ " %}"
       ~ "{%- set open = doors | selectattr('entity', 'is_state', 'on') | map(attribute='name') | list %}"
       ~ "{{ open | join(', ') ~ ' open' if open else 'All closed' }}"

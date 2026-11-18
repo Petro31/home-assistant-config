@@ -1,33 +1,39 @@
 # lovelace_gen
-# The Doors subview.
+# The Doors subview: the controls (tiles with their features inline), then a
+# card per door (cards/door.yaml), doors and garage doors in their own
+# sections (by door_type, in the order of the doors list).
 # Variables:
 #   name, icon, path, back_path
 #   badges    the view's badges (built by main.yaml)
 #   entities  door entries (entity, name, last_opened, door_type)
-#   locks     lock entity_ids
+#   controls  tiles: {entity, name}
 title: {{ name | tojson }}
 path: {{ path }}
 icon: {{ icon }}
 type: sections
-max_columns: 3
+max_columns: 2
 subview: true
 back_path: {{ back_path }}
 badges: {{ badges | default([]) | tojson }}
 sections:
-- type: grid
-  column_span: 2
-  cards:
-  - type: heading
-    heading: Doors
-  {%- for door in entities %}
-  - !include ['../cards/door.yaml', {{ door | tojson }}]
-  {%- endfor %}
-{%- if locks %}
+{%- if controls %}
 - type: grid
   cards:
   - type: heading
-    heading: Locks
-  {%- for lock in locks %}
-  - !include ['../cards/tile.yaml', {{ {'entity': lock} | tojson }}]
+    heading: Controls
+  {%- for c in controls %}
+  - !include ['../cards/tile.yaml', {{ {'entity': c.entity, 'card': {'name': c.name, 'features_position': 'inline'}} | tojson }}]
   {%- endfor %}
 {%- endif %}
+{%- for door_type, heading in [('door', 'Doors'), ('garage', 'Garage Doors')] %}
+{%- set group = entities | selectattr('door_type', 'equalto', door_type) | list %}
+{%- if group %}
+- type: grid
+  cards:
+  - type: heading
+    heading: {{ heading }}
+  {%- for door in group %}
+  - !include ['../cards/door.yaml', {{ door | tojson }}]
+  {%- endfor %}
+{%- endif %}
+{%- endfor %}

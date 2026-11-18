@@ -200,13 +200,9 @@
   } | tojson }}]
     {%- endfor %}
   {%- else %}
-    {%- set lock_ns = namespace(ids=[]) %}
-    {%- for g in groups(item, 'locks') | fromjson %}
-      {%- set lock_ns.ids = lock_ns.ids + g.entities %}
-    {%- endfor %}
 - !include ['{{ item.view }}.yaml', {{ {
     'name': item.name, 'icon': item.icon, 'path': path, 'back_path': dashboard ~ '/home',
-    'badges': view_badges, 'entities': item.entities, 'locks': lock_ns.ids,
+    'badges': view_badges, 'entities': item.entities, 'controls': item.controls | default([]),
   } | tojson }}]
   {%- endif %}
 {%- endfor %}

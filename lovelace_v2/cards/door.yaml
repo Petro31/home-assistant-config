@@ -1,27 +1,29 @@
 # lovelace_gen
-# A door: open/closed icon by door_type, and how long ago and by whom it was
-# last opened (from door_buddy's last_opened sensor and its 'who' attribute).
+# A door, from door_buddy's last_opened sensor (the card's entity). Its
+# 'source' attribute is the door (a binary_sensor or a cover): the icon and
+# color show it open or closed. The secondary line is how long ago it was last
+# opened (the sensor's timestamp), and under it the sensor's 'who'.
 # Variables:
-#   entity, name, last_opened
+#   name, last_opened
 #   door_type  door or garage
 {%- set icons = {
   'door': ['mdi:door-open', 'mdi:door-closed'],
   'garage': ['mdi:garage-open-variant', 'mdi:garage-variant'],
 }.get(door_type, ['mdi:power-on', 'mdi:power-off']) %}
+{%- set is_open = "{%- set open = is_state(state_attr(entity, 'source'), ['on', 'open', 'opening', 'closing']) %}" %}
 type: custom:mushroom-template-card
-entity: {{ entity }}
+entity: {{ last_opened }}
 primary: {{ name | tojson }}
 icon: >-
-  {% raw %}{%- set icons = {% endraw %}{{ icons | tojson }}{% raw %} %}
-  {{- icons[0] if is_state(entity, ['on', 'open']) else icons[1] }}{% endraw %}
+  {{ is_open }}{% raw %}{%- set icons = {% endraw %}{{ icons | tojson }}{% raw %} %}
+  {{- icons[0] if open else icons[1] }}{% endraw %}
 color: >-
-  {% raw %}{{ 'red' if is_state(entity, ['on', 'open']) else 'disabled' }}{% endraw %}
+  {{ is_open }}{% raw %}{{ 'red' if open else 'disabled' }}{% endraw %}
 secondary: >-
-  {% raw %}{%- set last_opened = {% endraw %}{{ last_opened | tojson }}{% raw %} %}
-  {%- set when = as_datetime(states(last_opened), none) %}
-  {%- set who = state_attr(last_opened, 'who') %}
-  {{- 'Open' if is_state(entity, ['on', 'open']) else 'Closed' }}
-  {%- if when %} · {{ time_since(when, 1) }} ago{% endif %}
-  {%- if who %} · {{ who }}{% endif %}{% endraw %}
+  {% raw %}{%- set when = as_datetime(states(entity), none) %}
+  {%- set who = state_attr(entity, 'who') %}
+  {{- time_since(when, 1) ~ ' ago' if when else 'Never opened' }}
+  {%- if who %}{{ '\n' ~ who }}{% endif %}{% endraw %}
+multiline_secondary: true
 grid_options:
   columns: 6
