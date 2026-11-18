@@ -1,0 +1,57 @@
+# lovelace_gen
+# A person (built-in picture-elements card): their photo, in grayscale while
+# they're away, with four lines of text at the bottom left:
+#   Home/Away
+#   weight
+#   hours at work
+#   "Turning N in N days" (their Birthday in binary_sensor.personal_events)
+# Tapping opens their map view on the old dashboard until it's ported.
+# Variables:
+#   entity
+#   who     their name in custom_templates/dates.jinja (for the birthday)
+#   weight  weight sensor
+#   work    hours-at-work sensor
+#   map     the map view's path on the old dashboard
+# Photos: /local/images/<object_id>_large.png and <object_id>_large_grayscale.png
+{%- set object_id = entity.split('.')[1] %}
+{%- set tap = {'action': 'navigate', 'navigation_path': '/ui-home/' ~ map} %}
+{%- set text = {
+  '--mush-chip-background': 'none',
+  '--mush-chip-border-width': '0',
+  '--mush-chip-box-shadow': 'none',
+  '--mush-chip-padding': '0',
+  '--mush-chip-height': '20px',
+  '--mush-chip-font-size': '15px',
+  '--mush-chip-font-weight': 'bold',
+  '--primary-text-color': 'white',
+  'text-shadow': '0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black',
+  'transform': 'none',
+  'left': '9px',
+  'top': 'auto',
+} %}
+{%- set lines = [
+  "{{ 'Home' if is_state('" ~ entity ~ "', 'home') else 'Away' if is_state('" ~ entity ~ "', 'not_home') else states('" ~ entity ~ "') }}",
+  "{{ (states('" ~ weight ~ "') | float | round(1)) ~ ' lbs' if states('" ~ weight ~ "') | is_number else '' }}",
+  "{{ '%.1f' | format(states('" ~ work ~ "') | float) ~ ' Hours at Work' if states('" ~ work ~ "') | is_number else '' }}",
+  "{%- set e = state_attr('binary_sensor.personal_events', 'events') | default([], true) | selectattr('who', 'eq', '" ~ who ~ "') | selectattr('event', 'eq', 'Birthday') | first | default(none) %}"
+    ~ "{{ 'Turning ' ~ e.milestone ~ ' in ' ~ e.days_away ~ (' day' if e.days_away == 1 else ' days') if e else '' }}",
+] %}
+{%- set ns = namespace(elements=[
+  {'type': 'image', 'image': '/local/images/transparent_1to1.png', 'tap_action': tap,
+   'style': {'top': '50%', 'left': '50%', 'width': '100%', 'height': '100%'}},
+]) %}
+{%- for line in lines %}
+  {%- set ns.elements = ns.elements + [
+    {'type': 'custom:mushroom-chips-card',
+     'chips': [{'type': 'template', 'content': line, 'tap_action': tap}],
+     'style': dict(text, bottom=(9 + 20 * (lines | length - loop.index)) ~ 'px')},
+  ] %}
+{%- endfor %}
+{{ {
+  'type': 'picture-elements',
+  'entity': entity,
+  'image': '/local/images/' ~ object_id ~ '_large_grayscale.png',
+  'state_image': {'home': '/local/images/' ~ object_id ~ '_large.png'},
+  'elements': ns.elements,
+  'grid_options': {'columns': 6, 'rows': 'auto'},
+} | tojson }}

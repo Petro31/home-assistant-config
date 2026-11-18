@@ -1,0 +1,23 @@
+# lovelace_gen
+# A built-in tile card for one entity. Its features (controls) come from
+# tile_features in data/home.jinja, else its domain's default below.
+# Variables:
+#   entity
+#   card    optional mapping of tile options that override the defaults
+{%- from '/config/lovelace_v2/data/home.jinja' import tile_features %}
+{%- set features = tile_features[entity] if entity in tile_features else {
+  'light': [{'type': 'light-brightness'}],
+  'fan': [{'type': 'fan-speed'}],
+  'lock': [{'type': 'lock-commands'}],
+  'cover': [{'type': 'cover-open-close'}],
+  'switch': [{'type': 'toggle'}],
+}.get(entity.split('.')[0], []) %}
+{%- set tile = {'type': 'tile', 'entity': entity} %}
+{%- if features %}
+  {%- set tile = dict(tile, features=features) %}
+{%- endif %}
+{#- Weather: the condition and the temperature. #}
+{%- if entity.startswith('weather.') %}
+  {%- set tile = dict(tile, state_content=['state', 'temperature']) %}
+{%- endif %}
+{{ dict(tile, **card | default({})) | tojson }}

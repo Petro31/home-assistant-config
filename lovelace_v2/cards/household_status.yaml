@@ -1,0 +1,24 @@
+# lovelace_gen
+# The status part of Home's Household window: a built-in Markdown card with
+# one line per entry (icon, bold name, status), leaving out entries whose
+# status is one of their quiet values. "All quiet" when nothing is left.
+# Variables:
+#   lines  [{'icon', 'name', 'status' (an HA template), 'quiet' (list)}]
+#
+# Each status template is rendered inside a Jinja set block in the card's
+# template, then trimmed and checked against its quiet values.
+{%- set ns = namespace(content="{%- set out = namespace(lines=[]) %}") %}
+{%- for line in lines %}
+  {%- set ns.content = ns.content
+    ~ "{%- set s %}" ~ line.status ~ "{% endset %}"
+    ~ "{%- set s = s | trim %}"
+    ~ "{%- if s and s not in " ~ (line.quiet | tojson) ~ " %}"
+    ~ "{%- set out.lines = out.lines + ['<ha-icon icon=\"" ~ line.icon ~ "\"></ha-icon> **" ~ line.name ~ "** · ' ~ s] %}"
+    ~ "{%- endif %}" %}
+{%- endfor %}
+{%- set ns.content = ns.content ~ "{{ out.lines | join('<br>') if out.lines else 'All quiet' }}" %}
+{{ {
+  'type': 'markdown',
+  'content': ns.content,
+  'grid_options': {'columns': 12, 'rows': 'auto'},
+} | tojson }}

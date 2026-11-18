@@ -1,0 +1,31 @@
+# lovelace_gen
+# A quick action (built-in button card): a small icon-only square, 2 of the
+# section's 12 columns. The name is used for the confirmation text. While on,
+# the icon uses the theme's primary color. UIX also enlarges the icon to 75%
+# of the card (the button card otherwise caps it at 40% of the width).
+# Variables:
+#   name, icon
+#   entity   makes it a toggle for this entity (lit while on)
+#   action   otherwise, the action to run on 'target'
+#   target   entity_id the action runs on
+#   confirm  ask before running the action
+{%- set card = {
+  'type': 'button',
+  'name': name,
+  'icon': icon,
+  'show_name': false,
+  'grid_options': {'columns': 2, 'rows': 1},
+  'uix': {'style':
+    'ha-card { --state-active-color: var(--primary-color); --state-' ~ (entity.split('.')[0] if entity is defined else 'button') ~ '-active-color: var(--primary-color); } '
+    ~ 'ha-state-icon { width: 75% !important; height: 75% !important; max-height: none !important; }'},
+} %}
+{%- if entity is defined %}
+  {%- set card = dict(card, entity=entity, show_state=false, tap_action={'action': 'toggle'}) %}
+{%- else %}
+  {%- set tap = {'action': 'perform-action', 'perform_action': action, 'target': {'entity_id': target}} %}
+  {%- if confirm is defined and confirm %}
+    {%- set tap = dict(tap, confirmation={'text': name ~ '?'}) %}
+  {%- endif %}
+  {%- set card = dict(card, tap_action=tap) %}
+{%- endif %}
+{{ card | tojson }}

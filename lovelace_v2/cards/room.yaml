@@ -1,0 +1,87 @@
+# lovelace_gen
+# A room on the Areas view: Room Summary Card (HACS:
+# homeassistant-extras/room-summary-card), 2 per row, opening the area's
+# subview.
+#   - room icon: the lights group's target (the area's target light, else
+#     its first light), showing the area's own 'icon' as on Home, lit while
+#     the room is. Tapping it, or the card, opens the subview. No badge (the
+#     small icons carry the counts).
+#   - small icons: one per count group of the area's 'icons' keys (in that
+#     order), else of the rules with 'room_icon' (lights, fans, doors, locks,
+#     appliances; data/home.jinja), showing the group's target. Lights and
+#     fans toggle on tap (unless the area's 'toggle' says otherwise); the rest
+#     open more-info. A key in the area's 'links' (key: path) opens that path
+#     instead. Each has a count badge in its bottom-right corner while
+#     the target is in one of the rule's states: how many of the group's
+#     'entities' are. Then the area's 'extras' (entity ids), if any: no
+#     badge, the card's default tap (toggle).
+#   - stats: the area's 'temperature' and 'humidity' sensors (not HA's area
+#     averages, which depend on area assignments)
+#   - the area's 'image', if any, is the card's background and the room icon
+#     is hidden (its space still opens the subview)
+#   - no area stats line, no default room entity (light.<area>_light)
+# Variables:
+#   area             an area from data/home.jinja (or the house)
+#   navigation_path  where the card goes (its subview)
+#   card_options     optional card options merged in last (size, styles)
+{%- from '/config/lovelace_v2/data/home.jinja' import count_rules, groups %}
+{%- set go = {'action': 'navigate', 'navigation_path': navigation_path} %}
+{%- set info = {'action': 'more-info'} %}
+{%- set small = {'--user-badge-size': '20px'} %}
+
+{#- A count badge: the label counts the group's entities in the rule's states. #}
+{%- macro count_badge(group, rule) %}
+  {%- set label = "{{ " ~ (group.entities | tojson) ~ " | select('is_state', " ~ (rule.state | tojson) ~ ") | list | count }}" %}
+  {%- set ns = namespace(states=[]) %}
+  {%- for st in rule.state %}
+    {%- set ns.states = ns.states + [{'state': st, 'label': label}] %}
+  {%- endfor %}
+  {{- {'mode': 'if_match', 'position': 'bottom_right', 'styles': small, 'states': ns.states} | tojson }}
+{%- endmacro %}
+
+{%- set keys = area.icons if area.icons is defined else count_rules | selectattr('room_icon', 'defined') | map(attribute='key') | list %}
+{%- set toggle = area.toggle if area.toggle is defined else ['lights', 'fans'] %}
+{%- set ns = namespace(icons=[], room='') %}
+{%- for key in keys %}
+  {%- set rule = count_rules | selectattr('key', 'equalto', key) | first %}
+  {%- for g in groups(area, rule.key) | fromjson %}
+    {%- set icon = {'entity_id': g.target, 'badges': [count_badge(g, rule) | fromjson]} %}
+    {%- if area.links is defined and rule.key in area.links %}
+      {%- set icon = dict(icon, tap_action={'action': 'navigate', 'navigation_path': area.links[rule.key]}) %}
+    {%- elif rule.key not in toggle %}
+      {%- set icon = dict(icon, tap_action=info) %}
+    {%- endif %}
+    {%- set ns.icons = ns.icons + [icon] %}
+    {%- if rule.key == 'lights' and not ns.room %}
+      {%- set ns.room = g.target %}
+    {%- endif %}
+  {%- endfor %}
+{%- endfor %}
+{%- for e in area.extras | default([]) %}
+  {%- set ns.icons = ns.icons + [{'entity_id': e}] %}
+{%- endfor %}
+{%- set sensors = ([area.temperature | default('')] + [area.humidity | default('')]) | select | list %}
+{%- set card = {
+  'type': 'custom:room-summary-card',
+  'area': area.area_id,
+  'area_name': area.name,
+  'navigate': navigation_path,
+  'features': ['exclude_default_entities', 'hide_area_stats'],
+  'entities': ns.icons,
+  'sensors': sensors,
+  'sensor_classes': [],
+  'problem': {'display': 'active_only'},
+  'actions': {'tap_action': go},
+  'grid_options': {'columns': 6, 'rows': 'auto'},
+} %}
+{%- if ns.room %}
+  {%- set main = {'entity_id': ns.room, 'tap_action': go} %}
+  {%- if area.icon is defined and area.icon %}
+    {%- set main = dict(main, icon=area.icon) %}
+  {%- endif %}
+  {%- set card = dict(card, entity=main) %}
+{%- endif %}
+{%- if area.image is defined %}
+  {%- set card = dict(card, background={'image': area.image}, features=card.features + ['hide_room_icon']) %}
+{%- endif %}
+{{ dict(card, **card_options | default({})) | tojson }}

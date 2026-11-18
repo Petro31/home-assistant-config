@@ -1,0 +1,27 @@
+# lovelace_gen
+# A door: open/closed icon by door_type, and how long ago and by whom it was
+# last opened (from door_buddy's last_opened sensor and its 'who' attribute).
+# Variables:
+#   entity, name, last_opened
+#   door_type  door or garage
+{%- set icons = {
+  'door': ['mdi:door-open', 'mdi:door-closed'],
+  'garage': ['mdi:garage-open-variant', 'mdi:garage-variant'],
+}.get(door_type, ['mdi:power-on', 'mdi:power-off']) %}
+type: custom:mushroom-template-card
+entity: {{ entity }}
+primary: {{ name | tojson }}
+icon: >-
+  {% raw %}{%- set icons = {% endraw %}{{ icons | tojson }}{% raw %} %}
+  {{- icons[0] if is_state(entity, ['on', 'open']) else icons[1] }}{% endraw %}
+color: >-
+  {% raw %}{{ 'red' if is_state(entity, ['on', 'open']) else 'disabled' }}{% endraw %}
+secondary: >-
+  {% raw %}{%- set last_opened = {% endraw %}{{ last_opened | tojson }}{% raw %} %}
+  {%- set when = as_datetime(states(last_opened), none) %}
+  {%- set who = state_attr(last_opened, 'who') %}
+  {{- 'Open' if is_state(entity, ['on', 'open']) else 'Closed' }}
+  {%- if when %} · {{ time_since(when, 1) }} ago{% endif %}
+  {%- if who %} · {{ who }}{% endif %}{% endraw %}
+grid_options:
+  columns: 6

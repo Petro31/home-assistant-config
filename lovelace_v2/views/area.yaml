@@ -1,0 +1,84 @@
+# lovelace_gen
+# One area's subview: a section per count group key (Lights, Fans, Locks,
+# Doors, Appliances, Leaks), then Climate (the area's 'climate' entities),
+# each a heading and tile cards (cards/tile.yaml picks each tile's controls).
+# Badges: On and Off for the area's lights (its lights group's entities, not
+# the target light, minus on_off_exclude), then its temperature and
+# humidity, left-aligned at the top (header layout 'start'; HA's default
+# centers them). No counts.
+# Tiles are only the groups' 'entities', the individual devices; a target
+# that isn't one of them (light.area_*, fan.deck_fans,
+# binary_sensor.car_bays_doors) never gets a tile here.
+# Variables:
+#   name, icon, path, back_path
+#   area    the area from data/home.jinja
+{%- from '/config/lovelace_v2/data/home.jinja' import groups, on_off_exclude %}
+{%- set sections = [
+  ('Lights', 'lights'),
+  ('Fans', 'fans'),
+  ('Locks', 'locks'),
+  ('Doors', 'doors'),
+  ('Appliances', 'appliances'),
+  ('Leaks', 'leaks'),
+] %}
+
+{#- Header badges. #}
+{%- set lights = namespace(ids=[]) %}
+{%- for g in groups(area, 'lights') | fromjson %}
+  {%- for e in g.entities if e not in on_off_exclude and e not in lights.ids %}
+    {%- set lights.ids = lights.ids + [e] %}
+  {%- endfor %}
+{%- endfor %}
+{%- set badges = [] %}
+{%- if lights.ids %}
+  {%- for word, icon, color in [('On', 'mdi:lightbulb-on', 'amber'), ('Off', 'mdi:lightbulb-off', 'grey')] %}
+    {%- set _ = badges.append({
+      'type': 'custom:mushroom-template-badge',
+      'icon': icon,
+      'color': color,
+      'content': word,
+      'tap_action': {
+        'action': 'perform-action',
+        'perform_action': 'homeassistant.turn_' ~ word | lower,
+        'target': {'entity_id': lights.ids},
+      },
+    }) %}
+  {%- endfor %}
+{%- endif %}
+{%- for s in [area.temperature | default(''), area.humidity | default('')] if s %}
+  {%- set _ = badges.append({'type': 'entity', 'entity': s}) %}
+{%- endfor %}
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+type: sections
+max_columns: 4
+subview: true
+back_path: {{ back_path }}
+header: {{ {'layout': 'start'} | tojson }}
+badges: {{ badges | tojson }}
+sections:
+{%- for heading, key in sections + [('Climate', '')] %}
+  {%- set ns = namespace(items=[], seen=[]) %}
+  {%- if key %}
+    {%- for g in groups(area, key) | fromjson %}
+      {%- for e in g.entities if e not in ns.seen %}
+        {%- set ns.items = ns.items + [{'entity': e}] %}
+        {%- set ns.seen = ns.seen + [e] %}
+      {%- endfor %}
+    {%- endfor %}
+  {%- else %}
+    {%- for e in area.climate | default([]) if e %}
+      {%- set ns.items = ns.items + [{'entity': e}] %}
+    {%- endfor %}
+  {%- endif %}
+  {%- if ns.items %}
+- type: grid
+  cards:
+  - type: heading
+    heading: {{ heading }}
+    {%- for item in ns.items %}
+  - !include ['../cards/tile.yaml', {{ item | tojson }}]
+    {%- endfor %}
+  {%- endif %}
+{%- endfor %}

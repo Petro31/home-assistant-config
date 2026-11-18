@@ -1,0 +1,687 @@
+{#-
+  Data for the Home v2 dashboard (ui-home-v2.yaml).
+
+  This is not a YAML file. The lovelace_v2 views import from it:
+    {% from '/config/lovelace_v2/data/home.jinja' import main_buttons, people %}
+
+  Count groups. Areas and main buttons list what they count under these keys
+  (lights, fans, doors, locks, appliances, leaks, media). A group is
+    {'target': entity_id, 'entities': [entity_ids]}
+  'target' is the entity shown for the group (the room card's icon, the
+  subview's first tile); 'entities' are what's counted, i.e. how many are in
+  one of the rule's states. Either may be left out: 'entities' defaults to
+  [target], 'target' to the first of 'entities'. A key may also hold a list of
+  groups, one icon each (e.g. Garage's car bay doors and passenger door).
+
+  Count rules, in the order of the counts in status lines ("3 lights on ·
+  1 fan on") and badges (top of the Areas, area and Doors views; hidden while
+  0). 'unit'/'units' are the singular/plural words; 'color' (badges) defaults
+  to amber. 'icon' marks the groups shown as room card icons (leaks and media
+  aren't).
+-#}
+{%- set count_rules = [
+  {'key': 'lights', 'state': ['on'], 'icon': 'mdi:lightbulb-multiple', 'unit': 'light on', 'units': 'lights on', 'room_icon': true},
+  {'key': 'fans', 'state': ['on'], 'icon': 'mdi:fan', 'unit': 'fan on', 'units': 'fans on', 'room_icon': true},
+  {'key': 'doors', 'state': ['on', 'open', 'opening'], 'icon': 'mdi:door-open', 'unit': 'door open', 'units': 'doors open', 'color': 'red', 'room_icon': true},
+  {'key': 'locks', 'state': ['unlocked', 'unlocking', 'open', 'opening'], 'icon': 'mdi:lock-open', 'unit': 'lock unlocked', 'units': 'locks unlocked', 'color': 'red', 'room_icon': true},
+  {'key': 'appliances', 'state': ['on'], 'icon': 'mdi:washing-machine', 'unit': 'appliance running', 'units': 'appliances running', 'color': 'blue', 'room_icon': true},
+  {'key': 'leaks', 'state': ['on'], 'icon': 'mdi:water', 'unit': 'leak', 'units': 'leaks', 'color': 'blue'},
+  {'key': 'media', 'state': ['on', 'playing', 'idle', 'paused'], 'icon': 'mdi:speaker-wireless', 'unit': 'zone on', 'units': 'zones on'},
+] %}
+
+{#- An item's groups under one key, filled in: JSON [{'target', 'entities'}]. #}
+{%- macro groups(item, key) %}
+  {%- set ns = namespace(out=[]) %}
+  {%- set value = item[key] if key in item else [] %}
+  {%- for g in ([value] if value is mapping else value) %}
+    {%- set ids = g.entities if 'entities' in g else ([g.target] if 'target' in g else []) %}
+    {%- if ids or 'target' in g %}
+      {%- set ns.out = ns.out + [{'target': g.target if 'target' in g else ids[0], 'entities': ids}] %}
+    {%- endif %}
+  {%- endfor %}
+  {{- ns.out | tojson }}
+{%- endmacro %}
+
+{#- The house temperature/humidity, shown on the Areas row and the Areas view. #}
+{%- set home_sensors = ['sensor.house_temperature', 'sensor.house_humidity'] %}
+
+{#-
+  Left out of the On/Off buttons on the area subviews (they still count and
+  have tiles): the doorbell chime setting and the outside lights that run on
+  their own schedule.
+-#}
+{%- set on_off_exclude = [
+  'switch.doorbell_chime_active',
+  'switch.outside_porch',
+  'switch.passenger_sconce',
+  'switch.sconces_garage',
+  'switch.sconces_main_entrance',
+] %}
+
+{#-
+  Tile card features (the controls under a tile), for entities that differ
+  from their domain's default in cards/tile.yaml (light: brightness; fan:
+  speed; lock: lock/unlock). Picked from what each entity supports (its
+  supported_color_modes etc. in the entity registry): the tile card keeps a
+  row for every listed feature, even one the entity can't use.
+-#}
+{%- set color_light = [{'type': 'light-brightness'}, {'type': 'light-color-temp'}, {'type': 'light-color-favorites'}] %}
+{%- set rgb_light = [{'type': 'light-brightness'}, {'type': 'light-color-favorites'}] %}
+{%- set tile_features = {
+  'light.deck_wled_master': rgb_light,
+  'light.dining_room_uplights': color_light,
+  'light.front_yard_uplight_left': color_light,
+  'light.front_yard_uplight_middle': color_light,
+  'light.front_yard_uplight_right': color_light,
+  'light.garage_buffet_strip': color_light,
+  'light.garage_sconce_left_bulb': color_light,
+  'light.garage_sconce_right_bulb': color_light,
+  'light.jims_lamp': color_light,
+  'light.lindsays_lamp': color_light,
+  'light.living_room_uplight': color_light,
+  'light.main_door_left_bulb': color_light,
+  'light.main_door_right_bulb': color_light,
+  'light.mikes_lamp': color_light,
+  'light.passenger_door_bulb': color_light,
+  'light.workshop_bench_strip': color_light,
+  'light.workshop_desk': color_light,
+  'light.workshop_dome': color_light,
+  'fan.guest_bathroom_fan': [],
+  'fan.master_bathroom_fan': [],
+  'fan.core_300s': [{'type': 'fan-speed'}, {'type': 'fan-preset-modes', 'style': 'icons', 'preset_modes': ['auto', 'sleep']}],
+  'climate.living_room_thermostat': [
+    {'type': 'climate-hvac-modes', 'style': 'icons', 'hvac_modes': ['off', 'heat', 'cool', 'heat_cool']},
+    {'type': 'target-temperature'},
+    {'type': 'climate-fan-modes', 'style': 'dropdown', 'fan_modes': ['Auto low', 'Low', 'Circulation']},
+    {'type': 'climate-preset-modes', 'style': 'dropdown', 'preset_modes': ['none', 'Energy heat', 'Energy cool']},
+  ],
+} %}
+
+{#-
+  The tile beside the quick actions on Home (fills the rest of that row, which
+  also keeps the sections grid from pulling the person cards up into it).
+-#}
+{%- set home_corner = 'weather.outside' %}
+
+{#-
+  Quick actions at the top left of Home. 'entity' makes a toggle; 'action'
+  runs that action on 'target', asking for confirmation first when 'confirm'.
+-#}
+{%- set quick_actions = [
+  {
+    'name': 'Guests',
+    'icon': 'mdi:account-multiple',
+    'entity': 'input_boolean.company',
+  },{
+    'name': 'All On',
+    'icon': 'mdi:lightbulb-multiple',
+    'action': 'light.turn_on',
+    'target': 'light.floor_inside',
+    'confirm': true,
+  },{
+    'name': 'All Off',
+    'icon': 'mdi:lightbulb-multiple-off',
+    'action': 'light.turn_off',
+    'target': 'light.floor_inside',
+    'confirm': true,
+  },
+] %}
+
+{#-
+  Areas. Each becomes a room card on the Areas view and its own subview.
+  'area_id' is the HA area it belongs to.
+    lights, fans, locks, doors, appliances, leaks
+                count groups (see count_rules above). lights: 'target' is
+                the area's target light (light.area_*, packages/.lights/),
+                'entities' the lights and switches counted. doors: the Door
+                Buddy *_door sensors, or a group of them.
+    temperature, humidity
+                one sensor each: the card's stats, and the subview's Climate
+    climate     other entities for the subview's Climate section
+  The room card's big icon is the lights target, showing the area's 'icon';
+  each other group with a room_icon rule gets a small icon with its count.
+-#}
+{%- set areas = [
+  {
+    'name': 'Basement',
+    'area_id': 'basement',
+    'icon': 'mdi:home-floor-b',
+    'lights': {
+      'target': 'light.area_basement',
+      'entities': ['switch.basement_stairs', 'switch.basement_cans'],
+    },
+    'leaks': {'entities': ['binary_sensor.water_heater_water_leak_detected']},
+    'temperature': 'sensor.apollo_air_1_1ecac0_temperature',
+    'humidity': 'sensor.apollo_air_1_1ecac0_humidity',
+  },{
+    'name': 'Bonus Room',
+    'area_id': 'bonus_room',
+    'icon': 'mdi:bed-king',
+    'lights': {
+      'target': 'light.area_bonus_bedroom',
+      'entities': ['light.bonus_room_entrance', 'light.bonus_room_bedroom_fixture', 'light.bonus_room_bedroom_recessed'],
+    },
+    'fans': {'target': 'fan.bonus_room_bedroom'},
+    'temperature': 'sensor.bonus_room_cgdk2_temperature',
+    'humidity': 'sensor.bonus_room_cgdk2_humidity',
+  },{
+    'name': 'Craft Room',
+    'area_id': 'craft_room',
+    'icon': 'fas:envelopes-bulk',
+    'lights': {
+      'target': 'light.area_craft_room',
+      'entities': ['switch.craft_room_switch'],
+    },
+  },{
+    'name': 'Deck',
+    'area_id': 'deck',
+    'icon': 'fapro:tan',
+    'lights': {
+      'target': 'light.area_deck',
+      'entities': ['light.deck', 'switch.deck_walkway', 'switch.deck_mood_lighting', 'light.deck_wled_master', 'switch.sliding_door_sconce', 'switch.flood_light'],
+    },
+    'fans': {
+      'target': 'fan.deck_fans',
+      'entities': ['fan.deck_fan_1', 'fan.deck_fan_2'],
+    },
+    'temperature': 'sensor.outside_temperature',
+    'humidity': 'sensor.outside_humidity',
+  },{
+    'name': 'Dining Room',
+    'area_id': 'dining_room',
+    'icon': 'mdi:silverware-fork-knife',
+    'lights': {
+      'target': 'light.area_dining_room',
+      'entities': ['light.dining_room_chandelier', 'switch.dining_room_hutch', 'light.dining_room_uplights', 'switch.wled_hutch'],
+    },
+    'doors': {'target': 'binary_sensor.sliding_door'},
+    'temperature': 'sensor.sliding_door_temperature',
+  },{
+    'name': 'Foyer',
+    'area_id': 'foyer',
+    'icon': 'mdi:door',
+    'lights': {
+      'target': 'light.area_foyer',
+      'entities': ['switch.foyer'],
+    },
+    'doors': {'target': 'binary_sensor.main_door'},
+  },{
+    'name': 'Game Room',
+    'area_id': 'game_room',
+    'icon': 'mdi:gamepad-square',
+    'lights': {
+      'target': 'light.area_game_room',
+      'entities': ['switch.game_room_switch', 'switch.game_room_buffet_outlet', 'switch.game_room_bookcase_outlet', 'switch.game_room_window'],
+    },
+  },{
+    'name': 'Garage',
+    'area_id': 'garage',
+    'icon': 'mdi:home-floor-g',
+    'lights': {
+      'target': 'light.area_car_bays',
+      'entities': ['switch.garage_cans', 'switch.garage_workbench', 'switch.garage_ceiling_outlet', 'light.garage_buffet_strip'],
+    },
+    'doors': [
+      {
+        'target': 'binary_sensor.car_bays_doors',
+        'entities': ['cover.front_garage_door', 'cover.rear_garage_door'],
+      },
+      {'target': 'binary_sensor.passenger_door'},
+    ],
+  },{
+    'name': 'Garage Entrance',
+    'area_id': 'mud_room',
+    'icon': 'mdi:door',
+    'lights': {
+      'target': 'light.area_mud_room',
+      'entities': ['switch.garage_entry'],
+    },
+    'locks': {'target': 'lock.smart_lock_ultra'},
+    'doors': {'target': 'binary_sensor.garage_entry_door'},
+  },{
+    'name': 'Great Room',
+    'area_id': 'living_room',
+    'icon': 'mdi:sofa-single',
+    'lights': {
+      'target': 'light.area_great_room',
+      'entities': [
+        'light.kitchen_island',
+        'light.kitchen_cans',
+        'switch.kitchen_cabinet',
+        'switch.kitchen_pantry',
+        'light.dining_room_chandelier',
+        'switch.dining_room_hutch',
+        'light.dining_room_uplights',
+        'switch.wled_hutch',
+        'light.lindsays_lamp',
+        'light.mikes_lamp',
+        'light.jims_lamp',
+        'light.living_room_uplight',
+        'switch.living_room_window',
+      ],
+    },
+    'doors': {'target': 'binary_sensor.sliding_door'},
+    'leaks': {'entities': ['binary_sensor.kitchen_sink_water_leak_detected']},
+    'temperature': 'sensor.living_room_temperature',
+    'humidity': 'sensor.living_room_humidity',
+    'climate': ['climate.living_room_thermostat'],
+  },{
+    'name': 'Guest Bathroom',
+    'area_id': 'guest_bathroom',
+    'icon': 'mdi:paper-roll',
+    'lights': {
+      'target': 'light.area_guest_bathroom',
+      'entities': ['switch.guest_vanity', 'switch.guest_toilet'],
+    },
+    'fans': {'target': 'fan.guest_bathroom_fan'},
+    'leaks': {'entities': ['binary_sensor.guest_bathroom_left_sink_water_leak_detected', 'binary_sensor.guest_bathroom_right_sink_water_leak_detected']},
+  },{
+    'name': 'Hall',
+    'area_id': 'upstairs_hallway',
+    'icon': 'mdi:home-floor-2',
+    'lights': {
+      'target': 'light.area_hallway',
+      'entities': ['light.hallway'],
+    },
+  },{
+    'name': 'Kitchen',
+    'area_id': '79f87f3673464e84a683466dd6f7220d',
+    'icon': 'mdi:pasta',
+    'lights': {
+      'target': 'light.area_kitchen',
+      'entities': ['light.kitchen_island', 'light.kitchen_cans', 'switch.kitchen_cabinet', 'switch.kitchen_pantry'],
+    },
+    'temperature': 'sensor.kitchen_lywsdcgq_temperature',
+    'humidity': 'sensor.kitchen_lywsdcgq_humidity',
+    'leaks': {'entities': ['binary_sensor.kitchen_sink_water_leak_detected']},
+  },{
+    'name': 'Laundry Room',
+    'area_id': 'laundry_room',
+    'icon': 'mdi:washing-machine',
+    'lights': {
+      'target': 'light.area_laundry_room',
+      'entities': ['switch.laundry'],
+    },
+    'appliances': {
+      'target': 'binary_sensor.laundry_running',
+      'entities': ['binary_sensor.washer', 'binary_sensor.dryer_status'],
+    },
+  },{
+    'name': 'Living Room',
+    'area_id': 'living_room',
+    'icon': 'mdi:sofa',
+    'lights': {
+      'target': 'light.area_living_room',
+      'entities': ['light.lindsays_lamp', 'light.mikes_lamp', 'light.jims_lamp', 'light.living_room_uplight', 'switch.living_room_window'],
+    },
+    'temperature': 'sensor.living_room_temperature',
+    'humidity': 'sensor.living_room_humidity',
+    'climate': ['climate.living_room_thermostat'],
+  },{
+    'name': 'Master Bathroom',
+    'area_id': 'master_bathroom',
+    'icon': 'mdi:paper-roll',
+    'lights': {
+      'target': 'light.area_master_bathroom',
+      'entities': ['light.master_bathroom_sink', 'light.master_bathroom_cans'],
+    },
+    'fans': {'target': 'fan.master_bathroom_fan'},
+    'leaks': {'entities': ['binary_sensor.left_sink_water_leak_detected', 'binary_sensor.right_sink_water_leak_detected']},
+    'temperature': 'sensor.master_bathroom_lywsdcgq_temperature',
+    'humidity': 'sensor.master_bathroom_lywsdcgq_humidity',
+  },{
+    'name': 'Master Bedroom',
+    'area_id': 'master_bedroom',
+    'icon': 'mdi:bed-king',
+    'lights': {
+      'target': 'light.area_master_bedroom',
+      'entities': ['light.master_closet', 'light.master_fixture', 'switch.master_nightstand_left', 'switch.master_nightstand_right', 'switch.master_door_outlet', 'switch.master_wall_outlet'],
+    },
+    'fans': {
+      'target': 'fan.master_bedroom_fans',
+      'entities': ['fan.master_fixture', 'fan.core_300s'],
+    },
+    'temperature': 'sensor.master_bedroom_lywsdcgq_temperature',
+    'humidity': 'sensor.master_bedroom_lywsdcgq_humidity',
+    'climate': ['sensor.core_300s_air_quality'],
+  },{
+    'name': 'Office',
+    'area_id': 'office',
+    'icon': 'mdi:desk',
+    'lights': {
+      'target': 'light.area_office',
+      'entities': ['light.bonus_room_office_fixture', 'light.bonus_room_office_recessed'],
+    },
+    'fans': {'target': 'fan.bonus_room_office'},
+    'temperature': 'sensor.office_d1_mini_temperature',
+    'humidity': 'sensor.office_d1_mini_humidity',
+  },{
+    'name': 'Outside',
+    'area_id': 'front_yard',
+    'icon': 'mdi:tree',
+    'lights': {
+      'entities': [
+        'switch.outside_porch',
+        'switch.passenger_sconce',
+        'switch.sconces_garage',
+        'switch.sconces_main_entrance',
+        'switch.sliding_door_sconce',
+        'switch.flood_light',
+        'light.main_door_left_bulb',
+        'light.main_door_right_bulb',
+        'light.passenger_door_bulb',
+        'light.garage_sconce_left_bulb',
+        'light.garage_sconce_right_bulb',
+        'light.front_yard_uplight_left',
+        'light.front_yard_uplight_middle',
+        'light.front_yard_uplight_right',
+      ],
+    },
+    'temperature': 'sensor.outside_temperature',
+    'humidity': 'sensor.outside_humidity',
+  },{
+    'name': 'Patio',
+    'area_id': 'patio',
+    'icon': 'fapro:patio',
+    'lights': {
+      'target': 'light.area_patio',
+      'entities': ['switch.patio_string_light'],
+    },
+    'temperature': 'sensor.outside_temperature',
+    'humidity': 'sensor.outside_humidity',
+  },{
+    'name': 'Porch',
+    'area_id': 'porch',
+    'icon': 'fapro:porch',
+    'lights': {
+      'entities': ['switch.outside_porch', 'switch.doorbell_chime_active'],
+    },
+    'temperature': 'sensor.outside_temperature',
+    'humidity': 'sensor.outside_humidity',
+  },{
+    'name': 'Powder Room',
+    'area_id': 'powder_room',
+    'icon': 'mdi:toilet',
+    'lights': {
+      'target': 'light.area_powder_room',
+      'entities': ['switch.powder_room_switch'],
+    },
+    'leaks': {'entities': ['binary_sensor.powder_room_sink_water_leak_detected']},
+  },{
+    'name': 'Server Room',
+    'area_id': 'server_room',
+    'icon': 'mdi:server',
+    'lights': {
+      'entities': ['switch.server_room_switch'],
+    },
+    'doors': {'target': 'binary_sensor.server_room_door_contact'},
+  },{
+    'name': 'Vacation Planning Room',
+    'area_id': 'vacation_planning_room',
+    'icon': 'mdi:airplane',
+    'lights': {
+      'target': 'light.area_vacation_planning_room',
+      'entities': ['switch.vacation_planning_room'],
+    },
+  },{
+    'name': 'Workshop',
+    'area_id': 'workshop',
+    'icon': 'mdi:head-lightbulb',
+    'lights': {
+      'target': 'light.area_workshop',
+      'entities': ['light.workshop_dome', 'switch.floating_double_plug_left', 'switch.floating_double_plug_right', 'light.workshop_desk', 'light.workshop_bench_strip'],
+    },
+  },
+] %}
+
+{#-
+  The house: a Room Summary Card on Home, atop the Household window (square,
+  half width, beside the remote's), shaped like an area (same keys; area_id is not a real HA area, the
+  card doesn't need one). Its lights and leaks count every area's. 'icons'
+  lists the keys shown as small icons, in order; every icon opens more-info
+  (never toggles the house), or, for a key in 'links', the page of that Home
+  button (by name). The card opens Areas. 'image' is the card's background
+  (the Areas button's picture). Its doors (all of them) are added after the
+  doors list below.
+-#}
+{%- set house_ns = namespace(lights=[], leaks=[]) %}
+{%- for area in areas %}
+  {%- for key in ['lights', 'leaks'] if key in area %}
+    {%- for g in ([area[key]] if area[key] is mapping else area[key]) %}
+      {%- for e in g.entities | default([g.target]) %}
+        {%- if key == 'lights' and e not in house_ns.lights %}{%- set house_ns.lights = house_ns.lights + [e] %}
+        {%- elif key == 'leaks' and e not in house_ns.leaks %}{%- set house_ns.leaks = house_ns.leaks + [e] %}{%- endif %}
+      {%- endfor %}
+    {%- endfor %}
+  {%- endfor %}
+{%- endfor %}
+{%- set house = {
+  'name': 'Home',
+  'area_id': 'home',
+  'icon': 'mdi:home',
+  'image': '/local/images/home_transparent_5.png',
+  'icons': ['lights', 'locks', 'appliances', 'leaks', 'doors'],
+  'toggle': [],
+  'links': {'lights': 'Areas', 'locks': 'Doors', 'doors': 'Doors'},
+  'lights': {'target': 'light.floor_all', 'entities': house_ns.lights},
+  'locks': {'target': 'lock.smart_lock_ultra'},
+  'appliances': {
+    'target': 'binary_sensor.laundry_running',
+    'entities': ['binary_sensor.washer', 'binary_sensor.dryer_status'],
+  },
+  'leaks': {'target': 'binary_sensor.leak', 'entities': house_ns.leaks},
+  'temperature': home_sensors[0],
+  'humidity': home_sensors[1],
+} %}
+
+{#- Doors. door_type picks the icons: door or garage. #}
+{%- set doors = [
+  {
+    'entity': 'binary_sensor.main_door',
+    'name': 'Main Door',
+    'last_opened': 'sensor.main_door_last_opened',
+    'door_type': 'door',
+  },{
+    'entity': 'binary_sensor.garage_entry_door',
+    'name': 'Mudroom Door',
+    'last_opened': 'sensor.garage_entrance_last_opened',
+    'door_type': 'door',
+  },{
+    'entity': 'binary_sensor.sliding_door',
+    'name': 'Sliding Door',
+    'last_opened': 'sensor.sliding_door_last_opened',
+    'door_type': 'door',
+  },{
+    'entity': 'binary_sensor.front_garage_door',
+    'name': 'Front Garage',
+    'last_opened': 'sensor.garage_door_last_opened',
+    'door_type': 'garage',
+  },{
+    'entity': 'binary_sensor.rear_garage_door',
+    'name': 'Rear Garage',
+    'last_opened': 'sensor.rear_garage_door_last_opened',
+    'door_type': 'garage',
+  },{
+    'entity': 'binary_sensor.passenger_door',
+    'name': 'Passenger Door',
+    'last_opened': 'sensor.passenger_door_last_opened',
+    'door_type': 'door',
+  },
+] %}
+{%- set house = dict(house, doors={'target': 'binary_sensor.home_doors', 'entities': doors | map(attribute='entity') | list}) %}
+
+{#-
+  The remote: a square Room Summary Card beside the house's, shaped the same
+  way. The card and its media icon open the page of the Home button named in
+  'page'. 'extras' are plain icons after the counted ones: no count badge,
+  tap toggles.
+-#}
+{%- set home_remote = {
+  'name': 'Remote',
+  'area_id': 'remote',
+  'icon': 'mdi:remote-tv',
+  'image': '/local/images/remote_2.png',
+  'page': 'Remote',
+  'icons': ['media'],
+  'toggle': [],
+  'links': {'media': 'Remote'},
+  'media': {
+    'target': 'binary_sensor.remote_media_players',
+    'entities': ['media_player.yamaha_rx_v6a', 'media_player.yamaha_rx_v6a_zone2'],
+  },
+  'extras': ['switch.movie_time', 'switch.hyperion_usb_capture'],
+} %}
+
+{#- People on the Home view. 'who' is their name in custom_templates/dates.jinja
+    (for the birthday); 'map' is their map view on the old dashboard. #}
+{%- set people = [
+  {
+    'entity': 'person.petro',
+    'who': 'Mike',
+    'weight': 'sensor.petro_weight',
+    'work': 'sensor.petro_at_work',
+    'map': 'petro_map',
+  },{
+    'entity': 'person.lambo',
+    'who': 'Lindsay',
+    'weight': 'sensor.lambo_weight',
+    'work': 'sensor.lambo_at_work',
+    'map': 'lambo_map',
+  },
+] %}
+
+{#-
+  The Home menu: a grid of picture (or icon) buttons on Home; on other menu
+  views, one row per button with its name and a live status line. 'view' says how v2 builds the button's view:
+    menu   a view of rows for 'entities' (areas), plus one subview each
+    doors  views/doors.yaml ('entities': the door entries)
+  'legacy' links to a view on the old dashboard (/ui-home/<legacy>) until it is
+  ported.
+  Status line: 'status' is an HA template (evaluated live). Without it, the
+  row shows its 'sensors' (temperature/humidity) and the counts of its count
+  groups (doors, locks, media, ...; a menu button: all its areas'), or 'idle'
+  when there's nothing to show. 'image' may also be an HA template.
+  'household' puts the status line in Home's Household window, hidden while
+  it reads one of the listed (quiet) values; [] means always shown.
+-#}
+{%- set main_buttons = [
+  {
+    'name': 'Areas',
+    'icon': 'mdi:home-lightbulb',
+    'household': [],
+    'image': house.image,
+    'view': 'menu',
+    'entities': areas,
+    'sensors': home_sensors,
+    'idle': 'All off',
+  },{
+    'name': 'Doors',
+    'icon': 'mdi:door',
+    'household': ['All closed · Locked'],
+    'image': '/local/images/door_4.png',
+    'view': 'doors',
+    'entities': doors,
+    'doors': {'entities': doors | map(attribute='entity') | list},
+    'locks': {'target': 'lock.smart_lock_ultra'},
+    'status': "{%- set doors = " ~ (doors | tojson) ~ " %}"
+      ~ "{%- set open = doors | selectattr('entity', 'is_state', 'on') | map(attribute='name') | list %}"
+      ~ "{{ open | join(', ') ~ ' open' if open else 'All closed' }}"
+      ~ "{{ ' · Unlocked' if is_state('lock.smart_lock_ultra', ['unlocked', 'open']) else ' · Locked' }}",
+  },{
+    'name': 'Remote',
+    'icon': 'mdi:remote-tv',
+    'household': ['Off'],
+    'image': '/local/images/remote_2.png',
+    'legacy': 'remote',
+    'media': {'entities': [
+      'media_player.yamaha_rx_v6a',
+      'media_player.yamaha_rx_v6a_zone2',
+    ]},
+    'idle': 'Off',
+  },{
+    'name': 'Holiday',
+    'icon': 'mdi:string-lights',
+    'household': ['Accent lights'],
+    'image': "/local/images/{{ states('sensor.holiday_lighting') }}.png",
+    'legacy': 'sensor.holiday_lighting',
+    'status': "{{ 'Accent lights' if is_state('sensor.holiday_lighting', 'no_holiday') else states('sensor.holiday_lighting') | replace('_', ' ') | title }}",
+  },{
+    'name': 'Music',
+    'icon': 'mdi:music-box',
+    'household': ['Off'],
+    'image': '/local/images/music.png',
+    'legacy': 'music',
+    'media': {'entities': [
+      'media_player.yamaha_rx_v6a',
+      'media_player.yamaha_rx_v6a_zone2',
+      'media_player.yamaha_receiver',
+      'media_player.yamaha_receiver_zone_2',
+    ]},
+    'idle': 'Off',
+  },{
+    'name': 'Echos',
+    'icon': 'mdi:amazon-alexa',
+    'image': '/local/images/echo_2.png',
+    'legacy': 'echos',
+    'status': "{{ state_attr('sensor.alexa_last_tts', 'text') | default('', true) | truncate(60) or 'No announcements' }}",
+  },{
+    'name': 'Events',
+    'icon': 'mdi:calendar-outline',
+    'legacy': 'events',
+    'status': "{%- set e = state_attr('sensor.lambosino_s_random_events', 'events') | default([], true) | first | default(none) %}"
+      ~ "{%- if e %}{{ e.event.summary }} · {{ 'today' if e.days == 0 else 'tomorrow' if e.days == 1 else 'in ' ~ e.days ~ ' days' }}"
+      ~ "{%- else %}Nothing planned{%- endif %}",
+  },{
+    'name': 'This Week',
+    'icon': 'mdi:calendar-star',
+    'legacy': 'this_week',
+    'status': "{{ state_attr('sensor.mikes_todo_overview', 'today') | default([], true) | count }} today · "
+      ~ "{{ state_attr('sensor.mikes_todo_overview', 'this_week') | default([], true) | count }} this week",
+  },{
+    'name': 'Drinks',
+    'icon': 'mdi:glass-wine',
+    'image': "{{ state_attr('select.drink', 'image') or '/local/images/wine.png' }}",
+    'legacy': 'drinks',
+    'status': "{{ states('select.drink') }}",
+  },{
+    'name': 'Plants',
+    'icon': 'mdi:flower',
+    'household': ['All good'],
+    'image': '/local/images/plants.png',
+    'legacy': 'plants',
+    'status': "{{ 'Needs attention' if is_state('binary_sensor.plant_issue', 'on') else 'All good' }}",
+  },{
+    'name': 'Irrigation',
+    'icon': 'mdi:sprinkler-variant',
+    'household': ['Off season', 'In season'],
+    'legacy': 'irrigation',
+    'status': "{{ 'Watering' if is_state('switch.front_yard_status', 'on') or is_state('switch.back_yard_status', 'on') "
+      ~ "else 'In season' if is_state('binary_sensor.irrigation_season', 'on') else 'Off season' }}",
+  },{
+    'name': 'Laundry',
+    'icon': 'mdi:washing-machine',
+    'household': ['Idle'],
+    'legacy': 'laundry',
+    'status': "{%- set running = (['Washer running'] if is_state('binary_sensor.washer_status', 'on') else [])"
+      ~ " + (['Dryer running'] if is_state('binary_sensor.dryer_status', 'on') else []) %}"
+      ~ "{{ running | join(' · ') or 'Idle' }}",
+  },
+] %}
+
+{#-
+  Home's Household window: the entities in its recent activity log (Logbook
+  card, last 'hours' hours). Lights are left out to keep it readable.
+-#}
+{%- set household = {
+  'hours': 24,
+  'activity': doors | map(attribute='entity') | list + [
+    'lock.smart_lock_ultra',
+    'person.petro',
+    'person.lambo',
+    'input_boolean.company',
+    'binary_sensor.washer_status',
+    'binary_sensor.dryer_status',
+    'binary_sensor.leak',
+    'binary_sensor.plant_issue',
+  ],
+} %}

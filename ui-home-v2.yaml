@@ -1,0 +1,3 @@
+title: Home v2
+
+views: !include lovelace_v2/views/main.yaml

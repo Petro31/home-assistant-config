@@ -1,0 +1,63 @@
+# lovelace_gen
+# The Home view (sections, one column) and the Areas view (masonry of 2x2
+# grids, four room cards each, flowing by screen width; no badges).
+# Variables:
+#   name, icon, path
+#   back_path  makes it a subview with a back arrow to this path
+#   badges     badges at the top of the view (built by main.yaml)
+#   rooms      Room Summary Cards (cards/room.yaml variables); makes it the
+#              masonry Areas view
+# Home only:
+#   actions    quick actions, small at the top left
+#   corner     entity for a tile filling the rest of the actions' row (weather)
+#   people     person cards
+#   icons      a grid of picture/icon-only buttons (cards/menu_icon.yaml)
+#   summaries  Room Summary Cards (cards/room.yaml variables) atop the
+#              Household window: the house and the remote, side by side
+#   household  the rest of the Household window: activity, hours (its status
+#              lines feed cards/household_status.yaml, not used for now)
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+{%- if back_path is defined %}
+subview: true
+back_path: {{ back_path }}
+{%- endif %}
+{%- if rooms is defined and rooms %}
+type: masonry
+cards:
+  {%- for four in rooms | batch(4) %}
+- type: grid
+  columns: 2
+  square: false
+  cards:
+    {%- for room in four %}
+  - !include ['../cards/room.yaml', {{ room | tojson }}]
+    {%- endfor %}
+  {%- endfor %}
+{%- else %}
+type: sections
+max_columns: 1
+badges: {{ badges | default([]) | tojson }}
+sections:
+- type: grid
+  cards:
+  {%- for action in actions | default([]) %}
+  - !include ['../cards/action_button.yaml', {{ action | tojson }}]
+  {%- endfor %}
+  {%- if corner is defined %}
+  - !include ['../cards/tile.yaml', {{ {'entity': corner, 'card': {'grid_options': {'columns': 12 - 2 * (actions | default([]) | length), 'rows': 1}}} | tojson }}]
+  {%- endif %}
+  {%- for person in people | default([]) %}
+  - !include ['../cards/person.yaml', {{ person | tojson }}]
+  {%- endfor %}
+  {%- for button in icons | default([]) %}
+  - !include ['../cards/menu_icon.yaml', {{ button | tojson }}]
+  {%- endfor %}
+  {%- if household is defined %}
+  {%- for summary in summaries | default([]) %}
+  - !include ['../cards/room.yaml', {{ summary | tojson }}]
+  {%- endfor %}
+  - {{ {'type': 'logbook', 'entities': household.activity, 'hours_to_show': household.hours, 'grid_options': {'columns': 12, 'rows': 6}} | tojson }}
+  {%- endif %}
+{%- endif %}

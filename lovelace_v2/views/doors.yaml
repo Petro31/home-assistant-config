@@ -1,0 +1,33 @@
+# lovelace_gen
+# The Doors subview.
+# Variables:
+#   name, icon, path, back_path
+#   badges    the view's badges (built by main.yaml)
+#   entities  door entries (entity, name, last_opened, door_type)
+#   locks     lock entity_ids
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+type: sections
+max_columns: 3
+subview: true
+back_path: {{ back_path }}
+badges: {{ badges | default([]) | tojson }}
+sections:
+- type: grid
+  column_span: 2
+  cards:
+  - type: heading
+    heading: Doors
+  {%- for door in entities %}
+  - !include ['../cards/door.yaml', {{ door | tojson }}]
+  {%- endfor %}
+{%- if locks %}
+- type: grid
+  cards:
+  - type: heading
+    heading: Locks
+  {%- for lock in locks %}
+  - !include ['../cards/tile.yaml', {{ {'entity': lock} | tojson }}]
+  {%- endfor %}
+{%- endif %}

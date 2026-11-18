@@ -75,3 +75,11 @@ dashboards:
     show_in_sidebar: true
     require_admin: true
     filename: ui-status.yaml
+
+  ui-home-v2:
+    mode: yaml
+    title: Home v2
+    icon: mdi:home-outline
+    show_in_sidebar: true
+    require_admin: true
+    filename: ui-home-v2.yaml
