@@ -105,27 +105,6 @@
   {{- ns.counts | tojson }}
 {%- endmacro %}
 
-{#-
-  A view's badges: a Mushroom template badge per count (hidden by UIX while
-  it's 0), then built-in entity badges for the sensors.
-#}
-{%- macro badges(srcs, sensors=[]) %}
-  {%- set ns = namespace(badges=[]) %}
-  {%- for c in counts(srcs) | fromjson %}
-    {%- set n = "{%- set n = " ~ (c.entities | tojson) ~ " | select('is_state', " ~ (c.state | tojson) ~ ") | list | count %}" %}
-    {%- set ns.badges = ns.badges + [{
-      'type': 'custom:mushroom-template-badge',
-      'icon': c.icon,
-      'color': c.color,
-      'content': n ~ "{{ n }}",
-      'uix': {'style': n ~ "{{ ':host { display: none; }' if n == 0 else '' }}"},
-    }] %}
-  {%- endfor %}
-  {%- for s in sensors %}
-    {%- set ns.badges = ns.badges + [{'type': 'entity', 'entity': s}] %}
-  {%- endfor %}
-  {{- ns.badges | tojson }}
-{%- endmacro %}
 
 {#- Variables for cards/room.yaml (a Room Summary Card) for an area. #}
 {%- macro room(area) %}
@@ -188,7 +167,6 @@
 {#- One view per main button that has been ported to v2. #}
 {%- for item in main_buttons if item.view is defined %}
   {%- set path = slug(item.name) %}
-  {%- set view_badges = badges(sources(item) | fromjson, item.sensors | default([])) | fromjson %}
   {%- if item.view == 'menu' %}
     {%- set sub = namespace(rooms=[]) %}
     {%- for area in item.entities %}
@@ -207,7 +185,7 @@
   {%- else %}
 - !include ['{{ item.view }}.yaml', {{ {
     'name': item.name, 'icon': item.icon, 'path': path, 'back_path': dashboard ~ '/home',
-    'badges': view_badges, 'entities': item.entities | default([]), 'controls': item.controls | default([]),
+    'entities': item.entities | default([]), 'controls': item.controls | default([]),
   } | tojson }}]
   {%- endif %}
 {%- endfor %}

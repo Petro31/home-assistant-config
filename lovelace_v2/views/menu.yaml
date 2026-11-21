@@ -4,7 +4,6 @@
 # Variables:
 #   name, icon, path
 #   back_path  makes it a subview with a back arrow to this path
-#   badges     badges at the top of the view (built by main.yaml)
 #   rooms      Room Summary Cards (cards/room.yaml variables); makes it the
 #              masonry Areas view
 # Home only:
@@ -38,7 +37,6 @@ cards:
 {%- else %}
 type: sections
 max_columns: 1
-badges: {{ badges | default([]) | tojson }}
 sections:
 - type: grid
   cards:
