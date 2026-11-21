@@ -88,13 +88,13 @@ New features go in `packages/` (see `packages/leak_detection.yaml` for the curre
 
 ### Home v2 (in progress)
 
-`ui-home-v2.yaml` (admin-only) is a rebuild of the Home dashboard in `lovelace_v2/`, using built-in cards, Mushroom, UIX and the Room Summary Card. `lovelace_v2/data/home.jinja` holds the data and `lovelace_v2/views/main.yaml` builds the views. Home has summary cards (`lovelace_v2/cards/room.yaml`) atop the Household window: the house (opens Areas; its lock and laundry icons open the Doors and Laundry subviews), the remote (opens the legacy Remote view; its music icon opens the Music subview) and the holiday (opens the Holiday subview). Buttons with `legacy:` in `home.jinja` still open the old dashboard's view.
+`ui-home-v2.yaml` (admin-only) is a rebuild of the Home dashboard in `lovelace_v2/`, using built-in cards, Mushroom, UIX and the Room Summary Card. `lovelace_v2/data/home.jinja` holds the data and `lovelace_v2/views/main.yaml` builds the views. Home has summary cards (`lovelace_v2/cards/room.yaml`) atop the Household window: the house (opens Areas; its lock and laundry icons open the Doors and Laundry subviews), the remote (opens the legacy Remote view; its music icon opens the Music subview), the holiday (opens the Holiday subview) and events (opens the Events subview; its icons open the Drinks, Irrigation and This Week subviews). Buttons with `legacy:` in `home.jinja` still open the old dashboard's view.
 
 To do:
 - [x] Holiday summary card on Home. Its icons control the current holiday's themed lights directly. The card opens a page with all lights and scenes available for the current holiday (`sensor.holiday_lighting`; legacy `lovelace/views/holiday.yaml`).
 - [ ] ~~Music summary card on Home. Its icons count what's playing music in the house; the card opens a media/music page (legacy `lovelace/views/music.yaml`). One icon opens the Echo devices, which get their own control page (legacy `lovelace/views/echos.yaml`).~~ Cancelled: music is the music icon on the remote card instead (below).
 - [x] Laundry: the laundry icon on the house card opens a Laundry subview, an exact copy of the current Laundry view (`lovelace/views/laundry.yaml`) apart from the back button.
-- [ ] Events summary card on Home. The card opens a subview copy of the Events view (`lovelace/views/events.yaml`). Its icons open subviews for Drinks (`drinks.yaml`), Irrigation (`irrigation.yaml`) and This Week (`this_week.yaml`).
+- [x] Events summary card on Home. The card opens a subview copy of the Events view (`lovelace/views/events.yaml`). Its icons open subviews for Drinks (`drinks.yaml`), Irrigation (`irrigation.yaml`) and This Week (`this_week.yaml`).
 - [ ] Remote: recreate the Remote view (`lovelace/views/remote.yaml`) as a v2 subview, with a Remote Settings subview (`lovelace/views/remote_settings.yaml`). Then point the remote card there instead of the legacy view.
 - [x] Music icon on the remote card. It opens a v2 Music page with the music controls and media players, like the legacy Music view (`lovelace/views/music.yaml`).
 
