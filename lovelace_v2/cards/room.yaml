@@ -14,7 +14,10 @@
 #     instead. Each has a count badge in its bottom-right corner while
 #     the target is in one of the rule's states: how many of the group's
 #     'entities' are. Then the area's 'extras' (entity ids), if any: no
-#     badge, the card's default tap (toggle).
+#     badge, the card's default tap (toggle). An extra may be a mapping
+#     ({entity_id, icon, link, count}): its own icon, 'link' (a path) opens
+#     that path on tap, and 'count' (an attribute holding a list) gives it a
+#     count badge of that list's length while the entity is on.
 #   - stats: the area's 'temperature' and 'humidity' sensors (not HA's area
 #     averages, which depend on area assignments)
 #   - the area's 'image', if any, is the card's background and the room icon
@@ -75,7 +78,22 @@
   {%- endfor %}
 {%- endfor %}
 {%- for e in area.extras | default([]) %}
-  {%- set ns.icons = ns.icons + [{'entity_id': e}] %}
+  {%- if e is string %}
+    {%- set ns.icons = ns.icons + [{'entity_id': e}] %}
+  {%- else %}
+    {%- set extra = {'entity_id': e.entity_id} %}
+    {%- if e.icon is defined %}
+      {%- set extra = dict(extra, icon=e.icon) %}
+    {%- endif %}
+    {%- if e.link is defined %}
+      {%- set extra = dict(extra, tap_action={'action': 'navigate', 'navigation_path': e.link}) %}
+    {%- endif %}
+    {%- if e.count is defined %}
+      {%- set label = "{{ state_attr(" ~ (e.entity_id | tojson) ~ ", " ~ (e.count | tojson) ~ ") | default([], true) | count }}" %}
+      {%- set extra = dict(extra, badges=[{'mode': 'if_match', 'position': 'bottom_right', 'styles': small, 'states': [{'state': 'on', 'label': label}]}]) %}
+    {%- endif %}
+    {%- set ns.icons = ns.icons + [extra] %}
+  {%- endif %}
 {%- endfor %}
 {%- set sensors = ([area.temperature | default('')] + [area.humidity | default('')]) | select | list %}
 {%- set card = {

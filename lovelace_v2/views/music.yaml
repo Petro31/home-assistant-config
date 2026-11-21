@@ -1,0 +1,75 @@
+# lovelace_gen
+# The Music subview (home_music in data/home.jinja), like the legacy Music
+# view: a section per receiver (its zone 1 and zone 2 rooms are tied
+# together). The two room headings side by side, then one row of six buttons:
+# each room's zone power, Echo passthrough and AirPlay toggles. While the
+# receiver is on, the volume row below: the active zone toggle (which zone
+# the volume buttons control), volume up/down and mute. A media control for
+# each zone that's playing and not on the Echo input. Then the Echo Dots that
+# are playing.
+# Variables:
+#   name, icon, path, back_path (no badges)
+{%- from '/config/lovelace_v2/data/home.jinja' import home_music %}
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+type: sections
+max_columns: 2
+subview: true
+back_path: {{ back_path }}
+sections:
+{%- for r in home_music.receivers %}
+  {%- set on = [{'condition': 'state', 'entity': r.power, 'state': 'on'}] %}
+- type: grid
+  cards:
+  {%- for room in r.rooms %}
+  - type: heading
+    heading: {{ room.name | tojson }}
+    heading_style: subtitle
+    grid_options:
+      columns: 6
+  {%- endfor %}
+  {%- for room in r.rooms %}
+  - !include ['../cards/action_button.yaml', {{ {'name': room.name ~ ' Zone', 'entity': room.zone, 'icon': room.zone_icon, 'color': home_music.zone_color} | tojson }}]
+  - !include ['../cards/action_button.yaml', {{ {'name': room.name ~ ' Echo', 'entity': room.echo, 'icon': 'fapro:speaker-bluetooth-alexa', 'color': home_music.link_color} | tojson }}]
+  - !include ['../cards/action_button.yaml', {{ {'name': room.name ~ ' AirPlay', 'entity': room.airplay, 'icon': 'mdi:cast-audio-variant', 'color': home_music.link_color} | tojson }}]
+  {%- endfor %}
+  - !include ['../cards/action_button.yaml', {{ {'name': 'Active Zone', 'entity': r.active, 'action': 'multizone_controller.next_zone', 'visibility': on} | tojson }}]
+  {#- Volume up/down twice as wide, so the row fills: 2 + 4 + 4 + 2. #}
+  {%- for action, icon, columns in [('volume_up', 'mdi:volume-plus', 4), ('volume_down', 'mdi:volume-minus', 4), ('toggle_volume_mute', 'mdi:volume-mute', 2)] %}
+  - !include ['../cards/action_button.yaml', {{ {'name': action | replace('_', ' ') | title, 'icon': icon, 'action': 'multizone_controller.' ~ action, 'target': r.active, 'visibility': on, 'columns': columns} | tojson }}]
+  {%- endfor %}
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    card_param: cards
+    show_empty: false
+    grid_options:
+      columns: full
+    filter:
+      include:
+      - domain: media_player
+        entity_id: {{ r.players | tojson }}
+        state: playing
+        options:
+          type: media-control
+      exclude:
+      - attributes:
+          source: {{ r.echo_source | tojson }}
+{%- endfor %}
+- type: grid
+  cards:
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    card_param: cards
+    show_empty: false
+    grid_options:
+      columns: full
+    filter:
+      include:
+      - domain: media_player
+        entity_id: {{ home_music.echos | tojson }}
+        state: playing
+        options:
+          type: media-control

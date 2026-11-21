@@ -1,0 +1,22 @@
+{#-
+  The media players playing music, as a JSON list of entity ids: what the
+  Home v2 Music page shows media controls for. Each receiver zone that's
+  playing and not on its Echo input (the Echo Dot playing through it counts
+  instead), and each Echo Dot that's playing.
+  Used by binary_sensor.music_playing (packages/living_room/living_room_yamaha.yaml).
+-#}
+{%- set zone_echo_inputs = {
+  'media_player.yamaha_rx_v6a': 'audio3',
+  'media_player.yamaha_rx_v6a_zone2': 'audio3',
+  'media_player.yamaha_receiver': 'echo',
+  'media_player.yamaha_receiver_zone_2': 'echo',
+} %}
+
+{%- macro music_playing() %}
+  {%- set ns = namespace(playing=[]) %}
+  {%- for zone, echo_input in zone_echo_inputs.items() if is_state(zone, 'playing') and (state_attr(zone, 'source') or '') | lower != echo_input %}
+    {%- set ns.playing = ns.playing + [zone] %}
+  {%- endfor %}
+  {%- set echos = states.media_player | selectattr('entity_id', 'search', '_echo_dot') | selectattr('state', 'eq', 'playing') | map(attribute='entity_id') | list %}
+  {{- (ns.playing + echos) | to_json }}
+{%- endmacro %}

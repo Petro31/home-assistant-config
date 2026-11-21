@@ -1,31 +1,43 @@
 # lovelace_gen
 # A quick action (built-in button card): a small icon-only square, 2 of the
 # section's 12 columns. The name is used for the confirmation text. While on,
-# the icon uses the theme's primary color. UIX also enlarges the icon to 75%
-# of the card (the button card otherwise caps it at 40% of the width).
+# the icon uses the theme's primary color (or 'color'). UIX also enlarges the
+# icon to 75% of the card (the button card otherwise caps it at 40% of the
+# width).
 # Variables:
-#   name, icon
-#   entity   makes it a toggle for this entity (lit while on)
-#   action   otherwise, the action to run on 'target'
+#   name
+#   icon     optional with 'entity' (then the entity's own icon)
+#   entity   shows this entity (lit while on); tap toggles it, unless 'action'
+#   action   the action to run on 'target' (default: 'entity')
 #   target   entity_id the action runs on
 #   confirm  ask before running the action
+#   color    the icon's color while on (default: the theme's primary color)
+#   visibility  optional card visibility conditions
+#   columns  its width in the section's 12 columns (default 2)
+{%- set active = color | default('var(--primary-color)') %}
 {%- set card = {
   'type': 'button',
   'name': name,
-  'icon': icon,
   'show_name': false,
-  'grid_options': {'columns': 2, 'rows': 1},
+  'grid_options': {'columns': columns | default(2), 'rows': 1},
   'uix': {'style':
-    'ha-card { --state-active-color: var(--primary-color); --state-' ~ (entity.split('.')[0] if entity is defined else 'button') ~ '-active-color: var(--primary-color); } '
+    'ha-card { --state-active-color: ' ~ active ~ '; --state-' ~ (entity.split('.')[0] if entity is defined else 'button') ~ '-active-color: ' ~ active ~ '; } '
     ~ 'ha-state-icon { width: 75% !important; height: 75% !important; max-height: none !important; }'},
 } %}
+{%- if icon is defined %}
+  {%- set card = dict(card, icon=icon) %}
+{%- endif %}
 {%- if entity is defined %}
   {%- set card = dict(card, entity=entity, show_state=false, tap_action={'action': 'toggle'}) %}
-{%- else %}
-  {%- set tap = {'action': 'perform-action', 'perform_action': action, 'target': {'entity_id': target}} %}
+{%- endif %}
+{%- if action is defined %}
+  {%- set tap = {'action': 'perform-action', 'perform_action': action, 'target': {'entity_id': target | default(entity)}} %}
   {%- if confirm is defined and confirm %}
     {%- set tap = dict(tap, confirmation={'text': name ~ '?'}) %}
   {%- endif %}
   {%- set card = dict(card, tap_action=tap) %}
+{%- endif %}
+{%- if visibility is defined %}
+  {%- set card = dict(card, visibility=visibility) %}
 {%- endif %}
 {{ card | tojson }}

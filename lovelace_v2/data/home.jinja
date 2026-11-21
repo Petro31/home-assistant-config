@@ -533,7 +533,9 @@
   The remote: a square Room Summary Card beside the house's, shaped the same
   way. The card and its media icon open the page of the Home button named in
   'page'. 'extras' are plain icons after the counted ones: no count badge,
-  tap toggles.
+  tap toggles. An extra may be a mapping instead ({entity_id, icon, link,
+  count}): 'link' names the Home button whose page it opens; 'count' names an
+  attribute (a list) whose length is its count badge while it's on.
 -#}
 {%- set home_remote = {
   'name': 'Remote',
@@ -548,7 +550,50 @@
     'target': 'binary_sensor.remote_media_players',
     'entities': ['media_player.yamaha_rx_v6a', 'media_player.yamaha_rx_v6a_zone2'],
   },
-  'extras': ['switch.movie_time', 'switch.hyperion_usb_capture'],
+  'extras': [
+    'switch.movie_time',
+    'switch.hyperion_usb_capture',
+    {'entity_id': 'binary_sensor.music_playing', 'icon': 'mdi:music', 'link': 'Music', 'count': 'playing'},
+  ],
+} %}
+
+{#-
+  The Music view (views/music.yaml), like the legacy one: a section per
+  receiver; its 'rooms' are its zone 1 and zone 2. One row of six buttons:
+  each room's zone power, Echo passthrough and AirPlay toggles (zones red,
+  the others blue). While the receiver is on ('power'), the volume row: the
+  active zone toggle (next zone), volume up/down and mute, on its active-zone
+  sensor via multizone_controller. A media control for each zone
+  that's playing and not on the Echo input ('echo_source'). Then the Echo
+  Dots that are playing.
+-#}
+{%- set music_zone_color = 'rgb(228, 94, 101)' %}
+{%- set music_link_color = 'rgb(49, 196, 243)' %}
+{%- set home_music = {
+  'receivers': [
+    {
+      'power': 'binary_sensor.yamaha_receiver',
+      'active': 'sensor.active_media_player',
+      'players': '*yamaha_rx_v6a*',
+      'echo_source': 'audio3',
+      'rooms': [
+        {'name': 'Living Room', 'zone': 'media_player.yamaha_rx_v6a', 'zone_icon': 'fapro:power-zone-1', 'echo': 'switch.echo_through_living_room', 'airplay': 'switch.living_room_airplay'},
+        {'name': 'Dining Room', 'zone': 'media_player.yamaha_rx_v6a_zone2', 'zone_icon': 'fapro:power-zone-2', 'echo': 'switch.echo_through_dining_room', 'airplay': 'switch.dining_room_airplay'},
+      ],
+    },{
+      'power': 'binary_sensor.basement_yamaha_receiver',
+      'active': 'sensor.basement_active_media_player',
+      'players': '*yamaha_receiver*',
+      'echo_source': 'Echo',
+      'rooms': [
+        {'name': 'Deck', 'zone': 'media_player.yamaha_receiver', 'zone_icon': 'fapro:power-zone-1', 'echo': 'switch.echo_through_deck', 'airplay': 'switch.deck_airplay'},
+        {'name': 'Basement', 'zone': 'media_player.yamaha_receiver_zone_2', 'zone_icon': 'fapro:power-zone-2', 'echo': 'switch.echo_through_basement', 'airplay': 'switch.basement_airplay'},
+      ],
+    },
+  ],
+  'zone_color': music_zone_color,
+  'link_color': music_link_color,
+  'echos': '*_echo_dot*',
 } %}
 
 {#-
@@ -678,7 +723,7 @@
     'icon': 'mdi:music-box',
     'household': ['Off'],
     'image': '/local/images/music.png',
-    'legacy': 'music',
+    'view': 'music',
     'media': {'entities': [
       'media_player.yamaha_rx_v6a',
       'media_player.yamaha_rx_v6a_zone2',

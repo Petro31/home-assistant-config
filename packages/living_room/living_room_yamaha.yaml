@@ -24,6 +24,7 @@
 # Entities created by this package:
 #   binary_sensor.yamaha_receiver
 #   binary_sensor.remote_media_players (either RX-V6A zone on; group-like)
+#   binary_sensor.music_playing (any receiver zone or Echo Dot playing music)
 #   switch.xbox_source
 #   switch.playstation_source
 #   switch.nintendo_switch_source
@@ -317,6 +318,21 @@ template:
     attributes:
       entity_id: >
         {{ ['media_player.yamaha_rx_v6a', 'media_player.yamaha_rx_v6a_zone2'] }}
+
+  # On while any media player plays music (custom_templates/music.jinja: both
+  # receivers' zones and the Echo Dots); 'playing' lists them. The Home v2
+  # remote card's music icon and its count.
+  - unique_id: music_playing
+    name: Music Playing
+    default_entity_id: binary_sensor.music_playing
+    icon: mdi:music
+    state: >
+      {% from 'music.jinja' import music_playing %}
+      {{ music_playing() | from_json | count > 0 }}
+    attributes:
+      playing: >
+        {% from 'music.jinja' import music_playing %}
+        {{ music_playing() | from_json }}
 
 - switch:
 

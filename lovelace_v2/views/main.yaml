@@ -153,15 +153,19 @@
 
 {#-
   Variables for cards/room.yaml for a summary card atop the Household window
-  (the house, the remote): square, half width. Its 'links' name Home buttons;
-  they become those buttons' paths.
+  (the house, the remote): square, half width. Its 'links' (and its extras'
+  'link') name Home buttons; they become those buttons' paths.
 #}
 {%- macro summary(area, navigation_path, options={}) %}
   {%- set links = namespace(map={}) %}
   {%- for key, name in (area.links | default({})).items() %}
     {%- set links.map = dict(links.map, **{key: page(name)}) %}
   {%- endfor %}
-  {{- {'area': dict(area, links=links.map), 'navigation_path': navigation_path, 'card_options': dict({
+  {%- set extras = namespace(list=[]) %}
+  {%- for e in area.extras | default([]) %}
+    {%- set extras.list = extras.list + [dict(e, link=page(e.link)) if e is mapping and e.link is defined else e] %}
+  {%- endfor %}
+  {{- {'area': dict(area, links=links.map, extras=extras.list), 'navigation_path': navigation_path, 'card_options': dict({
     'grid_options': {'columns': 6, 'rows': 'auto'},
     'icon_opacity_preset': 'high_visibility',
     'styles': {'card': {'--user-grid-aspect-ratio': '1/1'}},
