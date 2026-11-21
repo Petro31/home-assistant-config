@@ -115,9 +115,10 @@
 {%- endmacro %}
 
 {#-
-  Home: quick actions and weather, people, the grid of picture buttons, then
-  the Household window: status lines of the 'household' buttons and the
-  recent activity log.
+  Home: quick actions and weather, people, then the Household window: the
+  summary cards and the recent activity log. The Home buttons (main_buttons)
+  are no longer shown as a grid; they still give each view its path (page()),
+  and the summary cards' icons link to them by name.
 #}
 {%- set home = namespace(icons=[], lines=[]) %}
 {%- for item in main_buttons %}
@@ -132,8 +133,8 @@
 
 {#-
   Variables for cards/room.yaml for a summary card atop the Household window
-  (the house, the remote): square, half width. Its 'links' (and its extras'
-  'link') name Home buttons; they become those buttons' paths.
+  (the house, remote, holiday, events): square, half width. Its 'links' (and
+  its extras' 'link') name Home buttons; they become those buttons' paths.
 #}
 {%- macro summary(area, navigation_path, options={}) %}
   {%- set links = namespace(map={}) %}
@@ -150,14 +151,21 @@
     'styles': {'card': {'--user-grid-aspect-ratio': '1/1'}},
   }, **options)} | tojson }}
 {%- endmacro %}
+{#-
+  The house card's icons fill a 4-row grid down each column, right to left;
+  its fifth icon (the Echos) is pinned to the bottom of the second column
+  instead of its top.
+#}
 - !include ['menu.yaml', {{ {
     'name': 'Home', 'icon': 'mdi:home', 'path': 'home',
     'actions': quick_actions, 'corner': home_corner, 'people': people,
-    'icons': home.icons,
     'household': dict(household, lines=home.lines),
     'summaries': [
       summary(house, dashboard ~ '/areas', {
-        'uix': {'style': {'room-background-image $ hui-image $': 'img { object-position: center 75% !important; }'}},
+        'uix': {'style': {
+          'room-background-image $ hui-image $': 'img { object-position: center 75% !important; }',
+          'entity-collection $': 'room-state-icon:nth-of-type(5) { grid-area: 4 / 2; }',
+        }},
       }) | fromjson,
       summary(home_remote, page(home_remote.page)) | fromjson,
       summary(home_holiday, page(home_holiday.page)) | fromjson,

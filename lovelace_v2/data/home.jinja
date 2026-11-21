@@ -456,7 +456,9 @@
   (never toggles the house), or, for a key in 'links', the page of that Home
   button (by name). The card opens Areas. 'image' is the card's background
   (the Areas button's picture). Its locks group (the lock plus every door) is
-  added after the doors list below.
+  added after the doors list below. After the four counted icons, 'extras':
+  the Echos (Amazon logo), opening the Echos view; main.yaml pins it to the
+  bottom of a second column.
 -#}
 {%- set house_ns = namespace(lights=[], leaks=[]) %}
 {%- for area in areas %}
@@ -483,6 +485,9 @@
     'entities': ['binary_sensor.washer', 'binary_sensor.dryer_status'],
   },
   'leaks': {'target': 'binary_sensor.leak', 'entities': house_ns.leaks},
+  'extras': [
+    {'entity_id': 'sensor.alexa_last_tts', 'icon': 'fab:amazon', 'link': 'Echos', 'color': 'amber'},
+  ],
   'temperature': home_sensors[0],
   'humidity': home_sensors[1],
 } %}
@@ -654,9 +659,9 @@
   'page': 'Events',
   'icons': [],
   'extras': [
-    {'entity_id': 'select.drink', 'icon': 'mdi:glass-cocktail', 'link': 'Drinks'},
+    {'entity_id': 'select.drink', 'icon': 'mdi:glass-cocktail', 'link': 'Drinks', 'color': 'amber'},
     {'entity_id': 'binary_sensor.irrigation_season', 'icon': 'mdi:sprinkler-variant', 'link': 'Irrigation'},
-    {'entity_id': 'sensor.mikes_todo_overview', 'icon': 'mdi:run', 'link': 'This Week'},
+    {'entity_id': 'sensor.mikes_todo_overview', 'icon': 'mdi:run', 'link': 'This Week', 'color': 'amber'},
   ],
 } %}
 
@@ -756,7 +761,7 @@
     'name': 'Echos',
     'icon': 'mdi:amazon-alexa',
     'image': '/local/images/echo_2.png',
-    'legacy': 'echos',
+    'view': 'echos',
     'status': "{{ state_attr('sensor.alexa_last_tts', 'text') | default('', true) | truncate(60) or 'No announcements' }}",
   },{
     'name': 'Events',

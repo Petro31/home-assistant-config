@@ -1,0 +1,94 @@
+# lovelace_gen
+# The Echos subview: a copy of the legacy Echos view
+# (lovelace/views/echos.yaml) without its header row (the legacy back
+# button); the subview's back arrow returns to Home. The text box for what
+# Alexa says, the room toggles (where she says it), the last announcement,
+# and the Text to Speech and Announce buttons.
+# Variables:
+#   name, icon, path, back_path (no badges)
+
+{%- set columns = 2 %}
+{%- set rows = 5 %}
+{%- set booleans = [
+  {'entity':'input_boolean.basement'},
+  {'entity':'input_boolean.bonus_room'},
+  {'entity':'input_boolean.downstairs'},
+  {'entity':'input_boolean.everywhere'},
+  {'entity':'input_boolean.game_room'},
+  {'entity':'input_boolean.garage'},
+  {'entity':'input_boolean.kitchen'},
+  {'entity':'input_boolean.living_room'},
+  {'entity':'input_boolean.master_bedroom'},
+] %}
+
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+subview: true
+back_path: {{ back_path }}
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+      - !include '../../lovelace/templates/buttons/edge.yaml'
+      - !include 
+        - '../../lovelace/templates/headers/full_text_box.yaml'
+        - entity: input_text.alexa_say
+      - !include '../../lovelace/templates/buttons/edge.yaml'
+  {%- for i in range(columns * rows) %}
+  {%- set boolean = booleans[i] %}
+    {%- if i % columns == 0 %}
+  - type: horizontal-stack
+    cards:
+    - !include '../../lovelace/templates/spacer_edge.yaml'
+    {%- endif %}
+    {% if boolean %}
+    - !include
+      {%- if boolean.template %}
+      - {{ boolean.template }}
+      {%- else %}
+      - '../../lovelace/templates/buttons/boolean_control.yaml'
+      {%- endif %}
+      {%- if boolean.entity is defined %}
+      - entity: {{ boolean.entity }}
+        color: {{ boolean.color }}
+      {%- elif boolean.path is defined %}
+      - path: {{ boolean.path }}
+      {%- endif %}
+      {%- if boolean.icon is defined %}
+        icon: {{ boolean.icon }}
+      {%- endif %}
+      {%- if boolean.image is defined %}
+        image: {{ boolean.image }}
+      {%- endif %}
+    {%- else %}
+    - !include '../../lovelace/templates/buttons/spacer.yaml'
+    {%- endif %}
+    {%- if i % columns == columns - 1 %}
+    - !include '../../lovelace/templates/spacer_edge.yaml'
+    {%- endif %}
+  {%- endfor %}
+
+  - type: horizontal-stack
+    cards:
+      - !include '../../lovelace/templates/buttons/edge.yaml'
+      - !include 
+        - '../../lovelace/templates/buttons/announced.yaml'
+        - entity: sensor.alexa_last_tts
+      - !include '../../lovelace/templates/buttons/edge.yaml'
+
+  - type: horizontal-stack
+    cards:
+      - !include '../../lovelace/templates/buttons/edge.yaml'
+      - !include 
+        - '../../lovelace/templates/buttons/boolean_control.yaml'
+        - entity: script.alexa_tts
+          name: Text to Speech
+          icon: mdi:message
+      - !include 
+        - '../../lovelace/templates/buttons/boolean_control.yaml'
+        - entity: script.alexa_announce
+          name: Announce
+          icon: mdi:message-alert
+      - !include '../../lovelace/templates/buttons/edge.yaml'
