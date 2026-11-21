@@ -476,7 +476,7 @@
   'image': '/local/images/home_transparent_5.png',
   'icons': ['lights', 'locks', 'appliances', 'leaks'],
   'toggle': [],
-  'links': {'lights': 'Areas', 'locks': 'Doors'},
+  'links': {'lights': 'Areas', 'locks': 'Doors', 'appliances': 'Laundry'},
   'lights': {'target': 'light.floor_all', 'entities': house_ns.lights},
   'appliances': {
     'target': 'binary_sensor.laundry_running',
@@ -774,7 +774,7 @@
     'name': 'Laundry',
     'icon': 'mdi:washing-machine',
     'household': ['Idle'],
-    'legacy': 'laundry',
+    'view': 'laundry',
     'status': "{%- set running = (['Washer running'] if is_state('binary_sensor.washer_status', 'on') else [])"
       ~ " + (['Dryer running'] if is_state('binary_sensor.dryer_status', 'on') else []) %}"
       ~ "{{ running | join(' · ') or 'Idle' }}",
