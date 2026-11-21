@@ -1,0 +1,32 @@
+# lovelace_gen
+# The This Week subview: a copy of the legacy This Week view
+# (lovelace/views/this_week.yaml) without its header row (the legacy back
+# button); the subview's back arrow returns to Home. Today's and this week's
+# to-dos (sensor.mikes_todo_overview).
+# Variables:
+#   name, icon, path, back_path (no badges)
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+subview: true
+back_path: {{ back_path }}
+cards:
+- type: vertical-stack
+  cards:
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+      title: Today
+    card_param: cards
+    filter:
+      template: >
+        {% raw %}{{ state_attr('sensor.mikes_todo_overview', 'today') | list or [] }}{% endraw %}
+
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+      title: This Week
+    card_param: cards
+    filter:
+      template: >
+        {% raw %}{{ state_attr('sensor.mikes_todo_overview', 'this_week') | list or [] }}{% endraw %}

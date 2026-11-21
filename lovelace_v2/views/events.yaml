@@ -1,0 +1,62 @@
+# lovelace_gen
+# The Events subview: a copy of the legacy Events view
+# (lovelace/views/events.yaml) without its header row (the legacy back
+# button); the subview's back arrow returns to Home. The event category
+# buttons, then a card per event in the chosen category.
+# Variables:
+#   name, icon, path, back_path (no badges)
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+subview: true
+back_path: {{ back_path }}
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+      - !include '../../lovelace/templates/buttons/edge.yaml'
+      - entity: switch.event_category_all
+        icon: mdi:calendar-blank
+        <<: &base
+          type: custom:button-card
+          color: var(--paper-item-icon-active-color)
+          aspect_ratio: 1/1
+          show_name: false
+          show_label: false
+          show_icon: true
+          styles:
+            icon:
+            - width: 80%
+            card:
+            - padding: 0px
+            - border-radius: 18%
+      - entity: switch.event_category_race
+        icon: mdi:run-fast
+        <<: *base
+      - entity: switch.event_category_vacation
+        icon: mdi:white-balance-sunny
+        <<: *base
+      - entity: switch.event_category_work
+        icon: mdi:briefcase
+        <<: *base
+      - entity: switch.event_category_party
+        icon: mdi:party-popper
+        <<: *base
+      - !include '../../lovelace/templates/buttons/spacer.yaml'
+      - !include '../../lovelace/templates/buttons/edge.yaml'
+
+  - type: custom:auto-entities
+    card:
+      type: vertical-stack
+    card_param: cards
+    filter:
+      template: >
+        {% raw %}
+        {% set category = states('input_select.event_category').lower() %}
+        {% if category != 'all' %}
+          {{ state_attr('sensor.lambosino_s_random_events', 'events') | map(attribute='card') | selectattr('category', 'eq', category) | list or [] }}
+        {% else %}
+          {{ state_attr('sensor.lambosino_s_random_events', 'events') | map(attribute='card') | list or [] }}
+        {% endif %}
+        {% endraw %}

@@ -5,7 +5,7 @@
 #   - !include ['file.yaml', <the variables, a mapping piped through tojson>]
 # JSON is valid YAML, so no indentation bookkeeping is needed. Macros return
 # JSON too; decode it with fromjson.
-{%- from '/config/lovelace_v2/data/home.jinja' import main_buttons, people, quick_actions, home_corner, count_rules, groups, home_sensors, household, house, home_remote, home_holiday %}
+{%- from '/config/lovelace_v2/data/home.jinja' import main_buttons, people, quick_actions, home_corner, count_rules, groups, home_sensors, household, house, home_remote, home_holiday, home_events %}
 {%- set dashboard = '/ui-home-v2' %}
 
 {#- A view path from a name: lowercase, spaces to underscores. #}
@@ -161,6 +161,7 @@
       }) | fromjson,
       summary(home_remote, page(home_remote.page)) | fromjson,
       summary(home_holiday, page(home_holiday.page)) | fromjson,
+      summary(home_events, page(home_events.page)) | fromjson,
     ],
   } | tojson }}]
 

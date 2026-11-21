@@ -639,6 +639,27 @@
   ],
 } %}
 
+{#-
+  Events: a square Room Summary Card beside the others, shaped the same way,
+  on a calendar picture. The card opens the Events view; its icons (no counts)
+  open the Drinks, Irrigation and This Week views ('link': Home button names).
+  Each of those views is a copy of its legacy view (lovelace/views/) without
+  the header row.
+-#}
+{%- set home_events = {
+  'name': 'Events',
+  'area_id': 'events',
+  'icon': 'mdi:calendar-outline',
+  'image': '/local/images/calendar.png',
+  'page': 'Events',
+  'icons': [],
+  'extras': [
+    {'entity_id': 'select.drink', 'icon': 'mdi:glass-cocktail', 'link': 'Drinks'},
+    {'entity_id': 'binary_sensor.irrigation_season', 'icon': 'mdi:sprinkler-variant', 'link': 'Irrigation'},
+    {'entity_id': 'sensor.mikes_todo_overview', 'icon': 'mdi:run', 'link': 'This Week'},
+  ],
+} %}
+
 {#- People on the Home view. 'who' is their name in custom_templates/dates.jinja
     (for the birthday); 'map' is their map view on the old dashboard. #}
 {%- set people = [
@@ -740,21 +761,21 @@
   },{
     'name': 'Events',
     'icon': 'mdi:calendar-outline',
-    'legacy': 'events',
+    'view': 'events',
     'status': "{%- set e = state_attr('sensor.lambosino_s_random_events', 'events') | default([], true) | first | default(none) %}"
       ~ "{%- if e %}{{ e.event.summary }} · {{ 'today' if e.days == 0 else 'tomorrow' if e.days == 1 else 'in ' ~ e.days ~ ' days' }}"
       ~ "{%- else %}Nothing planned{%- endif %}",
   },{
     'name': 'This Week',
     'icon': 'mdi:calendar-star',
-    'legacy': 'this_week',
+    'view': 'this_week',
     'status': "{{ state_attr('sensor.mikes_todo_overview', 'today') | default([], true) | count }} today · "
       ~ "{{ state_attr('sensor.mikes_todo_overview', 'this_week') | default([], true) | count }} this week",
   },{
     'name': 'Drinks',
     'icon': 'mdi:glass-wine',
     'image': "{{ state_attr('select.drink', 'image') or '/local/images/wine.png' }}",
-    'legacy': 'drinks',
+    'view': 'drinks',
     'status': "{{ states('select.drink') }}",
   },{
     'name': 'Plants',
@@ -767,7 +788,7 @@
     'name': 'Irrigation',
     'icon': 'mdi:sprinkler-variant',
     'household': ['Off season', 'In season'],
-    'legacy': 'irrigation',
+    'view': 'irrigation',
     'status': "{{ 'Watering' if is_state('switch.front_yard_status', 'on') or is_state('switch.back_yard_status', 'on') "
       ~ "else 'In season' if is_state('binary_sensor.irrigation_season', 'on') else 'Off season' }}",
   },{

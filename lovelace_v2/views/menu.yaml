@@ -12,7 +12,8 @@
 #   people     person cards
 #   icons      a grid of picture/icon-only buttons (cards/menu_icon.yaml)
 #   summaries  Room Summary Cards (cards/room.yaml variables) atop the
-#              Household window: the house and the remote, side by side
+#              Household window: the house, remote, holiday and events, two
+#              to a row
 #   household  the rest of the Household window: activity, hours (its status
 #              lines feed cards/household_status.yaml, not used for now)
 title: {{ name | tojson }}
