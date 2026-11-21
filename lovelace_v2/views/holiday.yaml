@@ -5,8 +5,7 @@
 # trees and outdoor lights); then a section per room with its lights. Tile
 # features come from tile_features in data/home.jinja (or the domain default).
 # Variables:
-#   name, icon, path, back_path
-#   badges  the view's badges (built by main.yaml)
+#   name, icon, path, back_path (no badges)
 {%- from '/config/lovelace_v2/data/home.jinja' import home_holiday %}
 title: {{ name | tojson }}
 path: {{ path }}
@@ -15,7 +14,6 @@ type: sections
 max_columns: 2
 subview: true
 back_path: {{ back_path }}
-badges: {{ badges | default([]) | tojson }}
 sections:
 - type: grid
   cards:
