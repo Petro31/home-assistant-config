@@ -338,6 +338,12 @@ template:
     event: start
   - trigger: event
     event_type: templates_reloaded
+  # The holiday changing (its own midnight update, or the override).
+  - trigger: state
+    entity_id: sensor.holiday_lighting
+    not_to:
+    - unknown
+    - unavailable
   actions:
   - action: script.get_indoor_holiday
     response_variable: response
@@ -355,9 +361,28 @@ template:
   - unique_id: 87f4f2b9-f15c-4948-a4fe-6316ecd0d98e
     name: Seasonal Accent Lights
     default_entity_id: sensor.seasonal_accent_lights
+    variables:
+      # sensor.holiday_lighting's states and their names for the UI.
+      holiday_names:
+        no_holiday: Mood Lighting
+        valentines: Valentine's Day
+        st_patricks_day: St. Patrick's Day
+        easter: Easter
+        memorial_day: Memorial Day
+        independence_day: Independence Day
+        halloween: Halloween
+        veterans_day: Veterans Day
+        thanksgiving: Thanksgiving
+        christmas: Christmas
+        patriotic: Patriotic
     state: "{{ entities | length }}"
     attributes:
       settings: "{{ entities }}"
+      # The current holiday's name (the Indoor Holiday switch's name and the
+      # Home v2 holiday card's title).
+      current_holiday_name: >
+        {%- set holiday = states('sensor.holiday_lighting') %}
+        {{- holiday_names.get(holiday, holiday | replace('_', ' ') | title) }}
       ui: >
         {% set ambiance_entity = 'light.great_room_ambiance' %}
         {% set accent_entity = 'light.great_room_accent' %}
@@ -579,11 +604,34 @@ template:
   # {{- ns.items | select('true') | list | length == settings | length }}
   
   - unique_id: 2954ff2b-3e2e-47e4-9a5a-f2cc6c226bdc
-    name: Indoor Holiday
+    # The current holiday's name (Mood Lighting when there is none).
+    name: >
+      {{ state_attr('sensor.seasonal_accent_lights', 'current_holiday_name') or 'Indoor Holiday' }}
     default_entity_id: switch.indoor_holiday
     state: >
       {% set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
       {{ settings | map(attribute='entity_id') | select('is_state', 'on') | list | length == settings | length }}
+    # The current holiday's icon (a spotlight when there is none); its off
+    # variant, where MDI has one, while off. On is worked out as in state
+    # (this.state would be a step behind).
+    icon: >
+      {%- set settings = state_attr('sensor.seasonal_accent_lights', 'settings') %}
+      {%- set is_on = settings | map(attribute='entity_id') | select('is_state', 'on') | list | length == settings | length %}
+      {%- set icons = {
+        'no_holiday': ['mdi:spotlight-beam', 'mdi:spotlight'],
+        'christmas': ['mdi:string-lights', 'mdi:string-lights-off'],
+        'valentines': ['mdi:heart', 'mdi:heart-off'],
+        'st_patricks_day': ['mdi:clover'],
+        'easter': ['mdi:egg-easter'],
+        'memorial_day': ['mdi:flag', 'mdi:flag-off'],
+        'independence_day': ['mdi:firework', 'mdi:firework-off'],
+        'veterans_day': ['mdi:flag', 'mdi:flag-off'],
+        'patriotic': ['mdi:flag', 'mdi:flag-off'],
+        'halloween': ['mdi:halloween'],
+        'thanksgiving': ['mdi:turkey'],
+      } %}
+      {%- set icon = icons.get(states('sensor.holiday_lighting'), icons.no_holiday) %}
+      {{- icon[0] if is_on else icon[-1] }}
   
     availability: >
       {{ state_attr('sensor.seasonal_accent_lights', 'settings') is not none }}

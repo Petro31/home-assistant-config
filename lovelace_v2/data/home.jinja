@@ -561,9 +561,16 @@
   name, state_content}; one with 'holiday' shows only during that holiday,
   per sensor.holiday_lighting), then the 'rooms' and their lights (the accent
   lights and the living room lamps).
+  Its title follows the holiday (holiday_title, an HA template):
+  sensor.seasonal_accent_lights' current_holiday_name (Mood Lighting when
+  there is none).
 -#}
+{%- set holiday_title -%}
+{% raw %}{{ state_attr('sensor.seasonal_accent_lights', 'current_holiday_name') or 'Holiday' }}{% endraw %}
+{%- endset %}
 {%- set home_holiday = {
   'name': 'Holiday',
+  'title': holiday_title,
   'area_id': 'holiday',
   'icon': 'mdi:string-lights',
   'image_entity': 'sensor.holiday_lighting',
@@ -571,7 +578,7 @@
   'icons': [],
   'extras': ['light.great_room_ambiance', 'switch.indoor_holiday'],
   'indoor': [
-    {'entity': 'switch.indoor_holiday', 'name': 'Indoor Scene'},
+    {'entity': 'switch.indoor_holiday'},
     {'entity': 'light.great_room_ambiance', 'name': 'All Accent Lights'},
     {'entity': 'light.christmas_tree', 'holiday': 'christmas'},
   ],

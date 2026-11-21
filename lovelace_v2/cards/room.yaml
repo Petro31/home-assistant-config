@@ -19,7 +19,12 @@
 #     averages, which depend on area assignments)
 #   - the area's 'image', if any, is the card's background and the room icon
 #     is hidden (its space still opens the subview); or 'image_entity', an
-#     entity whose picture is the background
+#     entity whose picture is the background. The card reads that picture
+#     only when it re-renders, and it re-renders when one of its sensors
+#     changes, so the entity is added as a sensor too (hidden by UIX when it
+#     is the only one) to make the picture follow it live.
+#   - the area's 'title', if any (an HA template), replaces the name shown
+#     (by UIX, live; 'name' stays the card's own)
 #   - no area stats line, no default room entity (light.<area>_light)
 # Variables:
 #   area             an area from data/home.jinja (or the house)
@@ -96,6 +101,16 @@
 {%- if area.image is defined %}
   {%- set card = dict(card, background={'image': area.image}, features=card.features + ['hide_room_icon']) %}
 {%- elif area.image_entity is defined %}
-  {%- set card = dict(card, background={'image_entity': area.image_entity}, features=card.features + ['hide_room_icon']) %}
+  {%- set card = dict(card, background={'image_entity': area.image_entity}, features=card.features + ['hide_room_icon'], sensors=sensors + [area.image_entity]) %}
+{%- endif %}
+{%- set style = namespace(css='') %}
+{%- if area.image_entity is defined and area.image is not defined and not sensors %}
+  {%- set style.css = style.css ~ 'sensor-collection { display: none; } ' %}
+{%- endif %}
+{%- if area.title is defined %}
+  {%- set style.css = style.css ~ '.name { font-size: 0 !important; } .name::after { content: "' ~ area.title ~ '"; font-size: clamp(1.2rem, 6cqw, 2rem); }' %}
+{%- endif %}
+{%- if style.css %}
+  {%- set card = dict(card, uix={'style': style.css}) %}
 {%- endif %}
 {{ dict(card, **card_options | default({})) | tojson }}
