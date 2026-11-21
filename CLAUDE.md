@@ -97,6 +97,10 @@ To do:
 - [x] Events summary card on Home. The card opens a subview copy of the Events view (`lovelace/views/events.yaml`). Its icons open subviews for Drinks (`drinks.yaml`), Irrigation (`irrigation.yaml`) and This Week (`this_week.yaml`).
 - [ ] Remote: recreate the Remote view (`lovelace/views/remote.yaml`) as a v2 subview, with a Remote Settings subview (`lovelace/views/remote_settings.yaml`). Then point the remote card there instead of the legacy view.
 - [x] Music icon on the remote card. It opens a v2 Music page with the music controls and media players, like the legacy Music view (`lovelace/views/music.yaml`).
+- [ ] Plants: figure out what to do with it. Since the Home button grid was removed, no summary card links to the Plants button (still `legacy: 'plants'`), so v2 has no way to reach it.
+- [ ] Redesign the person cards on Home (`lovelace_v2/cards/person.yaml`) using the Room Summary Card, like the summary cards.
+- [ ] Fully remove custom button-card from v2. It still comes in through the copied legacy views and their `lovelace/templates/` includes (e.g. Events' category buttons, Echos, the Drinks header).
+- [ ] Fix the broken card on the Echos subview (`lovelace_v2/views/echos.yaml`).
 
 ## Custom integrations
 
