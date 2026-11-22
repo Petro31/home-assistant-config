@@ -2,8 +2,8 @@
 # The Echos subview: a copy of the legacy Echos view
 # (lovelace/views/echos.yaml) without its header row (the legacy back
 # button); the subview's back arrow returns to Home. The text box for what
-# Alexa says, the room toggles (where she says it), the last announcement,
-# and the Text to Speech and Announce buttons.
+# Alexa says, the room toggles (where she says it), the last announcement
+# (a Mushroom template card), and the Text to Speech and Announce buttons.
 # Variables:
 #   name, icon, path, back_path (no badges)
 
@@ -73,9 +73,29 @@ cards:
   - type: horizontal-stack
     cards:
       - !include '../../lovelace/templates/buttons/edge.yaml'
-      - !include 
-        - '../../lovelace/templates/buttons/announced.yaml'
-        - entity: sensor.alexa_last_tts
+      # The last announcement (was lovelace/templates/buttons/announced.yaml,
+      # which broke on messages from automations: they have no person).
+      # Who sent it and how, when and to which rooms, and what was said.
+      - type: custom:mushroom-template-card
+        entity: sensor.alexa_last_tts
+        multiline_secondary: true
+        tap_action:
+          action: more-info
+        {%- raw %}
+        picture: >
+          {%- set person = state_attr('sensor.alexa_last_tts', 'person') %}
+          {{ state_attr(person, 'entity_picture') if person else '' }}
+        icon: mdi:home-assistant
+        icon_color: blue
+        primary: >
+          {%- set person = state_attr('sensor.alexa_last_tts', 'person') %}
+          {%- set who = state_attr(person, 'friendly_name') if person else 'Home Assistant' %}
+          {{ who }} {{ 'announced' if is_state_attr('sensor.alexa_last_tts', 'type', 'announce') else 'via Text to Speech' }}
+        secondary: |-
+          {%- set sent = states('sensor.alexa_last_tts') | as_datetime %}
+          {{- relative_time(sent) ~ ' ago' if sent else 'Never' }} · {{ state_attr('sensor.alexa_last_tts', 'targets') or 'nowhere' }}
+          "{{ state_attr('sensor.alexa_last_tts', 'text') }}"
+        {%- endraw %}
       - !include '../../lovelace/templates/buttons/edge.yaml'
 
   - type: horizontal-stack
