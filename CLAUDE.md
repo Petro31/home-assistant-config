@@ -99,6 +99,9 @@ The legacy dashboards (`ui-home.yaml` and `ui-status.yaml`) are built from `love
 To do:
 - [ ] Plants: figure out what to do with it. Since the Home button grid was removed, no summary card links to the Plants button (still `legacy: 'plants'`), so v2 has no way to reach it.
 - [ ] Fully remove custom button-card from v2. It still comes in through the copied legacy views and their `lovelace/templates/` includes (e.g. Events' category buttons, Echos, the Drinks header).
+- [ ] Recreate the Status dashboard (`ui-status.yaml`, built from `lovelace/views/status_master.yaml`) in the v2 style, like Home.
+- [ ] Recreate the Events page (`lovelace_v2/views/events.yaml`, still a copy of the legacy Events view) in the v2 style.
+- [ ] Recreate the running program dashboard: the This Week subview (`lovelace_v2/views/this_week.yaml`, a copy of the legacy view; data from `packages/running_training_programs.yaml`) in the v2 style.
 
 ## Custom integrations
 
@@ -172,6 +175,15 @@ Goal: over time, move features whose automations, scripts and templates are spli
 Goal: migrate everything left in `automation/`, `scripts/`, `template/` and `command_line/`, plus `sensor.yaml`, `media_player.yaml`, `notify.yaml`, `compensation.yaml` and `intent_script.yaml`. Delete each file (and its `configuration.yaml` line) once it's empty. These stay where they are: the UI-managed `automations.yaml`, `scripts.yaml` and `scenes.yaml`, and the dashboards (`lovelace`). The infrastructure configs (`cloud`, `logger`, `recorder`, `system_log`, `door_buddy`) were later moved to `packages/system/` and `packages/doors.yaml`.
 
 All candidates have been migrated.
+
+## To do
+
+Configuration work, separate from the dashboard to-do list under [Home v2](#home-v2). Do each as its own change, only when asked.
+
+- [ ] Irrigation Buddy: turn the irrigation automations (`packages/irrigation_scheduler.yaml`) into a custom integration, like the owner's other integrations (`door_buddy`, `harmony_helper`, `multizone_controller`).
+- [ ] Remove dead and unused things: go through the configuration (packages, helpers, scripts, templates, dashboards, `www/` files) and remove what nothing uses any more.
+- [ ] Find and address discrepancies across the entire configuration (e.g. names, entity IDs, package headers or comments that no longer match what the config does).
+- [ ] Office presence: an automation (in a package) that uses the office's Apollo MSR-2 radar (`binary_sensor.apollo_msr_2_8935e0_*`, area Office) to properly detect when either of the household's two people (`person.petro`, `person.lambo`) is in the office.
 
 ## Known issues
 
