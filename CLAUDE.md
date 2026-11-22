@@ -88,7 +88,7 @@ New features go in `packages/` (see `packages/leak_detection.yaml` for the curre
 
 ### Home v2 (in progress)
 
-`ui-home-v2.yaml` (admin-only) is a rebuild of the Home dashboard in `lovelace_v2/`, using built-in cards, Mushroom, UIX and the Room Summary Card. `lovelace_v2/data/home.jinja` holds the data and `lovelace_v2/views/main.yaml` builds the views. Home has summary cards (`lovelace_v2/cards/room.yaml`) atop the Household window: the house (opens Areas; its lock and laundry icons open the Doors and Laundry subviews), the remote (opens the Remote subview, a copy of the legacy view whose cog opens Remote Settings; its music icon opens the Music subview), the holiday (opens the Holiday subview) and events (opens the Events subview; its icons open the Drinks, Irrigation and This Week subviews). Buttons with `legacy:` in `home.jinja` still open the old dashboard's view.
+`ui-home-v2.yaml` (admin-only) is a rebuild of the Home dashboard in `lovelace_v2/`, using built-in cards, Mushroom, UIX and the Room Summary Card. `lovelace_v2/data/home.jinja` holds the data and `lovelace_v2/views/main.yaml` builds the views. Home has person cards (`lovelace_v2/cards/person.yaml`; each opens the person's subview, and its location icon their map subview) and summary cards (`lovelace_v2/cards/room.yaml`) atop the Household window: the house (opens Areas; its lock and laundry icons open the Doors and Laundry subviews), the remote (opens the Remote subview, a copy of the legacy view whose cog opens Remote Settings; its music icon opens the Music subview), the holiday (opens the Holiday subview) and events (opens the Events subview; its icons open the Drinks, Irrigation and This Week subviews). Buttons with `legacy:` in `home.jinja` still open the old dashboard's view.
 
 To do:
 - [x] Holiday summary card on Home. Its icons control the current holiday's themed lights directly. The card opens a page with all lights and scenes available for the current holiday (`sensor.holiday_lighting`; legacy `lovelace/views/holiday.yaml`).
@@ -98,7 +98,7 @@ To do:
 - [x] Remote: recreate the Remote view (`lovelace/views/remote.yaml`) as a v2 subview, with a Remote Settings subview (`lovelace/views/remote_settings.yaml`). Then point the remote card there instead of the legacy view.
 - [x] Music icon on the remote card. It opens a v2 Music page with the music controls and media players, like the legacy Music view (`lovelace/views/music.yaml`).
 - [ ] Plants: figure out what to do with it. Since the Home button grid was removed, no summary card links to the Plants button (still `legacy: 'plants'`), so v2 has no way to reach it.
-- [ ] Redesign the person cards on Home (`lovelace_v2/cards/person.yaml`) using the Room Summary Card, like the summary cards.
+- [x] Redesign the person cards on Home (`lovelace_v2/cards/person.yaml`) using the Room Summary Card, like the summary cards. Each opens a person subview (`lovelace_v2/views/person.yaml`); its location icon opens a map subview (`person_map.yaml`).
 - [ ] Fully remove custom button-card from v2. It still comes in through the copied legacy views and their `lovelace/templates/` includes (e.g. Events' category buttons, Echos, the Drinks header).
 - [x] Fix the broken card on the Echos subview (`lovelace_v2/views/echos.yaml`). The last-announcement button-card crashed on messages from automations (no person); it's now a Mushroom template card.
 
