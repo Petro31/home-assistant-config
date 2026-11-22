@@ -54,15 +54,12 @@
 
 {#-
   Left out of the On/Off buttons on the area subviews (they still count and
-  have tiles): the doorbell chime setting and the outside lights that run on
-  their own schedule.
+  have tiles): the doorbell chime setting and the porch outlet. (The
+  always-on outside sconces aren't in any area at all.)
 -#}
 {%- set on_off_exclude = [
   'switch.doorbell_chime_active',
   'switch.outside_porch',
-  'switch.passenger_sconce',
-  'switch.sconces_garage',
-  'switch.sconces_main_entrance',
 ] %}
 
 {#-
@@ -375,11 +372,9 @@
     'area_id': 'front_yard',
     'icon': 'mdi:tree',
     'lights': {
+      'target': 'light.area_outside',
       'entities': [
         'switch.outside_porch',
-        'switch.passenger_sconce',
-        'switch.sconces_garage',
-        'switch.sconces_main_entrance',
         'switch.sliding_door_sconce',
         'switch.flood_light',
         'light.main_door_left_bulb',

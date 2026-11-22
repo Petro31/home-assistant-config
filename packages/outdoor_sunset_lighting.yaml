@@ -1,9 +1,12 @@
 # Outdoor sunset lighting: at sunset, turns the outdoor bulbs on with the
 # season's scene (sensor.seasonal_lights), and at sunrise switches them to the
-# sunrise scene. If someone turns off a front door sconce switch, turns it back
-# on, notifies, announces it in the living room and, during the day, turns the
-# bulbs back off. Also holds the everyday outdoor bulb scenes: Sunrise Bulbs
-# (all off), Soft White (the default when there's no holiday) and DayLight.
+# sunrise scene. If someone turns off a front door sconce switch, turns it
+# back on, notifies, announces it in the living room and, during the day,
+# turns the bulbs back off. light.area_outside switches the outside lights
+# together, except those always-on front door sconces (the Outside area's
+# target on the Home v2 dashboard). Also holds the everyday outdoor bulb
+# scenes: Sunrise Bulbs (all off), Soft White (the default when there's no
+# holiday) and DayLight.
 #
 # External entities used:
 #   Group (group, UI)
@@ -28,12 +31,17 @@
 #   Sun (sun)
 #     sun.sun (through the sun triggers and condition)
 #   Z-Wave JS (zwave_js)
+#     Back Yard: Flood / Sconce (c3baeb3b55b2be85800b1e188b2c7013)
+#       switch.flood_light
+#       switch.sliding_door_sconce
 #     Front Yard: Garage Sconces (b1d0a1ebdf7883af6ca9be5ad848e5eb)
 #       switch.sconces_garage
 #     Front Yard: Main Door Sconces (355f69100e17fb9869a9bbcb7198786f)
 #       switch.sconces_main_entrance
 #     Front Yard: Passenger Door Sconce (12ec0b2afff1bb467983d1c17993f753)
 #       switch.passenger_sconce
+#     Porch: Outlet (e6ac7faef32679c1f2951bd80a3a2978)
+#       switch.outside_porch
 #   packages/echo_announcements.yaml
 #     script.notify_area
 #   packages/holiday/holiday_christmas.yaml and holiday_scenes.yaml
@@ -44,10 +52,39 @@
 #     script.notify
 #
 # Entities created by this package:
+#   light.area_outside (the outside lights but the always-on sconces; group-like)
 #   script.sunrise_sunset
 #   scene.sunrise_bulbs (no unique_id)
 #   scene.holiday_bulbs_soft_white (no unique_id)
 #   scene.holiday_bulbs_daylight (no unique_id)
+
+# On while any outside light is on; turns them all on or off. Leaves out the
+# always-on front door sconces (switch.passenger_sconce, switch.sconces_garage
+# and switch.sconces_main_entrance): never turned off, never counted. The
+# Outside area's lights target on the Home v2 dashboard (like the generated
+# light.area_* targets, which don't cover the outside areas). The entity_id
+# attribute lists them, so it acts like a group.
+template:
+- light:
+  - unique_id: area_outside
+    name: Outside
+    default_entity_id: light.area_outside
+    icon: mdi:tree
+    variables:
+      entities: [switch.outside_porch, switch.sliding_door_sconce, switch.flood_light, light.main_door_left_bulb, light.main_door_right_bulb, light.passenger_door_bulb, light.garage_sconce_left_bulb, light.garage_sconce_right_bulb, light.front_yard_uplight_left, light.front_yard_uplight_middle, light.front_yard_uplight_right]
+    state: >
+      {{ entities | select('is_state', 'on') | list | count > 0 }}
+    attributes:
+      entity_id: >
+        {{ entities }}
+    turn_on:
+    - action: homeassistant.turn_on
+      target:
+        entity_id: "{{ entities }}"
+    turn_off:
+    - action: homeassistant.turn_off
+      target:
+        entity_id: "{{ entities }}"
 
 automation:
 - alias: Outdoor Lights On at Sunset, Off at Sunrise
