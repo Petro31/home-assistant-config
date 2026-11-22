@@ -1,0 +1,107 @@
+# lovelace_gen
+# A person's subview (opened by their card on Home):
+#   - a Room Summary Card for the person: their picture (the person's
+#     entity_picture) as the background (full opacity, no gradient), their
+#     state as the title (Home, Away, or the zone; UIX, live), their weight
+#     and hours at work this week below it (work with a briefcase icon);
+#     text and icons outlined in black; tapping opens the person's more-info
+#   - their next birthday, one row (binary_sensor.personal_events)
+#   - their history this week (the built-in history card's state bar, from
+#     Monday 00:00 to now, via config-template-card)
+#   - a map of where they've been today, with the zones
+# Variables:
+#   name, icon, path, back_path (no badges)
+#   person  their entry in people (data/home.jinja): entity, who, weight, work
+#   zones   zones shown on the map
+{%- set p = person %}
+{%- set e = "'" ~ p.entity ~ "'" %}
+{%- set label = "{{ 'Home' if is_state(" ~ e ~ ", 'home') else 'Away' if is_state(" ~ e ~ ", 'not_home') else states(" ~ e ~ ") }}" %}
+{#- A solid 1px black outline: eight unblurred 1px text shadows around the text. #}
+{%- set outline = '-1px -1px 0 black, 0 -1px 0 black, 1px -1px 0 black, 1px 0 0 black, 1px 1px 0 black, 0 1px 0 black, -1px 1px 0 black, -1px 0 0 black' %}
+{%- set icon_outline = 'drop-shadow(1px 1px 0.5px black) drop-shadow(-1px -1px 0.5px black) drop-shadow(1px -1px 0.5px black) drop-shadow(-1px 1px 0.5px black)' %}
+{%- set info = {'action': 'more-info', 'entity': p.entity} %}
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+type: sections
+max_columns: 2
+subview: true
+back_path: {{ back_path }}
+sections:
+- type: grid
+  column_span: 2
+  cards:
+  - {{ {
+      'type': 'custom:room-summary-card',
+      'area': p.entity.split('.')[1],
+      'area_name': name,
+      'entity': {'entity_id': p.entity, 'tap_action': info},
+      'features': ['exclude_default_entities', 'hide_area_stats', 'hide_room_icon'],
+      'background': {'image_entity': p.entity, 'options': ['hide_gradient'], 'opacity': 100},
+      'entities': [],
+      'sensors': [p.weight, {'entity_id': p.work, 'icon': 'mdi:briefcase'}],
+      'sensor_classes': [],
+      'problem': {'display': 'active_only'},
+      'actions': {'tap_action': info},
+      'styles': {'card': {'--user-grid-aspect-ratio': '2/1'}},
+      'grid_options': {'columns': 12, 'rows': 'auto'},
+      'uix': {'style': {
+        '.': 'ha-card { text-shadow: ' ~ outline ~ '; } '
+          ~ '.info, .name { overflow: visible !important; } .name { font-size: 0 !important; } '
+          ~ '.name::after { content: "' ~ label ~ '"; font-size: clamp(1.2rem, 6cqw, 2rem); padding-right: 2px; }',
+        'sensor-collection $': 'ha-state-icon { filter: ' ~ icon_outline ~ '; }',
+      }},
+    } | tojson }}
+  # The next birthday (binary_sensor.personal_events).
+  - type: custom:mushroom-template-card
+    entity: binary_sensor.personal_events
+    icon: mdi:cake-variant
+    icon_color: pink
+    primary: Birthday
+    secondary: >
+      {%- raw %}
+      {%- set e = state_attr('binary_sensor.personal_events', 'events') | default([], true)
+          | selectattr('who', 'eq', {% endraw %}{{ p.who | tojson }}{% raw %}) | selectattr('event', 'eq', 'Birthday') | first | default(none) %}
+      {%- if e %}
+        {%- set days = 'today' if e.days_away == 0 else 'tomorrow' if e.days_away == 1 else 'in ' ~ e.days_away ~ ' days' %}
+        Turning {{ e.milestone }} {{ days }} · {{ (e.when | as_datetime).strftime('%B %-d') }}
+      {%- else %}
+        Unknown
+      {%- endif %}
+      {%- endraw %}
+    tap_action:
+      action: none
+    grid_options:
+      columns: 12
+      rows: 1
+  # The built-in history card (the state bar) from Monday 00:00 of this week
+  # (Monday-first) to now: config-template-card works out the hours since
+  # Monday. It can only end at now, so Saturday and Sunday show the weekend
+  # too; Monday morning starts the new week.
+  - type: custom:config-template-card
+    entities:
+    - {{ p.entity }}
+    grid_options:
+      columns: 12
+    card:
+      type: history-graph
+      title: This week
+      hours_to_show: >-
+        ${ (() => { const now = new Date(); const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (now.getDay() + 6) % 7); return Math.max(1, Math.ceil((now - monday) / 3600000)); })() }
+      entities:
+      - entity: {{ p.entity }}
+        name: {{ name | tojson }}
+- type: grid
+  column_span: 2
+  cards:
+  - type: map
+    default_zoom: 14
+    hours_to_show: 24
+    grid_options:
+      columns: 12
+      rows: 8
+    entities:
+    - entity: {{ p.entity }}
+    {%- for zone in zones %}
+    - {{ zone }}
+    {%- endfor %}

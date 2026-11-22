@@ -667,22 +667,36 @@
   ],
 } %}
 
-{#- People on the Home view. 'who' is their name in custom_templates/dates.jinja
-    (for the birthday); 'map' is their map view on the old dashboard. #}
+{#-
+  People on Home (cards/person.yaml), each with a person subview
+  (views/person.yaml, at their object_id) and a map subview
+  (views/person_map.yaml, at <object_id>_map). 'who' is their name in
+  binary_sensor.personal_events (their birthday) and their subview's title.
+  'person_zones' are the zones on their maps.
+-#}
 {%- set people = [
   {
     'entity': 'person.petro',
     'who': 'Mike',
     'weight': 'sensor.petro_weight',
     'work': 'sensor.petro_at_work',
-    'map': 'petro_map',
   },{
     'entity': 'person.lambo',
     'who': 'Lindsay',
     'weight': 'sensor.lambo_weight',
     'work': 'sensor.lambo_at_work',
-    'map': 'lambo_map',
   },
+] %}
+{%- set person_zones = [
+  'zone.cobbs_hill',
+  'zone.home',
+  'zone.lambs_lakehouse',
+  'zone.petros_lakehouse',
+  'zone.ruckhouse',
+  'zone.tops',
+  'zone.wegmans',
+  'zone.lambo_work',
+  'zone.petro_work',
 ] %}
 
 {#-

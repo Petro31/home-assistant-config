@@ -5,7 +5,7 @@
 #   - !include ['file.yaml', <the variables, a mapping piped through tojson>]
 # JSON is valid YAML, so no indentation bookkeeping is needed. Macros return
 # JSON too; decode it with fromjson.
-{%- from '/config/lovelace_v2/data/home.jinja' import main_buttons, people, quick_actions, home_corner, count_rules, groups, home_sensors, household, house, home_remote, home_holiday, home_events %}
+{%- from '/config/lovelace_v2/data/home.jinja' import main_buttons, people, quick_actions, home_corner, count_rules, groups, home_sensors, household, house, home_remote, home_holiday, home_events, person_zones %}
 {%- set dashboard = '/ui-home-v2' %}
 
 {#- A view path from a name: lowercase, spaces to underscores. #}
@@ -156,9 +156,16 @@
   its fifth icon (the Echos) is pinned to the bottom of the second column
   instead of its top.
 #}
+{#- Variables for cards/person.yaml: each person's subview and map paths. #}
+{%- set cards = namespace(people=[]) %}
+{%- for p in people %}
+  {%- set id = p.entity.split('.')[1] %}
+  {%- set cards.people = cards.people + [{'entity': p.entity, 'work': p.work,
+    'page': dashboard ~ '/' ~ id, 'map': dashboard ~ '/' ~ id ~ '_map'}] %}
+{%- endfor %}
 - !include ['menu.yaml', {{ {
     'name': 'Home', 'icon': 'mdi:home', 'path': 'home',
-    'actions': quick_actions, 'corner': home_corner, 'people': people,
+    'actions': quick_actions, 'corner': home_corner, 'people': cards.people,
     'household': dict(household, lines=home.lines),
     'summaries': [
       summary(house, dashboard ~ '/areas', {
@@ -205,4 +212,17 @@
   } | tojson }}]
     {%- endif %}
   {%- endif %}
+{%- endfor %}
+
+{#- Each person's subview and map subview (their card on Home opens them). #}
+{%- for p in people %}
+  {%- set id = p.entity.split('.')[1] %}
+- !include ['person.yaml', {{ {
+    'name': p.who, 'icon': 'mdi:account', 'path': id, 'back_path': dashboard ~ '/home',
+    'person': p, 'zones': person_zones,
+  } | tojson }}]
+- !include ['person_map.yaml', {{ {
+    'name': p.who ~ ' Map', 'icon': 'mdi:map', 'path': id ~ '_map', 'back_path': dashboard ~ '/home',
+    'entity': p.entity, 'zones': person_zones,
+  } | tojson }}]
 {%- endfor %}

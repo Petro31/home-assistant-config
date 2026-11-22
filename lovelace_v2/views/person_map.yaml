@@ -1,0 +1,27 @@
+# lovelace_gen
+# A person's map subview (the map icon on their card on Home): a copy of the
+# legacy person map view (lovelace/views/person_map.yaml): a full-page map of
+# their last 24 hours, with the zones.
+# Variables:
+#   name, icon, path, back_path (no badges)
+#   entity  the person
+#   zones   zones shown on the map
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+panel: true
+subview: true
+back_path: {{ back_path }}
+cards:
+- type: map
+  default_zoom: 14
+  geo_location_sources:
+  - all
+  style: |
+    ha-card { --primary-text-color: var(--paper-item-icon-active-color); }
+  hours_to_show: 24
+  entities:
+  - entity: {{ entity }}
+  {%- for zone in zones %}
+  - {{ zone }}
+  {%- endfor %}

@@ -1,57 +1,63 @@
 # lovelace_gen
-# A person (built-in picture-elements card): their photo, in grayscale while
-# they're away, with four lines of text at the bottom left:
-#   Home/Away
-#   weight
-#   hours at work
-#   "Turning N in N days" (their Birthday in binary_sensor.personal_events)
-# Tapping opens their map view on the old dashboard until it's ported.
+# A person on Home: Room Summary Card (HACS:
+# homeassistant-extras/room-summary-card), half width, at the photo's aspect
+# ratio (7:5).
+#   - background: their photo at full opacity (the card dims pictures to 30%
+#     by default), no gradient, in grayscale while they're not home (UIX,
+#     live)
+#   - title: the person's state: Home, Away, or the zone they're in (UIX,
+#     live, like the summary cards' titles)
+#   - stat: their hours at work this week (a briefcase icon)
+#   - colored by the person's state, as on their subview (the person is the
+#     room entity; its icon stays hidden)
+#   - text outlined in black (an inherited text-shadow), the stat's icon too
+#     (a drop-shadow; it's an SVG in the sensors' shadow root)
+#   - one icon (a location marker, not the person's picture) opening their
+#     map subview; the icon strip wraps at 3 rows instead of 4 (and is
+#     widened to match), so the icon is larger; its circle is filled at 40%
+#     (the card's default is 20%) in the state color, and the marker itself
+#     is grey. The marker's color is set inline on its wrapper, so it's
+#     overridden from inside the icon: the entity's 'styles' go into a
+#     <style> there as ':host { key: value; }', and the key closes that rule
+#     and opens one for the glyph.
+#   - tapping the card opens their person subview
 # Variables:
-#   entity
-#   who     their name in custom_templates/dates.jinja (for the birthday)
-#   weight  weight sensor
+#   entity  the person
 #   work    hours-at-work sensor
-#   map     the map view's path on the old dashboard
-# Photos: /local/images/<object_id>_large.png and <object_id>_large_grayscale.png
+#   page    their person subview's path
+#   map     their map subview's path
+# Photos: /local/images/<object_id>_large.png
 {%- set object_id = entity.split('.')[1] %}
-{%- set tap = {'action': 'navigate', 'navigation_path': '/ui-home/' ~ map} %}
-{%- set text = {
-  '--mush-chip-background': 'none',
-  '--mush-chip-border-width': '0',
-  '--mush-chip-box-shadow': 'none',
-  '--mush-chip-padding': '0',
-  '--mush-chip-height': '20px',
-  '--mush-chip-font-size': '15px',
-  '--mush-chip-font-weight': 'bold',
-  '--primary-text-color': 'white',
-  'text-shadow': '0.25px 0.25px 1px black, -0.25px -0.25px 1px black, -0.25px 0.25px 1px black, 0.25px -0.25px 1px black',
-  'transform': 'none',
-  'left': '9px',
-  'top': 'auto',
-} %}
-{%- set lines = [
-  "{{ 'Home' if is_state('" ~ entity ~ "', 'home') else 'Away' if is_state('" ~ entity ~ "', 'not_home') else states('" ~ entity ~ "') }}",
-  "{{ (states('" ~ weight ~ "') | float | round(1)) ~ ' lbs' if states('" ~ weight ~ "') | is_number else '' }}",
-  "{{ '%.1f' | format(states('" ~ work ~ "') | float) ~ ' Hours at Work' if states('" ~ work ~ "') | is_number else '' }}",
-  "{%- set e = state_attr('binary_sensor.personal_events', 'events') | default([], true) | selectattr('who', 'eq', '" ~ who ~ "') | selectattr('event', 'eq', 'Birthday') | first | default(none) %}"
-    ~ "{{ 'Turning ' ~ e.milestone ~ ' in ' ~ e.days_away ~ (' day' if e.days_away == 1 else ' days') if e else '' }}",
-] %}
-{%- set ns = namespace(elements=[
-  {'type': 'image', 'image': '/local/images/transparent_1to1.png', 'tap_action': tap,
-   'style': {'top': '50%', 'left': '50%', 'width': '100%', 'height': '100%'}},
-]) %}
-{%- for line in lines %}
-  {%- set ns.elements = ns.elements + [
-    {'type': 'custom:mushroom-chips-card',
-     'chips': [{'type': 'template', 'content': line, 'tap_action': tap}],
-     'style': dict(text, bottom=(9 + 20 * (lines | length - loop.index)) ~ 'px')},
-  ] %}
-{%- endfor %}
+{%- set go = {'action': 'navigate', 'navigation_path': page} %}
+{%- set e = "'" ~ entity ~ "'" %}
+{%- set label = "{{ 'Home' if is_state(" ~ e ~ ", 'home') else 'Away' if is_state(" ~ e ~ ", 'not_home') else states(" ~ e ~ ") }}" %}
+{#- A solid 1px black outline: eight unblurred 1px text shadows around the text. #}
+{%- set outline = '-1px -1px 0 black, 0 -1px 0 black, 1px -1px 0 black, 1px 0 0 black, 1px 1px 0 black, 0 1px 0 black, -1px 1px 0 black, -1px 0 0 black' %}
+{%- set icon_outline = 'drop-shadow(1px 1px 0.5px black) drop-shadow(-1px -1px 0.5px black) drop-shadow(1px -1px 0.5px black) drop-shadow(-1px 1px 0.5px black)' %}
+{%- set grey_glyph = {'} .icon ha-state-icon { color': '#616161 !important; } :host { --person-glyph: grey'} %}
+{%- set filter = "{{ 'none' if is_state(" ~ e ~ ", 'home') else 'grayscale(1)' }}" %}
 {{ {
-  'type': 'picture-elements',
-  'entity': entity,
-  'image': '/local/images/' ~ object_id ~ '_large_grayscale.png',
-  'state_image': {'home': '/local/images/' ~ object_id ~ '_large.png'},
-  'elements': ns.elements,
+  'type': 'custom:room-summary-card',
+  'area': object_id,
+  'area_name': object_id | title,
+  'navigate': page,
+  'entity': {'entity_id': entity, 'tap_action': go},
+  'features': ['exclude_default_entities', 'hide_area_stats', 'hide_room_icon'],
+  'entities': [{'entity_id': entity, 'icon': 'mdi:map-marker', 'features': ['use_entity_icon'], 'styles': grey_glyph, 'tap_action': {'action': 'navigate', 'navigation_path': map}}],
+  'sensors': [{'entity_id': work, 'icon': 'mdi:briefcase'}],
+  'sensor_classes': [],
+  'problem': {'display': 'active_only'},
+  'actions': {'tap_action': go},
+  'background': {'image': '/local/images/' ~ object_id ~ '_large.png', 'options': ['hide_gradient'], 'opacity': 100},
+  'icon_opacity_preset': 'high_visibility',
+  'styles': {'card': {'--user-grid-aspect-ratio': '7/5'}},
   'grid_options': {'columns': 6, 'rows': 'auto'},
+  'uix': {'style': {
+    '.': 'ha-card { text-shadow: ' ~ outline ~ '; --opacity-icon-fill-active: 0.4 !important; --opacity-icon-fill-inactive: 0.4 !important; } '
+      ~ '.info, .name { overflow: visible !important; } .name { font-size: 0 !important; } '
+      ~ '.name::after { content: "' ~ label ~ '"; font-size: clamp(1.2rem, 6cqw, 2rem); padding-right: 2px; } '
+      ~ 'room-background-image { filter: ' ~ filter ~ '; } '
+      ~ 'entity-collection { --user-entities-wrap: 3; aspect-ratio: calc(0.31 * var(--entity-columns)) / 1 !important; }',
+    'sensor-collection $': 'ha-state-icon { filter: ' ~ icon_outline ~ '; }',
+  }},
 } | tojson }}
