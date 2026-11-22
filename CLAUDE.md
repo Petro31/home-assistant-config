@@ -47,9 +47,15 @@ New features go in `packages/` (see `packages/leak_detection.yaml` for the curre
 
 ## Dashboards (lovelace_gen)
 
-`lovelace.yaml` defines two YAML-mode dashboards, `ui-home.yaml` and `ui-status.yaml`. Both are built from `lovelace/`:
+`lovelace.yaml` defines three YAML-mode dashboards. HA reads that list only at startup, and the UI can't edit YAML-mode dashboards, so changing a dashboard's title, icon, sidebar or admin settings means editing `lovelace.yaml` and restarting.
 
-- `lovelace/views/`: one file per view. `master.yaml` assembles the view list for the Home dashboard.
+- `ui-home-v2.yaml`: **Home**, the system default dashboard (set in the UI; stored by HA, not in this repo), built from `lovelace_v2/`. See [Home v2](#home-v2) below.
+- `ui-home.yaml`: **Home (Legacy)**, the old Home dashboard, hidden from the sidebar (`show_in_sidebar: false`). Its views still work at `/ui-home/...`, and v2 still links to some of them (`legacy:` buttons).
+- `ui-status.yaml`: **Status** (admin-only).
+
+The legacy dashboards (`ui-home.yaml` and `ui-status.yaml`) are built from `lovelace/`:
+
+- `lovelace/views/`: one file per view. `master.yaml` assembles the view list for the Home (Legacy) dashboard.
 - `lovelace/templates/` and `lovelace/partials/`: reusable card fragments.
 - Files whose first line is `# lovelace_gen` are rendered as Jinja by the `lovelace_gen` custom component ([docs and source](https://github.com/thomasloven/hass-lovelace_gen)) before YAML parsing. Fragments are included with variables via the list form of `!include` (filename first, then a dict of variables):
   ```yaml
@@ -86,9 +92,9 @@ New features go in `packages/` (see `packages/leak_detection.yaml` for the curre
 - A view's `path` is its `name` lowercased with spaces replaced by `_`. Renaming an area or button changes its URL and the `back_path` of its subviews.
 - Leaf templates are in `lovelace/templates/` (`buttons/`, `summary/`, `headers/`, `remote/`), and most are `custom:button-card` configs. `summary/overview.yaml` builds the "N lights on" style summaries at render time from `display` (domain/state/icon/units rules) and `triggers_update` (defaults to the button's `entities`). `override_sensors` sets the sensors shown in place of the leftover ones.
 
-### Home v2 (in progress)
+### Home v2
 
-`ui-home-v2.yaml` (admin-only) is a rebuild of the Home dashboard in `lovelace_v2/`, using built-in cards, Mushroom, UIX and the Room Summary Card. `lovelace_v2/data/home.jinja` holds the data and `lovelace_v2/views/main.yaml` builds the views. Home has person cards (`lovelace_v2/cards/person.yaml`; each opens the person's subview, and its location icon their map subview) and summary cards (`lovelace_v2/cards/room.yaml`) atop the Household window: the house (opens Areas; its lock and laundry icons open the Doors and Laundry subviews), the remote (opens the Remote subview, a copy of the legacy view whose cog opens Remote Settings; its music icon opens the Music subview), the holiday (opens the Holiday subview) and events (opens the Events subview; its icons open the Drinks, Irrigation and This Week subviews). Buttons with `legacy:` in `home.jinja` still open the old dashboard's view.
+`ui-home-v2.yaml` (titled Home, at `/ui-home-v2/`) is the rebuild of the legacy Home dashboard in `lovelace_v2/`, using built-in cards, Mushroom, UIX and the Room Summary Card. `lovelace_v2/data/home.jinja` holds the data and `lovelace_v2/views/main.yaml` builds the views. Home has person cards (`lovelace_v2/cards/person.yaml`; each opens the person's subview, and its location icon their map subview) and summary cards (`lovelace_v2/cards/room.yaml`) atop the Household window: the house (opens Areas; its lock and laundry icons open the Doors and Laundry subviews), the remote (opens the Remote subview, a copy of the legacy view whose cog opens Remote Settings; its music icon opens the Music subview), the holiday (opens the Holiday subview) and events (opens the Events subview; its icons open the Drinks, Irrigation and This Week subviews). Buttons with `legacy:` in `home.jinja` still open the old dashboard's view.
 
 To do:
 - [ ] Plants: figure out what to do with it. Since the Home button grid was removed, no summary card links to the Plants button (still `legacy: 'plants'`), so v2 has no way to reach it.
