@@ -63,9 +63,9 @@
 dashboards:
   ui-home:
     mode: yaml
-    title: Home
+    title: Home (Legacy)
     icon: mdi:home
-    show_in_sidebar: true
+    show_in_sidebar: false
     filename: ui-home.yaml
 
   ui-status:
@@ -78,8 +78,7 @@ dashboards:
 
   ui-home-v2:
     mode: yaml
-    title: Home v2
-    icon: mdi:home-outline
+    title: Home
+    icon: mdi:home
     show_in_sidebar: true
-    require_admin: true
     filename: ui-home-v2.yaml
