@@ -100,7 +100,7 @@ To do:
 - [ ] Plants: figure out what to do with it. Since the Home button grid was removed, no summary card links to the Plants button (still `legacy: 'plants'`), so v2 has no way to reach it.
 - [ ] Redesign the person cards on Home (`lovelace_v2/cards/person.yaml`) using the Room Summary Card, like the summary cards.
 - [ ] Fully remove custom button-card from v2. It still comes in through the copied legacy views and their `lovelace/templates/` includes (e.g. Events' category buttons, Echos, the Drinks header).
-- [ ] Fix the broken card on the Echos subview (`lovelace_v2/views/echos.yaml`).
+- [x] Fix the broken card on the Echos subview (`lovelace_v2/views/echos.yaml`). The last-announcement button-card crashed on messages from automations (no person); it's now a Mushroom template card.
 
 ## Custom integrations
 
