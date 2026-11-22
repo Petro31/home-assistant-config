@@ -91,16 +91,8 @@ New features go in `packages/` (see `packages/leak_detection.yaml` for the curre
 `ui-home-v2.yaml` (admin-only) is a rebuild of the Home dashboard in `lovelace_v2/`, using built-in cards, Mushroom, UIX and the Room Summary Card. `lovelace_v2/data/home.jinja` holds the data and `lovelace_v2/views/main.yaml` builds the views. Home has person cards (`lovelace_v2/cards/person.yaml`; each opens the person's subview, and its location icon their map subview) and summary cards (`lovelace_v2/cards/room.yaml`) atop the Household window: the house (opens Areas; its lock and laundry icons open the Doors and Laundry subviews), the remote (opens the Remote subview, a copy of the legacy view whose cog opens Remote Settings; its music icon opens the Music subview), the holiday (opens the Holiday subview) and events (opens the Events subview; its icons open the Drinks, Irrigation and This Week subviews). Buttons with `legacy:` in `home.jinja` still open the old dashboard's view.
 
 To do:
-- [x] Holiday summary card on Home. Its icons control the current holiday's themed lights directly. The card opens a page with all lights and scenes available for the current holiday (`sensor.holiday_lighting`; legacy `lovelace/views/holiday.yaml`).
-- [ ] ~~Music summary card on Home. Its icons count what's playing music in the house; the card opens a media/music page (legacy `lovelace/views/music.yaml`). One icon opens the Echo devices, which get their own control page (legacy `lovelace/views/echos.yaml`).~~ Cancelled: music is the music icon on the remote card instead (below).
-- [x] Laundry: the laundry icon on the house card opens a Laundry subview, an exact copy of the current Laundry view (`lovelace/views/laundry.yaml`) apart from the back button.
-- [x] Events summary card on Home. The card opens a subview copy of the Events view (`lovelace/views/events.yaml`). Its icons open subviews for Drinks (`drinks.yaml`), Irrigation (`irrigation.yaml`) and This Week (`this_week.yaml`).
-- [x] Remote: recreate the Remote view (`lovelace/views/remote.yaml`) as a v2 subview, with a Remote Settings subview (`lovelace/views/remote_settings.yaml`). Then point the remote card there instead of the legacy view.
-- [x] Music icon on the remote card. It opens a v2 Music page with the music controls and media players, like the legacy Music view (`lovelace/views/music.yaml`).
 - [ ] Plants: figure out what to do with it. Since the Home button grid was removed, no summary card links to the Plants button (still `legacy: 'plants'`), so v2 has no way to reach it.
-- [x] Redesign the person cards on Home (`lovelace_v2/cards/person.yaml`) using the Room Summary Card, like the summary cards. Each opens a person subview (`lovelace_v2/views/person.yaml`); its location icon opens a map subview (`person_map.yaml`).
 - [ ] Fully remove custom button-card from v2. It still comes in through the copied legacy views and their `lovelace/templates/` includes (e.g. Events' category buttons, Echos, the Drinks header).
-- [x] Fix the broken card on the Echos subview (`lovelace_v2/views/echos.yaml`). The last-announcement button-card crashed on messages from automations (no person); it's now a Mushroom template card.
 
 ## Custom integrations
 
@@ -171,65 +163,9 @@ Goal: over time, move features whose automations, scripts and templates are spli
 
 ### Candidates
 
-Goal: migrate everything left in `automation/`, `scripts/`, `template/` and `command_line/`, plus `sensor.yaml`, `media_player.yaml`, `notify.yaml`, `compensation.yaml` and `intent_script.yaml`. Delete each file (and its `configuration.yaml` line) once it's empty. These stay where they are: the UI-managed `automations.yaml`, `scripts.yaml` and `scenes.yaml`, and the dashboards (`lovelace`). The infrastructure configs (`cloud`, `logger`, `recorder`, `system_log`, `door_buddy`) were later moved to `packages/system/` and `packages/doors.yaml`. Items marked ⚠ use non-reloadable platforms: do them last and restart once.
+Goal: migrate everything left in `automation/`, `scripts/`, `template/` and `command_line/`, plus `sensor.yaml`, `media_player.yaml`, `notify.yaml`, `compensation.yaml` and `intent_script.yaml`. Delete each file (and its `configuration.yaml` line) once it's empty. These stay where they are: the UI-managed `automations.yaml`, `scripts.yaml` and `scenes.yaml`, and the dashboards (`lovelace`). The infrastructure configs (`cloud`, `logger`, `recorder`, `system_log`, `door_buddy`) were later moved to `packages/system/` and `packages/doors.yaml`.
 
-Into existing packages:
-- [x] doorbell: "Fix Doorbell Chime Status" (automation/reactions.yaml)
-- [x] device_firmware_updates: script.update_zwave (scripts/zwave_js.yaml)
-- [x] power_outage_shutdown: UPS Model and UPS Battery Runtime (template/system.yaml)
-- [x] living_room/living_room_yamaha: Living Room and Dining Room Speakers (media_player.yaml), the receiver volume compensations (compensation.yaml), the living room multizone_controller sensor (sensor.yaml) ⚠
-
-Shared plumbing (packages/shared/):
-- [x] notifications: script.notify (scripts/notifiers.yaml) and the notify groups (notify.yaml)
-- [x] mqtt_discovery_helpers: scripts/mqtt.yaml
-- [x] template_reload_event: "Events - Forward Reload Templates" (automation/events.yaml)
-
-New packages:
-- [x] outdoor_sunset_lighting: script.sunrise_sunset (scripts/sunset_sunrise.yaml), "Outdoor Lights On at Sunset, Off at Sunrise" (automation/timed_events.yaml), "Keep Sunset Switches On." (automation/reactions.yaml)
-- [x] daylight_saving_reminders: template/daylight_savings_time.yaml and "Notify DST Change" (automation/timed_events.yaml)
-- [x] household_reminders: "Notify Change Filters Message" and "Notify Mosby Heartworm and Flee Medication." (automation/timed_events.yaml)
-- [x] thermostat_schedule: "Simple Thermostat" (automation/timed_events.yaml)
-- [x] server_health: Disk Use Total and Memory Use Total (template/system.yaml), CPU Temperature (command_line/temperature.yaml) ⚠, template/homeassistant_image.yaml, "Notify Snapshot status" and "Clear persistent_notifications at bedtime" (automation/timed_events.yaml)
-- [x] living_room/living_room_controllers: "Living Room Scene Controller" and its LEDs (automation/buttons.yaml), "Cube Actions" (automation/cube.yaml), "Living Room Lamp Availability." (automation/reactions.yaml; the commented-out "Fix Wled Errors" copy left in that file was deleted with it)
-- [x] zigbee_button_toggles: "Zigbee Button Toggler" (automation/buttons.yaml)
-- [x] linked_light_switches: automation/toggles.yaml
-- [x] garage_doors: template/door.yaml and script.garage_door_toggle (scripts/nfc.yaml)
-- [x] home_occupancy: template/people_tracker.yaml and template/network.yaml
-- [x] work_hours_tracking: Petro/Lambo at Work history_stats (sensor.yaml) ⚠ and template/time.yaml
-- [x] bonus_room_television: template/bonus_room.yaml and the Bonus Room Television universal player (media_player.yaml) ⚠
-- [x] outdoor_weather_station: template/temperatures.yaml
-- [x] energy_tariff: template/energy.yaml
-- [x] aurora_alerts: automation/aurora.yaml
-- [x] drink_tracker: automation/drinks.yaml
-- [x] body_weight_tracking: automation/weight.yaml
-- [x] awtrix_announcements: scripts/awtrix.yaml
-- [x] dashboard_helpers: script.lovelace_toggle (scripts/misc.yaml)
-- [x] voice_intents: deleted instead of migrated. intent_script.yaml (git-ignored) held old Alexa custom-skill intents that nothing could reach any more (no top-level `alexa:` config, no custom sentences); it was removed with the git-ignored `alexa/` skill files.
-- [x] testing_sandbox: scripts/tests.yaml and "MSR 2 Testing" (automation/apollo_msr2.yaml)
-- [x] sensor_calibration_helper: automation/calibrations.yaml (migrated as-is; see Known issues)
-
-Done:
-- [x] master bathroom humidity / shower fan (packages/master_bathroom_humidity.yaml)
-- [x] doorbell (packages/doorbell.yaml)
-- [x] update (packages/device_firmware_updates.yaml)
-- [x] laser (packages/garage_parking_laser.yaml; also includes template/garage.yaml)
-- [x] basement humidity (packages/basement_humidity_alert.yaml)
-- [x] hyperion (packages/tv_ambient_lighting.yaml)
-- [x] laundry (packages/laundry_monitor.yaml; also includes the laundry blocks from template/energy.yaml)
-- [x] ups (packages/power_outage_shutdown.yaml)
-- [x] todo (packages/daily_todo_lists.yaml)
-- [x] lzw45 (packages/lzw45_led_strips.yaml; also includes the Mood Lighting switch from template/living_room_remote.yaml)
-- [x] run_schedule (packages/running_training_programs.yaml)
-- [x] holiday (packages/holiday_lighting.yaml; also includes template/seasons.yaml and the Indoor Holiday switch from template/wled_ambiance.yaml). Later split into `packages/holiday/`: `holiday_lighting.yaml` (the shared holiday logic), `holiday_christmas.yaml` (the Christmas-only lights, front trees and Christmas bulb scene) and `holiday_scenes.yaml` (the other holidays' bulb scenes, from scenes.yaml). Other holidays can get their own files once they have enough devices of their own.
-- [x] irrigation (packages/irrigation_scheduler.yaml)
-- [x] harmony (packages/living_room/: living_room_harmony.yaml, living_room_remote.yaml and living_room_yamaha.yaml; also includes harmony_helper.yaml, scripts/cast.yaml, template/living_room_remote.yaml, template/yamaha.yaml, template/cast_workout.yaml and the Play/Pause lighting automation from automation/reactions.yaml)
-- [x] basement receiver (packages/basement_yamaha.yaml; also includes the yamaha platform and the Deck/Basement Speakers from media_player.yaml, the basement multizone_controller sensor from sensor.yaml, and the Basement Yamaha Receiver sensor from packages/living_room/living_room_yamaha.yaml)
-- [x] events (packages/calendar_and_milestone_events.yaml; also includes script.event and script.events from scripts/notifiers.yaml)
-- [x] wled (packages/kitchen_cabinet_lighting.yaml, with the cabinet sync automation from automation/toggles.yaml; Movie Time moved to living_room_remote, Front Trees to holiday_lighting, now packages/holiday/holiday_christmas.yaml; the unused scripts/wled.yaml scripts were deleted)
-- [x] lighting (packages/light_targets.yaml with the scripts from scripts/lights.yaml and the Fix Zwave Multicast Errors automation from automation/reactions.yaml; the generated template lights are in packages/.lights/)
-- [x] house humidity (packages/house_climate.yaml; also includes House Temperature from template/temperatures.yaml)
-- [x] echos/alexa (packages/echo_announcements.yaml with the MQTT Discovery automation from automation/echos.yaml and the scripts from scripts/alexa.yaml)
-- [x] plants (packages/plant_care_notifications.yaml with the `plant:` config from plants.yaml, automation/plants.yaml and template/plants.yaml)
+All candidates have been migrated.
 
 ## Known issues
 
