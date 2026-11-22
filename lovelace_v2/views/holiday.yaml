@@ -39,7 +39,12 @@ sections:
   cards:
   - type: heading
     heading: {{ room.name | tojson }}
+  {#- A light is an entity_id, or {entity, name} to rename it on the card. #}
   {%- for light in room.lights %}
+    {%- if light is mapping %}
+  - !include ['../cards/tile.yaml', {{ {'entity': light.entity, 'card': {'name': light.name}} | tojson }}]
+    {%- else %}
   - !include ['../cards/tile.yaml', {{ {'entity': light} | tojson }}]
+    {%- endif %}
   {%- endfor %}
 {%- endfor %}

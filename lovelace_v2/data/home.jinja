@@ -88,6 +88,7 @@
   'light.garage_buffet_strip': color_light,
   'light.garage_sconce_left_bulb': color_light,
   'light.garage_sconce_right_bulb': color_light,
+  'light.gpio_18_tv': rgb_light + [{'type': 'light-effect'}],
   'light.great_room_ambiance': color_light,
   'light.hutch_uplight': rgb_light,
   'light.jims_lamp': color_light,
@@ -610,7 +611,8 @@
   view: the Holiday section, split into 'indoor' and 'outdoor' tiles ({entity,
   name, state_content}; one with 'holiday' shows only during that holiday,
   per sensor.holiday_lighting), then the 'rooms' and their lights (the accent
-  lights and the living room lamps).
+  lights, the living room lamps and the TV backlight; a light is an entity_id,
+  or {entity, name} to rename it on the card).
   Its title follows the holiday (holiday_title, an HA template):
   sensor.seasonal_accent_lights' current_holiday_name (Mood Lighting when
   there is none).
@@ -638,7 +640,7 @@
     {'entity': 'switch.outdoor_receptacle', 'name': 'Outdoor Christmas Lights', 'holiday': 'christmas'},
   ],
   'rooms': [
-    {'name': 'Living Room', 'lights': ['light.living_room_uplight', 'light.lindsays_lamp', 'light.mikes_lamp', 'light.jims_lamp']},
+    {'name': 'Living Room', 'lights': ['light.living_room_uplight', 'light.lindsays_lamp', 'light.mikes_lamp', 'light.jims_lamp', {'entity': 'light.gpio_18_tv', 'name': 'TV Backlight'}]},
     {'name': 'Dining Room', 'lights': ['light.dining_room_uplight_1', 'light.dining_room_uplight_2', 'light.hutch_uplight']},
     {'name': 'Kitchen', 'lights': ['light.cabinet_master', 'light.cabinet_slave']},
   ],
@@ -731,7 +733,7 @@
     'icon': 'mdi:remote-tv',
     'household': ['Off'],
     'image': '/local/images/remote_2.png',
-    'legacy': 'remote',
+    'view': 'remote',
     'media': {'entities': [
       'media_player.yamaha_rx_v6a',
       'media_player.yamaha_rx_v6a_zone2',

@@ -82,9 +82,9 @@ cards:
               border-width: 0px
             }
         entities:
-        - entity: input_number.hyperion_brightness
+        - entity: number.hyperion_brightness
           name: Brightness
-        - input_select.hyperion_effects
+        - select.hyperion_effects
       - !include '../templates/buttons/edge.yaml'
 
 # SOURCE

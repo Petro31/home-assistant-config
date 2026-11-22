@@ -1,0 +1,37 @@
+# lovelace_gen
+# A remote control button (the look of lovelace/templates/remote/harmony/
+# control.yaml: an outlined icon, no tile) that toggles an entity. The
+# outline is the control blue while off and 'color' while on.
+# Variables:
+#   entity, color (default: the power buttons' red), aspect_ratio
+{%- set on = namespace(blur='2px', size='1px') %}
+{%- macro outline(color) -%}
+drop-shadow({{ on.size }} {{ on.size }} {{ on.blur }} {{ color }}) drop-shadow({{ on.size }} -{{ on.size }} {{ on.blur }} {{ color }}) drop-shadow(-{{ on.size }} {{ on.size }} {{ on.blur }} {{ color }}) drop-shadow(-{{ on.size }} -{{ on.size }} {{ on.blur }} {{ color }})
+{%- endmacro %}
+
+type: custom:button-card
+color: var(--primary-background-color)
+aspect_ratio: {{ aspect_ratio | default('1/1') }}
+entity: {{ entity }}
+show_icon: true
+size: 75%
+show_state: false
+show_name: false
+show_label: false
+tap_action:
+  action: toggle
+  haptic: light
+styles:
+  card:
+  - --ha-card-background: none
+  - box-shadow: none
+  - padding: 0px
+  - --ha-card-border-width: 0px
+  icon:
+  - color: var(--primary-background-color)
+  - filter: {{ outline('var(--paper-item-icon-active-color)') }}
+state:
+- value: 'on'
+  styles:
+    icon:
+    - filter: {{ outline(color | default('rgba(228, 94, 101)')) }}

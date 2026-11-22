@@ -52,6 +52,7 @@
 #   switch.surround_mode_all_ch_stereo
 #   switch.surround_mode_surr_decoder
 #   switch.surround_mode_straight
+#   switch.active_media_player_mute (the active zone's mute)
 #   switch.echo_through_receiver
 #   switch.airplay_through_receiver
 #   switch.echo_through_living_room
@@ -697,6 +698,32 @@ template:
   
 
 - switch:
+  # Mute for the multizone volume controller's active zone(s): on while any
+  # of them is muted (matching multizone_controller.toggle_volume_mute). The
+  # Home v2 Remote's mute button.
+  - unique_id: active_media_player_mute
+    name: Mute
+    default_entity_id: switch.active_media_player_mute
+    state: >
+      {{ state_attr('sensor.active_media_player', 'active') | default([], true)
+         | select('is_state_attr', 'is_volume_muted', true) | list | count > 0 }}
+    icon: >
+      {%- set muted = state_attr('sensor.active_media_player', 'active') | default([], true)
+         | select('is_state_attr', 'is_volume_muted', true) | list | count > 0 %}
+      {{ 'mdi:volume-mute' if muted else 'mdi:volume-high' }}
+    turn_on:
+    - action: multizone_controller.volume_mute
+      target:
+        entity_id: sensor.active_media_player
+      data:
+        is_volume_muted: true
+    turn_off:
+    - action: multizone_controller.volume_mute
+      target:
+        entity_id: sensor.active_media_player
+      data:
+        is_volume_muted: false
+
   #####################
   # LIVING ROOM MUSIC #
   #####################

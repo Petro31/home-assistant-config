@@ -1,0 +1,392 @@
+# lovelace_gen
+# The Remote subview: a copy of the legacy Remote view
+# (lovelace/views/remote.yaml), custom button-card templates and all. The
+# top row drops the legacy back button (the subview's back arrow returns to
+# Home) and adds Mimic Screen (Hyperion) after Movie Time: Power, Movie Time,
+# Mimic Screen, Zone 1, Zone 2, Settings. The cog opens the Remote Settings
+# subview. Mute toggles switch.active_media_player_mute
+# (cards/remote_control_toggle.yaml): styled like the volume buttons,
+# outlined red while the active zone is muted.
+# Variables:
+#   name, icon, path, back_path, settings_path (no badges)
+
+{%- set activity_cols = 6 %}
+{%- set activity_rows = 2 %}
+{# {'entity':'switch.xbox_one', 'color': 'rgba(14, 122, 13)'}, #}
+{%- set activities = [
+  {'entity':'switch.playstation', 'color': 'rgba(102, 92, 190)'},
+  {'entity':'switch.switch', 'color': 'rgba(228, 0, 15)'},
+  {'entity':'switch.tv', 'color': 'var(--button-card-light-color)'},
+  {'entity':'switch.chromecast', 'color': 'rgba(66,133,244)'},
+  {'entity':'switch.plex', 'color': 'rgba(229, 160, 13)', 'icon': 'fapro:plex'},
+  {'entity':'switch.apple_tv', 'color': 'rgba(56, 196, 200)'},
+  {'entity':'switch.peacock', 'color': 'rgba(81, 105, 170)', 'image': '/local/images/peacock.png', 'template': '../../lovelace/templates/remote_image_button.yaml'},
+  {'entity':'switch.netflix', 'color': 'rgba(216, 31, 38)', 'icon': 'fapro:netflix'},
+  {'entity':'switch.hbo', 'color': 'rgba(255, 255, 255)', 'icon': 'fapro:hbo'},
+  {'entity':'switch.hulu', 'color': 'rgba(28, 231, 131)', 'icon': 'fapro:hulu'},
+  {'entity':'switch.prime_video', 'color': 'rgba(0, 168, 225)', 'icon': 'fapro:prime-video'},
+  {'entity':'switch.disney_plus', 'color': 'rgba(8, 213, 238)', 'icon': 'fapro:disney-plus'},
+] %}
+
+{%- set controls = [
+  {'entity': 'button.remote_living_room_homebutton' },
+  {'entity': 'button.remote_living_room_menubutton' },
+  {'entity': 'button.remote_living_room_lowerleft' },
+  {'entity': 'button.remote_living_room_lowerright' },
+] %}
+
+title: {{ name | tojson }}
+path: {{ path }}
+icon: {{ icon }}
+subview: true
+back_path: {{ back_path }}
+cards:
+- type: vertical-stack
+  cards:
+  - type: horizontal-stack
+    cards:
+    - !include '../../lovelace/templates/buttons/edge.yaml'
+    - !include
+      - '../../lovelace/templates/remote/harmony/toggle.yaml'
+      - entity: switch.poweroff
+        color: rgba(228, 94, 101)
+    - !include
+      - '../../lovelace/templates/remote/harmony/toggle.yaml'
+      - entity: switch.movie_time
+        color: rgba(252,194,82)
+    - !include
+      - '../../lovelace/templates/remote/harmony/toggle.yaml'
+      - entity: switch.hyperion_usb_capture
+        color: rgba(49, 196, 243)
+    - !include
+      - '../../lovelace/templates/remote/harmony/toggle.yaml'
+      - entity: media_player.yamaha_rx_v6a
+        icon: fapro:power-zone-1
+        color: rgba(228, 94, 101)
+    - !include
+      - '../../lovelace/templates/remote/harmony/toggle.yaml'
+      - entity: media_player.yamaha_rx_v6a_zone2
+        icon: fapro:power-zone-2
+        color: rgba(228, 94, 101)
+    # lovelace/templates/remote/harmony/navigate.yaml, inlined: it
+    # navigates within /ui-home only.
+    - type: custom:button-card
+      color: var(--paper-item-icon-active-color)
+      aspect_ratio: 1/1
+      icon: mdi:cog
+      show_icon: true
+      size: 75%
+      show_state: false
+      show_name: false
+      show_label: false
+      tap_action:
+        action: navigate
+        navigation_path: {{ settings_path }}
+        haptic: light
+      styles:
+        card:
+        - border-radius: 18%
+        - padding: 0px
+        - --ha-card-background: var(--primary-background-color)
+        - --ha-card-border-width: 0px
+    - !include '../../lovelace/templates/buttons/edge.yaml'
+  {%- for i in range(activity_cols * activity_rows) %}
+  {%- set activity = activities[i] %}
+    {%- if i % activity_cols == 0 %}
+  - type: horizontal-stack
+    cards:
+    - !include '../../lovelace/templates/spacer_edge.yaml'
+    {%- endif %}
+    {% if activity %}
+    - !include
+      {%- if activity.template %}
+      - {{ activity.template }}
+      {%- else %}
+      - '../../lovelace/templates/remote/harmony/toggle.yaml'
+      {%- endif %}
+      {%- if activity.entity is defined %}
+      - entity: {{ activity.entity }}
+        color: {{ activity.color }}
+      {%- elif activity.path is defined %}
+      - path: {{ activity.path }}
+      {%- endif %}
+      {%- if activity.icon is defined %}
+        icon: {{ activity.icon }}
+      {%- endif %}
+      {%- if activity.image is defined %}
+        image: {{ activity.image }}
+      {%- endif %}
+    {%- else %}
+    - !include '../../lovelace/templates/buttons/spacer.yaml'
+    {%- endif %}
+    {%- if i % activity_cols == activity_cols - 1 %}
+    - !include '../../lovelace/templates/spacer_edge.yaml'
+    {%- endif %}
+  {%- endfor %}
+  - type: conditional
+    conditions:
+    - entity: binary_sensor.remote_living_room_control
+      state: 'on'
+    card:
+      type: vertical-stack
+      cards:
+      - type: horizontal-stack
+        cards:
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_back
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_home
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_menu
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_lowerleft
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_lowerright
+            service: button.press
+            use_entity: true
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+      - type: custom:mod-card
+        style: |
+          :host { margin: 0px; padding: 0px; --ha-card-background: none; box-shadow: none; }
+        card:
+          type: horizontal-stack
+          cards:
+          - !include '../../lovelace/templates/buttons/edge.yaml'
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 20% 80%
+              grid-template-rows: auto
+              grid-template-areas: |
+                "volume directionpad"
+            cards:
+            - type: vertical-stack
+              view_layout:
+                grid-area: volume
+              cards:
+              - !include
+                - '../../lovelace/templates/remote/harmony/control.yaml'
+                - entity: sensor.active_media_player
+                  service: multizone_controller.next_zone
+                  use_entity: true
+              - !include
+                - '../../lovelace/templates/remote/harmony/control.yaml'
+                - entity: sensor.active_media_player
+                  service: multizone_controller.volume_up
+                  icon: mdi:volume-plus
+                  use_entity: true
+                  repeat: 250
+              - !include
+                - '../../lovelace/templates/remote/harmony/control.yaml'
+                - entity: sensor.active_media_player
+                  service: multizone_controller.volume_down
+                  icon: mdi:volume-minus
+                  use_entity: true
+                  repeat: 250
+              - !include ['../cards/remote_control_toggle.yaml', {"entity": "switch.active_media_player_mute"}]
+            - type: vertical-stack
+              view_layout:
+                grid-area: directionpad
+              cards:
+              - type: horizontal-stack
+                cards:
+                - !include '../../lovelace/templates/buttons/spacer.yaml'
+                - !include
+                  - '../../lovelace/templates/remote/harmony/control.yaml'
+                  - entity: button.remote_living_room_directionup
+                    service: button.press
+                    use_entity: true
+                - !include '../../lovelace/templates/buttons/spacer.yaml'
+              - type: horizontal-stack
+                cards:
+                - !include
+                  - '../../lovelace/templates/remote/harmony/control.yaml'
+                  - entity: button.remote_living_room_directionleft
+                    service: button.press
+                    use_entity: true
+                - !include
+                  - '../../lovelace/templates/remote/harmony/control.yaml'
+                  - entity: button.remote_living_room_ok
+                    service: button.press
+                    use_entity: true
+                - !include
+                  - '../../lovelace/templates/remote/harmony/control.yaml'
+                  - entity: button.remote_living_room_directionright
+                    service: button.press
+                    use_entity: true
+              - type: horizontal-stack
+                cards:
+                - !include '../../lovelace/templates/buttons/spacer.yaml'
+                - !include
+                  - '../../lovelace/templates/remote/harmony/control.yaml'
+                  - entity: button.remote_living_room_directiondown
+                    service: button.press
+                    use_entity: true
+                - !include '../../lovelace/templates/buttons/spacer.yaml'
+          - !include '../../lovelace/templates/buttons/edge.yaml'
+      - type: horizontal-stack
+        cards:
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+        - !include '../../lovelace/templates/buttons/spacer.yaml'
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_rewind
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_play
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_pause
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_fastforward
+            service: button.press
+            use_entity: true
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+  - type: conditional
+    conditions:
+    - entity: switch.tv
+      state: 'on'
+    card:
+      type: vertical-stack
+      cards:
+      - type: horizontal-stack
+        cards:
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_channelprev
+            icon: mdi:chevron-left-circle
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_7
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_8
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_9
+            service: button.press
+            use_entity: true
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+      - type: horizontal-stack
+        cards:
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_channelup
+            icon: mdi:chevron-up-circle
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_4
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_5
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_6
+            service: button.press
+            use_entity: true
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+      - type: horizontal-stack
+        cards:
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_channeldown
+            icon: mdi:chevron-down-circle
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_1
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_2
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_3
+            service: button.press
+            use_entity: true
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+      - type: horizontal-stack
+        cards:
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+        - !include '../../lovelace/templates/buttons/spacer.yaml'
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_0
+            service: button.press
+            use_entity: true
+        - !include
+          - '../../lovelace/templates/remote/harmony/control.yaml'
+          - entity: button.remote_living_room_period
+            icon: mdi:circle-small
+            service: button.press
+            use_entity: true
+        - !include '../../lovelace/templates/buttons/spacer.yaml'
+        - !include '../../lovelace/templates/buttons/edge.yaml'
+  - type: conditional
+    conditions:
+    - entity: switch.echo_through_receiver
+      state: 'on'
+    card:
+      type: horizontal-stack
+      cards:
+      - !include '../../lovelace/templates/buttons/edge.yaml'
+      - !include
+        - '../../lovelace/templates/remote/harmony/control.yaml'
+        - entity: sensor.active_media_player
+          service: multizone_controller.next_zone
+          use_entity: true
+      - !include '../../lovelace/templates/buttons/spacer.yaml'
+      - !include
+        - '../../lovelace/templates/remote/harmony/control.yaml'
+        - entity: sensor.active_media_player
+          service: multizone_controller.volume_up
+          icon: mdi:volume-plus
+          use_entity: true
+          repeat: 250
+      - !include
+        - '../../lovelace/templates/remote/harmony/control.yaml'
+        - entity: sensor.active_media_player
+          service: multizone_controller.volume_down
+          icon: mdi:volume-minus
+          use_entity: true
+          repeat: 250
+      - !include ['../cards/remote_control_toggle.yaml', {"entity": "switch.active_media_player_mute"}]
+      - !include '../../lovelace/templates/buttons/edge.yaml'

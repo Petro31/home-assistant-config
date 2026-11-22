@@ -195,6 +195,14 @@
 - !include ['{{ item.view }}.yaml', {{ {
     'name': item.name, 'icon': item.icon, 'path': path, 'back_path': dashboard ~ '/home',
     'entities': item.entities | default([]), 'controls': item.controls | default([]),
+    'settings_path': dashboard ~ '/' ~ path ~ '_settings',
   } | tojson }}]
+    {#- The Remote's cog opens its Remote Settings subview. #}
+    {%- if item.view == 'remote' %}
+- !include ['remote_settings.yaml', {{ {
+    'name': item.name ~ ' Settings', 'icon': 'mdi:cog', 'path': path ~ '_settings',
+    'back_path': dashboard ~ '/' ~ path,
+  } | tojson }}]
+    {%- endif %}
   {%- endif %}
 {%- endfor %}
