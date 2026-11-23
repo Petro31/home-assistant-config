@@ -89,7 +89,7 @@ cards:
         icon_color: blue
         primary: >
           {%- set person = state_attr('sensor.alexa_last_tts', 'person') %}
-          {%- set who = state_attr(person, 'friendly_name') if person else 'Home Assistant' %}
+          {%- set who = entity_name(person) if person else 'Home Assistant' %}
           {{ who }} {{ 'announced' if is_state_attr('sensor.alexa_last_tts', 'type', 'announce') else 'via Text to Speech' }}
         secondary: |-
           {%- set sent = states('sensor.alexa_last_tts') | as_datetime %}
