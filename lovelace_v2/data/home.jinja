@@ -603,7 +603,7 @@
   on/off (the great room ambiance group), and the indoor holiday scene (the
   accent lights in the current holiday's colors). The card opens the Holiday
   view: the Holiday section, split into 'indoor' and 'outdoor' tiles ({entity,
-  name, state_content}; one with 'holiday' shows only during that holiday,
+  name, icon, state_content}; one with 'holiday' shows only during that holiday,
   per sensor.holiday_lighting), then the 'rooms' and their lights (the accent
   lights, the living room lamps and the TV backlight; a light is an entity_id,
   or {entity, name} to rename it on the card).
@@ -629,9 +629,9 @@
     {'entity': 'light.christmas_tree', 'holiday': 'christmas'},
   ],
   'outdoor': [
-    {'entity': 'switch.holiday_scene', 'name': 'Outdoor Bulbs', 'state_content': ['scene_name', 'state']},
+    {'entity': 'switch.holiday_scene'},
     {'entity': 'switch.front_trees', 'holiday': 'christmas'},
-    {'entity': 'switch.outdoor_receptacle', 'name': 'Outdoor Christmas Lights', 'holiday': 'christmas'},
+    {'entity': 'switch.outdoor_receptacle', 'name': 'Christmas Lights', 'icon': 'mdi:pine-tree', 'holiday': 'christmas'},
   ],
   'rooms': [
     {'name': 'Living Room', 'lights': ['light.living_room_uplight', 'light.lindsays_lamp', 'light.mikes_lamp', 'light.jims_lamp', {'entity': 'light.gpio_18_tv', 'name': 'TV Backlight'}]},

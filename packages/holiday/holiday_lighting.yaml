@@ -655,22 +655,26 @@ template:
   # The current holiday's outdoor bulb scene (sensor.seasonal_lights; soft
   # white when there's no holiday) as a switch: on while any of its bulbs is
   # on, turning on applies the scene, turning off turns the bulbs off. Its
-  # icon and scene_name follow the scene. Every holiday scene sets the same
-  # bulbs.
+  # name ("Christmas Scene", "Soft White Scene"), icon and scene_name follow
+  # the scene. Every holiday scene sets the same bulbs. The scene is read
+  # from the sensor in each template, not through a variable: variables are
+  # only worked out when the entity loads, and the sensor briefly reads soft
+  # white during a template reload.
   - unique_id: holiday_scene
-    name: Holiday Scene
+    name: >
+      {%- set n = (entity_name(states('sensor.seasonal_lights')) or '') | replace('Holiday Bulbs', '') | trim %}
+      {{- n or 'Holiday' }} Scene
     default_entity_id: switch.holiday_scene
     variables:
-      scene: "{{ states('sensor.seasonal_lights') }}"
       bulbs: &holiday_bulbs [light.main_door_left_bulb, light.main_door_right_bulb, light.garage_sconce_left_bulb, light.garage_sconce_right_bulb, light.passenger_door_bulb, light.front_yard_uplight_left, light.front_yard_uplight_middle, light.front_yard_uplight_right]
     state: >
       {{ bulbs | select('is_state', 'on') | list | count > 0 }}
     icon: >
-      {{ state_attr(scene, 'icon') or 'mdi:string-lights' }}
+      {{ state_attr(states('sensor.seasonal_lights'), 'icon') or 'mdi:string-lights' }}
     attributes:
-      scene: "{{ scene }}"
+      scene: "{{ states('sensor.seasonal_lights') }}"
       scene_name: >
-        {{ (state_attr(scene, 'friendly_name') or 'Holiday Bulbs') | replace('Holiday Bulbs ', '') }}
+        {{ (entity_name(states('sensor.seasonal_lights')) or 'Holiday Bulbs') | replace('Holiday Bulbs ', '') }}
       entity_id: "{{ bulbs }}"
     turn_on:
     - action: scene.turn_on

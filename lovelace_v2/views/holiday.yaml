@@ -25,7 +25,7 @@ sections:
     heading_style: subtitle
     {%- for item in home_holiday[part] %}
       {%- set t = namespace(card={}) %}
-      {%- for k in ['name', 'state_content'] if k in item %}
+      {%- for k in ['name', 'icon', 'state_content'] if k in item %}
         {%- set t.card = dict(t.card, **{k: item[k]}) %}
       {%- endfor %}
       {%- if item.holiday is defined %}
