@@ -65,6 +65,7 @@
 #     scene.holiday_bulbs_valentines_day
 #   packages/outdoor_sunset_lighting.yaml
 #     scene.holiday_bulbs_soft_white
+#     script.outside_porch_power
 #
 # Entities created by this package:
 #   binary_sensor.indoor_holiday
@@ -117,6 +118,11 @@ automation:
     - condition: template
       value_template: "{{ target | count > 0 and continue and to_state in ['on','off'] }}"
   actions:
+    # The outdoor receptacle is plugged into the porch outlet: make sure it
+    # has power (packages/outdoor_sunset_lighting.yaml).
+    - if: "{{ trigger.id == 'outdoor_on' }}"
+      then:
+      - action: script.outside_porch_power
     - action: switch.turn_{{ to_state }}
       target:
         entity_id: "{{ target }}"

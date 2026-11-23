@@ -1,10 +1,14 @@
 # Outdoor sunset lighting: at sunset, turns the outdoor bulbs on with the
 # season's scene (sensor.seasonal_lights), and at sunrise switches them to the
-# sunrise scene. If someone turns off a front door sconce switch, turns it
-# back on, notifies, announces it in the living room and, during the day,
-# turns the bulbs back off. light.area_outside switches the outside lights
-# together, except those always-on front door sconces (the Outside area's
-# target on the Home v2 dashboard). Also holds the everyday outdoor bulb
+# sunrise scene. If someone turns off a front door sconce switch or the porch
+# outlet, turns it back on, notifies, announces it in the living room and,
+# during the day, turns the bulbs back off. The porch outlet powers the front
+# yard uplights and the outdoor receptacle (Z-Wave, plugged into it), so at
+# sunset script.outside_porch_power turns it on first (if it's off) and waits
+# for them to come back before they're used. light.area_outside switches the
+# outside lights together, except those always-on front door sconces and the
+# porch outlet (the Outside area's target on the Home v2 dashboard). Also
+# holds the everyday outdoor bulb
 # scenes: Sunrise Bulbs (all off), Soft White (the default when there's no
 # holiday) and DayLight.
 #
@@ -42,6 +46,8 @@
 #       switch.passenger_sconce
 #     Porch: Outlet (e6ac7faef32679c1f2951bd80a3a2978)
 #       switch.outside_porch
+#     Porch: Outdoor Receptacle (ba33e8ffacdb12807b90d8f43a80dc45)
+#       sensor.outdoor_receptacle_node_status
 #   packages/echo_announcements.yaml
 #     script.notify_area
 #   packages/holiday/holiday_christmas.yaml and holiday_scenes.yaml
@@ -54,13 +60,16 @@
 # Entities created by this package:
 #   light.area_outside (the outside lights but the always-on sconces; group-like)
 #   script.sunrise_sunset
+#   script.outside_porch_power
 #   scene.sunrise_bulbs (no unique_id)
 #   scene.holiday_bulbs_soft_white (no unique_id)
 #   scene.holiday_bulbs_daylight (no unique_id)
 
 # On while any outside light is on; turns them all on or off. Leaves out the
 # always-on front door sconces (switch.passenger_sconce, switch.sconces_garage
-# and switch.sconces_main_entrance): never turned off, never counted. The
+# and switch.sconces_main_entrance) and the always-on porch outlet
+# (switch.outside_porch, which powers the uplights and the outdoor
+# receptacle): never turned off, never counted. The
 # Outside area's lights target on the Home v2 dashboard (like the generated
 # light.area_* targets, which don't cover the outside areas). The entity_id
 # attribute lists them, so it acts like a group.
@@ -71,7 +80,7 @@ template:
     default_entity_id: light.area_outside
     icon: mdi:tree
     variables:
-      entities: [switch.outside_porch, switch.sliding_door_sconce, switch.flood_light, light.main_door_left_bulb, light.main_door_right_bulb, light.passenger_door_bulb, light.garage_sconce_left_bulb, light.garage_sconce_right_bulb, light.front_yard_uplight_left, light.front_yard_uplight_middle, light.front_yard_uplight_right]
+      entities: [switch.sliding_door_sconce, switch.flood_light, light.main_door_left_bulb, light.main_door_right_bulb, light.passenger_door_bulb, light.garage_sconce_left_bulb, light.garage_sconce_right_bulb, light.front_yard_uplight_left, light.front_yard_uplight_middle, light.front_yard_uplight_right]
     state: >
       {{ entities | select('is_state', 'on') | list | count > 0 }}
     attributes:
@@ -114,6 +123,7 @@ automation:
     - switch.passenger_sconce
     - switch.sconces_garage
     - switch.sconces_main_entrance
+    - switch.outside_porch
     to: 'off'
   variables:
     continue: >
@@ -129,10 +139,10 @@ automation:
     data:
       title: "Sunset Switch Turned Off"
       message: >
-        {{ trigger.entity_id | entity_name }} door sconce switch was turned off, turning back on.
+        {{ trigger.entity_id | entity_name }} switch was turned off, turning back on.
   - action: script.notify_area
     data:
-      message: Jim counter action initiative in affect. Turning on {{ trigger.entity_id | entity_name }} door sconces.
+      message: Jim counter action initiative in affect. Turning on {{ trigger.entity_id | entity_name }}.
       announce: False
       area: living_room
   - condition: sun
@@ -181,9 +191,39 @@ script:
     sequence:
     - condition: template
       value_template: "{{ continue }}"
+    # The scene sets the uplights, which are powered by the porch outlet.
+    - if: "{{ evt == 'sunset' }}"
+      then:
+      - action: script.outside_porch_power
     - action: scene.turn_on
       target:
         entity_id: "{{ start_scene }}"
+
+  # Turns on the porch outlet (it powers the front yard uplights and the
+  # outdoor receptacle) if it's off, then waits for them to come back: the
+  # receptacle's Z-Wave node to report alive (up to 2 minutes), then a few
+  # seconds for the uplights to rejoin Zigbee. Returns right away when the
+  # outlet is already on. Called (and waited on) at sunset by
+  # script.sunrise_sunset and the holiday lights automation
+  # (packages/holiday/holiday_lighting.yaml); parallel so both can wait.
+  outside_porch_power:
+    alias: Outside Porch Power
+    mode: parallel
+    sequence:
+    - if: "{{ is_state('switch.outside_porch', 'off') }}"
+      then:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.outside_porch
+    - if: "{{ not is_state('sensor.outdoor_receptacle_node_status', 'alive') or (now() - states.switch.outside_porch.last_changed).total_seconds() < 15 }}"
+      then:
+      - delay:
+          seconds: 5
+      - wait_template: "{{ is_state('sensor.outdoor_receptacle_node_status', 'alive') }}"
+        timeout:
+          minutes: 2
+      - delay:
+          seconds: 10
 
 scene:
 - name: Sunrise Bulbs
