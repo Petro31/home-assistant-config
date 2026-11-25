@@ -11,11 +11,11 @@
 #     Office: D1 Mini (adf0eae5cfe0dea1465fc796781d5e10)
 #       sensor.office_d1_mini_humidity
 #       sensor.office_d1_mini_temperature
-#   Xiaomi BLE (xiaomi_ble)
-#     Bonus Bedroom: CGDK2 (BC8A) (10cac61c99f3aaa8ec9def234ac9fa05), removed
-#     until HA 2026.12 (see CLAUDE.md Known issues)
+#   Qingping (qingping)
+#     Bonus Bedroom: CGDK2 (BC8A) (70c6fb2c7c1a0e4f2af8f62f22772224)
 #       sensor.bonus_room_cgdk2_humidity
 #       sensor.bonus_room_cgdk2_temperature
+#   Xiaomi BLE (xiaomi_ble)
 #     Kitchen: LYWSDCGQ (B721) (e68aad4abd3f8f61f3b5a14cc9a6fa53)
 #       sensor.kitchen_lywsdcgq_humidity
 #       sensor.kitchen_lywsdcgq_temperature
