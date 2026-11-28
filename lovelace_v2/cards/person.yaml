@@ -4,7 +4,10 @@
 # ratio (7:5).
 #   - background: their photo at full opacity (the card dims pictures to 30%
 #     by default), no gradient, in grayscale while they're not home (UIX,
-#     live)
+#     live). The grayscale goes through the card's --background-filter
+#     variable (its image layer applies it), not a filter on
+#     room-background-image itself: a filter there makes that unsized
+#     element the photo's containing block, and the photo disappears.
 #   - title: the person's state: Home, Away, or the zone they're in (UIX,
 #     live, like the summary cards' titles)
 #   - stat: their hours at work this week (a briefcase icon)
@@ -56,7 +59,7 @@
     '.': 'ha-card { text-shadow: ' ~ outline ~ '; --opacity-icon-fill-active: 0.4 !important; --opacity-icon-fill-inactive: 0.4 !important; } '
       ~ '.info, .name { overflow: visible !important; } .name { font-size: 0 !important; } '
       ~ '.name::after { content: "' ~ label ~ '"; font-size: clamp(1.2rem, 6cqw, 2rem); padding-right: 2px; } '
-      ~ 'room-background-image { filter: ' ~ filter ~ '; } '
+      ~ 'room-background-image { --background-filter: ' ~ filter ~ '; } '
       ~ 'entity-collection { --user-entities-wrap: 3; aspect-ratio: calc(0.31 * var(--entity-columns)) / 1 !important; }',
     'sensor-collection $': 'ha-state-icon { filter: ' ~ icon_outline ~ '; }',
   }},
