@@ -29,7 +29,8 @@
 #   work    hours-at-work sensor
 #   page    their person subview's path
 #   map     their map subview's path
-# Photos: /local/images/<object_id>_large.png
+# Photos: /media/people/<object_id>_large.png, through media-source so they
+# need a login (not /local/, which anyone can download)
 {%- set object_id = entity.split('.')[1] %}
 {%- set go = {'action': 'navigate', 'navigation_path': page} %}
 {%- set e = "'" ~ entity ~ "'" %}
@@ -51,7 +52,7 @@
   'sensor_classes': [],
   'problem': {'display': 'active_only'},
   'actions': {'tap_action': go},
-  'background': {'image': '/local/images/' ~ object_id ~ '_large.png', 'options': ['hide_gradient'], 'opacity': 100},
+  'background': {'image': 'media-source://media_source/local/people/' ~ object_id ~ '_large.png', 'options': ['hide_gradient'], 'opacity': 100},
   'icon_opacity_preset': 'high_visibility',
   'styles': {'card': {'--user-grid-aspect-ratio': '7/5'}},
   'grid_options': {'columns': 6, 'rows': 'auto'},

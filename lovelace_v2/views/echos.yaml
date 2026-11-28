@@ -59,9 +59,6 @@ cards:
       {%- if boolean.icon is defined %}
         icon: {{ boolean.icon }}
       {%- endif %}
-      {%- if boolean.image is defined %}
-        image: {{ boolean.image }}
-      {%- endif %}
     {%- else %}
     - !include '../../lovelace/templates/buttons/spacer.yaml'
     {%- endif %}

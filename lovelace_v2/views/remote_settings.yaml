@@ -11,7 +11,7 @@
 {% set sources = [
   {'entity':'switch.xbox_source', 'color': 'rgba(14, 122, 13)', 'template': '../../lovelace/templates/remote_icon_button.yaml'},
   {'entity':'switch.playstation_source', 'color': 'rgba(102, 92, 190)', 'template': '../../lovelace/templates/remote_icon_button.yaml'},
-  {'entity':'switch.roku_source', 'color': 'rgba(105, 58, 147)', 'template': '../../lovelace/templates/remote_image_button.yaml', 'image': '/local/images/roku.png'},
+  {'entity':'switch.roku_source', 'color': 'rgba(105, 58, 147)', 'template': '../../lovelace/templates/remote_icon_button.yaml', 'icon': 'fapro:roku-r'},
   {'entity':'switch.nintendo_switch_source', 'color': 'rgba(228, 0, 15)', 'template': '../../lovelace/templates/remote_icon_button.yaml'},
   {'entity':'switch.chromecast_source', 'color': 'rgba(66,133,244)', 'template': '../../lovelace/templates/remote_icon_button.yaml'},
   {'entity':'switch.alexa_source', 'color': 'rgba(49, 196, 243)', 'template': '../../lovelace/templates/remote_icon_button.yaml', 'icon': 'fab:amazon'},
@@ -74,9 +74,6 @@ cards:
         color: {{ source.color }}
         {%- if source.icon is defined %}
         icon: {{ source.icon }}
-        {%- endif %}
-        {%- if source.image is defined %}
-        image: {{ source.image }}
         {%- endif %}
     {% else %}
     - !include '../../lovelace/templates/buttons/spacer.yaml'

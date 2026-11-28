@@ -8,7 +8,7 @@ show_state: true
 show_label: false
 show_name: false
 show_entity_picture: true
-entity_picture: /local/images/petro_large.png
+entity_picture: /local/images/transparent.png
 entity: select.drink
 styles:
   grid:

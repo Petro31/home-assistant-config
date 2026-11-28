@@ -22,7 +22,6 @@ www/community/
 
 www/lovelace/
 
-www/motion/
 .HA_VERSION
 
 .ios.conf
@@ -61,43 +60,11 @@ known_devices.yaml
 
 intent_script.yaml
 
-www/images/andrea.png
-
 www/images/background.jpg
-
-www/images/blank_thin.png
-
-www/images/bonnie.png
-
-www/images/food.jpg
-
-www/images/lambo_large_grayscale.png
-
-www/images/lambo_large.jpg
-
-www/images/lambo_large.png
-
-www/images/lindsay.png
-
-www/images/owen.png
-
-www/images/petro_large.png
-
-www/images/petro.png
-
-www/images/petro_large_grayscale.png
 
 www/images/home.jpg
 
-www/images/jim.png
-
-www/images/netfix n.xcf
-
 www/images/transparent.png
-
-www/images/driveway_motion.jpg
-
-www/harmony_activity_controls/transparent.png
 
 appdaemon/apps/ad_harmony_activity_controls/
 
@@ -105,23 +72,11 @@ ozwave/
 
 ui-lovelace-before-changes.yaml
 
-www/images/county.png
-
-www/images/Monroe.png
-
 harmony_9888285.conf
 
 appdaemon/apps/ad_count_entities/
 
-www/images/home_transparent_2.png
-
-www/images/home_transparent_3.png
-
-www/images/home_transparent_4.png
-
 www/images/home_transparent_5.png
-
-www/images/home_transparent.png
 
 lovelace/views/testing.yaml
 
@@ -176,12 +131,6 @@ custom_templates/dates.jinja
 custom_templates/easy_time.jinja
 
 core
-
-www/images/apple_cider_margarita.jpg
-
-www/images/manhatten.jpg
-
-www/images/spicy_margarita.jpg
 
 esphome/bonus_room_esp32/
 

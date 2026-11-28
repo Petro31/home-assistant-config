@@ -12,9 +12,9 @@
 {%- macro slug(name) %}{{ name | lower | replace(' ', '_') }}{% endmacro %}
 
 {#-
-  Variables for cards/menu_icon.yaml (and the Household status lines): name,
-  picture/icon, where it goes, and its status line (an HA template; see
-  status() below).
+  A Home button's name, icon, view path and status line (an HA template;
+  see status() below). The buttons aren't drawn: page() looks up their paths
+  and the Household window shows their status lines.
 #}
 {%- macro button(item) %}
   {%- if item.legacy is defined %}
@@ -26,7 +26,6 @@
   {{- {
     'name': item.name,
     'icon': item.icon,
-    'image': item.image | default(''),
     'navigation_path': target,
     'status': status(item.status | default(''), item_counts, item.sensors | default([]),
                      item.idle | default('All off' if item_counts else '')) | fromjson,

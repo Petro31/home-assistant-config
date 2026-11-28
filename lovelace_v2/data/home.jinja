@@ -703,7 +703,7 @@
   Status line: 'status' is an HA template (evaluated live). Without it, the
   row shows its 'sensors' (temperature/humidity) and the counts of its count
   groups (doors, locks, media, ...; a menu button: all its areas'), or 'idle'
-  when there's nothing to show. 'image' may also be an HA template.
+  when there's nothing to show.
   'household' puts the status line in Home's Household window, hidden while
   it reads one of the listed (quiet) values; [] means always shown.
 -#}
@@ -712,7 +712,6 @@
     'name': 'Areas',
     'icon': 'mdi:home-lightbulb',
     'household': [],
-    'image': house.image,
     'view': 'menu',
     'entities': areas,
     'sensors': home_sensors,
@@ -721,7 +720,6 @@
     'name': 'Doors',
     'icon': 'mdi:door',
     'household': ['All closed · Locked'],
-    'image': '/local/images/door_4.png',
     'view': 'doors',
     'entities': doors,
     'doors': {'entities': doors | map(attribute='entity') | list},
@@ -740,7 +738,6 @@
     'name': 'Remote',
     'icon': 'mdi:remote-tv',
     'household': ['Off'],
-    'image': '/local/images/remote_2.png',
     'view': 'remote',
     'media': {'entities': [
       'media_player.yamaha_rx_v6a',
@@ -751,14 +748,12 @@
     'name': 'Holiday',
     'icon': 'mdi:string-lights',
     'household': ['Accent lights'],
-    'image': "/local/images/{{ states('sensor.holiday_lighting') }}.png",
     'view': 'holiday',
     'status': "{{ 'Accent lights' if is_state('sensor.holiday_lighting', 'no_holiday') else states('sensor.holiday_lighting') | replace('_', ' ') | title }}",
   },{
     'name': 'Music',
     'icon': 'mdi:music-box',
     'household': ['Off'],
-    'image': '/local/images/music.png',
     'view': 'music',
     'media': {'entities': [
       'media_player.yamaha_rx_v6a',
@@ -770,7 +765,6 @@
   },{
     'name': 'Echos',
     'icon': 'mdi:amazon-alexa',
-    'image': '/local/images/echo_2.png',
     'view': 'echos',
     'status': "{{ state_attr('sensor.alexa_last_tts', 'text') | default('', true) | truncate(60) or 'No announcements' }}",
   },{
@@ -789,14 +783,12 @@
   },{
     'name': 'Drinks',
     'icon': 'mdi:glass-wine',
-    'image': "{{ state_attr('select.drink', 'image') or '/local/images/wine.png' }}",
     'view': 'drinks',
     'status': "{{ states('select.drink') }}",
   },{
     'name': 'Plants',
     'icon': 'mdi:flower',
     'household': ['All good'],
-    'image': '/local/images/plants.png',
     'legacy': 'plants',
     'status': "{{ 'Needs attention' if is_state('binary_sensor.plant_issue', 'on') else 'All good' }}",
   },{
